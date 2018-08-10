@@ -1,0 +1,27 @@
+Package: phenoptrReports
+Title: Create reports using Phenoptics data
+Version: 0.0.0.9000
+Authors@R: c(
+    person("Kent S", "Johnson", role = c("aut", "cre"),
+           email = "kent.johnson@perkinelmer.com"),
+    person("PerkinElmer, Inc.", role="cph"))
+Copyright: PerkinElmer
+Description: Creates diagnostic and summary reports from inForm data.
+Depends: R (>= 3.5.0)
+License: Zlib | file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports:
+    dplyr (>= 0.7.5),
+    ggplot2,
+    knitr,
+    magrittr,
+    phenoptr (>= 0.1.1.9005),
+    purrr,
+    rlang,
+    rmarkdown,
+    tibble,
+    tidyverse
+Remotes: PerkinElmer/phenoptr
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 6.1.0
