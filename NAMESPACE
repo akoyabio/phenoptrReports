@@ -2,6 +2,8 @@
 
 export(compute_mean_expression)
 export(compute_mean_expression_many)
+export(compute_positivity)
+export(compute_positivity_many)
 importFrom(magrittr,"%>%")
 importFrom(rlang,"!!")
 importFrom(rlang,":=")
