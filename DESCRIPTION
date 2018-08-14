@@ -20,7 +20,9 @@ Imports:
     purrr,
     rlang,
     rmarkdown,
+    stringr,
     tibble,
+    tidyr,
     tidyverse
 Remotes: PerkinElmer/phenoptr
 Roxygen: list(markdown = TRUE)
