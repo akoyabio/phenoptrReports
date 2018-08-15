@@ -13,12 +13,11 @@ utils::globalVariables(c(
 #'   reported in the same order as phenotypes are listed here.
 #' @param tissue_categories A character vector of tissue category names
 #'   of interest.
-#' @param include_all If true, include a column for All cells (i.e. total)
 #' @return A data frame with columns for Slide ID, Tissue Category, cell
 #'   counts for each requested phenotype, and total cells
 #' @importFrom magrittr %>%
 #' @export
-count_phenotypes = function(csd, phenotypes, tissue_categories, include_all=TRUE) {
+count_phenotypes = function(csd, phenotypes, tissue_categories) {
   selections = csd %>%
     dplyr::select(`Slide ID`, `Tissue Category`, dplyr::starts_with('Phenotype')) %>%
     dplyr::filter(`Tissue Category` %in% tissue_categories) %>%
@@ -27,10 +26,6 @@ count_phenotypes = function(csd, phenotypes, tissue_categories, include_all=TRUE
     dplyr::select(-dplyr::starts_with('Phenotype '))
 
   pheno_names = names(phenotypes)
-  if (include_all) {
-    selections$`Total Cells` = TRUE
-    pheno_names = c(pheno_names, 'Total Cells')
-  }
 
   fill=rep(0, length(pheno_names)) %>% as.list %>% rlang::set_names(pheno_names)
 

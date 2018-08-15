@@ -4,20 +4,27 @@
 \alias{compute_mean_expression_many}
 \title{Compute mean expression of top-expressing cells for multiple phenotypes}
 \usage{
-compute_mean_expression_many(csd, param_pairs, percentile = NULL,
-  count = NULL)
+compute_mean_expression_many(csd, phenotypes, params,
+  tissue_categories = NULL, percentile = NULL, count = NULL)
 }
 \arguments{
 \item{csd}{Cell seg data to use. This should already have been filtered
-for the slides or fields of interest.}
+for the slides or fields of interest. It may already be nested by
+\code{Slide ID} and \code{Tissue Category}.}
 
-\item{param_pairs}{A named list of pairs of phenotype selectors and column names.}
+\item{phenotypes}{A named list of phenotype selectors}
+
+\item{params}{A named list matching phenotype names to
+expression column names.}
+
+\item{tissue_categories}{Optional vector of tissue category names to include.}
 
 \item{percentile}{The percentile cutoff for top-expressing cells. For
 example, to measure the top quartile, the percentile is 0.75.}
 
 \item{count}{The number of top expressing cells to use. Only one of
-\code{percentile} and \code{count} can be provided.}
+\code{percentile} and \code{count} can be provided. If both are omitted,
+all cells matching the phe}
 }
 \value{
 A data frame with columns for count and mean for each \code{param_pair}.

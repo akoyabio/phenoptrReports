@@ -20,7 +20,8 @@ for the slides or fields of interest.}
 example, to measure the top quartile, the percentile is 0.75.}
 
 \item{count}{The number of top expressing cells to use. Only one of
-\code{percentile} and \code{count} can be provided.}
+\code{percentile} and \code{count} can be provided. If both are omitted,
+the mean expression of all cells is returned.}
 }
 \value{
 A data frame with columns for count and mean.

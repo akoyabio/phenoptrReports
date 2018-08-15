@@ -4,7 +4,7 @@
 \alias{count_phenotypes}
 \title{Count phenotypes per slide and tissue category}
 \usage{
-count_phenotypes(csd, phenotypes, tissue_categories, include_all = TRUE)
+count_phenotypes(csd, phenotypes, tissue_categories)
 }
 \arguments{
 \item{csd}{Cell seg data to use. This should already have been filtered
@@ -15,8 +15,6 @@ reported in the same order as phenotypes are listed here.}
 
 \item{tissue_categories}{A character vector of tissue category names
 of interest.}
-
-\item{include_all}{If true, include a column for All cells (i.e. total)}
 }
 \value{
 A data frame with columns for Slide ID, Tissue Category, cell
