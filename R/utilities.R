@@ -1,35 +1,51 @@
 # Helpers
 
-#' Parse a vector of phenotype names to create selectors for
-#' [phenoptr::select_rows()].
+#' Parse a vector of phenotype names.
 #'
-#' @param phenos A character vector of phenotype names.
-#' @return A named list of phenotype selectors
+#' @param ... Phenotypes to be decoded, optionally with names.
+#' @return A named list of phenotype selectors for use with
+#'   [phenoptr::select_rows()].
 #' @section Details:
-#' Each name must be either a single phenotype name (e.g. CD3+ or CD8-)
-#' or two or more names separated by a slash (/). Additionally,
+#' Each phenotype must be either a single phenotype name (e.g. CD3+ or CD8-)
+#' or two or more names separated by a slash (/) or comma (,). Additionally,
 #' a name without a + or - and containing either "Total" or "All" will be
 #' interpreted as meaning "All cells".
 #' @importFrom magrittr %>%
 #' @export
-parse_phenotypes = function(phenos) {
-  # This does the basic decoding
-  # case_when is a bit of a pain...
-  dplyr::case_when(
-    # Multiple phenotypes become a list
-    stringr::str_detect(phenos, '/') ~ str_split(phenos, '/'),
+#' @examples
+#' parse_phenotypes("CD3+", "CD3+/CD8-", "Total Cells", Macrophage="CD68+,CD163+")
+parse_phenotypes = function(...) {
+  phenos = list(...)
 
-    # Ends with +- and no / is a single phenotype
-    stringr::str_detect(phenos, '[+-]$') ~ as.list(phenos),
+  # phenos may have names(pheno) == NULL, if no names were provided
+  # If any names were provided, missing names will be ''
+  if (is.null(names(phenos))) names(phenos)=phenos else {
+    no_names = names(phenos) == ''
+    names(phenos)[no_names] = phenos[no_names]
+  }
+
+  # This does the basic decoding
+  purrr::map(phenos, function(pheno) {
+    # Multiple AND phenotypes become a list
+    if (stringr::str_detect(pheno, '/')) {
+      # Can't have comma and slash
+      if (stringr::str_detect(pheno, ','))
+        stop(paste("Phenotype selectors may not contain both '/' and '.':", pheno))
+      as.list(stringr::str_split(pheno, '/')[[1]])
+    }
+
+    # Multiple OR phenotypes become a character vector
+    else if (stringr::str_detect(pheno, ',')) stringr::str_split(pheno, ',')[[1]]
+
+    # Ends with +- and no '/' or ',' is a single phenotype
+    else if (stringr::str_detect(pheno, '[+-]$')) pheno
 
     # Contains Total or All returns NA which signals "Select All"
-    stringr::str_detect(phenos, stringr::regex('Total|All', ignore_case=TRUE)) ~
-      rep(NA, length(phenos)) %>% as.list
-  ) %>%
-    rlang::set_names(phenos) %>%
-
-    # Combinations need to be represented as lists, not vectors
-    purrr::map(~{if(length(.x)<=1) .x else as.list(.x)})
+    else if (stringr::str_detect(pheno, stringr::regex('Total|All', ignore_case=TRUE)))
+      NA
+    else stop(paste("Unrecognized phenotype selector:", pheno))
+  }) %>%
+    rlang::set_names(names(phenos))
 }
 
 #' Make a nested data frame with one row per Slide ID and Tissue Category.

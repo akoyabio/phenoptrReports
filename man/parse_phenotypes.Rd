@@ -2,26 +2,28 @@
 % Please edit documentation in R/utilities.R
 \name{parse_phenotypes}
 \alias{parse_phenotypes}
-\title{Parse a vector of phenotype names to create selectors for
-\code{\link[phenoptr:select_rows]{phenoptr::select_rows()}}.}
+\title{Parse a vector of phenotype names.}
 \usage{
-parse_phenotypes(phenos)
+parse_phenotypes(...)
 }
 \arguments{
-\item{phenos}{A character vector of phenotype names.}
+\item{...}{Phenotypes to be decoded, optionally with names.}
 }
 \value{
-A named list of phenotype selectors
+A named list of phenotype selectors for use with
+\code{\link[phenoptr:select_rows]{phenoptr::select_rows()}}.
 }
 \description{
-Parse a vector of phenotype names to create selectors for
-\code{\link[phenoptr:select_rows]{phenoptr::select_rows()}}.
+Parse a vector of phenotype names.
 }
 \section{Details}{
 
-Each name must be either a single phenotype name (e.g. CD3+ or CD8-)
-or two or more names separated by a slash (/). Additionally,
+Each phenotype must be either a single phenotype name (e.g. CD3+ or CD8-)
+or two or more names separated by a slash (/) or comma (,). Additionally,
 a name without a + or - and containing either "Total" or "All" will be
 interpreted as meaning "All cells".
 }
 
+\examples{
+parse_phenotypes("CD3+", "CD3+/CD8-", "Total Cells", Macrophage="CD68+,CD163+")
+}
