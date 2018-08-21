@@ -2,8 +2,7 @@
 % Please edit documentation in R/split_phenotypes.R
 \name{split_phenotypes}
 \alias{split_phenotypes}
-\title{Split a phenotype column containing multiple positivities
-into multiple columns, one for each single phenotype.}
+\title{Split a phenotype column}
 \usage{
 split_phenotypes(csd)
 }
@@ -15,6 +14,10 @@ A new data frame with the \code{Phenotype} column replaced with
 individual columns per phenotype and the \code{Confidence} column removed.
 }
 \description{
-Split a phenotype column containing multiple positivities
+A column containing multiple phenotypes is split
 into multiple columns, one for each single phenotype.
+}
+\details{
+Multiple phenotypes in the original column must be separated with "/".
+The names of positive phenotypes must end in "+".
 }

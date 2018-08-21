@@ -8,16 +8,23 @@ write_expression_sheet(wb, exprs, sheet_name = "Mean Expression",
   sheet_title = "Mean Expression")
 }
 \arguments{
-\item{wb}{An openxlsx Workbook}
+\item{wb}{An openxlsx Workbook from \link[openxlsx:createWorkbook]{openxlsx::createWorkbook}}
 
 \item{exprs}{A data frame with columns for \code{Slide ID}, \code{Tissue Category},
 and mean expression, such as the output of
-\code{\link[=compute_mean_expression_many]{compute_mean_expression_many()}}. Count columns will not be reported.}
+\link{compute_mean_expression_many}. Count columns are not reported.}
 
 \item{sheet_name}{Optional name for the worksheet.}
 
 \item{sheet_title}{Optional title header for the table.}
 }
 \description{
-Write an expression table to an Excel workbook
+Write a formatted cell expression table to a sheet in an Excel workbook.
 }
+\seealso{
+Other output functions: \code{\link{write_counts_sheet}},
+  \code{\link{write_density_sheet}},
+  \code{\link{write_h_score_sheet}},
+  \code{\link{write_percents_sheet}}
+}
+\concept{output functions}

@@ -9,12 +9,18 @@ utils::globalVariables(c(
   "Confidence"
 ))
 
-#' Merge several cell seg data files, each with their own `Phenotype` column,
+#' Merge cell seg data files from parallel projects
+#'
+#' Merge several cell seg data files, each with its own `Phenotype` column,
 #' into a single file with separate columns for each phenotype.
 #'
-#' @param files A list or vector of file paths
+#' The
+#' individual files must all have exactly the same `Sample Name` and `Cell ID`
+#' columns. [split_phenotypes] is called to split the `Phenotype` columns.
+#'
+#' @param files A list or vector of paths to cell seg data files.
 #' @return A single data frame containing merged data and columns for each
-#'   phenotype.
+#'   single phenotype.
 #' @importFrom magrittr %>%
 #' @export
 merge_and_split_cell_seg_data = function(files) {
@@ -22,8 +28,10 @@ merge_and_split_cell_seg_data = function(files) {
   if (!is.character(files) || !all(purrr::map_lgl(files, file.exists)))
     stop('Please pass a list of paths to existing cell seg data files.')
 
+  # Read the first file, we will use it as the basis for the result
   csd = phenoptr::read_cell_seg_data(files[1]) %>% split_phenotypes()
 
+  # Read subsequent files, split phenotypes, join with the first file.
   for (file in files[-1]) {
     csd2 = phenoptr::read_cell_seg_data(file) %>%
       split_phenotypes()%>%
@@ -36,8 +44,13 @@ merge_and_split_cell_seg_data = function(files) {
   csd
 }
 
-#' Split a phenotype column containing multiple positivities
+#' Split a phenotype column
+#'
+#' A column containing multiple phenotypes is split
 #' into multiple columns, one for each single phenotype.
+#'
+#' Multiple phenotypes in the original column must be separated with "/".
+#' The names of positive phenotypes must end in "+".
 #'
 #' @param csd Cell seg data to use.
 #' @return A new data frame with the `Phenotype` column replaced with
@@ -62,17 +75,24 @@ split_phenotypes = function(csd) {
 
   # Make a new column for each positive phenotype
   new_columns = purrr::map(positives, ~{
+    # Positive and negative values for the new column
     positive = .x
     negative = stringr::str_replace(positive, '\\+$', '-')
+
+    # Start out all negative or blank
     result = rep(negative, nrow(csd))
     result[blanks] = ''
+
+    # Fill in the positive value anywhere it appears in the original
     result[stringr::str_detect(csd$Phenotype, stringr::fixed(positive))] = positive
     result
   })
 
+  # Make names for the new columns
   new_names = paste('Phenotype', stringr::str_remove(positives, '\\+$'))
   new_columns = new_columns %>% rlang::set_names(new_names)
 
+  # Build a new data frame
   csd %>% dplyr::select(-Phenotype, -Confidence) %>%
     dplyr::bind_cols(new_columns)
 }

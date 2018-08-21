@@ -10,16 +10,29 @@ count_phenotypes(csd, phenotypes, tissue_categories)
 \item{csd}{Cell seg data to use. This should already have been filtered
 for the slides or fields of interest.}
 
-\item{phenotypes}{A named list of phenotype selectors. Results will be
-reported in the same order as phenotypes are listed here.}
+\item{phenotypes}{A named list of phenotype selectors
+(see \link{parse_phenotypes}). Results will be
+reported in the same order as phenotypes are listed here. To include a
+row total, \code{phenotypes} should contain a "Total" item.}
 
 \item{tissue_categories}{A character vector of tissue category names
 of interest.}
 }
 \value{
 A data frame with columns for Slide ID, Tissue Category, cell
-counts for each requested phenotype, and total cells
+counts for each requested phenotype, and total cells.
 }
 \description{
-Count phenotypes per slide and tissue category
+Count selected phenotypes, aggregating by Slide ID and Tissue Category.
+If multiple tissue categories are selected, include a Total row for
+each Slide ID.
 }
+\seealso{
+Other aggregation functions: \code{\link{compute_density}},
+  \code{\link{compute_h_score}},
+  \code{\link{compute_mean_expression_many}},
+  \code{\link{compute_mean_expression}},
+  \code{\link{compute_positivity_many}},
+  \code{\link{compute_positivity}}
+}
+\concept{aggregation functions}

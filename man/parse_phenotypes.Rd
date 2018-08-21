@@ -2,7 +2,7 @@
 % Please edit documentation in R/utilities.R
 \name{parse_phenotypes}
 \alias{parse_phenotypes}
-\title{Parse a vector of phenotype names.}
+\title{Parse a vector of phenotype names}
 \usage{
 parse_phenotypes(...)
 }
@@ -11,16 +11,31 @@ parse_phenotypes(...)
 }
 \value{
 A named list of phenotype selectors for use with
-\code{\link[phenoptr:select_rows]{phenoptr::select_rows()}}.
+\link[phenoptr:select_rows]{phenoptr::select_rows}.
 }
 \description{
-Parse a vector of phenotype names.
+This helper function takes a user-friendly list of single and
+multiple phenotype names and converts it to a named list of phenotype
+selectors for use with \link[phenoptr:select_rows]{phenoptr::select_rows}. By using \code{parse_phenotypes}
+a user does not have to know the (somewhat inscrutable)
+details of \code{select_rows}.
 }
 \section{Details}{
 
 Each phenotype must be either a single phenotype name (e.g. CD3+ or CD8-)
-or two or more names separated by a slash (/) or comma (,). Additionally,
-a name without a + or - and containing either "Total" or "All" will be
+or two or more names separated by a slash (/) or comma (,).
+
+Phenotypes containing slashes are interpreted as requiring \emph{all} of the
+individual phenotypes. For example, "CD3+/CD8-" is a CD3+ cell which is
+also CD8-.
+
+Phenotypes containing commas are interpreted as requiring \emph{any} of the
+individual phenotypes. For example, "CD68+,CD163+" is a cell which is
+either CD68+ or CD163+ or both.
+
+Additionally,
+a phenotype name without a + or - and containing
+either "Total" or "All" will be
 interpreted as meaning "All cells".
 }
 

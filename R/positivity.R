@@ -14,6 +14,7 @@ utils::globalVariables(c(
 #' @return A data frame with columns for count,
 #'   positive count,
 #'   and percent for each element of `positivity_pairs`.
+#' @family aggregation functions
 #' @importFrom rlang !! :=
 #' @export
 compute_positivity_many = function(csd, positivity_pairs) {
@@ -42,6 +43,7 @@ compute_positivity_many = function(csd, positivity_pairs) {
 #'   the given phenotype),
 #'   positive (count of positive cells)
 #'   and fraction (fraction of positive cells).
+#' @family aggregation functions
 #' @export
 compute_positivity = function(csd, phenotype, positivity) {
   # Parameter checking
@@ -68,6 +70,7 @@ compute_positivity = function(csd, phenotype, positivity) {
 #' @param thresholds Optional three element vector with the threshold values.
 #' @return A data frame with one row per Slide ID, showing cell counts and
 #'   percents in each bin and the H score
+#' @family aggregation functions
 #' @importFrom magrittr %>%
 #' @export
 compute_h_score = function(csd, measure, tissue_categories,

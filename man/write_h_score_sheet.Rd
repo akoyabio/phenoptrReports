@@ -8,15 +8,22 @@ write_h_score_sheet(wb, h_score, sheet_name = "H-Score",
   sheet_title = "H-Score")
 }
 \arguments{
-\item{wb}{An openxlsx Workbook}
+\item{wb}{An openxlsx Workbook from \link[openxlsx:createWorkbook]{openxlsx::createWorkbook}}
 
 \item{h_score}{A data frame with columns for \code{Slide ID}, \code{Tissue Category},
-and percent.}
+and percent, such as the output of \link{compute_h_score}.}
 
 \item{sheet_name}{Optional name for the worksheet.}
 
 \item{sheet_title}{Optional title header for the table.}
 }
 \description{
-Write an H-Score table to an Excel workbook
+Write a formatted H-Score table to a sheet in an Excel workbook.
 }
+\seealso{
+Other output functions: \code{\link{write_counts_sheet}},
+  \code{\link{write_density_sheet}},
+  \code{\link{write_expression_sheet}},
+  \code{\link{write_percents_sheet}}
+}
+\concept{output functions}

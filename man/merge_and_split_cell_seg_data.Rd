@@ -2,19 +2,23 @@
 % Please edit documentation in R/split_phenotypes.R
 \name{merge_and_split_cell_seg_data}
 \alias{merge_and_split_cell_seg_data}
-\title{Merge several cell seg data files, each with their own \code{Phenotype} column,
-into a single file with separate columns for each phenotype.}
+\title{Merge cell seg data files from parallel projects}
 \usage{
 merge_and_split_cell_seg_data(files)
 }
 \arguments{
-\item{files}{A list or vector of file paths}
+\item{files}{A list or vector of paths to cell seg data files.}
 }
 \value{
 A single data frame containing merged data and columns for each
-phenotype.
+single phenotype.
 }
 \description{
-Merge several cell seg data files, each with their own \code{Phenotype} column,
+Merge several cell seg data files, each with its own \code{Phenotype} column,
 into a single file with separate columns for each phenotype.
+}
+\details{
+The
+individual files must all have exactly the same \code{Sample Name} and \code{Cell ID}
+columns. \link{split_phenotypes} is called to split the \code{Phenotype} columns.
 }

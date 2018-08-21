@@ -8,15 +8,22 @@ write_counts_sheet(wb, counts, sheet_name = "Cell Counts",
   sheet_title = "Cell Counts per Phenotype")
 }
 \arguments{
-\item{wb}{An openxlsx Workbook}
+\item{wb}{An openxlsx Workbook from \link[openxlsx:createWorkbook]{openxlsx::createWorkbook}}
 
 \item{counts}{A data frame with columns for \code{Slide ID}, \code{Tissue Category},
-and counts, such as the output of \code{\link[=count_phenotypes]{count_phenotypes()}}.}
+and counts, such as the output of \link{count_phenotypes}.}
 
 \item{sheet_name}{Optional name for the worksheet.}
 
 \item{sheet_title}{Optional title header for the table.}
 }
 \description{
-Write a cell counts table to an Excel workbook
+Write a formatted cell counts table to a sheet in an Excel workbook.
 }
+\seealso{
+Other output functions: \code{\link{write_density_sheet}},
+  \code{\link{write_expression_sheet}},
+  \code{\link{write_h_score_sheet}},
+  \code{\link{write_percents_sheet}}
+}
+\concept{output functions}

@@ -21,3 +21,12 @@ and percent for each element of \code{positivity_pairs}.
 \description{
 Compute positivity of multiple phenotypes
 }
+\seealso{
+Other aggregation functions: \code{\link{compute_density}},
+  \code{\link{compute_h_score}},
+  \code{\link{compute_mean_expression_many}},
+  \code{\link{compute_mean_expression}},
+  \code{\link{compute_positivity}},
+  \code{\link{count_phenotypes}}
+}
+\concept{aggregation functions}

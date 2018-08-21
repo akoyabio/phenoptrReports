@@ -1,5 +1,7 @@
 # Excel helpers
+# Use openxlsx to write formatted worksheets with analysis results.
 
+# Cell styles
 percent_style = openxlsx::createStyle(numFmt='0%')
 two_decimal_style = openxlsx::createStyle(numFmt='0.00')
 integer_style = openxlsx::createStyle(numFmt='0')
@@ -8,11 +10,14 @@ bold_style = openxlsx::createStyle(textDecoration='bold',
 
 #' Write a cell counts table to an Excel workbook
 #'
-#' @param wb An openxlsx Workbook
+#' Write a formatted cell counts table to a sheet in an Excel workbook.
+#'
+#' @param wb An openxlsx Workbook from [openxlsx::createWorkbook]
 #' @param counts A data frame with columns for `Slide ID`, `Tissue Category`,
-#'   and counts, such as the output of [count_phenotypes()].
+#'   and counts, such as the output of [count_phenotypes].
 #' @param sheet_name Optional name for the worksheet.
 #' @param sheet_title Optional title header for the table.
+#' @family output functions
 #' @export
 write_counts_sheet = function(wb, counts,
                               sheet_name='Cell Counts',
@@ -23,11 +28,14 @@ write_counts_sheet = function(wb, counts,
 
 #' Write a cell percent table to an Excel workbook
 #'
-#' @param wb An openxlsx Workbook
+#' Write a formatted cell percent table to a sheet in an Excel workbook.
+#'
+#' @param wb An openxlsx Workbook from [openxlsx::createWorkbook]
 #' @param percents A data frame with columns for `Slide ID`, `Tissue Category`,
 #'   and percent.
 #' @param sheet_name Optional name for the worksheet.
 #' @param sheet_title Optional title header for the table.
+#' @family output functions
 #' @export
 write_percents_sheet = function(wb, percents,
                               sheet_name='Cell Percents',
@@ -38,18 +46,21 @@ write_percents_sheet = function(wb, percents,
   data_rows = 1:nrow(percents)+2
   data_cols = 3:ncol(percents)
 
-  # Format as percent
+  # Format the data columns as percent
   openxlsx::addStyle(wb, sheet_name, percent_style,
                      rows=data_rows, cols=data_cols, gridExpand=TRUE)
 }
 
 #' Write a density table to an Excel workbook
 #'
-#' @param wb An openxlsx Workbook
+#' Write a formatted density table to a sheet in an Excel workbook.
+#'
+#' @param wb An openxlsx Workbook from [openxlsx::createWorkbook]
 #' @param densities A data frame with columns for `Slide ID`, `Tissue Category`,
-#'   `Tissue Area` and densities, such as the output of [compute_density()].
+#'   `Tissue Area` and densities, such as the output of [compute_density].
 #' @param sheet_name Optional name for the worksheet.
 #' @param sheet_title Optional title header for the table.
+#' @family output functions
 #' @export
 write_density_sheet = function(wb, densities,
                                sheet_name='Cell Densities',
@@ -66,13 +77,16 @@ write_density_sheet = function(wb, densities,
 
 #' Write an expression table to an Excel workbook
 #'
-#' @param wb An openxlsx Workbook
+#' Write a formatted cell expression table to a sheet in an Excel workbook.
+#'
+#' @param wb An openxlsx Workbook from [openxlsx::createWorkbook]
 #' @param exprs A data frame with columns for `Slide ID`, `Tissue Category`,
 #'   and mean expression, such as the output of
-#'   [compute_mean_expression_many()]. Count columns will not be reported.
+#'   [compute_mean_expression_many]. Count columns are not reported.
 #' @param sheet_name Optional name for the worksheet.
 #' @param sheet_title Optional title header for the table.
 #' @importFrom magrittr %>%
+#' @family output functions
 #' @export
 write_expression_sheet = function(wb, exprs,
                                sheet_name='Mean Expression',
@@ -96,11 +110,14 @@ write_expression_sheet = function(wb, exprs,
 
 #' Write an H-Score table to an Excel workbook
 #'
-#' @param wb An openxlsx Workbook
+#' Write a formatted H-Score table to a sheet in an Excel workbook.
+#'
+#' @param wb An openxlsx Workbook from [openxlsx::createWorkbook]
 #' @param h_score A data frame with columns for `Slide ID`, `Tissue Category`,
-#'   and percent.
+#'   and percent, such as the output of [compute_h_score].
 #' @param sheet_name Optional name for the worksheet.
 #' @param sheet_title Optional title header for the table.
+#' @family output functions
 #' @export
 write_h_score_sheet = function(wb, h_score,
                                 sheet_name='H-Score',
@@ -119,7 +136,7 @@ write_sheet <- function(wb, d, sheet_name, sheet_title, header_col) {
   # Make a new sheet
   openxlsx::addWorksheet(wb, sheet_name)
 
-  # Write a bold header
+  # Write a bold header across all the data columns
   openxlsx::writeData(wb, sheet_name, startCol=header_col, sheet_title)
   openxlsx::addStyle(wb, sheet_name, bold_style, rows=1, cols=1:header_col)
   openxlsx::mergeCells(wb, sheet_name, rows=1, cols=header_col:ncol(d))
@@ -134,7 +151,7 @@ write_sheet <- function(wb, d, sheet_name, sheet_title, header_col) {
     openxlsx::mergeCells(wb, sheet_name, rows=1:2, cols=col)
   }
 
-  # Wider first column
+  # Wider Slide ID column
   openxlsx::setColWidths(wb, sheet_name, 1, 'auto')
 }
 

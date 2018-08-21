@@ -1,14 +1,31 @@
 # Helpers
 
-#' Parse a vector of phenotype names.
+#' Parse a vector of phenotype names
+#'
+#' This helper function takes a user-friendly list of single and
+#' multiple phenotype names and converts it to a named list of phenotype
+#' selectors for use with [phenoptr::select_rows]. By using `parse_phenotypes`
+#' a user does not have to know the (somewhat inscrutable)
+#' details of `select_rows`.
 #'
 #' @param ... Phenotypes to be decoded, optionally with names.
 #' @return A named list of phenotype selectors for use with
-#'   [phenoptr::select_rows()].
+#'   [phenoptr::select_rows].
 #' @section Details:
 #' Each phenotype must be either a single phenotype name (e.g. CD3+ or CD8-)
-#' or two or more names separated by a slash (/) or comma (,). Additionally,
-#' a name without a + or - and containing either "Total" or "All" will be
+#' or two or more names separated by a slash (/) or comma (,).
+#'
+#' Phenotypes containing slashes are interpreted as requiring *all* of the
+#' individual phenotypes. For example, "CD3+/CD8-" is a CD3+ cell which is
+#' also CD8-.
+#'
+#' Phenotypes containing commas are interpreted as requiring *any* of the
+#' individual phenotypes. For example, "CD68+,CD163+" is a cell which is
+#' either CD68+ or CD163+ or both.
+#'
+#' Additionally,
+#' a phenotype name without a + or - and containing
+#' either "Total" or "All" will be
 #' interpreted as meaning "All cells".
 #' @importFrom magrittr %>%
 #' @export
@@ -17,8 +34,9 @@
 parse_phenotypes = function(...) {
   phenos = list(...)
 
-  # phenos may have names(pheno) == NULL, if no names were provided
-  # If any names were provided, missing names will be ''
+  # If no names were given, phenos will have names(pheno) == NULL
+  # If any names were given, missing names will be ''
+  # One way or another, get a named list.
   if (is.null(names(phenos))) names(phenos)=phenos else {
     no_names = names(phenos) == ''
     names(phenos)[no_names] = phenos[no_names]
@@ -60,6 +78,7 @@ order_by_slide_and_tissue_category = function(d, tissue_categories) {
   # Lookup table for ordering tissue categories
   tissue_order = 1:(length(tissue_categories)+1) %>%
     rlang::set_names(c(tissue_categories, 'Total'))
+
   d %>%
     dplyr::arrange(`Slide ID`, tissue_order[`Tissue Category`])
 }

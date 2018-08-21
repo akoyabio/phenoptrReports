@@ -12,7 +12,8 @@ compute_mean_expression_many(csd, phenotypes, params,
 for the slides or fields of interest. It may already be nested by
 \code{Slide ID} and \code{Tissue Category}.}
 
-\item{phenotypes}{A named list of phenotype selectors}
+\item{phenotypes}{A named list of phenotype selectors
+(see \link{parse_phenotypes}).}
 
 \item{params}{A named list matching phenotype names to
 expression column names.}
@@ -24,11 +25,26 @@ example, to measure the top quartile, the percentile is 0.75.}
 
 \item{count}{The number of top expressing cells to use. Only one of
 \code{percentile} and \code{count} can be provided. If both are omitted,
-all cells matching the phe}
+all cells matching the phenotype are used and the result is the
+overall mean expression.}
 }
 \value{
 A data frame with columns for count and mean for each \code{param_pair}.
 }
 \description{
-Compute mean expression of top-expressing cells for multiple phenotypes
+For each given combination of phenotype and expression parameter,
+find the cells with the highest expression within the phenotype.
+Report the mean expression of the high-expressing cells.
 }
+\details{
+High expression may be specified by a percentile cutoff or a count of cells.
+}
+\seealso{
+Other aggregation functions: \code{\link{compute_density}},
+  \code{\link{compute_h_score}},
+  \code{\link{compute_mean_expression}},
+  \code{\link{compute_positivity_many}},
+  \code{\link{compute_positivity}},
+  \code{\link{count_phenotypes}}
+}
+\concept{aggregation functions}

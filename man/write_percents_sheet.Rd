@@ -8,7 +8,7 @@ write_percents_sheet(wb, percents, sheet_name = "Cell Percents",
   sheet_title = "Percentage of Total Cells")
 }
 \arguments{
-\item{wb}{An openxlsx Workbook}
+\item{wb}{An openxlsx Workbook from \link[openxlsx:createWorkbook]{openxlsx::createWorkbook}}
 
 \item{percents}{A data frame with columns for \code{Slide ID}, \code{Tissue Category},
 and percent.}
@@ -18,5 +18,12 @@ and percent.}
 \item{sheet_title}{Optional title header for the table.}
 }
 \description{
-Write a cell percent table to an Excel workbook
+Write a formatted cell percent table to a sheet in an Excel workbook.
 }
+\seealso{
+Other output functions: \code{\link{write_counts_sheet}},
+  \code{\link{write_density_sheet}},
+  \code{\link{write_expression_sheet}},
+  \code{\link{write_h_score_sheet}}
+}
+\concept{output functions}

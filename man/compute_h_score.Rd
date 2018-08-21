@@ -26,3 +26,12 @@ percents in each bin and the H score
 \description{
 Thresholds may come from a score data file or be directly provided.
 }
+\seealso{
+Other aggregation functions: \code{\link{compute_density}},
+  \code{\link{compute_mean_expression_many}},
+  \code{\link{compute_mean_expression}},
+  \code{\link{compute_positivity_many}},
+  \code{\link{compute_positivity}},
+  \code{\link{count_phenotypes}}
+}
+\concept{aggregation functions}

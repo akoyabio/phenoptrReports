@@ -5,10 +5,17 @@ utils::globalVariables(c(
 
 #' Compute mean expression of top-expressing cells for multiple phenotypes
 #'
+#' For each given combination of phenotype and expression parameter,
+#' find the cells with the highest expression within the phenotype.
+#' Report the mean expression of the high-expressing cells.
+#'
+#' High expression may be specified by a percentile cutoff or a count of cells.
+#'
 #' @param csd Cell seg data to use. This should already have been filtered
 #'   for the slides or fields of interest. It may already be nested by
 #'   `Slide ID` and `Tissue Category`.
 #' @param phenotypes A named list of phenotype selectors
+#'  (see [parse_phenotypes]).
 #' @param params A named list matching phenotype names to
 #'   expression column names.
 #' @param tissue_categories Optional vector of tissue category names to include.
@@ -16,8 +23,10 @@ utils::globalVariables(c(
 #'   example, to measure the top quartile, the percentile is 0.75.
 #' @param count The number of top expressing cells to use. Only one of
 #'   `percentile` and `count` can be provided. If both are omitted,
-#'   all cells matching the phe
+#'   all cells matching the phenotype are used and the result is the
+#'   overall mean expression.
 #' @return A data frame with columns for count and mean for each `param_pair`.
+#' @family aggregation functions
 #' @importFrom magrittr %>%
 #' @importFrom rlang !! :=
 #' @export
@@ -35,11 +44,16 @@ compute_mean_expression_many = function(
 
   # Function to compute all expressions for a single nested data frame
   compute_means = function(d) {
-    purrr::map(names(params), ~{
+    purrr::map_dfc(names(params), ~{
+      # Phenotype name, phenotype selector, expression parameter name
       name = .x
       phenotype = phenotypes[[name]]
       param = params[[name]]
+
+      # Compute a single expression value
       d = compute_mean_expression(d, phenotype, param, percentile, count)
+
+      # Make nice column names so we can bind them all together
       count_name = paste(name, 'Count')
       param_what = dplyr::case_when(!is.null(percentile) ~
                                       paste0(' >', percentile*100, '%ile'),
@@ -47,9 +61,10 @@ compute_mean_expression_many = function(
                           TRUE ~ '')
       param_name = paste0(name, param_what, ' ', param)
       d %>% dplyr::rename(!!count_name := count, !!param_name := mean)
-    }) %>% dplyr::bind_cols()
+    })
   }
 
+  # Actually do the computation for each nested data frame
   csd %>% dplyr::mutate(means = purrr::map(data, compute_means)) %>%
     dplyr::select(-data) %>%
     tidyr::unnest()
@@ -57,10 +72,14 @@ compute_mean_expression_many = function(
 
 #' Compute mean expression of top-expressing cells for a single phenotype
 #'
+#' Find the cells with the highest expression of the given parameter
+#' within the given phenotype.
+#' Report the mean expression of the high-expressing cells.
+#'
 #' @param csd Cell seg data to use. This should already have been filtered
 #'   for the slides or fields of interest.
 #' @param phenotype A phenotype selector. This will be passed to
-#'   \code{\link[phenoptr]{select_rows}}.
+#'   [phenoptr::select_rows].
 #' @param param The parameter (column) to report, as a string.
 #' @param percentile The percentile cutoff for top-expressing cells. For
 #'   example, to measure the top quartile, the percentile is 0.75.
@@ -68,6 +87,7 @@ compute_mean_expression_many = function(
 #'   `percentile` and `count` can be provided. If both are omitted,
 #'   the mean expression of all cells is returned.
 #' @return A data frame with columns for count and mean.
+#' @family aggregation functions
 #' @importFrom magrittr %>%
 #' @export
 compute_mean_expression = function(

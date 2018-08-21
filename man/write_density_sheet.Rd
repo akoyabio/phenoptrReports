@@ -8,15 +8,22 @@ write_density_sheet(wb, densities, sheet_name = "Cell Densities",
   sheet_title = "Cell Densities (cells/mm2)")
 }
 \arguments{
-\item{wb}{An openxlsx Workbook}
+\item{wb}{An openxlsx Workbook from \link[openxlsx:createWorkbook]{openxlsx::createWorkbook}}
 
 \item{densities}{A data frame with columns for \code{Slide ID}, \code{Tissue Category},
-\code{Tissue Area} and densities, such as the output of \code{\link[=compute_density]{compute_density()}}.}
+\code{Tissue Area} and densities, such as the output of \link{compute_density}.}
 
 \item{sheet_name}{Optional name for the worksheet.}
 
 \item{sheet_title}{Optional title header for the table.}
 }
 \description{
-Write a density table to an Excel workbook
+Write a formatted density table to a sheet in an Excel workbook.
 }
+\seealso{
+Other output functions: \code{\link{write_counts_sheet}},
+  \code{\link{write_expression_sheet}},
+  \code{\link{write_h_score_sheet}},
+  \code{\link{write_percents_sheet}}
+}
+\concept{output functions}

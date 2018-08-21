@@ -7,12 +7,17 @@ utils::globalVariables(c(
 
 #' Compute cell densities from counts and tissue area
 #'
+#' Compute cell density from a table of cell counts and tissue areas
+#' read from a summary cell seg data file.
+#'
 #' @param counts A data frame with columns for `Slide ID`, `Tissue Category`,
-#'   and counts, such as the output of [count_phenotypes()].
+#'   and counts, such as the output of [count_phenotypes].
 #' @param summary_path Path to a cell seg data summary table containing
 #'   sample names and tissue categories matching `counts`.
-#' @param pixels_per_micron Conversion factor to microns
-#' @return A data table with counts converted to density in cells / mm^2
+#' @param pixels_per_micron Conversion factor to microns.
+#' @return A data table with counts converted to density in
+#'   \ifelse{html}{\out{mm<sup>2</sup>}{\eqn{cells / mm^2}}.
+#' @family aggregation functions
 #' @importFrom magrittr %>%
 #' @export
 compute_density = function(counts, summary_path,
@@ -34,6 +39,7 @@ compute_density = function(counts, summary_path,
     dplyr::group_by(`Slide ID`, `Tissue Category`) %>%
     dplyr::summarize(`Tissue Area` = sum(`Tissue Area`)/1e6)
 
+  # Join with the counts table and divide counts by area to get density
   densities = dplyr::left_join(counts, summary_data) %>%
     dplyr::select(`Slide ID`, `Tissue Category`, `Tissue Area`, dplyr::everything()) %>%
     dplyr::mutate_at(-(1:3), function(x) x/.$`Tissue Area`) %>%

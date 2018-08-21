@@ -9,16 +9,23 @@ compute_density(counts, summary_path,
 }
 \arguments{
 \item{counts}{A data frame with columns for \code{Slide ID}, \code{Tissue Category},
-and counts, such as the output of \code{\link[=count_phenotypes]{count_phenotypes()}}.}
+and counts, such as the output of \link{count_phenotypes}.}
 
 \item{summary_path}{Path to a cell seg data summary table containing
 sample names and tissue categories matching \code{counts}.}
 
-\item{pixels_per_micron}{Conversion factor to microns}
-}
-\value{
-A data table with counts converted to density in cells / mm^2
+\item{pixels_per_micron}{Conversion factor to microns.}
 }
 \description{
-Compute cell densities from counts and tissue area
+Compute cell density from a table of cell counts and tissue areas
+read from a summary cell seg data file.
 }
+\seealso{
+Other aggregation functions: \code{\link{compute_h_score}},
+  \code{\link{compute_mean_expression_many}},
+  \code{\link{compute_mean_expression}},
+  \code{\link{compute_positivity_many}},
+  \code{\link{compute_positivity}},
+  \code{\link{count_phenotypes}}
+}
+\concept{aggregation functions}

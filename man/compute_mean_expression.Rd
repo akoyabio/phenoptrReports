@@ -12,7 +12,7 @@ compute_mean_expression(csd, phenotype, param, percentile = NULL,
 for the slides or fields of interest.}
 
 \item{phenotype}{A phenotype selector. This will be passed to
-\code{\link[phenoptr]{select_rows}}.}
+\link[phenoptr:select_rows]{phenoptr::select_rows}.}
 
 \item{param}{The parameter (column) to report, as a string.}
 
@@ -27,5 +27,16 @@ the mean expression of all cells is returned.}
 A data frame with columns for count and mean.
 }
 \description{
-Compute mean expression of top-expressing cells for a single phenotype
+Find the cells with the highest expression of the given parameter
+within the given phenotype.
+Report the mean expression of the high-expressing cells.
 }
+\seealso{
+Other aggregation functions: \code{\link{compute_density}},
+  \code{\link{compute_h_score}},
+  \code{\link{compute_mean_expression_many}},
+  \code{\link{compute_positivity_many}},
+  \code{\link{compute_positivity}},
+  \code{\link{count_phenotypes}}
+}
+\concept{aggregation functions}
