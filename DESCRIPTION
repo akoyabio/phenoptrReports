@@ -19,6 +19,7 @@ Imports:
     openxlsx,
     phenoptr (>= 0.1.1.9006),
     purrr,
+    readr,
     rlang,
     rmarkdown,
     stringr,

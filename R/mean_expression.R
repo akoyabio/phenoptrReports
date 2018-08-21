@@ -27,6 +27,10 @@ compute_mean_expression_many = function(
   if (!is.null(tissue_categories))
     csd = csd %>% dplyr::filter(`Tissue Category` %in% tissue_categories)
 
+  missing_phenotypes = setdiff(names(params), names(phenotypes))
+  if (length(missing_phenotypes) > 0)
+    stop("These phenotypes are not defined: ", paste(missing_phenotypes, sep=' ,'))
+
   csd = make_nested(csd)
 
   # Function to compute all expressions for a single nested data frame
@@ -97,6 +101,9 @@ compute_mean_expression = function(
     # Mean expression of all cells
     m = mean(d, na.rm=TRUE)
   }
+
+  # Report NA rather than NaN
+  m[is.nan(m)] = NA
 
   tibble::data_frame(count=length(d), mean=m)
 }

@@ -1,10 +1,12 @@
 # Excel helpers
 
-pct_style = openxlsx::createStyle(numFmt='0%')
+percent_style = openxlsx::createStyle(numFmt='0%')
+two_decimal_style = openxlsx::createStyle(numFmt='0.00')
+integer_style = openxlsx::createStyle(numFmt='0')
 bold_style = openxlsx::createStyle(textDecoration='bold',
                                    halign='center', wrapText=TRUE)
 
-#' Write a counts table to an Excel workbook
+#' Write a cell counts table to an Excel workbook
 #'
 #' @param wb An openxlsx Workbook
 #' @param counts A data frame with columns for `Slide ID`, `Tissue Category`,
@@ -14,9 +16,31 @@ bold_style = openxlsx::createStyle(textDecoration='bold',
 #' @export
 write_counts_sheet = function(wb, counts,
                               sheet_name='Cell Counts',
-                              sheet_title='Cell Counts')
+                              sheet_title='Cell Counts per Phenotype')
 {
   write_sheet(wb, counts, sheet_name, sheet_title, 3)
+}
+
+#' Write a cell percent table to an Excel workbook
+#'
+#' @param wb An openxlsx Workbook
+#' @param percents A data frame with columns for `Slide ID`, `Tissue Category`,
+#'   and percent.
+#' @param sheet_name Optional name for the worksheet.
+#' @param sheet_title Optional title header for the table.
+#' @export
+write_percents_sheet = function(wb, percents,
+                              sheet_name='Cell Percents',
+                              sheet_title='Percentage of Total Cells')
+{
+  write_sheet(wb, percents, sheet_name, sheet_title, 3)
+
+  data_rows = 1:nrow(percents)+2
+  data_cols = 3:ncol(percents)
+
+  # Format as percent
+  openxlsx::addStyle(wb, sheet_name, percent_style,
+                     rows=data_rows, cols=data_cols, gridExpand=TRUE)
 }
 
 #' Write a density table to an Excel workbook
@@ -32,6 +56,12 @@ write_density_sheet = function(wb, densities,
                                sheet_title='Cell Densities (cells/mm2)')
 {
   write_sheet(wb, densities, sheet_name, sheet_title, 4)
+
+  # Format tissue area with two decimal places, densities as integer
+  data_rows = 1:nrow(densities)+2
+  openxlsx::addStyle(wb, sheet_name, two_decimal_style, rows=data_rows, cols=3)
+  openxlsx::addStyle(wb, sheet_name, integer_style, rows=data_rows,
+                     cols=4:ncol(densities), gridExpand=TRUE)
 }
 
 #' Write an expression table to an Excel workbook
@@ -55,8 +85,34 @@ write_expression_sheet = function(wb, exprs,
   write_sheet(wb, exprs, sheet_name, sheet_title, 3)
 
   # Make the expression columns a little wider
-  openxlsx::setColWidths(wb, sheet_name, 3:ncol(exprs), 14)
+  data_rows = 1:nrow(exprs)+2
+  data_cols = 3:ncol(exprs)
+  openxlsx::setColWidths(wb, sheet_name, data_cols, 14)
 
+  # Format with two decimal places
+  openxlsx::addStyle(wb, sheet_name, two_decimal_style,
+                     rows=data_rows, cols=data_cols, gridExpand=TRUE)
+}
+
+#' Write an H-Score table to an Excel workbook
+#'
+#' @param wb An openxlsx Workbook
+#' @param h_score A data frame with columns for `Slide ID`, `Tissue Category`,
+#'   and percent.
+#' @param sheet_name Optional name for the worksheet.
+#' @param sheet_title Optional title header for the table.
+#' @export
+write_h_score_sheet = function(wb, h_score,
+                                sheet_name='H-Score',
+                                sheet_title='H-Score')
+{
+  write_sheet(wb, h_score, sheet_name, sheet_title, 3)
+
+  data_rows = 1:nrow(h_score)+2
+
+  # Format as percent
+  openxlsx::addStyle(wb, sheet_name, percent_style,
+                     rows=data_rows, cols=8:11, gridExpand=TRUE)
 }
 
 write_sheet <- function(wb, d, sheet_name, sheet_title, header_col) {

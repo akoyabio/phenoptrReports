@@ -57,11 +57,15 @@ split_phenotypes = function(csd) {
   if (length(positives) == 0)
     stop('No positive phenotypes found.')
 
+  # If there is no phenotype in the original, leave the new ones blank as well
+  blanks = csd$Phenotype == ''
+
   # Make a new column for each positive phenotype
   new_columns = purrr::map(positives, ~{
     positive = .x
     negative = stringr::str_replace(positive, '\\+$', '-')
     result = rep(negative, nrow(csd))
+    result[blanks] = ''
     result[stringr::str_detect(csd$Phenotype, stringr::fixed(positive))] = positive
     result
   })

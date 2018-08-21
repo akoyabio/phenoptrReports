@@ -2,10 +2,10 @@
 % Please edit documentation in R/excel_helpers.R
 \name{write_counts_sheet}
 \alias{write_counts_sheet}
-\title{Write a counts table to an Excel workbook}
+\title{Write a cell counts table to an Excel workbook}
 \usage{
 write_counts_sheet(wb, counts, sheet_name = "Cell Counts",
-  sheet_title = "Cell Counts")
+  sheet_title = "Cell Counts per Phenotype")
 }
 \arguments{
 \item{wb}{An openxlsx Workbook}
@@ -18,5 +18,5 @@ and counts, such as the output of \code{\link[=count_phenotypes]{count_phenotype
 \item{sheet_title}{Optional title header for the table.}
 }
 \description{
-Write a counts table to an Excel workbook
+Write a cell counts table to an Excel workbook
 }
