@@ -8,7 +8,7 @@
 #' a user does not have to know the (somewhat inscrutable)
 #' details of `select_rows`.
 #'
-#' @param ... Phenotypes to be decoded, optionally with names.
+#' @param ... Phenotypes to be decoded, or a list of same, optionally with names.
 #' @return A named list of phenotype selectors for use with
 #'   [phenoptr::select_rows].
 #' @section Details:
@@ -34,6 +34,10 @@
 parse_phenotypes = function(...) {
   phenos = list(...)
 
+  # Allow passing a single list
+  if (length(phenos)==1 && is.list(phenos[[1]]))
+    phenos = phenos[[1]]
+
   # If no names were given, phenos will have names(pheno) == NULL
   # If any names were given, missing names will be ''
   # One way or another, get a named list.
@@ -44,6 +48,9 @@ parse_phenotypes = function(...) {
 
   # This does the basic decoding
   purrr::map(phenos, function(pheno) {
+    if (rlang::is_formula(pheno))
+      stop("parse_phenotypes does not support formula definitions.")
+
     # Multiple AND phenotypes become a list
     if (stringr::str_detect(pheno, '/')) {
       # Can't have comma and slash
@@ -90,12 +97,12 @@ order_by_slide_and_tissue_category = function(d, tissue_categories) {
 #' @param csd Cell seg data to use, possibly nested already.
 #' @return A nested data frame.
 make_nested = function(csd) {
-  if (!'Slide ID' %in% names(csd) || !'Tissue Category' %in% names(csd))
-    stop('Data frame must have "Slide ID" and "Tissue Category" columns.')
-
   # If it is already nested, just return it
   if ('data' %in% names(csd) && inherits(csd$data[[1]], 'data.frame'))
     return (csd)
+
+  if (!'Slide ID' %in% names(csd) || !'Tissue Category' %in% names(csd))
+    stop('Data frame must have "Slide ID" and "Tissue Category" columns.')
 
   tidyr::nest(csd, -`Slide ID`, -`Tissue Category`)
 }
