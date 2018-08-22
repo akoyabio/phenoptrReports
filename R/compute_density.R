@@ -15,8 +15,7 @@ utils::globalVariables(c(
 #' @param summary_path Path to a cell seg data summary table containing
 #'   sample names and tissue categories matching `counts`.
 #' @param pixels_per_micron Conversion factor to microns.
-#' @return A data table with counts converted to density in
-#'   \ifelse{html}{\out{mm<sup>2</sup>}{\eqn{cells / mm^2}}.
+#' @return A data table with counts converted to density in  \eqn{cells / mm^2}.
 #' @family aggregation functions
 #' @importFrom magrittr %>%
 #' @export

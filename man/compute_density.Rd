@@ -16,6 +16,9 @@ sample names and tissue categories matching \code{counts}.}
 
 \item{pixels_per_micron}{Conversion factor to microns.}
 }
+\value{
+A data table with counts converted to density in  \eqn{cells / mm^2}.
+}
 \description{
 Compute cell density from a table of cell counts and tissue areas
 read from a summary cell seg data file.
