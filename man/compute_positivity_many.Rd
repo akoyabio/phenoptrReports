@@ -4,14 +4,18 @@
 \alias{compute_positivity_many}
 \title{Compute positivity of multiple phenotypes}
 \usage{
-compute_positivity_many(csd, positivity_pairs)
+compute_positivity_many(csd, phenotypes, positivity_pairs)
 }
 \arguments{
 \item{csd}{Cell seg data to use. This should already have been filtered
 for the slides or fields of interest.}
 
-\item{positivity_pairs}{A named list of pairs (lists) of phenotype selectors
-and positivity expressions.}
+\item{phenotypes}{A named list of phenotype selectors
+(see \link{parse_phenotypes}).}
+
+\item{positivity_pairs}{A named list of pairs (lists) of phenotype names
+and positivity expressions. The expressions must be one-sided formulas
+such as \code{~`Membrane PDL1 (Opal 520) Mean`>pdl1_threshold}.}
 }
 \value{
 A data frame with columns for count,
