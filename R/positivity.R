@@ -9,26 +9,55 @@ utils::globalVariables(c(
 #'
 #' @param csd Cell seg data to use. This should already have been filtered
 #'   for the slides or fields of interest.
-#' @param positivity_pairs A named list of pairs (lists) of phenotype selectors
-#'   and positivity expressions.
+#' @param phenotypes A named list of phenotype selectors
+#'  (see [parse_phenotypes]).
+#' @param positivity_pairs A named list of pairs (lists) of phenotype names
+#'   and positivity expressions. The expressions must be one-sided formulas
+#'   such as ``~`Membrane PDL1 (Opal 520) Mean`>pdl1_threshold``.
+#' @param tissue_categories Optional vector of tissue category names to include.
 #' @return A data frame with columns for count,
 #'   positive count,
 #'   and percent for each element of `positivity_pairs`.
 #' @family aggregation functions
 #' @importFrom rlang !! :=
 #' @export
-compute_positivity_many = function(csd, positivity_pairs) {
-  purrr::map(names(positivity_pairs), ~{
-    name = .x
-    phenotype = positivity_pairs[[name]][[1]]
-    positivity = positivity_pairs[[name]][[2]]
-    d = compute_positivity(csd, phenotype, positivity)
-    count_name = paste(paste(phenotype, collapse='/'), 'Count')
-    pos_name = paste(name, 'Count')
-    pct_name = paste(name, 'Pct')
-    d %>% dplyr::rename(!!count_name := count, !!pos_name := positive,
-                        !!pct_name := fraction)
-  }) %>% dplyr::bind_cols()
+compute_positivity_many = function(csd, phenotypes, positivity_pairs,
+                                   tissue_categories=NULL)
+  {
+  missing_phenotypes = setdiff(purrr::map_chr(positivity_pairs, 1), names(phenotypes))
+  if (length(missing_phenotypes) > 0)
+    stop("These phenotypes are not defined: ", paste(missing_phenotypes, sep=' ,'))
+
+  if (!is.null(tissue_categories))
+    csd = csd %>% dplyr::filter(`Tissue Category` %in% tissue_categories)
+
+  csd = make_nested(csd)
+
+  # Function to compute all positivities for a single nested data frame
+  compute_data_frame = function(d) {
+    purrr::map_dfc(names(positivity_pairs), ~{
+      # Get the result name, phenotype selector, and positivity expression
+      name = .x
+      pair = positivity_pairs[[name]]
+      phenotype = phenotypes[[pair[[1]]]]
+      positivity = pair[[2]]
+
+      # Do the actual calculation
+      d = compute_positivity(d, phenotype, positivity)
+
+      # Make nice column names so we can paste them all together
+      count_name = paste(paste(phenotype, collapse='/'), 'Count')
+      pos_name = paste(name, 'Count')
+      pct_name = paste(name, 'Pct')
+      d %>% dplyr::rename(!!count_name := count, !!pos_name := positive,
+                          !!pct_name := fraction)
+    })
+  }
+
+  # Actually do the computation for each nested data frame
+  csd %>% dplyr::mutate(positivity = purrr::map(data, compute_data_frame)) %>%
+    dplyr::select(-data) %>%
+    tidyr::unnest()
 }
 
 #' Compute positivity of a single phenotype
