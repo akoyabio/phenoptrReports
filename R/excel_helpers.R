@@ -3,6 +3,7 @@
 
 # Cell styles
 percent_style = openxlsx::createStyle(numFmt='0%')
+percent_style.1 = openxlsx::createStyle(numFmt='0.0%')
 two_decimal_style = openxlsx::createStyle(numFmt='0.00')
 integer_style = openxlsx::createStyle(numFmt='0')
 bold_style = openxlsx::createStyle(textDecoration='bold')
@@ -128,8 +129,9 @@ write_h_score_sheet = function(wb, h_score,
 
   data_rows = 1:nrow(h_score)+2
 
-  # Format as percent
-  openxlsx::addStyle(wb, sheet_name, percent_style,
+  # Format as percent with one decimal place except for the last column
+  # Showing one decimal makes the total add up
+  openxlsx::addStyle(wb, sheet_name, percent_style.1,
                      rows=data_rows, cols=8:11, gridExpand=TRUE)
 }
 

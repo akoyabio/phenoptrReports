@@ -142,10 +142,10 @@ compute_h_score = function(csd, measure, tissue_categories,
 
   d = add_tissue_category_totals(d, tissue_categories) %>%
     dplyr::mutate(
-      `0+` = round(`Count of 0+`/Total, 2),
-      `1+` = round(`Count of 1+`/Total, 2),
-      `2+` = round(`Count of 2+`/Total, 2),
-      `3+` = round(`Count of 3+`/Total, 2),
+      `0+` = round(`Count of 0+`/Total, 3),
+      `1+` = round(`Count of 1+`/Total, 3),
+      `2+` = round(`Count of 2+`/Total, 3),
+      `3+` = round(`Count of 3+`/Total, 3),
       `H-Score` = as.integer(100 * (`1+` + 2*`2+` + 3*`3+`))
     )
   d
