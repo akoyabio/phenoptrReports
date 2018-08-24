@@ -5,8 +5,9 @@
 percent_style = openxlsx::createStyle(numFmt='0%')
 two_decimal_style = openxlsx::createStyle(numFmt='0.00')
 integer_style = openxlsx::createStyle(numFmt='0')
-bold_style = openxlsx::createStyle(textDecoration='bold',
-                                   halign='center', wrapText=TRUE)
+bold_style = openxlsx::createStyle(textDecoration='bold')
+bold_wrap_style = openxlsx::createStyle(textDecoration='bold',
+                                        halign='center', wrapText=TRUE)
 
 #' Write a cell counts table to an Excel workbook
 #'
@@ -132,17 +133,42 @@ write_h_score_sheet = function(wb, h_score,
                      rows=data_rows, cols=8:11, gridExpand=TRUE)
 }
 
+#' Write a plot to an Excel workbook
+#'
+#' Write a plot to a sheet in an Excel workbook.
+#'
+#' @param wb An openxlsx Workbook from [openxlsx::createWorkbook]
+#' @param plot A plot such as the output from [upset_plot].
+#' @param sheet_name Optional name for the worksheet.
+#' @param sheet_title Optional title header for the plot.
+#' @family output functions
+#' @export
+write_plot_sheet = function(wb, plot, sheet_name='Phenotypes',
+                  sheet_title='All combinations of phenotypes in all slides')
+{
+  # Make a new sheet
+  openxlsx::addWorksheet(wb, sheet_name)
+
+  # Write a bold header across all the data columns
+  openxlsx::writeData(wb, sheet_name, sheet_title)
+  openxlsx::addStyle(wb, sheet_name, bold_style, rows=1, cols=1)
+
+  print(plot)
+  openxlsx::insertPlot(wb, sheet_name, startRow=3,
+                       width=10, height=6, fileType='png')
+}
+
 write_sheet <- function(wb, d, sheet_name, sheet_title, header_col) {
   # Make a new sheet
   openxlsx::addWorksheet(wb, sheet_name)
 
   # Write a bold header across all the data columns
   openxlsx::writeData(wb, sheet_name, startCol=header_col, sheet_title)
-  openxlsx::addStyle(wb, sheet_name, bold_style, rows=1, cols=1:header_col)
+  openxlsx::addStyle(wb, sheet_name, bold_wrap_style, rows=1, cols=1:header_col)
   openxlsx::mergeCells(wb, sheet_name, rows=1, cols=header_col:ncol(d))
 
   # Write the table
-  openxlsx::writeData(wb, sheet_name, d, startRow=2, headerStyle=bold_style)
+  openxlsx::writeData(wb, sheet_name, d, startRow=2, headerStyle=bold_wrap_style)
 
   # Make the initial headers be two rows
   for (col in 1:(header_col-1)) {

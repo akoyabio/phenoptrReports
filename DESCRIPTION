@@ -26,7 +26,11 @@ Imports:
     tibble,
     tidyr,
     tidyverse
-Remotes: PerkinElmer/phenoptr@9006
+Remotes: 
+    PerkinElmer/phenoptr@9006,
+    hms-dbmi/UpSetR
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.0
-Suggests: testthat
+Suggests: 
+    testthat,
+    UpSetR

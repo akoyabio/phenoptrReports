@@ -24,6 +24,7 @@ Write a formatted cell counts table to a sheet in an Excel workbook.
 Other output functions: \code{\link{write_density_sheet}},
   \code{\link{write_expression_sheet}},
   \code{\link{write_h_score_sheet}},
-  \code{\link{write_percents_sheet}}
+  \code{\link{write_percents_sheet}},
+  \code{\link{write_plot_sheet}}
 }
 \concept{output functions}
