@@ -18,28 +18,44 @@ utils::globalVariables(c(
 #' individual files must all have exactly the same `Sample Name` and `Cell ID`
 #' columns. [split_phenotypes] is called to split the `Phenotype` columns.
 #'
-#' @param files A list or vector of paths to cell seg data files.
+#' @param files A list or vector of paths to cell seg data files
+#' @param data A list of data tables from read_cell_seg_data. Exactly one
+#'   of `files` or `data` should be provided.
 #' @return A single data frame containing merged data and columns for each
 #'   single phenotype.
 #' @importFrom magrittr %>%
 #' @export
-merge_and_split_cell_seg_data = function(files) {
-  files = unlist(files)
-  if (!is.character(files) || !all(purrr::map_lgl(files, file.exists)))
-    stop('Please pass a list of paths to existing cell seg data files.')
+merge_and_split_cell_seg_data = function(files=NULL, data=NULL) {
+  if (is.null(files) == is.null(data))
+    stop("Provide either 'files' or 'data' but not both.")
+
+  if (!is.null(files)) {
+    files = unlist(files)
+    if (!is.character(files) || !all(purrr::map_lgl(files, file.exists)))
+      stop('Please pass a list of paths to existing cell seg data files.')
+
+    data = purrr::map(files, phenoptr::read_cell_seg_data)
+  } else {
+    if (!all(purrr::map_lgl(data, ~inherits(., 'data.frame'))))
+      stop("Please pass a list of data frames as 'data'.")
+  }
 
   # Read the first file, we will use it as the basis for the result
-  csd = phenoptr::read_cell_seg_data(files[1]) %>% split_phenotypes()
+  csd = data[[1]] %>% split_phenotypes()
 
   # Read subsequent files, split phenotypes, join with the first file.
-  for (file in files[-1]) {
-    csd2 = phenoptr::read_cell_seg_data(file) %>%
-      split_phenotypes()%>%
+  for (csd2 in data[-1]) {
+    csd2 = csd2 %>%
+      split_phenotypes() %>%
       dplyr::select(`Sample Name`, `Cell ID`, dplyr::starts_with('Phenotype '))
+
     if (nrow(csd2) != nrow(csd))
-      stop(paste0('Number of rows in "', files[1], '" does not match "', file, '".'))
-    csd = dplyr::left_join(csd, csd2 )
+      stop(paste0('Number of rows in data frames do not match.'))
+    csd = dplyr::inner_join(csd, csd2 )
   }
+
+  if (nrow(csd) != nrow(data[[1]]))
+    stop('Rows of data frames do not match.')
 
   csd
 }
