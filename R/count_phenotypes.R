@@ -29,15 +29,16 @@ count_phenotypes = function(csd, phenotypes, tissue_categories) {
   # negative phenotypes. (We don't know what they are, don't assume.)
   # Any phenotype column works for this.
   pheno_col = purrr::detect(names(csd), ~startsWith(.x, 'Phenotype'))
-  selections = csd[csd[[pheno_col]]!='',]
+  csd_good = csd[csd[[pheno_col]]!='',] %>%
+    dplyr::filter(`Tissue Category` %in% tissue_categories)
 
   # Make a data frame with a boolean column for each phenotype
-  selections = selections %>%
-    dplyr::select(`Slide ID`, `Tissue Category`, dplyr::starts_with('Phenotype')) %>%
-    dplyr::filter(`Tissue Category` %in% tissue_categories) %>%
-    dplyr::bind_cols(purrr::map_dfc(phenotypes,
-                          function(pheno) phenoptr::select_rows(., pheno))) %>%
-    dplyr::select(-dplyr::starts_with('Phenotype'))
+  selections = purrr::map_dfc(phenotypes,
+                   function(pheno) phenoptr::select_rows(csd_good, pheno))
+
+  selections = csd_good %>%
+    dplyr::select(`Slide ID`, `Tissue Category`) %>%
+    bind_cols(selections)
 
   # Make the `fill` argument to `tidyr::complete`; we want 0 for missing values.
   pheno_names = names(phenotypes)
