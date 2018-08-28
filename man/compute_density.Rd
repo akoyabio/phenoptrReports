@@ -11,7 +11,7 @@ compute_density(counts, summary_path,
 \item{counts}{A data frame with columns for \code{Slide ID}, \code{Tissue Category},
 and counts, such as the output of \link{count_phenotypes}.}
 
-\item{summary_path}{Path to a cell seg data summary table containing
+\item{summary_path}{Path(s) to cell seg data summary table(s) containing
 sample names and tissue categories matching \code{counts}.}
 
 \item{pixels_per_micron}{Conversion factor to microns.}

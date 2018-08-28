@@ -12,7 +12,7 @@ utils::globalVariables(c(
 #'
 #' @param counts A data frame with columns for `Slide ID`, `Tissue Category`,
 #'   and counts, such as the output of [count_phenotypes].
-#' @param summary_path Path to a cell seg data summary table containing
+#' @param summary_path Path(s) to cell seg data summary table(s) containing
 #'   sample names and tissue categories matching `counts`.
 #' @param pixels_per_micron Conversion factor to microns.
 #' @return A data table with counts converted to density in  \eqn{cells / mm^2}.
@@ -28,7 +28,7 @@ compute_density = function(counts, summary_path,
   # Read the summary data, extract the columns we need, recode the
   # `Tissue Category` total name to match what `count_phenotypes` gives us,
   # and aggregate by `Slide ID` and `Tissue Category`
-  summary_data = phenoptr::read_cell_seg_data(summary_path,
+  summary_data = purrr::map_dfr(summary_path, phenoptr::read_cell_seg_data,
                                               pixels_per_micron=pixels_per_micron) %>%
     dplyr::select(`Slide ID`, `Tissue Category`, Phenotype,
                   `Tissue Area`=`Tissue Category Area (sq microns)`) %>%
@@ -38,11 +38,18 @@ compute_density = function(counts, summary_path,
     dplyr::group_by(`Slide ID`, `Tissue Category`) %>%
     dplyr::summarize(`Tissue Area` = sum(`Tissue Area`)/1e6)
 
+  # Check that the files match
+  missing_ids = setdiff(unique(counts$`Slide ID`), unique(summary_data$`Slide ID`))
+  if (length(missing_ids) > 1)
+    stop(length(missing_ids), ' Slide IDs are missing from summary file.')
+
   # Join with the counts table and divide counts by area to get density
   densities = dplyr::left_join(counts, summary_data) %>%
     dplyr::select(`Slide ID`, `Tissue Category`, `Tissue Area`, dplyr::everything()) %>%
     dplyr::mutate_at(-(1:3), function(x) x/.$`Tissue Area`) %>%
     dplyr::rename(`Tissue Area (mm2)`=`Tissue Area`)
+
+  densities
 }
 
 
