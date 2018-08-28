@@ -50,7 +50,8 @@ write_percents_sheet = function(wb, percents,
 
   # Format the data columns as percent
   openxlsx::addStyle(wb, sheet_name, percent_style,
-                     rows=data_rows, cols=data_cols, gridExpand=TRUE)
+                     rows=data_rows, cols=data_cols,
+                     gridExpand=TRUE, stack=TRUE)
 }
 
 #' Write a density table to an Excel workbook
@@ -70,11 +71,19 @@ write_density_sheet = function(wb, densities,
 {
   write_sheet(wb, densities, sheet_name, sheet_title, 4)
 
+  # Border to the left of the Area column
+  openxlsx::addStyle(wb, sheet_name,
+                     openxlsx::createStyle(border='Left'),
+                     rows=3:(nrow(densities)+2), cols=3,
+                     stack=TRUE)
+
   # Format tissue area with two decimal places, densities as integer
   data_rows = 1:nrow(densities)+2
-  openxlsx::addStyle(wb, sheet_name, two_decimal_style, rows=data_rows, cols=3)
+  openxlsx::addStyle(wb, sheet_name, two_decimal_style,
+                     rows=data_rows, cols=3, stack=TRUE)
   openxlsx::addStyle(wb, sheet_name, integer_style, rows=data_rows,
-                     cols=4:ncol(densities), gridExpand=TRUE)
+                     cols=4:ncol(densities),
+                     gridExpand=TRUE, stack=TRUE)
 }
 
 #' Write an expression table to an Excel workbook
@@ -107,7 +116,8 @@ write_expression_sheet = function(wb, exprs,
 
   # Format with two decimal places
   openxlsx::addStyle(wb, sheet_name, two_decimal_style,
-                     rows=data_rows, cols=data_cols, gridExpand=TRUE)
+                     rows=data_rows, cols=data_cols,
+                     gridExpand=TRUE, stack=TRUE)
 }
 
 #' Write an H-Score table to an Excel workbook
@@ -132,7 +142,8 @@ write_h_score_sheet = function(wb, h_score,
   # Format as percent with one decimal place except for the last column
   # Showing one decimal makes the total add up
   openxlsx::addStyle(wb, sheet_name, percent_style.1,
-                     rows=data_rows, cols=8:11, gridExpand=TRUE)
+                     rows=data_rows, cols=8:11,
+                     gridExpand=TRUE, stack=TRUE)
 }
 
 #' Write a plot to an Excel workbook
@@ -153,13 +164,24 @@ write_plot_sheet = function(wb, plot, sheet_name='Phenotypes',
 
   # Write a bold header across all the data columns
   openxlsx::writeData(wb, sheet_name, sheet_title)
-  openxlsx::addStyle(wb, sheet_name, bold_style, rows=1, cols=1)
+  openxlsx::addStyle(wb, sheet_name, bold_style,
+                     rows=1, cols=1, stack=TRUE)
 
   print(plot)
   openxlsx::insertPlot(wb, sheet_name, startRow=3,
                        width=10, height=6, fileType='png')
 }
 
+#' Write a single sheet with formatting common to all sheets.
+#'
+#' - Bold, centered header
+#' - Bold column headers
+#' - Bold Slide ID column
+#' @param wb An openxlsx Workbook from [openxlsx::createWorkbook]
+#' @param d A data frame to write.
+#' @param sheet_name Name for the worksheet.
+#' @param sheet_title Title header for the plot.
+#' @param header_col Column number to start the `sheet_title`
 write_sheet <- function(wb, d, sheet_name, sheet_title, header_col) {
   # Make a new sheet
   openxlsx::addWorksheet(wb, sheet_name)
@@ -170,7 +192,8 @@ write_sheet <- function(wb, d, sheet_name, sheet_title, header_col) {
   openxlsx::mergeCells(wb, sheet_name, rows=1, cols=header_col:ncol(d))
 
   # Write the table
-  openxlsx::writeData(wb, sheet_name, d, startRow=2, headerStyle=bold_wrap_style)
+  openxlsx::writeData(wb, sheet_name, d, startRow=2,
+                      headerStyle=bold_wrap_style, keepNA=TRUE)
 
   # Make the initial headers be two rows
   for (col in 1:(header_col-1)) {
@@ -179,7 +202,36 @@ write_sheet <- function(wb, d, sheet_name, sheet_title, header_col) {
     openxlsx::mergeCells(wb, sheet_name, rows=1:2, cols=col)
   }
 
-  # Wider Slide ID column
+  # Wider, bold Slide ID column
   openxlsx::setColWidths(wb, sheet_name, 1, 'auto')
+  openxlsx::addStyle(wb, sheet_name, bold_style, rows=3:(nrow(d)+2), cols=1)
+
+  # Wider Tissue Category column
+  openxlsx::setColWidths(wb, sheet_name, 2, 11)
+
+  grid_spacing = length(unique(d$`Tissue Category`))
+  if (grid_spacing > 1) {
+    # Borders at left, right and bottom of the data portion
+    openxlsx::addStyle(wb, sheet_name,
+                       openxlsx::createStyle(border='Left'),
+                       rows=3:(nrow(d)+2), cols=header_col,
+                       stack=TRUE)
+    openxlsx::addStyle(wb, sheet_name,
+                       openxlsx::createStyle(border='Right'),
+                       rows=3:(nrow(d)+2), cols=ncol(d),
+                       stack=TRUE)
+    openxlsx::addStyle(wb, sheet_name,
+                       openxlsx::createStyle(border='Bottom'),
+                       rows=2+nrow(d), 1:ncol(d),
+                       stack=TRUE)
+
+    # Top border at grid spacing
+    for (start_row in seq(3, nrow(d)+3-grid_spacing, grid_spacing))
+      openxlsx::addStyle(wb, sheet_name,
+                         openxlsx::createStyle(border='Top'),
+                         rows=start_row,
+                         cols=1:ncol(d),
+                         stack=TRUE)
+  }
 }
 
