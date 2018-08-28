@@ -38,8 +38,9 @@ compute_mean_expression_many = function(
     stop("These phenotypes are not defined: ",
          paste(missing_phenotypes, collapse=' ,'))
 
-  if (!is.null(tissue_categories))
+  if (!is.null(tissue_categories)) {
     csd = csd %>% dplyr::filter(`Tissue Category` %in% tissue_categories)
+  }
 
   csd = make_nested(csd)
 
@@ -66,9 +67,24 @@ compute_mean_expression_many = function(
   }
 
   # Actually do the computation for each nested data frame
-  csd %>% dplyr::mutate(means = purrr::map(data, compute_means)) %>%
+  result = csd %>% dplyr::mutate(means = purrr::map(data, compute_means)) %>%
     dplyr::select(-data) %>%
     tidyr::unnest()
+
+  # Fix up the row order so Slide ID order is preserved and
+  # tissue categories are in the order given
+  if (!is.null(tissue_categories)) {
+    slides = unique(result$`Slide ID`)
+    slide_order = seq_along(slides) %>% rlang::set_names(slides)
+    tissue_order = seq_along(tissue_categories) %>%
+      rlang::set_names(tissue_categories)
+    result = result %>%
+      dplyr::arrange(slide_order[`Slide ID`],
+                     tissue_order[`Tissue Category`]) %>%
+      dplyr::select(`Slide ID`, `Tissue Category`, dplyr::everything())
+  }
+
+  result
 }
 
 #' Compute mean expression of top-expressing cells for a single phenotype
