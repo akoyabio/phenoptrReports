@@ -38,7 +38,7 @@ count_phenotypes = function(csd, phenotypes, tissue_categories) {
 
   selections = csd_good %>%
     dplyr::select(`Slide ID`, `Tissue Category`) %>%
-    bind_cols(selections)
+    dplyr::bind_cols(selections)
 
   # Make the `fill` argument to `tidyr::complete`; we want 0 for missing values.
   pheno_names = names(phenotypes)
