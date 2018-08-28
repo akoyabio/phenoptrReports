@@ -4,7 +4,7 @@
 \alias{compute_density}
 \title{Compute cell densities from counts and tissue area}
 \usage{
-compute_density(counts, summary_path,
+compute_density(counts, summary_path, tissue_categories,
   pixels_per_micron = getOption("phenoptr.pixels.per.micron"))
 }
 \arguments{
@@ -13,6 +13,9 @@ and counts, such as the output of \link{count_phenotypes}.}
 
 \item{summary_path}{Path(s) to cell seg data summary table(s) containing
 sample names and tissue categories matching \code{counts}.}
+
+\item{tissue_categories}{A character vector of tissue category names
+of interest.}
 
 \item{pixels_per_micron}{Conversion factor to microns.}
 }
