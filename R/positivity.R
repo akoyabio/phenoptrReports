@@ -10,7 +10,7 @@ utils::globalVariables(c(
 #' @param csd Cell seg data to use. This should already have been filtered
 #'   for the slides or fields of interest.
 #' @param phenotypes A named list of phenotype selectors
-#'  (see [parse_phenotypes]).
+#'  (see [phenoptr::parse_phenotypes]).
 #' @param positivity_pairs A named list of pairs (lists) of phenotype names
 #'   and positivity expressions. The expressions must be one-sided formulas
 #'   such as ``~`Membrane PDL1 (Opal 520) Mean`>pdl1_threshold``.

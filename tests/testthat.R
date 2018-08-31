@@ -1,4 +1,5 @@
 library(testthat)
 library(phenoptrReports)
 
-test_check("phenoptrReports")
+# No tests yet...
+#test_check("phenoptrReports")

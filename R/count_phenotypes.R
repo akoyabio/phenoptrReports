@@ -14,7 +14,7 @@ utils::globalVariables(c(
 #' @param csd Cell seg data to use. This should already have been filtered
 #'   for the slides or fields of interest.
 #' @param phenotypes A named list of phenotype selectors
-#'   (see [parse_phenotypes]). Results will be
+#'   (see [phenoptr::parse_phenotypes]). Results will be
 #'   reported in the same order as phenotypes are listed here. To include a
 #'   row total, `phenotypes` should contain a "Total" item.
 #' @param tissue_categories A character vector of tissue category names

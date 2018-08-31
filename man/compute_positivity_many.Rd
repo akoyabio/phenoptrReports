@@ -12,7 +12,7 @@ compute_positivity_many(csd, phenotypes, positivity_pairs,
 for the slides or fields of interest.}
 
 \item{phenotypes}{A named list of phenotype selectors
-(see \link{parse_phenotypes}).}
+(see \link[phenoptr:parse_phenotypes]{phenoptr::parse_phenotypes}).}
 
 \item{positivity_pairs}{A named list of pairs (lists) of phenotype names
 and positivity expressions. The expressions must be one-sided formulas

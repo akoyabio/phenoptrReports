@@ -11,7 +11,7 @@ count_phenotypes(csd, phenotypes, tissue_categories)
 for the slides or fields of interest.}
 
 \item{phenotypes}{A named list of phenotype selectors
-(see \link{parse_phenotypes}). Results will be
+(see \link[phenoptr:parse_phenotypes]{phenoptr::parse_phenotypes}). Results will be
 reported in the same order as phenotypes are listed here. To include a
 row total, \code{phenotypes} should contain a "Total" item.}
 

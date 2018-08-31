@@ -15,7 +15,7 @@ utils::globalVariables(c(
 #'   for the slides or fields of interest. It may already be nested by
 #'   `Slide ID` and `Tissue Category`.
 #' @param phenotypes A named list of phenotype selectors
-#'  (see [parse_phenotypes]).
+#'  (see [phenoptr::parse_phenotypes]).
 #' @param params A named list matching phenotype names to
 #'   expression column names.
 #' @param tissue_categories Optional vector of tissue category names to include.

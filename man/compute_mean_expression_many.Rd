@@ -13,7 +13,7 @@ for the slides or fields of interest. It may already be nested by
 \code{Slide ID} and \code{Tissue Category}.}
 
 \item{phenotypes}{A named list of phenotype selectors
-(see \link{parse_phenotypes}).}
+(see \link[phenoptr:parse_phenotypes]{phenoptr::parse_phenotypes}).}
 
 \item{params}{A named list matching phenotype names to
 expression column names.}
