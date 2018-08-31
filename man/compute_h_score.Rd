@@ -27,7 +27,8 @@ percents in each bin and the H score
 Thresholds may come from a score data file or be directly provided.
 }
 \seealso{
-Other aggregation functions: \code{\link{compute_density}},
+Other aggregation functions: \code{\link{compute_density_from_cell_summary}},
+  \code{\link{compute_density_from_table}},
   \code{\link{compute_mean_expression_many}},
   \code{\link{compute_mean_expression}},
   \code{\link{compute_positivity_many}},

@@ -11,7 +11,8 @@ write_density_sheet(wb, densities, sheet_name = "Cell Densities",
 \item{wb}{An openxlsx Workbook from \link[openxlsx:createWorkbook]{openxlsx::createWorkbook}}
 
 \item{densities}{A data frame with columns for \code{Slide ID}, \code{Tissue Category},
-\code{Tissue Area} and densities, such as the output of \link{compute_density}.}
+\code{Tissue Area} and densities, such as the output of
+\link{compute_density_from_table}.}
 
 \item{sheet_name}{Optional name for the worksheet.}
 

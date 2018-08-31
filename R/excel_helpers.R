@@ -60,7 +60,8 @@ write_percents_sheet = function(wb, percents,
 #'
 #' @param wb An openxlsx Workbook from [openxlsx::createWorkbook]
 #' @param densities A data frame with columns for `Slide ID`, `Tissue Category`,
-#'   `Tissue Area` and densities, such as the output of [compute_density].
+#'   `Tissue Area` and densities, such as the output of
+#'   [compute_density_from_table].
 #' @param sheet_name Optional name for the worksheet.
 #' @param sheet_title Optional title header for the table.
 #' @family output functions

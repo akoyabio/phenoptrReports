@@ -21,8 +21,9 @@ utils::globalVariables(c(
 #' @family aggregation functions
 #' @importFrom magrittr %>%
 #' @export
-compute_density = function(counts, summary_path, tissue_categories,
-                  pixels_per_micron=getOption('phenoptr.pixels.per.micron')) {
+compute_density_from_cell_summary =
+  function(counts, summary_path, tissue_categories,
+           pixels_per_micron=getOption('phenoptr.pixels.per.micron')) {
 
   stopifnot('Slide ID' %in% names(counts),
             'Tissue Category' %in% names(counts))
@@ -33,9 +34,38 @@ compute_density = function(counts, summary_path, tissue_categories,
   summary_data = purrr::map_dfr(summary_path, phenoptr::read_cell_seg_data,
                                               pixels_per_micron=pixels_per_micron) %>%
     dplyr::select(`Slide ID`, `Tissue Category`, Phenotype,
-                  `Tissue Area`=`Tissue Category Area (sq microns)`) %>%
-    dplyr::filter(Phenotype=='All',
-                  `Tissue Category` %in% tissue_categories) %>%
+                  `Tissue Category Area (sq microns)`) %>%
+    dplyr::filter(Phenotype=='All')
+  compute_density_from_table(counts, summary_data, tissue_categories)
+}
+
+#' Compute cell densities from counts and tissue area
+#'
+#' Compute cell density from a table of cell counts and
+#' a table of tissue areas.
+#'
+#' @param counts A data frame with columns for `Slide ID`, `Tissue Category`,
+#'   and counts, such as the output of [count_phenotypes].
+#' @param areas A data frame containing tissue areas in \eqn{cells / micron^2} with
+#'   sample names and tissue categories matching `counts`.
+#' @param tissue_categories A character vector of tissue category names
+#'   of interest.
+#' @return A data table with counts converted to density in \eqn{cells / mm^2}.
+#' @family aggregation functions
+#' @importFrom magrittr %>%
+#' @export
+compute_density_from_table = function(counts, areas, tissue_categories) {
+  stopifnot(inherits(areas, 'data.frame'))
+
+  # Normalize the name of the area column
+  if ("Region Area (sq microns)" %in% names(areas))
+    areas = areas %>% dplyr::rename(`Tissue Area`="Region Area (sq microns)")
+  else if ('Tissue Category Area (sq microns)' %in% names(areas))
+    areas = areas %>% dplyr::rename(`Tissue Area`='Tissue Category Area (sq microns)')
+  else stopifnot('Tissue Area' %in% names(areas))
+
+  areas = areas %>%
+    dplyr::filter(`Tissue Category` %in% tissue_categories) %>%
     dplyr::group_by(`Slide ID`, `Tissue Category`) %>%
     dplyr::summarize(`Tissue Area` = sum(`Tissue Area`)/1e6) %>%
     add_tissue_category_totals(tissue_categories) %>%
@@ -43,13 +73,14 @@ compute_density = function(counts, summary_path, tissue_categories,
                     dplyr::recode(`Tissue Category`, 'All'='Total'))
 
   # Check that the files match
-  missing_ids = setdiff(unique(counts$`Slide ID`), unique(summary_data$`Slide ID`))
+  missing_ids = setdiff(unique(counts$`Slide ID`), unique(areas$`Slide ID`))
   if (length(missing_ids) > 1)
     stop(length(missing_ids), ' Slide IDs are missing from summary file.')
 
   # Join with the counts table and divide counts by area to get density
-  densities = dplyr::left_join(counts, summary_data) %>%
-    dplyr::select(`Slide ID`, `Tissue Category`, `Tissue Area`, dplyr::everything()) %>%
+  densities = dplyr::left_join(counts, areas) %>%
+    dplyr::select(`Slide ID`, `Tissue Category`, `Tissue Area`,
+                  dplyr::everything()) %>%
     dplyr::mutate_at(-(1:3), function(x) x/.$`Tissue Area`) %>%
     dplyr::rename(`Tissue Area (mm2)`=`Tissue Area`)
 
