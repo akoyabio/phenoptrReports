@@ -46,11 +46,14 @@ upset_plot = function(csd, expected=NULL) {
     })
   }
 
+  # Color for unexpected phenotypes, if any
+  matrix.color = ifelse(is.null(queries), '#000000', '#ff7f00')
+
   UpSetR::upset(d, nsets=ncol(d), nintersects=NA, queries=queries,
         #number.angles=30,
         text.scale=1.5, mb.ratio = c(0.6, 0.4),
         sets.x.label='Phenotype count', order.by='freq',
-        matrix.color='#ff7f00', point.size=2, line.size=1)
+        matrix.color=matrix.color, point.size=2, line.size=1)
 }
 
 positive = function(cl) endsWith(cl, '+')
