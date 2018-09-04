@@ -32,6 +32,7 @@ Other aggregation functions: \code{\link{compute_density_from_cell_summary}},
   \code{\link{compute_mean_expression_many}},
   \code{\link{compute_mean_expression}},
   \code{\link{compute_positivity_many}},
-  \code{\link{count_phenotypes}}
+  \code{\link{count_phenotypes}},
+  \code{\link{counts_to_percents}}
 }
 \concept{aggregation functions}
