@@ -1,0 +1,80 @@
+---
+title: "Cell seg data summary"
+date: "`r Sys.Date()`"
+output: 
+  html_vignette:
+    df_print: kable
+params:
+  csd_path: 
+    label: "Path to cell seg data file:"
+    value: NULL
+    input: file
+  csd: NULL
+  dataset_name: NULL
+---
+
+```{r setup, echo=FALSE,include=FALSE,message=FALSE}
+knitr::opts_chunk$set(echo=FALSE,fig.width=11, fig.height=8, 
+                      comment=NA, warning=FALSE, message=FALSE)
+
+library(tidyverse)
+library(phenoptr)
+```
+
+<style type="text/css">
+table {
+    width: auto !important;
+    max-width: 100%;
+    margin-bottom: 20px;
+    margin-left: 0px;
+}
+</style>
+
+```{r}
+if (is.null(params$csd_path) == is.null(params$csd))
+  stop('csd_path or csd must be provided but not both.')
+
+csd = if (!is.null(params$csd)) params$csd else read_cell_seg_data(params$csd_path)
+```
+
+```{r results='asis'}
+if (!is.null(params$dataset_name)) {
+  cat('Summary of cell seg data for **', params$dataset_name, '**\n\n', sep='')
+} else if (!is.null(params$csd_path)) {
+  cat('Summary of cell seg data from  \n`', params$csd_path, '`\n\n')
+}
+```
+
+
+## Slides and fields
+
+This file contains data on `r n_distinct(csd[['Sample Name']])` fields 
+taken from `r n_distinct(csd[['Slide ID']])` slides:
+
+```{r}
+csd %>% group_by(`Slide ID`) %>% summarize(`Number of fields`=n_distinct(`Sample Name`))
+```
+
+## Tissue categories
+
+The tissue categories present are
+
+```{r results='asis'}
+cats = unique(csd$`Tissue Category`)
+cat('\n- ', paste(cats, collapse='\n- '), '\n\n', sep='')
+```
+
+## Phenotypes
+
+The phenotypes present, and their total counts, are
+
+```{r}
+csd %>% count(Phenotype) %>% rename(Counts='n')
+```
+
+### Phenotype counts per slide
+
+```{r}
+csd %>% count(`Slide ID`, `Phenotype`) %>% spread('Phenotype', 'n', fill=0)
+```
+
