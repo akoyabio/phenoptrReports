@@ -51,7 +51,7 @@ merge_and_split_cell_seg_data = function(files=NULL, data=NULL) {
 
     if (nrow(csd2) != nrow(csd))
       stop(paste0('Number of rows in data frames do not match.'))
-    csd = dplyr::inner_join(csd, csd2 )
+    csd = dplyr::inner_join(csd, csd2, by=c('Sample Name', 'Cell ID'))
   }
 
   if (nrow(csd) != nrow(data[[1]]))
