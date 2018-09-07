@@ -33,10 +33,7 @@ utils::globalVariables(c(
 compute_mean_expression_many = function(
   csd, phenotypes, params, tissue_categories=NULL, percentile=NULL, count=NULL)
 {
-  missing_phenotypes = setdiff(names(params), names(phenotypes))
-  if (length(missing_phenotypes) > 0)
-    stop("These phenotypes are not defined: ",
-         paste(missing_phenotypes, collapse=' ,'))
+  check_params(params, phenotypes)
 
   if (!is.null(tissue_categories)) {
     csd = csd %>% dplyr::filter(`Tissue Category` %in% tissue_categories)

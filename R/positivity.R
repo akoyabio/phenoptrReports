@@ -24,9 +24,7 @@ utils::globalVariables(c(
 compute_positivity_many = function(csd, phenotypes, positivity_pairs,
                                    tissue_categories=NULL)
   {
-  missing_phenotypes = setdiff(purrr::map_chr(positivity_pairs, 1), names(phenotypes))
-  if (length(missing_phenotypes) > 0)
-    stop("These phenotypes are not defined: ", paste(missing_phenotypes, sep=' ,'))
+  check_params(params, phenotypes)
 
   if (!is.null(tissue_categories))
     csd = csd %>% dplyr::filter(`Tissue Category` %in% tissue_categories)
