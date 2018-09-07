@@ -14,7 +14,7 @@ params:
 ---
 
 ```{r setup, echo=FALSE,include=FALSE,message=FALSE}
-knitr::opts_chunk$set(echo=FALSE,fig.width=11, fig.height=8, 
+knitr::opts_chunk$set(echo=FALSE,fig.width=9, fig.height=6, 
                       comment=NA, warning=FALSE, message=FALSE)
 
 library(tidyverse)
@@ -69,12 +69,64 @@ cat('\n- ', paste(cats, collapse='\n- '), '\n\n', sep='')
 The phenotypes present, and their total counts, are
 
 ```{r}
-csd %>% count(Phenotype) %>% rename(Counts='n')
+if ('Phenotype' %in% names(csd)) {
+  # Old-style phenotypes (single column)
+  csd %>% count(Phenotype) %>% 
+    rename(Counts='n') %>% 
+    mutate(Phenotype=ifelse(Phenotype=='', 'N/A', Phenotype))
+} else {
+  # Phenotype per marker
+  csd %>% select(starts_with('Phenotype')) %>% 
+    gather() %>% 
+    filter(!str_detect(value, '-$')) %>% 
+    count(value) %>% 
+    rename(Phenotype='value', Count='n') %>% 
+    mutate(Phenotype=ifelse(Phenotype=='', 'N/A', Phenotype))
+}
 ```
 
 ### Phenotype counts per slide
 
 ```{r}
-csd %>% count(`Slide ID`, `Phenotype`) %>% spread('Phenotype', 'n', fill=0)
+if ('Phenotype' %in% names(csd)) {
+  # Old-style phenotypes (single column)
+  csd %>% count(`Slide ID`, `Phenotype`) %>% 
+    mutate(Phenotype=ifelse(Phenotype=='', 'N/A', Phenotype)) %>% 
+    spread('Phenotype', 'n', fill=0)
+} else {
+  # Phenotype per marker
+  csd %>% select(`Slide ID`, starts_with('Phenotype')) %>% 
+    gather('key', 'value', -`Slide ID`) %>% 
+    filter(!str_detect(value, '-$')) %>% 
+    group_by(`Slide ID`) %>% 
+    count(value) %>% 
+    rename(Phenotype='value', Count='n') %>%
+    mutate(Phenotype=ifelse(Phenotype=='', 'N/A', Phenotype)) %>% 
+    spread(Phenotype, Count, fill=0)
+}
+```
+
+```{r results='asis'}
+# For phenotype per marker we can show UpSet plots. For classic phenotyping
+# they don't add much to the tabular summaries.
+if (!'Phenotype' %in% names(csd) && require(UpSetR)) {
+  # Some explanation
+  cat('\n\n### UpSet plots of phenotype combinations\n\n')
+  cat('These "UpSet" plots visualize combinations of phenotypes.
+      The horizontal bars show counts of the individual phenotypes.
+      The vertical bars show counts of the combination phenotypes
+      present in the data. The central matrix shows the combinations
+      graphically.')
+  
+  # UpSet plot for the whole dataset
+  cat('\n\n#### Phenotype combinations, all data\n\n')
+  print(upset_plot(csd))
+  
+  # And for each slide
+  for (slide in unique(csd$`Slide ID`)) {
+    cat('\n\n#### Phenotype combinations, ', slide, '\n\n', sep='')
+    print(upset_plot(csd %>% filter(`Slide ID`==slide)))
+  }
+}
 ```
 
