@@ -53,13 +53,13 @@ add_tissue_category_totals = function(d, tissue_categories) {
 }
 
 #' Check that all requested phenotypes are defined
-#' @param params A list whose names are phenotype names.
+#' @param params Phenotype names.
 #' @param phenotypes A named list of phenotype definitions.
-check_params = function(params, phenotypes) {
-  if (is.null(names(params)))
+check_phenotypes = function(params, phenotypes) {
+  if (is.null(params))
       stop('Parameter list must be named.')
 
-  missing_phenotypes = setdiff(names(params), names(phenotypes))
+  missing_phenotypes = setdiff(params, names(phenotypes))
   if (length(missing_phenotypes) > 0)
     stop("These phenotypes are not defined: ",
          paste(missing_phenotypes, collapse=' ,'), '.')

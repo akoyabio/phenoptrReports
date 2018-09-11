@@ -33,7 +33,7 @@ utils::globalVariables(c(
 compute_mean_expression_many = function(
   csd, phenotypes, params, tissue_categories=NULL, percentile=NULL, count=NULL)
 {
-  check_params(params, phenotypes)
+  check_phenotypes(names(params), phenotypes)
 
   if (!is.null(tissue_categories)) {
     csd = csd %>% dplyr::filter(`Tissue Category` %in% tissue_categories)

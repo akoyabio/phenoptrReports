@@ -23,8 +23,8 @@ utils::globalVariables(c(
 #' @export
 compute_positivity_many = function(csd, phenotypes, positivity_pairs,
                                    tissue_categories=NULL)
-  {
-  check_params(params, phenotypes)
+{
+  check_phenotypes(purrr::map_chr(positivity_pairs, 1), phenotypes)
 
   if (!is.null(tissue_categories))
     csd = csd %>% dplyr::filter(`Tissue Category` %in% tissue_categories)
