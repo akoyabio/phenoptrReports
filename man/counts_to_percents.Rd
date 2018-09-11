@@ -8,8 +8,8 @@ counts_to_percents(counts)
 }
 \arguments{
 \item{counts}{A table containing count data. All numeric columns are
-assumed to contain count data. The table must contain a \code{Total Cells}
-column.}
+assumed to contain count data. The table must contain a
+column whose name contains "Total" or "All".}
 }
 \value{
 A table containing percent values as decimal fractions.

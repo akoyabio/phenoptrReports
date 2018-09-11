@@ -61,15 +61,23 @@ count_phenotypes = function(csd, phenotypes, tissue_categories) {
 #' to a table of fractional percents. Percents are computed row-wise, e.g. per
 #' tissue category.
 #' @param counts A table containing count data. All numeric columns are
-#'   assumed to contain count data. The table must contain a `Total Cells`
-#'   column.
+#'   assumed to contain count data. The table must contain a
+#'   column whose name contains "Total" or "All".
 #' @return A table containing percent values as decimal fractions.
 #' @export
 #' @family aggregation functions
 #' @importFrom magrittr %>%
 counts_to_percents = function(counts) {
-  if (!'Total Cells' %in% names(counts))
-    stop('Count table must contain a "Total Cells" column.')
+  # Figure out the column to total on
+  if ('Total Cells' %in% names(counts)) {
+    column = 'Total Cells'
+  } else {
+    candidates = stringr::str_detect(names(counts), 'Total|All')
+    if (sum(candidates)==1) {
+      column = names(counts)[candidates]
+    } else
+      stop('Count table must contain a "Total" or "All" column.')
+  }
 
-  counts %>% dplyr::mutate_if(is.numeric, ~.x/counts$`Total Cells`)
+  counts %>% dplyr::mutate_if(is.numeric, ~.x/counts[[column]])
 }
