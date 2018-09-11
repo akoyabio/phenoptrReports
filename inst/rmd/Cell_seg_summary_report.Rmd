@@ -35,13 +35,31 @@ if (is.null(params$csd_path) == is.null(params$csd))
   stop('csd_path or csd must be provided but not both.')
 
 csd = if (!is.null(params$csd)) params$csd else read_cell_seg_data(params$csd_path)
+
+# If csd_path was provided, look for a companion 'rejected' file
+rejected = NULL
+if (!is.null(csd_path) && str_detect(csd_path, 'cell_seg_data.txt')) {
+  # Try summary first
+  rejected_path = str_replace(csd_path, 'cell_seg_data',
+                              'rejected_cell_seg_data_summary')
+  if (!file.exists(rejected_path))
+    rejected_path = str_replace(csd_path, 'cell_seg_data',
+                              'rejected_cell_seg_data')
+  if(file.exists(rejected_path)) {
+    rejected = read_cell_seg_data(rejected_path)
+    
+    # Don't report on empty rejected file
+    if (nrow(rejected) == 0)
+      rejected = NULL
+  }
+}
 ```
 
 ```{r results='asis'}
 if (!is.null(params$dataset_name)) {
-  cat('Summary of cell seg data for **', params$dataset_name, '**\n\n', sep='')
+  cat('Summary of cell seg data for **', params$dataset_name, '**.\n\n', sep='')
 } else if (!is.null(params$csd_path)) {
-  cat('Summary of cell seg data from  \n`', params$csd_path, '`\n\n')
+  cat('Summary of cell seg data from  \n`', params$csd_path, '`.\n\n')
 }
 ```
 
@@ -52,7 +70,20 @@ This file contains data on `r n_distinct(csd[['Sample Name']])` fields
 taken from `r n_distinct(csd[['Slide ID']])` slides:
 
 ```{r}
-csd %>% group_by(`Slide ID`) %>% summarize(`Number of fields`=n_distinct(`Sample Name`))
+csd %>% group_by(`Slide ID`) %>% 
+  summarize(`Number of fields`=n_distinct(`Sample Name`))
+```
+
+```{r results='asis'}
+if (!is.null(rejected)) {
+  cat('\n\n### Rejected fields\n\n')
+  cat(n_distinct(rejected[['Sample Name']]), 
+      ' fields from ', n_distinct(rejected[['Slide ID']]), 
+      ' slides were rejected in the merge step:\n\n', sep='')
+  
+  rejected %>% group_by(`Slide ID`) %>% 
+    summarize(`Number of fields`=n_distinct(`Sample Name`))
+}
 ```
 
 ## Tissue categories
@@ -71,18 +102,22 @@ The phenotypes present, and their total counts, are
 ```{r}
 if ('Phenotype' %in% names(csd)) {
   # Old-style phenotypes (single column)
-  csd %>% count(Phenotype) %>% 
-    rename(Counts='n') %>% 
+  counts = csd %>% count(Phenotype) %>% 
+    rename(Count='n') %>% 
     mutate(Phenotype=ifelse(Phenotype=='', 'N/A', Phenotype))
 } else {
   # Phenotype per marker
-  csd %>% select(starts_with('Phenotype')) %>% 
+  counts = csd %>% select(starts_with('Phenotype')) %>% 
     gather() %>% 
     filter(!str_detect(value, '-$')) %>% 
     count(value) %>% 
     rename(Phenotype='value', Count='n') %>% 
     mutate(Phenotype=ifelse(Phenotype=='', 'N/A', Phenotype))
 }
+
+total = sum(counts$Count)
+counts %>% spread(Phenotype, Count) %>% 
+  mutate(`Total Cells`=total)
 ```
 
 ### Phenotype counts per slide
@@ -90,20 +125,24 @@ if ('Phenotype' %in% names(csd)) {
 ```{r}
 if ('Phenotype' %in% names(csd)) {
   # Old-style phenotypes (single column)
-  csd %>% count(`Slide ID`, `Phenotype`) %>% 
+  counts = csd %>% count(`Slide ID`, `Phenotype`) %>% 
     mutate(Phenotype=ifelse(Phenotype=='', 'N/A', Phenotype)) %>% 
-    spread('Phenotype', 'n', fill=0)
+    rename(Count='n')
 } else {
   # Phenotype per marker
-  csd %>% select(`Slide ID`, starts_with('Phenotype')) %>% 
+  counts = csd %>% select(`Slide ID`, starts_with('Phenotype')) %>% 
     gather('key', 'value', -`Slide ID`) %>% 
     filter(!str_detect(value, '-$')) %>% 
     group_by(`Slide ID`) %>% 
     count(value) %>% 
     rename(Phenotype='value', Count='n') %>%
-    mutate(Phenotype=ifelse(Phenotype=='', 'N/A', Phenotype)) %>% 
-    spread(Phenotype, Count, fill=0)
+    mutate(Phenotype=ifelse(Phenotype=='', 'N/A', Phenotype))
 }
+
+  totals = counts %>% dplyr::group_by(`Slide ID`) %>%
+    dplyr::summarize(`Total Cells` = sum(Count))
+  counts %>% spread(Phenotype, Count, fill=0) %>% left_join(totals)
+
 ```
 
 ```{r results='asis'}
