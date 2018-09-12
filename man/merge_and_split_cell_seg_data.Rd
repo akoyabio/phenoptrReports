@@ -4,10 +4,10 @@
 \alias{merge_and_split_cell_seg_data}
 \title{Merge cell seg data files from parallel projects}
 \usage{
-merge_and_split_cell_seg_data(files = NULL, data = NULL)
+merge_and_split_cell_seg_data(csd_files = NULL, data = NULL)
 }
 \arguments{
-\item{files}{A list or vector of paths to cell seg data files}
+\item{csd_files}{A list or vector of paths to cell seg data files.}
 
 \item{data}{A list of data tables from read_cell_seg_data. Exactly one
 of \code{files} or \code{data} should be provided.}
@@ -25,3 +25,7 @@ The
 individual files must all have exactly the same \code{Sample Name} and \code{Cell ID}
 columns. \link{split_phenotypes} is called to split the \code{Phenotype} columns.
 }
+\seealso{
+Other merge functions: \code{\link{merge_and_summarize_cell_seg_data}}
+}
+\concept{merge functions}

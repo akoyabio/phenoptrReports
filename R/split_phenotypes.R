@@ -10,6 +10,51 @@ utils::globalVariables(c(
 ))
 
 #' Merge cell seg data files from parallel projects
+#' and create summary reports
+#'
+#' Calls [merge_and_split_cell_seg_data] to merge the supplied
+#' cell seg data files. Additionally calls [write_summary_report] to
+#' create a summary report for each source file and the merged data.
+#'
+#' Writes the merged data to `Consolidated_data.txt` in the output
+#' directory.
+#'
+#' @param csd_files A list or vector of paths to cell seg data files.
+#' @param output_dir Path to a directory where the results will be saved.
+#' @return A single data frame containing merged data and columns for each
+#'   single phenotype, invisibly.
+#' @family merge functions
+#' @importFrom magrittr %>%
+#' @export
+merge_and_summarize_cell_seg_data = function(csd_files, output_dir) {
+  # Make some names, these will be for files and headers
+  names = make_unique_names(csd_files)
+
+  if (!dir.exists(output_dir))
+    stopifnot(dir.create(output_dir, recursive=TRUE))
+
+  # Read all the files so we read each one only once
+  data = purrr::map(csd_files, phenoptr::read_cell_seg_data)
+
+  # Summary reports for the raw data
+  purrr::walk2(names, data, function(n, d) {
+    out_path = file.path(output_dir, paste0(n, '.html'))
+    write_summary_report(csd=d, output_path=out_path, dataset_name=n)
+  })
+
+  # Merge and write the consolidated data
+  csd = merge_and_split_cell_seg_data(data=data)
+  readr::write_tsv(csd, file.path(output_dir, 'Consolidated_data.txt'))
+
+  # And the report
+  write_summary_report(csd=csd,
+    output_path=file.path(output_dir, 'Consolidated_data.html'),
+    dataset_name='Consolidated data')
+
+  invisible(csd)
+}
+
+#' Merge cell seg data files from parallel projects
 #'
 #' Merge several cell seg data files, each with its own `Phenotype` column,
 #' into a single file with separate columns for each phenotype.
@@ -18,23 +63,24 @@ utils::globalVariables(c(
 #' individual files must all have exactly the same `Sample Name` and `Cell ID`
 #' columns. [split_phenotypes] is called to split the `Phenotype` columns.
 #'
-#' @param files A list or vector of paths to cell seg data files
+#' @param csd_files A list or vector of paths to cell seg data files.
 #' @param data A list of data tables from read_cell_seg_data. Exactly one
 #'   of `files` or `data` should be provided.
 #' @return A single data frame containing merged data and columns for each
 #'   single phenotype.
+#' @family merge functions
 #' @importFrom magrittr %>%
 #' @export
-merge_and_split_cell_seg_data = function(files=NULL, data=NULL) {
-  if (is.null(files) == is.null(data))
-    stop("Provide either 'files' or 'data' but not both.")
+merge_and_split_cell_seg_data = function(csd_files=NULL, data=NULL) {
+  if (is.null(csd_files) == is.null(data))
+    stop("Provide either 'csd_files' or 'data' but not both.")
 
-  if (!is.null(files)) {
-    files = unlist(files)
-    if (!is.character(files) || !all(purrr::map_lgl(files, file.exists)))
+  if (!is.null(csd_files)) {
+    csd_files = unlist(csd_files)
+    if (!is.character(csd_files) || !all(purrr::map_lgl(csd_files, file.exists)))
       stop('Please pass a list of paths to existing cell seg data files.')
 
-    data = purrr::map(files, phenoptr::read_cell_seg_data)
+    data = purrr::map(csd_files, phenoptr::read_cell_seg_data)
   } else {
     if (!all(purrr::map_lgl(data, ~inherits(., 'data.frame'))))
       stop("Please pass a list of data frames as 'data'.")
@@ -111,4 +157,31 @@ split_phenotypes = function(csd) {
   # Build a new data frame
   csd %>% dplyr::select(-Phenotype, -Confidence) %>%
     dplyr::bind_cols(new_columns)
+}
+
+#' Make unique names from a list of paths to cell seg data files
+#'
+#' If the files have unique names, returns the base names without extension.
+#' If the files do not have unique names, returns the directory name
+#' plus the file name without extension.
+#' If those are not unique, appends a sequence number to each name.
+#' @param csd_files A list or vector of paths to cell seg data files.
+#' @return A vector of names.
+make_unique_names = function(csd_files) {
+  # Get the base names sans extension
+  names = csd_files %>% purrr::map_chr(basename) %>%
+    stringr::str_remove('\\.txt')
+
+  # If they are unique, we are done
+  if (length(unique(names)) == length(names))
+    return(names)
+
+  # Try prefixing the directory names
+  dir_names = csd_files %>% purrr::map_chr(~basename(dirname(.x)))
+  names = paste(dir_names, names, sep='_')
+  if (length(unique(names)) == length(names))
+    return(names)
+
+  # Suffix sequence numbers
+  paste(names, seq_along(names), sep='_')
 }
