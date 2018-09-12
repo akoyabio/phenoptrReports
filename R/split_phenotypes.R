@@ -21,32 +21,43 @@ utils::globalVariables(c(
 #'
 #' @param csd_files A list or vector of paths to cell seg data files.
 #' @param output_dir Path to a directory where the results will be saved.
+#' @param update_progress Callback function which is called with progress.
 #' @return A single data frame containing merged data and columns for each
 #'   single phenotype, invisibly.
 #' @family merge functions
 #' @importFrom magrittr %>%
 #' @export
-merge_and_summarize_cell_seg_data = function(csd_files, output_dir) {
+merge_and_summarize_cell_seg_data = function(csd_files, output_dir,
+                                             update_progress=NULL) {
   # Make some names, these will be for files and headers
   names = make_unique_names(csd_files)
 
   if (!dir.exists(output_dir))
     stopifnot(dir.create(output_dir, recursive=TRUE))
 
+  # Make a progress function if we don't have one so we don't have to
+  # check every time
+  if (!is.function(update_progress))
+    update_progress = function(...) {}
+
   # Read all the files so we read each one only once
+  update_progress(detail='Reading source files.')
   data = purrr::map(csd_files, phenoptr::read_cell_seg_data)
 
   # Summary reports for the raw data
   purrr::walk2(names, data, function(n, d) {
+    update_progress(detail=paste0('Writing report for "', n, '".'))
     out_path = file.path(output_dir, paste0(n, '.html'))
     write_summary_report(csd=d, output_path=out_path, dataset_name=n)
   })
 
   # Merge and write the consolidated data
+  update_progress(detail='Merging...')
   csd = merge_and_split_cell_seg_data(data=data)
   readr::write_tsv(csd, file.path(output_dir, 'Consolidated_data.txt'))
 
   # And the report
+  update_progress(detail='Writing report for consolidated data.')
   write_summary_report(csd=csd,
     output_path=file.path(output_dir, 'Consolidated_data.html'),
     dataset_name='Consolidated data')

@@ -56,12 +56,15 @@ merge_addin = function() {
     shiny::observeEvent(input$browse_source, {
       shiny::req(input$browse_source)
       files = choose.files(
-        default='F:\\DavidC\\*.*',
         caption='Select merge data files',
         filters = Filters['txt',])
       
-      # Only allow cell_seg_data.txt files
-      is_cell_seg = stringr::str_detect(files, '_cell_seg_data.txt$')
+      if (length(files) == 0)
+        return()
+      
+      # Only allow cell_seg_data.txt files, and not rejected!
+      is_cell_seg = stringr::str_detect(files, 
+                                        '(?<!rejected)_cell_seg_data.txt$')
       if (!all(is_cell_seg)) {
         shiny::showNotification('Please select only cell_seg_data files!',
                                 type='message')
@@ -74,6 +77,7 @@ merge_addin = function() {
                       ~p(paste0(basename(dirname(.x)), '/', basename(.x)))))
         })
       }
+      
       set_error_text()
     })
     
@@ -81,7 +85,6 @@ merge_addin = function() {
     shiny::observeEvent(input$browse_output, {
       shiny::req(input$browse_output)
       output_dir(choose.dir(
-        default='F:\\DavidC\\Test',
         caption='Select an output folder'
       ))
       
@@ -94,10 +97,17 @@ merge_addin = function() {
       error_text = get_error_text()
       
       if (error_text == '') {
-        shiny::showNotification('Processing files, please be patient!',
-                type='message', duration=NULL, closeButton=FALSE)
+        progress <- shiny::Progress$new(max=length(file_list())+4)
+        progress$set(message = 'Processing files, please wait!', 
+                     value = 0)
+        update_progress <- function(detail = NULL) {
+          progress$set(value = progress$getValue()+1, detail = detail)
+        }        
         phenoptrReports::merge_and_summarize_cell_seg_data(file_list(), 
-                                                           output_dir())
+                                                           output_dir(),
+                                                           update_progress)
+        update_progress(detail='Done!')
+        Sys.sleep(0.5)
         shiny::stopApp()
       } else {
         shiny::showNotification(error_text, type='message')
