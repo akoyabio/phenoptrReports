@@ -16,21 +16,23 @@ Imports:
     ggplot2,
     knitr,
     magrittr,
+    miniUI (>= 0.1.1),
     openxlsx,
     phenoptr (>= 0.1.1.9006),
     purrr,
     readr,
     rlang,
     rmarkdown,
+    shiny (>= 0.13),
     stringr,
     tibble,
     tidyr,
     tidyverse,
     UpSetR (>= 1.4.0)
-Remotes: 
+Remotes:
     PerkinElmer/phenoptr@9006,
     hms-dbmi/UpSetR
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.0
-Suggests: 
+Suggests:
     testthat
