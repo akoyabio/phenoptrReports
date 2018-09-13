@@ -16,23 +16,33 @@ merge_addin = function() {
   )
   
   ui <- miniUI::miniPage(
-     
+    shiny::tags$head(
+      shiny::tags$style(shiny::HTML("
+      .well {
+        padding-top: 10px;
+        padding-bottom: 5px;
+      }
+      h3 { margin-top: 10px; }
+    "))),
     miniUI::gadgetTitleBar("Consolidate inForm data",
       right=miniUI::miniTitleBarButton('done', 'Process Files', primary=TRUE)),
     
     miniUI::miniContentPanel(
       intro,
-      shiny::h3('Select merge data files'),
-      'Click the "Browse Input" button to select one or more',
-      'inForm cell seg data files to consolidate.',
-      'Continue until all files are selected.',
-      shiny::br(), shiny::br(),
       
-      shiny::actionButton('browse_source', 'Browse Input...'),
-      shiny::h4('Selected files:'),
-      shiny::uiOutput('selected_files'),
-      shiny::br(),
+      shiny::wellPanel(
+        shiny::h3('Select merge data files'),
+        'Click the "Browse Input" button to select one or more',
+        'inForm cell seg data files to consolidate.',
+        'Continue until all files are selected.',
+        shiny::br(), shiny::br(),
+        
+        shiny::actionButton('browse_source', 'Browse Input...'),
+        shiny::h4('Selected files:'),
+        shiny::uiOutput('selected_files')
+      ),
       
+      shiny::wellPanel(
       shiny::h3('Select output directory'),
       'Click the "Browse Output" button to select the directory',
       'where the merged data and summary reports will be placed.',
@@ -40,10 +50,10 @@ merge_addin = function() {
       
       shiny::actionButton('browse_output', 'Browse output...'),
       shiny::br(),
-      shiny::textOutput('output_dir'),
-      shiny::br(),
+      shiny::textOutput('output_dir')
+      ),
       
-      shiny::h4(shiny::textOutput('error'))
+      shiny::h4(shiny::textOutput('error'), style='color: maroon')
     )
   )
   
