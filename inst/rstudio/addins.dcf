@@ -1,4 +1,4 @@
-Name: Merge and summarize
-Description: Merge and summarize multiple cell seg data files.
+Name: Consolidate and summarize
+Description: Consolidate and summarize multiple cell seg data files.
 Binding: merge_addin
 Interactive: true
