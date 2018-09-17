@@ -65,9 +65,9 @@ merge_addin = function() {
     # to select data files and adding the result to file_list
     shiny::observeEvent(input$browse_source, {
       shiny::req(input$browse_source)
-      files = choose.files(
+      files = utils::choose.files(
         caption='Select merge data files',
-        filters = Filters['txt',])
+        filters = utils::Filters['txt',])
       
       if (length(files) == 0)
         return()
@@ -82,7 +82,7 @@ merge_addin = function() {
         # Add to file_list and update the list of files in the UI
         file_list(unique(c(file_list(), files)))
         output$selected_files = shiny::renderUI({
-          do.call(tagList, 
+          do.call(shiny::tagList, 
                   purrr::map(file_list(), 
                       ~p(paste0(basename(dirname(.x)), '/', basename(.x)))))
         })
@@ -94,7 +94,7 @@ merge_addin = function() {
     # Handle the browse_output button by selecting a folder
     shiny::observeEvent(input$browse_output, {
       shiny::req(input$browse_output)
-      output_dir(choose.dir(
+      output_dir(utils::choose.dir(
         caption='Select an output folder'
       ))
       

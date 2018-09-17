@@ -28,7 +28,8 @@ Imports:
     tibble,
     tidyr,
     tidyverse,
-    UpSetR (>= 1.4.0)
+    UpSetR (>= 1.4.0),
+    utils
 Remotes:
     PerkinElmer/phenoptr@9006,
     hms-dbmi/UpSetR

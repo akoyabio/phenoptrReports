@@ -5,12 +5,15 @@
 \title{Merge cell seg data files from parallel projects
 and create summary reports}
 \usage{
-merge_and_summarize_cell_seg_data(csd_files, output_dir)
+merge_and_summarize_cell_seg_data(csd_files, output_dir,
+  update_progress = NULL)
 }
 \arguments{
 \item{csd_files}{A list or vector of paths to cell seg data files.}
 
 \item{output_dir}{Path to a directory where the results will be saved.}
+
+\item{update_progress}{Callback function which is called with progress.}
 }
 \value{
 A single data frame containing merged data and columns for each
