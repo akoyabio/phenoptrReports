@@ -12,6 +12,7 @@ format_all = function(all_data) {
     purrr::discard(~.x$phenotype %in% c(''))
 
   has_phenotypes = length(phenos) > 0
+  has_density = has_phenotypes && !is.null(all_data$summary_path)
   has_expression = any(purrr::map_lgl(phenos, ~!.x$expression %in% c('', 'NA')))
 
   paste0(
@@ -19,8 +20,10 @@ format_all = function(all_data) {
     format_path(all_data$input_path),
     format_tissue_categories(all_data$tissue_categories),
     format_phenotypes(phenos),
+    ifelse(has_density, format_density(all_data$summary_path), ''),
     format_expression(phenos),
-    format_trailer(all_data$output_dir, has_phenotypes, has_expression))
+    format_trailer(all_data$output_dir,
+                   has_phenotypes, has_density, has_expression))
 }
 
 # Initial matter
@@ -62,6 +65,18 @@ counts = count_phenotypes(csd, phenotypes, tissue_categories)
 percents = counts_to_percents(counts)\n\n\n')
 }
 
+# Format density calculation
+format_density = function(summary_path) {
+  stringr::str_glue(
+'# Path to a cell seg summary file, used for the tissue category area
+summary_path = "{summary_path}"
+
+# Using the counts computed above and the tissue area from the summary,
+# compute cell densities for each phenotype
+densities = compute_density_from_cell_summary(counts, summary_path, tissue_categories)
+')
+}
+
 # Format the expression parameters
 format_expression = function(vals) {
   # Filter null values that happen when the control is created,
@@ -85,7 +100,8 @@ expression_means = csd %>%
 \n\n')
 }
 
-format_trailer = function(output_dir, has_phenotypes, has_expression) {
+format_trailer = function(output_dir,
+                          has_phenotypes, has_density, has_expression) {
 start =
 '# This plot shows phenotype combinations
 plot = upset_plot(csd)
@@ -103,6 +119,10 @@ plot =
 "write_plot_sheet(wb, plot)
 "
 
+density = ifelse(has_density,
+"write_density_sheet(wb, densities)
+", "")
+
 expression = ifelse(has_expression,
 "write_expression_sheet(wb, expression_means)
 ", "")
@@ -112,5 +132,5 @@ end = stringr::str_glue(
   overwrite=TRUE)
 ')
 
-paste0(start, counts, plot, expression, end)
+paste0(start, counts, plot, density, expression, end)
 }
