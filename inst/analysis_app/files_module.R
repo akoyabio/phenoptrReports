@@ -27,6 +27,7 @@ browse_file_module = function(input, output, session, validator=NULL) {
       multi=FALSE)
 
     shiny::req(path)
+    path = normalizePath(path, winslash='/', mustWork=FALSE)
     output$selected_file = shiny::renderText(paste('Selected file:', path))
 
     if (is.null(validator)) {
@@ -36,8 +37,7 @@ browse_file_module = function(input, output, session, validator=NULL) {
     }
     output$error = shiny::renderText(error)
 
-#    if (error=='') the_path(path) else the_path(NULL)
-    the_path(path)
+    if (error=='') the_path(path) else the_path(NULL)
   })
 
   the_path
@@ -55,6 +55,14 @@ files_module_ui = function(id) {
                              'Select a consolidated data file', 'Browse...'),
        shiny::hr(),
 
+       shiny::h4('Select the output directory'),
+       shiny::br(),
+
+       shiny::actionButton(ns('browse_output'), 'Browse...'),
+       shiny::br(), shiny::br(),
+       shiny::textOutput(ns('output_dir')),
+       shiny::hr(),
+
        browse_file_module_ui(ns('summary_file'),
          'Optional: Select a cell seg summary file to compute cell densities.',
          'Browse...'),
@@ -62,17 +70,7 @@ files_module_ui = function(id) {
 
        browse_file_module_ui(ns('score_file'),
          'Optional: Select a scoring file to compute positivity or H-Score.',
-         'Browse...'),
-       shiny::hr(),
-
-       shiny::h4('Select the output directory'),
-       'Click the "Browse Output" button to select a directory',
-       'for the analysis results.',
-       shiny::br(), shiny::br(),
-
-       shiny::actionButton(ns('browse_output'), 'Browse output...'),
-       shiny::br(), shiny::br(),
-       shiny::textOutput(ns('output_dir'))
+         'Browse...')
      ))
   )
 }
@@ -125,11 +123,12 @@ files_module = function(input, output, session) {
       caption='Select an output folder'
     )
 
+    output_path = normalizePath(output_path, winslash='/', mustWork=FALSE)
     output$output_dir = shiny::renderText(output_path)
     output_dir(output_path)
   })
 
-  reactive({shiny::reactiveValues(
+  reactive({list(
     input_path=input_path(),
     summary_path=summary_path(),
     score_path=score_path(),
@@ -148,7 +147,7 @@ files_module_test = function() {
     the_data = shiny::callModule(files_module, 'test')
 
     observe({
-      text = shiny::reactiveValuesToList(the_data())
+      text = the_data()
       output$results = shiny::renderText(paste(text, collapse='\n'))
       print(text)})
   }
@@ -156,5 +155,5 @@ files_module_test = function() {
   shiny::shinyApp(ui, server)
 }
 
-shiny::runApp(files_module_test())
+#shiny::runApp(files_module_test())
 

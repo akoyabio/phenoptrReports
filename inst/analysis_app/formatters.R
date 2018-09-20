@@ -1,25 +1,26 @@
 # Output formatting
 # These functions build a script based on the user inputs
 
-# Format everything. This is the only function in this module
-# which takes reactive arguments.
-format_all = function(the_data) {
+# Format everything.
+format_all = function(all_data) {
   # Get values from all the phenotype modules
-  phenotype_values = purrr::map(the_data$phenotypes, function(ph) ph())
+  phenotype_values = purrr::map(all_data$phenotypes, function(ph) ph())
 
   # Filter null values that happen when the controls are created,
   # then missing phenotype
   phenos = purrr::compact(phenotype_values, 'phenotype') %>%
     purrr::discard(~.x$phenotype %in% c(''))
 
+  has_phenotypes = length(phenos) > 0
   has_expression = any(purrr::map_lgl(phenos, ~!.x$expression %in% c('', 'NA')))
+
   paste0(
     format_header(),
-    format_path(the_data$path),
-    format_tissue_categories(the_data$tissue_categories),
+    format_path(all_data$input_path),
+    format_tissue_categories(all_data$tissue_categories),
     format_phenotypes(phenos),
     format_expression(phenos),
-    format_trailer(the_data$path, has_expression))
+    format_trailer(all_data$output_dir, has_phenotypes, has_expression))
 }
 
 # Initial matter
@@ -35,7 +36,7 @@ format_path = function(path) {
   path = stringr::str_replace_all(path, '\\\\', '/')
   stringr::str_glue('# Read the consolidated data file
 csd_path = "{path}"
-csd = read_tsv(csd_path)\n\n\n')
+csd = read_cell_seg_data(csd_path)\n\n\n')
 }
 
 # Format tissue categories
@@ -84,18 +85,32 @@ expression_means = csd %>%
 \n\n')
 }
 
-format_trailer = function(path, has_expression) {
-  output_path = dirname(path)
-  stringr::str_glue('# This plot shows phenotype combinations
+format_trailer = function(output_dir, has_phenotypes, has_expression) {
+start =
+'# This plot shows phenotype combinations
 plot = upset_plot(csd)
 
 # Write it all out to an Excel workbook
 wb = createWorkbook()
-write_counts_sheet(wb, counts)
+'
+
+counts = ifelse(has_phenotypes,
+"write_counts_sheet(wb, counts)
 write_percents_sheet(wb, percents)
-write_plot_sheet(wb, plot)
-{ifelse(has_expression, "write_expression_sheet(wb, expression_means)\n", "")}
-saveWorkbook(wb, file.path("{output_path}", "Results.xlsx"),
+", "")
+
+plot =
+"write_plot_sheet(wb, plot)
+"
+
+expression = ifelse(has_expression,
+"write_expression_sheet(wb, expression_means)
+", "")
+
+end = stringr::str_glue(
+'saveWorkbook(wb, file.path("{output_dir}", "Results.xlsx"),
   overwrite=TRUE)
 ')
+
+paste0(start, counts, plot, expression, end)
 }
