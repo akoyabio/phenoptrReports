@@ -41,14 +41,9 @@ shinyServer(function(input, output, server) {
                          choices=tissue_categories, inline=TRUE),
       paste('Available phenotypes:', available_phenotypes),
       phenotype_module_ui('pheno0', the_data$expression_columns),
-      shiny::actionButton('add', 'Add another phenotype'),
-      shiny::br(), shiny::br(),
-      shiny::verbatimTextOutput('results'),
-      shiny::br(), shiny::br(),
-
-      shiny::actionButton('process', 'Do It!')
-
+      shiny::actionButton('add', 'Add another phenotype')
     ))
+
     shiny::insertUI('#placeholder', 'afterBegin', new_ui)
 
     # Remember the phenotype selector
