@@ -80,11 +80,19 @@ shinyServer(function(input, output, server) {
   })
 
   # Process the result!!
-  observeEvent(input$process, {
-    req(input$process)
+  shiny::observeEvent(input$process, {
+    shiny::req(input$process)
+    shiny::showNotification('Processing, please wait!', duration=NULL,
+                     closeButton=FALSE, type='message')
+
+    # Create and save the script
     script = format_all(all_data())
     script_path = file.path(file_data$output_dir(), 'Script.R')
     write_lines(script, script_path)
+
+    # Run the script to do some work!
     source(script_path, local=new.env())
+
+    shiny::stopApp()
   })
 })
