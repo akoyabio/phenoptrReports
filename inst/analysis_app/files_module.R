@@ -128,12 +128,13 @@ files_module = function(input, output, session) {
     output_dir(output_path)
   })
 
-  reactive({list(
-    input_path=input_path(),
-    summary_path=summary_path(),
-    score_path=score_path(),
-    output_dir=output_dir())
-  })
+  # Return a list of reactives
+  list(
+    input_path=input_path,
+    summary_path=summary_path,
+    score_path=score_path,
+    output_dir=output_dir
+  )
 }
 
 files_module_test = function() {
@@ -147,7 +148,7 @@ files_module_test = function() {
     the_data = shiny::callModule(files_module, 'test')
 
     observe({
-      text = the_data()
+      text = purrr::map(the_data, ~.())
       output$results = shiny::renderText(paste(text, collapse='\n'))
       print(text)})
   }

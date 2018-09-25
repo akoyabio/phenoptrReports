@@ -9,11 +9,12 @@ shinyServer(function(input, output, server) {
 
   # File selection
   # file_data may contain input_path, summary_path, score_path, output_dir
+  # It is an ordinary list of reactive objects
   file_data = shiny::callModule(files_module, 'files')
 
   # Consolidated
   all_data = reactive({
-    c(reactiveValuesToList(the_data), file_data())
+    c(reactiveValuesToList(the_data), purrr::map(file_data, ~.()))
   })
 
   # Handle changes in file_data$input_path by initializing the analysis panel
@@ -21,13 +22,14 @@ shinyServer(function(input, output, server) {
     # Remove any existing output panel
     purrr::safely(shiny::removeUI)('#well2')
 
-    shiny::req(file_data()$input_path)
-    shiny::req(file_data()$output_dir)
+    shiny::req(file_data$input_path())
+    # shiny::req(file_data$output_dir())
 
     # Read the data file and get some info about it
-    d = phenoptr::read_cell_seg_data(file_data()$input_path)
+    d = phenoptr::read_cell_seg_data(file_data$input_path())
     tissue_categories = unique(d$`Tissue Category`)
     the_data$expression_columns = stringr::str_subset(names(d), 'Mean$')
+
     available_phenotypes = names(d) %>%
       stringr::str_subset('Phenotype ') %>%
       stringr::str_remove('Phenotype ') %>%
@@ -64,9 +66,9 @@ shinyServer(function(input, output, server) {
 
   # Update the error message
   shiny::observe({
-    if (is.null(file_data()$input_path)) {
+    if (is.null(file_data$input_path())) {
       analysis_error = 'Please select a data file in the Files tab.'
-    } else if (is.null(file_data()$output_dir)) {
+    } else if (is.null(file_data$output_dir())) {
       analysis_error ='Please select an output directory in the Files tab.'
     } else if (length(input$tissue_categories)==0) {
       analysis_error = 'Please select tissue categories.'
@@ -86,7 +88,7 @@ shinyServer(function(input, output, server) {
   observeEvent(input$process, {
     req(input$process)
     script = format_all(all_data())
-    script_path = file.path(file_data()$output_dir, 'Script.R')
+    script_path = file.path(file_data$output_dir(), 'Script.R')
     write_lines(script, script_path)
     source(script_path, local=new.env())
   })
