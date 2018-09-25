@@ -55,7 +55,13 @@ format_phenotypes = function(vals) {
   phenos = purrr::map_chr(vals, 'phenotype')
   if (length(phenos) == 0) return('')
 
-  phenos = c(phenos, 'Total Cells')
+  # This allows multiple expression markers per pheno
+  phenos = unique(phenos)
+
+  # Always do all cells
+  if (!any(stringr::str_detect(phenos, 'Total|All')))
+    phenos = c(unique(phenos), 'Total Cells')
+
   phenos_string = paste(phenos, collapse='", "')
   stringr::str_glue('# Define phenotypes
 phenotypes = parse_phenotypes("{phenos_string}")
