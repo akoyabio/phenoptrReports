@@ -85,44 +85,61 @@ compute_positivity = function(csd, phenotype, positivity) {
   tibble::data_frame(count=count, positive=positive, fraction=positive/count)
 }
 
-#' Compute H-score for a single marker aggregated by Slide ID
+#' Compute H-Score based on parameters in a score data file
 #'
-#' Thresholds may come from a score data file or be directly provided.
+#' @param csd Cell seg data to use.
+#' @param score_path Path to to a score_data file (may be merged or not).
+#' @return A data frame with one row per Slide ID, showing cell counts and
+#'   percents in each bin and the H-Score
+#' @family aggregation functions
+#' @importFrom magrittr %>%
+#' @export
+compute_h_score_from_score_data = function(csd, store_path) {
+  # Read the score data to get the required parameters
+  score_data = readr::read_tsv(score_path, n_max=1)
+  score_names = c('Threshold 0/1+', 'Threshold 1+/2+', 'Threshold 2+/3+')
+  if (!all(score_names %in% names(score_data)))
+    stop('"', score_path, '" does not seem to be an H-Score data file.')
+
+  thresholds = score_data[,score_names] %>% purrr::flatten_dbl()
+  tissue_categories = unique(score_data$`Tissue Category`)
+  measure = paste(score_data$`Cell Compartment`[1],
+                  score_data$`Stain Component`[1],
+                  'Mean', sep=' ')
+
+  compute_h_score(csd, measure, tissue_categories, thresholds)
+}
+
+#' Compute H-Score for a single marker aggregated by Slide  ID
+#'
+#' Parameters are directly provided.
 #'
 #' @param csd Cell seg data to use.
 #' @param measure The cell seg data column to measure (as a character string)
 #' @param tissue_categories A character vector of tissue category names
 #'   of interest.
-#' @param score_path Optional path to to a score_data file (may be merged or not).
 #' @param thresholds Optional three element vector with the threshold values.
 #' @return A data frame with one row per Slide ID, showing cell counts and
-#'   percents in each bin and the H score
+#'   percents in each bin and the H-Score
 #' @family aggregation functions
 #' @importFrom magrittr %>%
 #' @export
-compute_h_score = function(csd, measure, tissue_categories,
-                           score_path=NULL, thresholds=NULL) {
+compute_h_score = function(csd, measure, tissue_categories, thresholds) {
   if (!measure %in% names(csd))
     stop("Column not found: ", measure)
 
-  if (is.null(score_path) == is.null(thresholds))
-    stop("You must provide one of 'score_path' or 'thresholds', and not both.")
+  if (length(tissue_categories)==0 ||
+      !all(tissue_categories %in% unique(csd$`Tissue Category`)))
+    stop('Incorrect tissue categories.')
+
+  if (length(thresholds) != 3)
+    stop('Please provide three threshold values.')
 
   measure = rlang::sym(measure)
 
   # We only need three columns
   d = csd %>% dplyr::select(`Slide ID`, `Tissue Category`, !!measure) %>%
     dplyr::filter(`Tissue Category` %in% tissue_categories)
-
-  # Read the score data to get the thresholds if they were not directly provided
-  if (!is.null(score_path)) {
-    score_data = readr::read_tsv(score_path, n_max=1)
-    score_names = c('Threshold 0/1+', 'Threshold 1+/2+', 'Threshold 2+/3+')
-    if (!all(score_names %in% names(score_data)))
-      stop('"', score_path, '" does not seem to be an H-score data file.')
-
-    thresholds = score_data[,score_names] %>% purrr::flatten_dbl()
-  }
 
   d = d %>% dplyr::mutate(score = dplyr::case_when(
     !!measure < thresholds[1] ~ 0,

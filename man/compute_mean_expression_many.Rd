@@ -42,6 +42,7 @@ High expression may be specified by a percentile cutoff or a count of cells.
 \seealso{
 Other aggregation functions: \code{\link{compute_density_from_cell_summary}},
   \code{\link{compute_density_from_table}},
+  \code{\link{compute_h_score_from_score_data}},
   \code{\link{compute_h_score}},
   \code{\link{compute_mean_expression}},
   \code{\link{compute_positivity_many}},

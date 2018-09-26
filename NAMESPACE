@@ -3,6 +3,7 @@
 export(compute_density_from_cell_summary)
 export(compute_density_from_table)
 export(compute_h_score)
+export(compute_h_score_from_score_data)
 export(compute_mean_expression)
 export(compute_mean_expression_many)
 export(compute_positivity)
