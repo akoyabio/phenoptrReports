@@ -16,6 +16,7 @@ format_all = function(all_data) {
   has$phenotypes = length(phenos) > 0
   has$density = has$phenotypes && !is.null(all_data$summary_path)
   has$expression = any(purrr::map_lgl(phenos, ~!.x$expression %in% c('', 'NA')))
+  has$h_score = !is.null(all_data$score_path)
 
   paste0(
     format_header(),
@@ -24,6 +25,7 @@ format_all = function(all_data) {
     format_phenotypes(phenos),
     ifelse(has$density, format_density(all_data$summary_path), ''),
     format_expression(phenos),
+    ifelse(has$h_score, format_h_score(all_data$score_path), ''),
     format_cleanup(all_data$slide_id_prefix, has),
     format_trailer(all_data$output_dir, has))
 }
@@ -107,6 +109,13 @@ expression_means = csd %>%
 \n\n')
 }
 
+format_h_score = function(score_path) {
+  stringr::str_glue(
+"# Compute H-Score
+score_path = '{score_path}'
+h_score = compute_h_score_from_score_data(csd, score_path)\n\n\n")
+}
+
 format_cleanup = function(slide_id_prefix, has) {
   if (!has$phenotypes || is.null(slide_id_prefix) || slide_id_prefix == '')
     return('')
@@ -127,6 +136,9 @@ percents = cleanup(percents)\n")
 
   if (has$expression)
     start = paste0(start, "expression_means = cleanup(expression_means)\n")
+
+  if (has$h_score)
+    start = paste0(start, "h_score = cleanup(h_score)\n")
 
   paste(start, '\n\n')
 }
@@ -154,7 +166,11 @@ density = ifelse(has$density,
 ", "")
 
 expression = ifelse(has$expression,
-"write_expression_sheet(wb, expression_means)
+                    "write_expression_sheet(wb, expression_means)
+                    ", "")
+
+h_score = ifelse(has$h_score,
+                    "write_h_score_sheet(wb, h_score)
 ", "")
 
 end = stringr::str_glue(
@@ -162,5 +178,5 @@ end = stringr::str_glue(
   overwrite=TRUE)
 ')
 
-paste0(start, counts, plot, density, expression, end)
+paste0(start, counts, plot, density, expression, h_score, end)
 }
