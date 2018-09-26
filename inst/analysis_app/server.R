@@ -2,8 +2,10 @@
 shinyServer(function(input, output, server) {
 
   # Data container. Will contain
+  # available_phenotypes - Base names (no +/-) of all available phenotypes
   # expression_columns - Names of mean expression columns
-  # phenotypes - A list of phenotype_module
+  # phenotype_modules - A list of phenotype_module
+  # slide_id_prefix - Slide ID prefix to remove
   # tissue_categories - User-selected tissue categories
   the_data = reactiveValues()
 
@@ -19,7 +21,8 @@ shinyServer(function(input, output, server) {
 
   # Handle changes in file_data$input_path by initializing the analysis panel
   shiny::observe({
-    # Remove any existing output panel
+    # Remove any existing output panels
+    purrr::safely(shiny::removeUI)('#well1')
     purrr::safely(shiny::removeUI)('#well2')
 
     shiny::req(file_data$input_path())
@@ -34,15 +37,23 @@ shinyServer(function(input, output, server) {
       stringr::str_subset('Phenotype ') %>%
       stringr::str_remove('Phenotype ')
 
+    the_data$slide_id_prefix = slide_id_prefix =
+      find_common_prefix(unique(d$`Slide ID`))
 
     # Create the initial GUI with tissue and phenotype selectors
-    new_ui = shiny::div(id='well2', shiny::wellPanel(
-      shiny::checkboxGroupInput('tissue_categories', 'Select tissue categories:',
-                         choices=tissue_categories, inline=TRUE),
+    new_ui = shiny::tagList(
+      shiny::div(id='well1', shiny::wellPanel(
+        shiny::checkboxGroupInput('tissue_categories', 'Select tissue categories:',
+                                  choices=tissue_categories, inline=TRUE),
+        shiny::textInput('slide_id_prefix',
+                         'Slide ID prefix (will be removed)',
+                         slide_id_prefix))),
+
+      shiny::div(id='well2', shiny::wellPanel(
       paste('Available phenotypes:', paste(available_phenotypes, collapse=', ')),
       phenotype_module_ui('pheno0', the_data$expression_columns),
       shiny::actionButton('add', 'Add another phenotype')
-    ))
+    )))
 
     shiny::insertUI('#placeholder', 'afterBegin', new_ui)
 
@@ -51,6 +62,11 @@ shinyServer(function(input, output, server) {
       list(shiny::callModule(phenotype_module, 'pheno0',
                              available_phenotypes))
 
+  })
+
+  # Handle changes to Slide ID prefix by saving value
+  observe({
+    the_data$slide_id_prefix = input$slide_id_prefix
   })
 
   # Handle Add button by adding another phenotype_module_ui

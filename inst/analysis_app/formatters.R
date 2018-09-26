@@ -11,19 +11,21 @@ format_all = function(all_data) {
   phenos = purrr::compact(phenotype_values, 'phenotype') %>%
     purrr::discard(~.x$phenotype %in% c(''))
 
-  has_phenotypes = length(phenos) > 0
-  has_density = has_phenotypes && !is.null(all_data$summary_path)
-  has_expression = any(purrr::map_lgl(phenos, ~!.x$expression %in% c('', 'NA')))
+  # Flags for various sections present
+  has = list()
+  has$phenotypes = length(phenos) > 0
+  has$density = has$phenotypes && !is.null(all_data$summary_path)
+  has$expression = any(purrr::map_lgl(phenos, ~!.x$expression %in% c('', 'NA')))
 
   paste0(
     format_header(),
     format_path(all_data$input_path),
     format_tissue_categories(all_data$tissue_categories),
     format_phenotypes(phenos),
-    ifelse(has_density, format_density(all_data$summary_path), ''),
+    ifelse(has$density, format_density(all_data$summary_path), ''),
     format_expression(phenos),
-    format_trailer(all_data$output_dir,
-                   has_phenotypes, has_density, has_expression))
+    format_cleanup(all_data$slide_id_prefix, has),
+    format_trailer(all_data$output_dir, has))
 }
 
 # Initial matter
@@ -105,8 +107,31 @@ expression_means = csd %>%
 \n\n')
 }
 
-format_trailer = function(output_dir,
-                          has_phenotypes, has_density, has_expression) {
+format_cleanup = function(slide_id_prefix, has) {
+  if (!has$phenotypes || is.null(slide_id_prefix) || slide_id_prefix == '')
+    return('')
+
+  prefix = escapeRegex(slide_id_prefix)
+  start = stringr::str_glue("# Clean up the Slide IDs
+# Do this at the end or it will break merges
+cleanup = function(d) {{
+  d %>% mutate(`Slide ID` = str_remove(`Slide ID`, '^{prefix}'))
+}}\n\n\n")
+
+  if (has$phenotypes)
+    start = paste0(start, "counts = cleanup(counts)
+percents = cleanup(percents)\n")
+
+  if (has$density)
+    start = paste0(start, "densities = cleanup(densities)\n")
+
+  if (has$expression)
+    start = paste0(start, "expression_means = cleanup(expression_means)\n")
+
+  paste(start, '\n\n')
+}
+
+format_trailer = function(output_dir, has) {
 start =
 '# This plot shows phenotype combinations
 plot = upset_plot(csd)
@@ -115,7 +140,7 @@ plot = upset_plot(csd)
 wb = createWorkbook()
 '
 
-counts = ifelse(has_phenotypes,
+counts = ifelse(has$phenotypes,
 "write_counts_sheet(wb, counts)
 write_percents_sheet(wb, percents)
 ", "")
@@ -124,11 +149,11 @@ plot =
 "write_plot_sheet(wb, plot)
 "
 
-density = ifelse(has_density,
+density = ifelse(has$density,
 "write_density_sheet(wb, densities)
 ", "")
 
-expression = ifelse(has_expression,
+expression = ifelse(has$expression,
 "write_expression_sheet(wb, expression_means)
 ", "")
 

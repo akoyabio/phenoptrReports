@@ -9,3 +9,4 @@ base_dir = getwd() # For development
 source(file.path(base_dir, 'phenotype_module.R'))
 source(file.path(base_dir, 'files_module.R'))
 source(file.path(base_dir, 'formatters.R'))
+source(file.path(base_dir, 'helpers.R'))
