@@ -13,22 +13,32 @@ browse_file_module_ui = function(id, header, button) {
 }
 
 # Server function for file browser widget with optional validation.
+# @param default_dir reactiveVal containing the starting directory.
 # If provided, validator is a function that takes a path and returns a
 # (possibly empty) error string.
-browse_file_module = function(input, output, session, validator=NULL) {
+browse_file_module = function(input, output, session, default_dir,
+                              caption='Select a file',
+                              validator=NULL) {
   the_path = shiny::reactiveVal()
 
   # Handle click on the browse button by opening a file
   shiny::observeEvent(input$browse, {
+    default = default_dir()
+    if (default != '') default = paste0(default, '\\*.txt')
+
     shiny::req(input$browse)
     path = purrr::possibly(utils::choose.files, otherwise=NULL)(
-      caption='Select a file',
+      default=default,
+      caption=caption,
       filters = utils::Filters['txt',],
       multi=FALSE)
 
     shiny::req(path)
     path = normalizePath(path, winslash='/', mustWork=FALSE)
     output$selected_file = shiny::renderText(paste('Selected file:', path))
+
+    # Update default path
+    default_dir(dirname(path))
 
     if (is.null(validator)) {
       error = ''
@@ -83,9 +93,11 @@ files_module = function(input, output, session) {
   # output_dir - Path to directory for results
 
   output_dir = reactiveVal()
+  default_dir = reactiveVal('')
 
   input_path = shiny::callModule(browse_file_module, 'data_file',
-     function(path) {
+     default_dir, caption='Select a consolidated data file',
+     validator =function(path) {
        # Read and validate the file. We just need the header here
        d = purrr::possibly(readr::read_tsv, otherwise=NULL)(path, n_max=5)
        if (is.null(d)) {
@@ -102,7 +114,8 @@ files_module = function(input, output, session) {
      })
 
   summary_path = shiny::callModule(browse_file_module, 'summary_file',
-    function(path) {
+    default_dir, caption='Select a summary data file',
+    validator =function(path) {
       if (!endsWith(path, 'cell_seg_data_summary.txt')) {
         'Please select a cell seg summary file.'
       } else ''
@@ -110,7 +123,8 @@ files_module = function(input, output, session) {
 
 
   score_path = shiny::callModule(browse_file_module, 'score_file',
-    function(path) {
+    default_dir, caption='Select a score data file',
+    validator = function(path) {
       if (!endsWith(path, 'score_data.txt')) {
         'Please select a score data file.'
       } else ''
@@ -120,12 +134,14 @@ files_module = function(input, output, session) {
   shiny::observeEvent(input$browse_output, {
     shiny::req(input$browse_output)
     output_path = utils::choose.dir(
+      default=default_dir(),
       caption='Select an output folder'
     )
 
     output_path = normalizePath(output_path, winslash='/', mustWork=FALSE)
     output$output_dir = shiny::renderText(output_path)
     output_dir(output_path)
+    default_dir(output_path)
   })
 
   # Return a list of reactives
