@@ -1,4 +1,4 @@
-# Define server logic required to draw a histogram
+# Server (and dynamic UI) for analysis_app
 shinyServer(function(input, output, server) {
 
   # Data container. Will contain
@@ -15,19 +15,18 @@ shinyServer(function(input, output, server) {
   # It is an ordinary list of reactive objects
   file_data = shiny::callModule(files_module, 'files')
 
-  # Consolidated
+  # Consolidated data for the formatter
   all_data = reactive({
     c(reactiveValuesToList(the_data), purrr::map(file_data, ~.()))
   })
 
-  # Handle changes in file_data$input_path by initializing the analysis panel
+  # Handle changes in file_data$input_path by initializing the Analysis tab
   shiny::observe({
     # Remove any existing output panels
     purrr::safely(shiny::removeUI)('#well1')
     purrr::safely(shiny::removeUI)('#well2')
 
     shiny::req(file_data$input_path())
-    # shiny::req(file_data$output_dir())
 
     # Read the data file and get some info about it
     d = phenoptr::read_cell_seg_data(file_data$input_path())
@@ -43,7 +42,7 @@ shinyServer(function(input, output, server) {
 
     # Create the initial GUI with tissue and phenotype selectors
     new_ui = shiny::tagList(
-      # Well panel with miscellaneous inputs
+      # First well panel has miscellaneous inputs
       shiny::div(id='well1', shiny::wellPanel(
         shiny::checkboxGroupInput('tissue_categories', 'Select tissue categories:',
                                   choices=tissue_categories, inline=TRUE),
@@ -58,7 +57,8 @@ shinyServer(function(input, output, server) {
         )
       )),
 
-      # Well panel for phenotype modules
+      # Second well panel holds phenotype modules.
+      # Start it with one phenotype module and a button to add more.
       shiny::div(id='well2', shiny::wellPanel(
       paste('Available phenotypes:', paste(available_phenotypes, collapse=', ')),
       phenotype_module_ui('pheno0', the_data$expression_columns),
@@ -74,7 +74,7 @@ shinyServer(function(input, output, server) {
 
   })
 
-  # Handle changes to Slide ID prefix by saving value
+  # Handle changes to Slide ID prefix by saving values
   observe({
     the_data$slide_id_prefix = input$slide_id_prefix
     the_data$use_regex = input$use_regex
@@ -85,6 +85,8 @@ shinyServer(function(input, output, server) {
     id = paste0('pheno', input$add)
     ui = phenotype_module_ui(id, the_data$expression_columns)
     insertUI('#add', 'beforeBegin', ui)
+
+    # Remember the result
     the_data$phenotype_modules = c(the_data$phenotype_modules,
                             list(callModule(phenotype_module, id,
                                             the_data$available_phenotypes)))
@@ -104,7 +106,7 @@ shinyServer(function(input, output, server) {
     output$analysis_error = shiny::renderText(analysis_error)
   })
 
-  # Update the output text in response to user selections
+  # Update the script text in response to user selections
   output$results = renderText({
     the_data$tissue_categories = input$tissue_categories
     format_all(all_data())
