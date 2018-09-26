@@ -79,8 +79,7 @@ summary_path = "{summary_path}"
 
 # Using the counts computed above and the tissue area from the summary,
 # compute cell densities for each phenotype
-densities = compute_density_from_cell_summary(counts, summary_path, tissue_categories)
-')
+densities = compute_density_from_cell_summary(counts, summary_path, tissue_categories)\n\n\n')
 }
 
 # Format the expression parameters
@@ -94,8 +93,8 @@ format_expression = function(vals) {
   pairs = purrr::map_chr(phenos,
                          ~stringr::str_glue('"{.x$phenotype}" = "{.x$expression}"'))
   phenos_string = paste(pairs, collapse=',\n  ')
-  stringr::str_glue('# This associates phenotype names with expression
-# columns to measure.
+  stringr::str_glue(
+'# Associate phenotype names with expression columns to measure.
 expression_params = list(
   {phenos_string}
 )
