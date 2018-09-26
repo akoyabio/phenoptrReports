@@ -129,13 +129,20 @@ write_expression_sheet = function(wb, exprs,
 #' @param h_score A data frame with columns for `Slide ID`, `Tissue Category`,
 #'   and percent, such as the output of [compute_h_score].
 #' @param sheet_name Optional name for the worksheet.
-#' @param sheet_title Optional title header for the table.
+#' @param sheet_title Optional title header for the table. If omitted,
+#' the title will be inferred from the `h_score` data if possible.
 #' @family output functions
 #' @export
 write_h_score_sheet = function(wb, h_score,
                                 sheet_name='H-Score',
-                                sheet_title='H-Score')
+                                sheet_title=NULL)
 {
+  measure = attr(h_score, 'measure')
+  if (is.null(sheet_title)) {
+    sheet_title = ifelse(is.null(measure),
+                         'H-Score', paste0('H-Score, ', measure))
+  }
+
   write_sheet(wb, h_score, sheet_name, sheet_title, 3)
 
   data_rows = 1:nrow(h_score)+2

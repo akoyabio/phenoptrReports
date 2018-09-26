@@ -90,7 +90,7 @@ compute_positivity = function(csd, phenotype, positivity) {
 #' @param csd Cell seg data to use.
 #' @param score_path Path to to a score_data file (may be merged or not).
 #' @return A data frame with one row per Slide ID, showing cell counts and
-#'   percents in each bin and the H-Score
+#'   percents in each bin and the H-Score. See [compute_h_score].
 #' @family aggregation functions
 #' @importFrom magrittr %>%
 #' @export
@@ -120,7 +120,8 @@ compute_h_score_from_score_data = function(csd, store_path) {
 #'   of interest.
 #' @param thresholds Optional three element vector with the threshold values.
 #' @return A data frame with one row per Slide ID, showing cell counts and
-#'   percents in each bin and the H-Score
+#'   percents in each bin and the H-Score. The data frame has attributes
+#'   measure and thresholds.
 #' @family aggregation functions
 #' @importFrom magrittr %>%
 #' @export
@@ -163,5 +164,6 @@ compute_h_score = function(csd, measure, tissue_categories, thresholds) {
       `3+` = round(`Count of 3+`/Total, 3),
       `H-Score` = round(100 * (`1+` + 2*`2+` + 3*`3+`))
     )
-  d
+
+  structure(d, measure=measure, thresholds=thresholds)
 }

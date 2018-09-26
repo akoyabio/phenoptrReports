@@ -5,7 +5,7 @@
 \title{Write an H-Score table to an Excel workbook}
 \usage{
 write_h_score_sheet(wb, h_score, sheet_name = "H-Score",
-  sheet_title = "H-Score")
+  sheet_title = NULL)
 }
 \arguments{
 \item{wb}{An openxlsx Workbook from \link[openxlsx:createWorkbook]{openxlsx::createWorkbook}}
@@ -15,7 +15,8 @@ and percent, such as the output of \link{compute_h_score}.}
 
 \item{sheet_name}{Optional name for the worksheet.}
 
-\item{sheet_title}{Optional title header for the table.}
+\item{sheet_title}{Optional title header for the table. If omitted,
+the title will be inferred from the \code{h_score} data if possible.}
 }
 \description{
 Write a formatted H-Score table to a sheet in an Excel workbook.

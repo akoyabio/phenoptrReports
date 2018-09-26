@@ -18,7 +18,8 @@ of interest.}
 }
 \value{
 A data frame with one row per Slide ID, showing cell counts and
-percents in each bin and the H-Score
+percents in each bin and the H-Score. The data frame has attributes
+measure and thresholds.
 }
 \description{
 Parameters are directly provided.

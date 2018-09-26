@@ -13,7 +13,7 @@ compute_h_score_from_score_data(csd, store_path)
 }
 \value{
 A data frame with one row per Slide ID, showing cell counts and
-percents in each bin and the H-Score
+percents in each bin and the H-Score. See \link{compute_h_score}.
 }
 \description{
 Compute H-Score based on parameters in a score data file
