@@ -30,16 +30,16 @@ shinyServer(function(input, output, server) {
     tissue_categories = unique(d$`Tissue Category`)
     the_data$expression_columns = stringr::str_subset(names(d), 'Mean$')
 
-    available_phenotypes = names(d) %>%
+    the_data$available_phenotypes = available_phenotypes = names(d) %>%
       stringr::str_subset('Phenotype ') %>%
-      stringr::str_remove('Phenotype ') %>%
-      paste(collapse=', ')
+      stringr::str_remove('Phenotype ')
+
 
     # Create the initial GUI with tissue and phenotype selectors
     new_ui = shiny::div(id='well2', shiny::wellPanel(
       shiny::checkboxGroupInput('tissue_categories', 'Select tissue categories:',
                          choices=tissue_categories, inline=TRUE),
-      paste('Available phenotypes:', available_phenotypes),
+      paste('Available phenotypes:', paste(available_phenotypes, collapse=', ')),
       phenotype_module_ui('pheno0', the_data$expression_columns),
       shiny::actionButton('add', 'Add another phenotype')
     ))
@@ -47,7 +47,9 @@ shinyServer(function(input, output, server) {
     shiny::insertUI('#placeholder', 'afterBegin', new_ui)
 
     # Remember the phenotype selector
-    the_data$phenotypes = list(shiny::callModule(phenotype_module, 'pheno0'))
+    the_data$phenotype_modules =
+      list(shiny::callModule(phenotype_module, 'pheno0',
+                             available_phenotypes))
 
   })
 
@@ -56,7 +58,9 @@ shinyServer(function(input, output, server) {
     id = paste0('pheno', input$add)
     ui = phenotype_module_ui(id, the_data$expression_columns)
     insertUI('#add', 'beforeBegin', ui)
-    the_data$phenotypes = c(the_data$phenotypes, list(callModule(phenotype_module, id)))
+    the_data$phenotype_modules = c(the_data$phenotype_modules,
+                            list(callModule(phenotype_module, id,
+                                            the_data$available_phenotypes)))
   })
 
   # Update the error message

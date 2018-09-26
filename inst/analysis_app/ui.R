@@ -1,7 +1,12 @@
 # Minimal UI definition here
 # The files tab is defined in files_module
 # The analysis tab is generated dynamically by the server
-shinyUI(shiny::navbarPage("Analyze inForm data",
+shiny::shinyUI(shiny::tagList(
+  shiny::tags$head(shiny::tags$style(HTML("#well2 div[id$='error'] {
+               color:maroon;
+               padding-bottom: 5px;
+             }"))),
+  shiny::navbarPage("Analyze inForm data",
   files_module_ui('files'),
   shiny::tabPanel('Analysis',
                   shiny::div(id='placeholder'),
@@ -14,4 +19,4 @@ shinyUI(shiny::navbarPage("Analyze inForm data",
                   shiny::actionButton('process', 'Do It!')
   )
 
-))
+)))

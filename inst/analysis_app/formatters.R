@@ -4,7 +4,7 @@
 # Format everything.
 format_all = function(all_data) {
   # Get values from all the phenotype modules
-  phenotype_values = purrr::map(all_data$phenotypes, function(ph) ph())
+  phenotype_values = purrr::map(all_data$phenotype_modules, function(ph) ph())
 
   # Filter null values that happen when the controls are created,
   # then missing phenotype
