@@ -26,7 +26,7 @@ format_all = function(all_data) {
     ifelse(has$density, format_density(all_data$summary_path), ''),
     format_expression(phenos),
     ifelse(has$h_score, format_h_score(all_data$score_path), ''),
-    format_cleanup(all_data$slide_id_prefix, has),
+    format_cleanup(all_data$slide_id_prefix, all_data$use_regex, has),
     format_trailer(all_data$output_dir, has))
 }
 
@@ -116,15 +116,20 @@ score_path = '{score_path}'
 h_score = compute_h_score_from_score_data(csd, score_path)\n\n\n")
 }
 
-format_cleanup = function(slide_id_prefix, has) {
+format_cleanup = function(slide_id_prefix, use_regex, has) {
   if (!has$phenotypes || is.null(slide_id_prefix) || slide_id_prefix == '')
     return('')
 
-  prefix = escapeRegex(slide_id_prefix)
+  if (use_regex) {
+    # slide_id_prefix is a regex. We just have to double-escape \
+    # to put it into a string literal
+    slide_id_prefix = stringr::str_replace(slide_id_prefix, fixed('\\'), '\\\\')
+  } else slide_id_prefix = escapeRegex(slide_id_prefix)
+
   start = stringr::str_glue("# Clean up the Slide IDs
 # Do this at the end or it will break merges
 cleanup = function(d) {{
-  d %>% mutate(`Slide ID` = str_remove(`Slide ID`, '^{prefix}'))
+  d %>% mutate(`Slide ID` = str_remove(`Slide ID`, '^{slide_id_prefix}'))
 }}\n\n\n")
 
   if (has$phenotypes)

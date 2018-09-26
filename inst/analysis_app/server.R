@@ -7,6 +7,7 @@ shinyServer(function(input, output, server) {
   # phenotype_modules - A list of phenotype_module
   # slide_id_prefix - Slide ID prefix to remove
   # tissue_categories - User-selected tissue categories
+  # use_regex - Is slide_id_prefix a regular expression?
   the_data = reactiveValues()
 
   # File selection
@@ -42,13 +43,22 @@ shinyServer(function(input, output, server) {
 
     # Create the initial GUI with tissue and phenotype selectors
     new_ui = shiny::tagList(
+      # Well panel with miscellaneous inputs
       shiny::div(id='well1', shiny::wellPanel(
         shiny::checkboxGroupInput('tissue_categories', 'Select tissue categories:',
                                   choices=tissue_categories, inline=TRUE),
-        shiny::textInput('slide_id_prefix',
-                         'Slide ID prefix (will be removed)',
-                         slide_id_prefix))),
+        shiny::fluidRow(
+          shiny::column(6, shiny::textInput('slide_id_prefix',
+                           'Slide ID prefix (will be removed)',
+                           slide_id_prefix)),
+          shiny::column(3, style='padding-top: 20px;',
+                        shiny::checkboxInput('use_regex',
+                                               'Use regular expressions',
+                                               FALSE))
+        )
+      )),
 
+      # Well panel for phenotype modules
       shiny::div(id='well2', shiny::wellPanel(
       paste('Available phenotypes:', paste(available_phenotypes, collapse=', ')),
       phenotype_module_ui('pheno0', the_data$expression_columns),
@@ -67,6 +77,7 @@ shinyServer(function(input, output, server) {
   # Handle changes to Slide ID prefix by saving value
   observe({
     the_data$slide_id_prefix = input$slide_id_prefix
+    the_data$use_regex = input$use_regex
   })
 
   # Handle Add button by adding another phenotype_module_ui
