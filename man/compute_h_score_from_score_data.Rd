@@ -4,7 +4,7 @@
 \alias{compute_h_score_from_score_data}
 \title{Compute H-Score based on parameters in a score data file}
 \usage{
-compute_h_score_from_score_data(csd, store_path)
+compute_h_score_from_score_data(csd, score_path)
 }
 \arguments{
 \item{csd}{Cell seg data to use.}

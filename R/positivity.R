@@ -94,7 +94,7 @@ compute_positivity = function(csd, phenotype, positivity) {
 #' @family aggregation functions
 #' @importFrom magrittr %>%
 #' @export
-compute_h_score_from_score_data = function(csd, store_path) {
+compute_h_score_from_score_data = function(csd, score_path) {
   # Read the score data to get the required parameters
   score_data = readr::read_tsv(score_path, n_max=1)
   score_names = c('Threshold 0/1+', 'Threshold 1+/2+', 'Threshold 2+/3+')
