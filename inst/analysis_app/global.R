@@ -4,6 +4,8 @@ library(phenoptr)
 library(phenoptrReports)
 library(shiny)
 
-source(system.file('analysis_app', 'phenotype_module.R', package='phenoptrReports'))
-source(system.file('analysis_app', 'files_module.R', package='phenoptrReports'))
-source(system.file('analysis_app', 'formatters.R', package='phenoptrReports'))
+base_dir = getwd() # For development
+#base_dir = system.file('analysis_app', package='phenoptrReports') # For release
+source(file.path(base_dir, 'phenotype_module.R'))
+source(file.path(base_dir, 'files_module.R'))
+source(file.path(base_dir, 'formatters.R'))
