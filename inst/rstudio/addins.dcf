@@ -2,3 +2,8 @@ Name: Consolidate and summarize
 Description: Consolidate and summarize multiple cell seg data files.
 Binding: merge_addin
 Interactive: true
+
+Name: Analyze consolidated data
+Description: Create aggregate statistics from a consolidated data file.
+Binding: analysis_app
+Interactive: true
