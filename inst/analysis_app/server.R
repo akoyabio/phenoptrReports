@@ -83,7 +83,7 @@ shinyServer(function(input, output, server) {
   # Handle Add button by adding another phenotype_module_ui
   observeEvent(input$add, {
     id = paste0('pheno', input$add)
-    ui = phenotype_module_ui(id, the_data$expression_columns)
+    ui = phenotype_module_ui(id, the_data$expression_columns, show_help=FALSE)
     insertUI('#add', 'beforeBegin', ui)
 
     # Remember the result
