@@ -107,7 +107,7 @@ shinyServer(function(input, output, server) {
   })
 
   # Update the script text in response to user selections
-  output$results = renderText({
+  output$the_script = renderText({
     the_data$tissue_categories = input$tissue_categories
     format_all(all_data())
   })

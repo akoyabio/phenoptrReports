@@ -21,10 +21,10 @@ shiny::shinyUI(shiny::tagList(
 
   # Run panel shows and runs the output script
   shiny::tabPanel('Run',
-                  shiny::p('This script will be saved and run.'),
-                  shiny::verbatimTextOutput('results'),
+                  shiny::actionButton('process', 'Create Report'),
                   shiny::br(), shiny::br(),
-                  shiny::actionButton('process', 'Do It!')
+                  shiny::p('This script will be saved and run.'),
+                  shiny::verbatimTextOutput('the_script')
   )
 
 )))
