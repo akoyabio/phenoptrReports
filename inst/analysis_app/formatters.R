@@ -150,10 +150,7 @@ percents = cleanup(percents)\n")
 
 format_trailer = function(output_dir, has) {
 start =
-'# This plot shows phenotype combinations
-plot = upset_plot(csd)
-
-# Write it all out to an Excel workbook
+'# Write it all out to an Excel workbook
 wb = createWorkbook()
 '
 
@@ -161,10 +158,6 @@ counts = ifelse(has$phenotypes,
 "write_counts_sheet(wb, counts)
 write_percents_sheet(wb, percents)
 ", "")
-
-plot =
-"write_plot_sheet(wb, plot)
-"
 
 density = ifelse(has$density,
 "write_density_sheet(wb, densities)
@@ -183,5 +176,5 @@ end = stringr::str_glue(
   overwrite=TRUE)
 ')
 
-paste0(start, counts, plot, density, expression, h_score, end)
+paste0(start, counts, density, expression, h_score, end)
 }
