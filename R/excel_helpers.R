@@ -10,6 +10,36 @@ bold_style = openxlsx::createStyle(textDecoration='bold')
 bold_wrap_style = openxlsx::createStyle(textDecoration='bold',
                                         halign='center', wrapText=TRUE)
 
+#' Write a summary table to an Excel workbook
+#'
+#' Write a table containing counts of fields per slide to
+#' a sheet in an Excel workbook.
+#' @param wb An openxlsx Workbook from [openxlsx::createWorkbook]
+#' @param counts A data frame with columns for `Slide ID`, `Tissue Category`,
+#'   and counts, such as the output of [count_phenotypes].
+#' @param sheet_name Optional name for the worksheet.
+#' @family output functions
+#' @export
+write_summary_sheet = function(wb, summary_table,
+                              sheet_name='Slide Summary')
+{
+  # This doesn't fit into the write_sheet template, make it from scratch here.
+  # Make a new sheet
+  openxlsx::addWorksheet(wb, sheet_name)
+
+  # Write the table
+  openxlsx::writeData(wb, sheet_name, summary_table, startRow=1,
+                      headerStyle=bold_wrap_style, keepNA=TRUE)
+
+  # Wider, bold Slide ID column
+  openxlsx::setColWidths(wb, sheet_name, 1, 'auto')
+  openxlsx::addStyle(wb, sheet_name, bold_style,
+                     rows=2:(nrow(summary_table)+1), cols=1)
+
+  # Wider count column
+  openxlsx::setColWidths(wb, sheet_name, 2, 11)
+}
+
 #' Write a cell counts table to an Excel workbook
 #'
 #' Write a formatted cell counts table to a sheet in an Excel workbook.

@@ -38,12 +38,16 @@ library(phenoptrReports)
 library(openxlsx)\n\n'
 }
 
-# Format reading cell seg data
+# Format reading cell seg data and making summary table
 format_path = function(path) {
   path = stringr::str_replace_all(path, '\\\\', '/')
   stringr::str_glue('# Read the consolidated data file
 csd_path = "{path}"
-csd = read_cell_seg_data(csd_path)\n\n\n')
+csd = read_cell_seg_data(csd_path)
+
+# Make a table summarizing the number of fields per slide
+summary_table = csd %>% group_by(`Slide ID`) %>%
+                    summarize(`Number of fields`=n_distinct(`Sample Name`))\n\n\n')
 }
 
 # Format tissue categories
@@ -152,6 +156,7 @@ format_trailer = function(output_dir, has) {
 start =
 '# Write it all out to an Excel workbook
 wb = createWorkbook()
+write_summary_sheet(wb, summary_table)
 '
 
 counts = ifelse(has$phenotypes,
