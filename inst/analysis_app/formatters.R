@@ -134,7 +134,9 @@ format_cleanup = function(slide_id_prefix, use_regex, has) {
 # Do this at the end or it will break merges
 cleanup = function(d) {{
   d %>% mutate(`Slide ID` = str_remove(`Slide ID`, '^{slide_id_prefix}'))
-}}\n\n\n")
+}}
+
+summary_table = cleanup(summary_table)\n")
 
   if (has$phenotypes)
     start = paste0(start, "counts = cleanup(counts)
@@ -170,7 +172,7 @@ density = ifelse(has$density,
 
 expression = ifelse(has$expression,
                     "write_expression_sheet(wb, expression_means)
-                    ", "")
+", "")
 
 h_score = ifelse(has$h_score,
                     "write_h_score_sheet(wb, h_score)
