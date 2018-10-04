@@ -38,6 +38,9 @@ write_summary_sheet = function(wb, summary_table,
 
   # Wider count column
   openxlsx::setColWidths(wb, sheet_name, 2, 11)
+
+  insert_page_breaks(wb, sheet_name, summary_table,
+                     grid_spacing=1, num_title_rows=1)
 }
 
 #' Write a cell counts table to an Excel workbook
@@ -276,13 +279,18 @@ write_sheet <- function(wb, d, sheet_name, sheet_title, header_col) {
   }
 
   # Page formatting
+  insert_page_breaks(wb, sheet_name, d, grid_spacing)
   # Print titles
-  num_title_rows = 2
+}
+
+insert_page_breaks <- function(wb, sheet_name, d, grid_spacing,
+                               num_title_rows = 2,
+                               max_rows = 29 # Worst case is the expression worksheet
+                               ) {
   pageSetup(wb, sheet_name, orientation='landscape',
             printTitleRows = 1:num_title_rows)
 
   # Page breaks should fall on Slide ID boundaries
-  max_rows = 29 # Worst case is the expression worksheet
   if (nrow(d) + num_title_rows > max_rows) {
     rows_per_page =
       as.integer((max_rows - num_title_rows)/grid_spacing) * grid_spacing
@@ -293,4 +301,3 @@ write_sheet <- function(wb, d, sheet_name, sheet_title, header_col) {
     }
   }
 }
-

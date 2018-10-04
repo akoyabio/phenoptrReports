@@ -22,5 +22,7 @@ write_sheet(wb, d, sheet_name, sheet_title, header_col)
 \item Bold, centered header
 \item Bold column headers
 \item Bold Slide ID column
+\item Two-row page title
+\item Page breaks as needed
 }
 }
