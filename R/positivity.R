@@ -89,12 +89,15 @@ compute_positivity = function(csd, phenotype, positivity) {
 #'
 #' @param csd Cell seg data to use.
 #' @param score_path Path to to a score_data file (may be merged or not).
+#' @param tissue_categories optionally specify tissue categories of interest.
+#'   If not given, tissue categories are taken from the score file.
 #' @return A data frame with one row per Slide ID, showing cell counts and
 #'   percents in each bin and the H-Score. See [compute_h_score].
 #' @family aggregation functions
 #' @importFrom magrittr %>%
 #' @export
-compute_h_score_from_score_data = function(csd, score_path) {
+compute_h_score_from_score_data = function(csd, score_path,
+                                           tissue_categories=NULL) {
   # Read the score data to get the required parameters
   score_data = readr::read_tsv(score_path, n_max=1)
   score_names = c('Threshold 0/1+', 'Threshold 1+/2+', 'Threshold 2+/3+')
@@ -102,7 +105,8 @@ compute_h_score_from_score_data = function(csd, score_path) {
     stop('"', score_path, '" does not seem to be an H-Score data file.')
 
   thresholds = score_data[,score_names] %>% purrr::flatten_dbl()
-  tissue_categories = unique(score_data$`Tissue Category`)
+  if (is.null(tissue_categories))
+    tissue_categories = unique(score_data$`Tissue Category`)
   measure = paste(score_data$`Cell Compartment`[1],
                   score_data$`Stain Component`[1],
                   'Mean', sep=' ')

@@ -117,7 +117,7 @@ format_h_score = function(score_path) {
   stringr::str_glue(
 "# Compute H-Score
 score_path = '{score_path}'
-h_score = compute_h_score_from_score_data(csd, score_path)\n\n\n")
+h_score = compute_h_score_from_score_data(csd, score_path, tissue_categories)\n\n\n")
 }
 
 format_cleanup = function(slide_id_prefix, use_regex, has) {
@@ -136,7 +136,7 @@ cleanup = function(d) {{
   d %>% mutate(`Slide ID` = str_remove(`Slide ID`, '^{slide_id_prefix}'))
 }}
 
-summary_table = cleanup(summary_table)\n")
+summary_table = cleanup(summary_table)\n\n")
 
   if (has$phenotypes)
     start = paste0(start, "counts = cleanup(counts)

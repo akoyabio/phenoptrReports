@@ -4,12 +4,16 @@
 \alias{compute_h_score_from_score_data}
 \title{Compute H-Score based on parameters in a score data file}
 \usage{
-compute_h_score_from_score_data(csd, score_path)
+compute_h_score_from_score_data(csd, score_path,
+  tissue_categories = NULL)
 }
 \arguments{
 \item{csd}{Cell seg data to use.}
 
 \item{score_path}{Path to to a score_data file (may be merged or not).}
+
+\item{tissue_categories}{optionally specify tissue categories of interest.
+If not given, tissue categories are taken from the score file.}
 }
 \value{
 A data frame with one row per Slide ID, showing cell counts and
