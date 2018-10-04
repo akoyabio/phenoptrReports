@@ -215,6 +215,8 @@ write_plot_sheet = function(wb, plot, sheet_name='Phenotypes',
 #' - Bold, centered header
 #' - Bold column headers
 #' - Bold Slide ID column
+#' - Two-row page title
+#' - Page breaks as needed
 #' @param wb An openxlsx Workbook from [openxlsx::createWorkbook]
 #' @param d A data frame to write.
 #' @param sheet_name Name for the worksheet.
@@ -247,6 +249,7 @@ write_sheet <- function(wb, d, sheet_name, sheet_title, header_col) {
   # Wider Tissue Category column
   openxlsx::setColWidths(wb, sheet_name, 2, 11)
 
+  # Set up grid lines per slide if there are multiple tissue categories
   grid_spacing = length(unique(d$`Tissue Category`))
   if (grid_spacing > 1) {
     # Borders at left, right and bottom of the data portion
@@ -270,6 +273,24 @@ write_sheet <- function(wb, d, sheet_name, sheet_title, header_col) {
                          rows=start_row,
                          cols=1:ncol(d),
                          stack=TRUE)
+  }
+
+  # Page formatting
+  # Print titles
+  num_title_rows = 2
+  pageSetup(wb, sheet_name, orientation='landscape',
+            printTitleRows = 1:num_title_rows)
+
+  # Page breaks should fall on Slide ID boundaries
+  max_rows = 29 # Worst case is the expression worksheet
+  if (nrow(d) + num_title_rows > max_rows) {
+    rows_per_page =
+      as.integer((max_rows - num_title_rows)/grid_spacing) * grid_spacing
+    page_break = rows_per_page + num_title_rows
+    while (page_break < nrow(d)) {
+      pageBreak(wb, sheet_name, page_break)
+      page_break = page_break + rows_per_page
+    }
   }
 }
 
