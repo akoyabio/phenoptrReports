@@ -130,10 +130,13 @@ format_cleanup = function(slide_id_prefix, use_regex, has) {
     slide_id_prefix = stringr::str_replace(slide_id_prefix, fixed('\\'), '\\\\')
   } else slide_id_prefix = escapeRegex(slide_id_prefix)
 
+  # Note: Don't use mutate() in cleanup(),
+  # it removes attribute from h_score table
   start = stringr::str_glue("# Clean up the Slide IDs
 # Do this at the end or it will break merges
 cleanup = function(d) {{
-  d %>% mutate(`Slide ID` = str_remove(`Slide ID`, '^{slide_id_prefix}'))
+  d$`Slide ID` = str_remove(d$`Slide ID`, '^{slide_id_prefix}')
+  d
 }}
 
 summary_table = cleanup(summary_table)\n\n")
