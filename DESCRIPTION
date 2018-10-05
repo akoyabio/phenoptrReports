@@ -13,6 +13,7 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     dplyr (>= 0.7.5),
+    forcats,
     ggplot2,
     knitr,
     magrittr,
@@ -21,6 +22,7 @@ Imports:
     phenoptr (>= 0.1.1.9006),
     purrr,
     readr,
+    readxl,
     rlang,
     rmarkdown,
     shiny (>= 0.13),

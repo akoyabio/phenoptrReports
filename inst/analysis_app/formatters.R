@@ -179,8 +179,14 @@ h_score = ifelse(has$h_score,
 ", "")
 
 end = stringr::str_glue(
-'saveWorkbook(wb, file.path("{output_dir}", "Results.xlsx"),
-  overwrite=TRUE)
+'
+
+workbook_path = file.path("{output_dir}", "Results.xlsx")
+saveWorkbook(wb, workbook_path, overwrite=TRUE)
+
+# Write summary charts
+charts_path = file.path("{output_dir}", "Charts.docx")
+write_summary_charts(workbook_path, charts_path)
 ')
 
 paste0(start, counts, density, expression, h_score, end)

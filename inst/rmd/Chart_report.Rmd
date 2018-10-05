@@ -1,0 +1,231 @@
+---
+output:
+  word_document:
+    reference_docx: Chart_report_template.docx
+  html_vignette:
+    df_print: kable
+params:
+  data_path:
+    input: file
+    label: 'Path to Excel file:'
+    value: F:\DavidC\Trillium AC\Analysis\MelanomaResults\Melanoma_170106-01a_Trillium_AllComers_Results.xlsx
+  max_slides_per_plot:
+    input: integer
+    label: Maximum number of slides to show on each plot
+    value: 20
+---
+
+```{r setup, echo=FALSE,include=FALSE,message=FALSE}
+library(dplyr)
+library(ggplot2)
+library(purrr)
+library(readxl)
+library(tidyr)
+
+knitr::opts_chunk$set(echo=FALSE,fig.width=10, fig.height=5.5, 
+                      comment=NA, warning=FALSE, message=FALSE)
+
+data_path = params$data_path
+max_slides_per_plot = params$max_slides_per_plot
+
+# Note: Using readxl rather than openxlsx for reading because
+# the check.names parameter of openxlsx::readWorkbook is kind of broken.
+# https://github.com/awalker89/openxlsx/issues/102
+sheet_names = readxl::excel_sheets(data_path)
+
+# Boilerplate for ggplot theming
+phenoptr_colors = c(
+  "#26A2ED", "#41C572", "#F05050", "#F4D646", "#B2A1E2", "#F99B15", "#98C7DC",
+  "#84D9A3", "#72C3F3", "#F58D8D", "#F8E487", "#CDC2EC", "#FBBE67", "#BCDBE8",
+  "#1F5F37", "#124E72", "#732626", "#756722", "#554D6C", "#784A0A", "#49606A",
+  "#C6EED5", "#BEE3FA", "#FBCBCB", "#FCF3C8", "#E8E3F6", "#FDE1B9", "#E0EEF5",
+  "#319456", "#1D7AB2", "#B43C3C", "#B7A135", "#8679AA", "#BB7410", "#7295A5"
+)
+
+scale_fill_phenoptr = scale_fill_manual(values=phenoptr_colors)
+scale_x_expand = scale_x_discrete(expand=expand_scale(add=1))
+base_line = geom_hline(yintercept=0, color='grey50')
+
+theme_phenoptr = theme_minimal() +
+  theme(strip.text.y=element_text(face='bold', size=12),
+        strip.text.x=element_text(face='bold', angle=90),
+        #strip.background.y=element_rect(color='grey90', fill='white', linetype=1),
+        strip.background.y=element_blank(),
+        axis.ticks=element_blank(),
+        axis.text.x=element_blank(),
+        axis.text.y=element_text(size=8),
+        axis.title=element_text(face='bold'),
+        panel.grid.major=element_blank(),
+        panel.grid.minor=element_blank(),
+        panel.spacing.x = unit(0, "null"), # Take out horizontal space 
+        legend.key.size = unit(12, 'points'),
+        legend.title=element_text(face='bold'),
+        legend.justification = "top"
+  )
+
+# If d has more than max_slides_per_plot slides, 
+# split it into roughly equal pieces
+split_slides = function(d) {
+  slides = unique(d$`Slide ID`)
+  n_slides = length(slides)
+  if (n_slides <= max_slides_per_plot)
+    return(list(d))
+  
+  n_groups = ceiling(n_slides/max_slides_per_plot)
+  group_size = ceiling(n_slides/n_groups)
+  groups = rep(1:n_groups, each=group_size)
+  slide_groups = split(slides, groups[1:n_slides])
+  map(slide_groups, ~d %>% filter(`Slide ID` %in% .x))
+}
+
+# Create a tissue category factor which has Tumor first and Total last
+order_tissue_categories = function(cats) {
+  cats = factor(cats)
+  if ('Tumor' %in% cats)
+    cats = forcats::fct_relevel(cats, 'Tumor')
+  if ('Total' %in% cats)
+    cats = forcats::fct_relevel(cats, 'Total', after=Inf)
+  cats
+}
+```
+
+
+
+```{r counts, results='asis'}
+if ('Cell Counts' %in% sheet_names) {
+  counts = read_xlsx(data_path, 'Cell Counts', skip=1)
+  tall = counts %>%
+    gather('Phenotype', 'Cell Count', -`Slide ID`, -`Tissue Category`) %>%
+    filter(!Phenotype %in% c('Other', 'Total Cells')) %>% 
+    mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`)) %>% 
+    split_slides
+
+  walk2(seq_along(tall), tall, function(i, d) {
+    if (length(tall) > 1) {
+      cat(stringr::str_glue('## Phenotype cell counts per tissue category and slide ({i} of {length(tall)})\n\n'))
+    } else {
+      cat('## Phenotype cell counts per tissue category and slide\n\n')
+    }
+    p = ggplot(d,
+                   aes(Phenotype, `Cell Count`, fill=Phenotype)) +
+      base_line +
+      geom_col() +
+      facet_grid(`Tissue Category` ~ `Slide ID`, switch='x') +
+      scale_fill_phenoptr + scale_x_expand +
+      labs(x='Slide ID') +
+      theme_phenoptr
+   
+    print(p)
+    cat('\n\n')
+  })
+}
+
+```
+
+```{r density,results='asis'}
+
+if ('Cell Densities' %in% sheet_names) {
+  density = read_xlsx(data_path, 'Cell Densities', skip=1)
+  
+  # Reshape for plotting
+  tall = density %>% gather('Phenotype', 'Density',
+                                    -`Slide ID`, -`Tissue Category`) %>%
+    filter(!Phenotype %in% c('Tissue Area (mm2)', 'Other', 'Total Cells')) %>% 
+    mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`)) %>%
+    split_slides
+  
+  walk2(seq_along(tall), tall, function(i, d) {
+    if (length(tall) > 1) {
+      cat(stringr::str_glue('## Phenotype cell density per tissue category and slide ({i} of {length(tall)})\n\n'))
+    } else {
+      cat('## Phenotype cell density per tissue category and slide\n\n')
+    }
+    p = ggplot(d,
+               aes(Phenotype, Density, fill=Phenotype)) +
+      base_line +
+      geom_col() +
+      facet_grid(`Tissue Category` ~ `Slide ID`, switch='x') +
+      scale_fill_phenoptr + scale_x_expand +
+      labs(x='Slide ID', y=expression(bold(paste('Cell Density (', cells/mm^2, ')')))) +
+      theme_phenoptr
+   
+    print(p)
+    cat('\n\n')
+  })
+}
+```
+
+```{r expression,results='asis'}
+
+if ('Mean Expression' %in% sheet_names) {
+  expression = read_xlsx(data_path, 'Mean Expression', skip=1)
+  
+  # Reshape for plotting
+  tall = expression %>% gather('Measure', 'Mean',
+                                    -`Slide ID`, -`Tissue Category`) %>%
+    mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`)) %>%
+    separate(Measure, into=c('Phenotype', 'Measure'), sep=' ', extra='merge') %>% 
+    mutate(Measure = stringr::str_replace(Measure, '([^(]*) (\\(.*\\) )?Mean', 'Mean \\1 Expression'))
+  
+  # We may have multiple measures, first split on Measure
+  tall_by_measure = split(tall, tall$Measure)
+  
+  walk(tall_by_measure, function(tall_one_measure) {
+    # Now split to fit slides per page
+    tall_one_measure = split_slides(tall_one_measure)
+    
+    walk2(seq_along(tall_one_measure), tall_one_measure, function(i, d) {
+      if (length(tall_one_measure) > 1) {
+        cat(stringr::str_glue('## {d$Measure[1]} ({i} of {length(tall_one_measure)})\n\n'))
+      } else {
+        cat(stringr::str_glue('## {d$Measure[1]}'))
+      }
+      p = ggplot(d, aes(Phenotype, Mean, fill=Phenotype)) +
+        base_line +
+        geom_col() +
+        facet_grid(`Tissue Category` ~ `Slide ID`, switch='x') +
+        scale_fill_phenoptr + scale_x_expand +
+        labs(x='Slide ID', y=d$Measure[1]) +
+        theme_phenoptr
+     
+      print(p)
+      cat('\n\n')
+    })
+  })
+}
+```
+
+```{r h_score,results='asis'}
+
+if ('H-Score' %in% sheet_names) {
+  h_score = read_xlsx(data_path, 'H-Score', skip=1)
+  
+  # Find the marker from the first row, if present
+  h_score_title = read_xlsx(data_path, 'H-Score', range='C1', col_names=FALSE) %>% 
+    unlist()
+  if (stringr::str_detect(h_score_title, 'H-Score,')) {
+    title = stringr::str_glue('Cumulative Percent of Cells in {stringr::str_remove(h_score_title, "H-Score,")} Bins')
+  } else title = 'Cumulative Percent of Cells in Expression Bins'
+  
+  # Reshape for plotting
+  tall = h_score %>%
+    select(`Slide ID`, `Tissue Category`, `0+`:`3+`) %>%
+    gather('Bin', 'Percent',  -`Slide ID`, -`Tissue Category`) %>% 
+    mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`))
+  
+  # H-Score plots as one bar per slide so we don't have to split_slides
+  cat('##', title, '\n\n')
+  p = ggplot(tall,
+         aes(`Slide ID`, Percent, fill=Bin)) +
+    geom_col(position=position_stack(reverse=TRUE)) +
+    facet_grid(`Tissue Category` ~ ., switch='x') +
+    scale_fill_phenoptr + 
+    scale_y_continuous(labels=scales::percent) +
+    labs(x='', y='Percent Total Cells per Bin') +
+    theme_phenoptr +
+    theme(axis.text.x=element_text(face='bold', angle=90))
+   
+    print(p)
+    cat('\n\n')
+}
+```
