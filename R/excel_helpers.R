@@ -30,10 +30,7 @@ write_summary_sheet = function(wb, summary_table,
   openxlsx::writeData(wb, sheet_name, summary_table, startRow=1,
                       headerStyle=bold_wrap_style, keepNA=TRUE)
 
-  # Wider, bold Slide ID column
-  openxlsx::setColWidths(wb, sheet_name, 1, 'auto')
-  openxlsx::addStyle(wb, sheet_name, bold_style,
-                     rows=2:(nrow(summary_table)+1), cols=1)
+  format_slide_id(wb, sheet_name, summary_table, first_data_row=2)
 
   # Wider count column
   openxlsx::setColWidths(wb, sheet_name, 2, 11)
@@ -135,10 +132,12 @@ write_density_sheet = function(wb, densities,
 write_expression_sheet = function(wb, exprs,
                                sheet_name='Mean Expression',
                                sheet_title='Mean Expression') {
-  # Subset and re-order columns
+
+  # Subset and re-order columns; remove "(Opal xx) Mean" from names
   exprs = exprs %>%
     dplyr::select(`Slide ID`, `Tissue Category`, dplyr::everything()) %>%
-    dplyr::select(-dplyr::contains('Count'))
+    dplyr::select(-dplyr::contains('Count')) %>%
+    dplyr::rename_all(remove_marker_mean)
 
   write_sheet(wb, exprs, sheet_name, sheet_title, 3)
 
@@ -169,20 +168,67 @@ write_h_score_sheet = function(wb, h_score,
                                 sheet_name='H-Score',
                                 sheet_title=NULL)
 {
-  measure = attr(h_score, 'measure')
+  measure = attr(h_score, 'measure') %>% remove_marker_mean
   if (is.null(sheet_title)) {
     sheet_title = ifelse(is.null(measure),
                          'H-Score', paste0('H-Score, ', measure))
   }
 
-  write_sheet(wb, h_score, sheet_name, sheet_title, 3)
+  d = h_score %>% select(-Total) %>%
+    rename_at(3:6, ~stringr::str_remove(.x, 'Count of '))
+
+  openxlsx::addWorksheet(wb, sheet_name)
+
+  # Write a bold header across all the data columns
+  header_col = 3
+  openxlsx::writeData(wb, sheet_name, startCol=header_col, sheet_title)
+  openxlsx::addStyle(wb, sheet_name, bold_wrap_style, rows=1, cols=1:header_col)
+  merge_and_outline_cells(wb, sheet_name, rows=1, cols=header_col:ncol(d))
+
+  # Write two sub-heads
+  openxlsx::writeData(wb, sheet_name, startCol=3, startRow=2, 'Cells per Bin')
+  merge_and_outline_cells(wb, sheet_name, rows=2, cols=3:6)
+  openxlsx::writeData(wb, sheet_name, startCol=7, startRow=2, 'Percent of Total Cells per Bin')
+  merge_and_outline_cells(wb, sheet_name, rows=2, cols=7:10)
+  openxlsx::addStyle(wb, sheet_name, bold_wrap_style, rows=2, cols=3:10, stack=TRUE)
+
+  # Write the table
+  openxlsx::writeData(wb, sheet_name, d, startRow=3,
+                      headerStyle=bold_wrap_style, keepNA=TRUE)
+
+
+  # Make the initial headers be multiple rows
+  for (col in 1:2) {
+    openxlsx::writeData(wb, sheet_name, startCol=col,
+                        data.frame(xx=names(d)[col]), colNames=FALSE)
+    merge_and_outline_cells(wb, sheet_name, rows=1:3, cols=col)
+  }
+
+  # The rest of the headers get outlined
+  for (col in 3:(ncol(d)-1))
+    outline_cells(wb, sheet_name, rows=3, cols=col)
+
+  # H-Score column is special
+  openxlsx::writeData(wb, sheet_name, startRow=2, startCol=11, 'H-Score')
+  merge_and_outline_cells(wb, sheet_name, rows=2:3, cols=11)
+
+  first_data_row = 4
+  format_slide_id(wb, sheet_name, d, first_data_row)
+
+  # Wider Tissue Category column
+  openxlsx::setColWidths(wb, sheet_name, 2, 11)
+
+  grid_spacing = add_grid_lines(wb, sheet_name, d, header_col, first_data_row)
+
+  # Page formatting
+  insert_page_breaks(wb, sheet_name, d, grid_spacing, num_title_rows=3)
 
   data_rows = 1:nrow(h_score)+2
 
   # Format as percent with one decimal place except for the last column
   # Showing one decimal makes the total add up
   openxlsx::addStyle(wb, sheet_name, percent_style.1,
-                     rows=data_rows, cols=8:11,
+                     rows=data_rows, cols=7:10,
                      gridExpand=TRUE, stack=TRUE)
 }
 
@@ -231,45 +277,64 @@ write_sheet <- function(wb, d, sheet_name, sheet_title, header_col) {
   # Write a bold header across all the data columns
   openxlsx::writeData(wb, sheet_name, startCol=header_col, sheet_title)
   openxlsx::addStyle(wb, sheet_name, bold_wrap_style, rows=1, cols=1:header_col)
-  openxlsx::mergeCells(wb, sheet_name, rows=1, cols=header_col:ncol(d))
+  merge_and_outline_cells(wb, sheet_name, rows=1, cols=header_col:ncol(d))
 
   # Write the table
   openxlsx::writeData(wb, sheet_name, d, startRow=2,
                       headerStyle=bold_wrap_style, keepNA=TRUE)
 
-  # Make the initial headers be two rows
+  first_data_row = 3
+
+  # Make the initial headers be multiple rows
   for (col in 1:(header_col-1)) {
     openxlsx::writeData(wb, sheet_name, startCol=col,
                         data.frame(xx=names(d)[col]), colNames=FALSE)
-    openxlsx::mergeCells(wb, sheet_name, rows=1:2, cols=col)
+    merge_and_outline_cells(wb, sheet_name, rows=1:2, cols=col)
   }
 
-  # Wider, bold Slide ID column
-  openxlsx::setColWidths(wb, sheet_name, 1, 'auto')
-  openxlsx::addStyle(wb, sheet_name, bold_style, rows=3:(nrow(d)+2), cols=1)
+  # The rest of the headers get outlined
+  for (col in header_col:ncol(d))
+    outline_cells(wb, sheet_name, rows=2, cols=col)
+
+  format_slide_id(wb, sheet_name, d, first_data_row)
 
   # Wider Tissue Category column
   openxlsx::setColWidths(wb, sheet_name, 2, 11)
 
-  # Set up grid lines per slide if there are multiple tissue categories
+  grid_spacing = add_grid_lines(wb, sheet_name, d, header_col, first_data_row)
+
+  # Page formatting
+  insert_page_breaks(wb, sheet_name, d, grid_spacing)
+}
+
+# Wider, bold Slide ID column
+format_slide_id <- function(wb, sheet_name, d, first_data_row) {
+  openxlsx::setColWidths(wb, sheet_name, 1, 'auto')
+  openxlsx::addStyle(wb, sheet_name, bold_style,
+                     rows=first_data_row:(nrow(d)+first_data_row-1), cols=1)
+}
+
+# Set up grid lines per slide if there are multiple tissue categories
+add_grid_lines <- function(wb, sheet_name, d, header_col, first_data_row) {
   grid_spacing = length(unique(d$`Tissue Category`))
   if (grid_spacing > 1) {
     # Borders at left, right and bottom of the data portion
+    last_data_row = nrow(d)+first_data_row-1
     openxlsx::addStyle(wb, sheet_name,
                        openxlsx::createStyle(border='Left'),
-                       rows=3:(nrow(d)+2), cols=header_col,
+                       rows=first_data_row:last_data_row, cols=header_col,
                        stack=TRUE)
     openxlsx::addStyle(wb, sheet_name,
                        openxlsx::createStyle(border='Right'),
-                       rows=3:(nrow(d)+2), cols=ncol(d),
+                       rows=first_data_row:last_data_row, cols=ncol(d),
                        stack=TRUE)
     openxlsx::addStyle(wb, sheet_name,
                        openxlsx::createStyle(border='Bottom'),
-                       rows=2+nrow(d), 1:ncol(d),
+                       rows=last_data_row, 1:ncol(d),
                        stack=TRUE)
 
     # Top border at grid spacing
-    for (start_row in seq(3, nrow(d)+3-grid_spacing, grid_spacing))
+    for (start_row in seq(first_data_row, nrow(d)+first_data_row-grid_spacing, grid_spacing))
       openxlsx::addStyle(wb, sheet_name,
                          openxlsx::createStyle(border='Top'),
                          rows=start_row,
@@ -277,15 +342,14 @@ write_sheet <- function(wb, d, sheet_name, sheet_title, header_col) {
                          stack=TRUE)
   }
 
-  # Page formatting
-  insert_page_breaks(wb, sheet_name, d, grid_spacing)
-  # Print titles
+  grid_spacing
 }
 
 insert_page_breaks <- function(wb, sheet_name, d, grid_spacing,
                                num_title_rows = 2,
                                max_rows = 29 # Worst case is the expression worksheet
                                ) {
+  # Print titles
   openxlsx::pageSetup(wb, sheet_name, orientation='landscape',
             printTitleRows = 1:num_title_rows)
 
@@ -299,4 +363,41 @@ insert_page_breaks <- function(wb, sheet_name, d, grid_spacing,
       page_break = page_break + rows_per_page
     }
   }
+}
+
+merge_and_outline_cells = function(wb, sheet_name, rows, cols) {
+  openxlsx::mergeCells(wb, sheet_name, rows=rows, cols=cols)
+  outline_cells(wb, sheet_name, rows, cols)
+}
+
+# Outline the block of cells given by rows x cols
+outline_cells = function(wb, sheet_name, rows, cols) {
+  openxlsx::addStyle(wb, sheet_name,
+                     openxlsx::createStyle(border='Top'),
+                     rows=rows[1],
+                     cols=cols,
+                     stack=TRUE)
+
+  openxlsx::addStyle(wb, sheet_name,
+                     openxlsx::createStyle(border='Left'),
+                     rows=rows,
+                     cols=cols[1],
+                     stack=TRUE)
+
+  openxlsx::addStyle(wb, sheet_name,
+                     openxlsx::createStyle(border='Bottom'),
+                     rows=tail(rows, 1),
+                     cols=cols,
+                     stack=TRUE)
+
+  openxlsx::addStyle(wb, sheet_name,
+                     openxlsx::createStyle(border='Right'),
+                     rows=rows,
+                     cols=tail(cols, 1),
+                     stack=TRUE)
+}
+
+# Remove " (xx xx) Mean" from strings
+remove_marker_mean = function(s) {
+  stringr::str_remove(s, ' \\(.*\\) Mean$')
 }

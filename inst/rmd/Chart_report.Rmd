@@ -8,7 +8,7 @@ params:
   data_path:
     input: file
     label: 'Path to Excel file:'
-    value: F:\DavidC\Trillium AC\Analysis\MelanomaResults\Melanoma_170106-01a_Trillium_AllComers_Results.xlsx
+    value: ''
   max_slides_per_plot:
     input: integer
     label: Maximum number of slides to show on each plot
@@ -198,7 +198,7 @@ if ('Mean Expression' %in% sheet_names) {
 ```{r h_score,results='asis'}
 
 if ('H-Score' %in% sheet_names) {
-  h_score = read_xlsx(data_path, 'H-Score', skip=1)
+  h_score = read_xlsx(data_path, 'H-Score', skip=2)
   
   # Find the marker from the first row, if present
   h_score_title = read_xlsx(data_path, 'H-Score', range='C1', col_names=FALSE) %>% 
@@ -207,9 +207,10 @@ if ('H-Score' %in% sheet_names) {
     title = stringr::str_glue('Cumulative Percent of Cells in {stringr::str_remove(h_score_title, "H-Score,")} Bins')
   } else title = 'Cumulative Percent of Cells in Expression Bins'
   
-  # Reshape for plotting
+  # Clean up duplicate names and reshape for plotting
   tall = h_score %>%
-    select(`Slide ID`, `Tissue Category`, `0+`:`3+`) %>%
+    select(`Slide ID`, `Tissue Category`, 7:10) %>%
+    rename_all(~stringr::str_remove(.x, '__1')) %>% 
     gather('Bin', 'Percent',  -`Slide ID`, -`Tissue Category`) %>% 
     mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`))
   
@@ -219,7 +220,7 @@ if ('H-Score' %in% sheet_names) {
          aes(`Slide ID`, Percent, fill=Bin)) +
     geom_col(position=position_stack(reverse=TRUE)) +
     facet_grid(`Tissue Category` ~ ., switch='x') +
-    scale_fill_phenoptr + 
+    scale_fill_manual(values=phenoptr_colors[c(1, 2, 4, 3)]) + 
     scale_y_continuous(labels=scales::percent) +
     labs(x='', y='Percent Total Cells per Bin') +
     theme_phenoptr +
