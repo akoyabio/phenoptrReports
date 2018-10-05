@@ -15,8 +15,7 @@ bold_wrap_style = openxlsx::createStyle(textDecoration='bold',
 #' Write a table containing counts of fields per slide to
 #' a sheet in an Excel workbook.
 #' @param wb An openxlsx Workbook from [openxlsx::createWorkbook]
-#' @param counts A data frame with columns for `Slide ID`, `Tissue Category`,
-#'   and counts, such as the output of [count_phenotypes].
+#' @param summary_table A data frame with columns for `Slide ID` and count.
 #' @param sheet_name Optional name for the worksheet.
 #' @family output functions
 #' @export
@@ -287,7 +286,7 @@ insert_page_breaks <- function(wb, sheet_name, d, grid_spacing,
                                num_title_rows = 2,
                                max_rows = 29 # Worst case is the expression worksheet
                                ) {
-  pageSetup(wb, sheet_name, orientation='landscape',
+  openxlsx::pageSetup(wb, sheet_name, orientation='landscape',
             printTitleRows = 1:num_title_rows)
 
   # Page breaks should fall on Slide ID boundaries
@@ -296,7 +295,7 @@ insert_page_breaks <- function(wb, sheet_name, d, grid_spacing,
       as.integer((max_rows - num_title_rows)/grid_spacing) * grid_spacing
     page_break = rows_per_page + num_title_rows
     while (page_break < nrow(d)) {
-      pageBreak(wb, sheet_name, page_break)
+      openxlsx::pageBreak(wb, sheet_name, page_break)
       page_break = page_break + rows_per_page
     }
   }

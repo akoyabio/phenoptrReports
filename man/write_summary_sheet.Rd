@@ -9,10 +9,9 @@ write_summary_sheet(wb, summary_table, sheet_name = "Slide Summary")
 \arguments{
 \item{wb}{An openxlsx Workbook from \link[openxlsx:createWorkbook]{openxlsx::createWorkbook}}
 
-\item{sheet_name}{Optional name for the worksheet.}
+\item{summary_table}{A data frame with columns for \code{Slide ID} and count.}
 
-\item{counts}{A data frame with columns for \code{Slide ID}, \code{Tissue Category},
-and counts, such as the output of \link{count_phenotypes}.}
+\item{sheet_name}{Optional name for the worksheet.}
 }
 \description{
 Write a table containing counts of fields per slide to
