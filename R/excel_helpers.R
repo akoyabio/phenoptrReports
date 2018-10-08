@@ -174,8 +174,8 @@ write_h_score_sheet = function(wb, h_score,
                          'H-Score', paste0('H-Score, ', measure))
   }
 
-  d = h_score %>% select(-Total) %>%
-    rename_at(3:6, ~stringr::str_remove(.x, 'Count of '))
+  d = h_score %>% dplyr::select(-Total) %>%
+    dplyr::rename_at(3:6, ~stringr::str_remove(.x, 'Count of '))
 
   openxlsx::addWorksheet(wb, sheet_name)
 
@@ -386,14 +386,14 @@ outline_cells = function(wb, sheet_name, rows, cols) {
 
   openxlsx::addStyle(wb, sheet_name,
                      openxlsx::createStyle(border='Bottom'),
-                     rows=tail(rows, 1),
+                     rows=utils::tail(rows, 1),
                      cols=cols,
                      stack=TRUE)
 
   openxlsx::addStyle(wb, sheet_name,
                      openxlsx::createStyle(border='Right'),
                      rows=rows,
-                     cols=tail(cols, 1),
+                     cols=utils::tail(cols, 1),
                      stack=TRUE)
 }
 
