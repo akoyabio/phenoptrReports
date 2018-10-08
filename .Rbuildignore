@@ -3,3 +3,5 @@
 
 .lintr
 ^inst/analysis_app/sample_data$
+^tools$
+^tests/testthat/test_data/temp$

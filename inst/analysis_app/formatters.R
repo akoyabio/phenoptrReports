@@ -3,8 +3,7 @@
 
 # Format everything.
 format_all = function(all_data) {
-  # Get values from all the phenotype modules
-  phenotype_values = purrr::map(all_data$phenotype_modules, function(ph) ph())
+  phenotype_values = all_data$phenotype_values
 
   # Filter null values that happen when the controls are created,
   # then missing phenotype
@@ -193,4 +192,10 @@ write_summary_charts(workbook_path, charts_path)
 ')
 
 paste0(start, counts, density, expression, h_score, end)
+}
+
+
+# Hmisc::escapeRegex
+escapeRegex = function(string) {
+  gsub("([.|()\\^{}+$*?]|\\[|\\])", "\\\\\\1", string)
 }

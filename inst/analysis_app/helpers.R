@@ -14,8 +14,3 @@ find_common_prefix <- function(x) {
 
   substring(x[1], 1, first_diff-1)
 }
-
-# Hmisc::escapeRegex
-escapeRegex = function(string) {
-  gsub("([.|()\\^{}+$*?]|\\[|\\])", "\\\\\\1", string)
-}

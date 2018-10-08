@@ -16,8 +16,13 @@ shinyServer(function(input, output, server) {
   file_data = shiny::callModule(files_module, 'files')
 
   # Consolidated data for the formatter
+  # all_data() should not contain any reactive objects
+  # This allows making test values for formatter
   all_data = reactive({
-    c(reactiveValuesToList(the_data), purrr::map(file_data, ~.()))
+    ad = c(reactiveValuesToList(the_data), purrr::map(file_data, ~.()))
+    ad$phenotype_values = purrr::map(ad$phenotype_modules, function(ph) ph())
+    ad$phenotype_modules = NULL
+    ad
   })
 
   # Handle changes in file_data$input_path by initializing the Analysis tab
