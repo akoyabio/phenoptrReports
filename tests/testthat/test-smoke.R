@@ -10,13 +10,12 @@ test_that("file generation works", {
   dir.create(output_dir)
 
   # Data structure for format_all
-  # This does not test H-Score :-/
   all_data = list(use_regex = FALSE,
                   slide_id_prefix = "Set",
                   tissue_categories = c("Tumor", "Stroma"),
                   input_path = file.path(data_dir, "Consolidated_data.txt"),
                   summary_path = file.path(data_dir, "Merge_cell_seg_data_summary.txt"),
-                  score_path = NULL,
+                  score_path = file.path(data_dir, "Merge_score_data.txt"),
                   output_dir = output_dir,
                   phenotype_values = list(
                     list(phenotype = "CD8+", expression = "Membrane PDL1 (Opal 520) Mean"),
@@ -49,8 +48,9 @@ test_that("file generation works", {
   expect_equal(excel_sheets(actual_results), sheets)
 
   for (sheet in sheets) {
-    actual_sheet = read_excel(actual_results, sheet, skip=1)
-    expected_sheet = read_excel(expected_results, sheet, skip=1)
+    skip = ifelse(sheet=='H-Score', 2, 1)
+    actual_sheet = read_excel(actual_results, sheet, skip=skip)
+    expected_sheet = read_excel(expected_results, sheet, skip=skip)
     expect_equal(actual_sheet, expected_sheet)
   }
 })
