@@ -14,7 +14,7 @@ LazyData: true
 Imports:
     dplyr (>= 0.7.5),
     forcats,
-    ggplot2,
+    ggplot2 (>= 2.2.0),
     knitr,
     magrittr,
     miniUI (>= 0.1.1),

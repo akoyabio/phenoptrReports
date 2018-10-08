@@ -43,7 +43,7 @@ phenoptr_colors = c(
 )
 
 scale_fill_phenoptr = scale_fill_manual(values=phenoptr_colors)
-scale_x_expand = scale_x_discrete(expand=expand_scale(add=1))
+scale_x_expand = scale_x_discrete(expand=c(0, 1, 0, 1)) # expand_scale(add=1)
 base_line = geom_hline(yintercept=0, color='grey50')
 
 theme_phenoptr = theme_minimal() +
