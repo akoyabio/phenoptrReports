@@ -5,8 +5,11 @@ context("smoke")
 test_that("file generation works", {
   # Make a test directory
   data_dir = normalizePath(test_path('test_data'), winslash='/', mustWork=FALSE)
-  output_dir = file.path(data_dir, 'temp')
-  if (dir.exists(output_dir)) unlink(output_dir, recursive=TRUE)
+  output_dir = normalizePath(test_path('results'), winslash='/', mustWork=FALSE)
+  if (dir.exists(output_dir)) {
+    unlink(output_dir, recursive=TRUE)
+    sys.sleep(0.1) # Wait for it...
+  }
   dir.create(output_dir)
 
   # Data structure for format_all

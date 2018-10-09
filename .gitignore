@@ -1,4 +1,4 @@
-tests/testthat/test_data/temp
+tests/testthat/results
 .Rproj.user
 .Rhistory
 .RData
