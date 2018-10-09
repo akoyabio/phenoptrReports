@@ -2,7 +2,7 @@
 % Please edit documentation in R/mean_expression.R
 \name{compute_mean_expression}
 \alias{compute_mean_expression}
-\title{Compute mean expression of top-expressing cells for a single phenotype}
+\title{Compute mean expression of cells for a single phenotype and marker.}
 \usage{
 compute_mean_expression(csd, phenotype, param, percentile = NULL,
   count = NULL)
@@ -17,7 +17,9 @@ for the slides or fields of interest.}
 \item{param}{The parameter (column) to report, as a string.}
 
 \item{percentile}{The percentile cutoff for top-expressing cells. For
-example, to measure the top quartile, the percentile is 0.75.}
+example, to measure the top quartile, the percentile is 0.75. Negative
+numbers will use low-expressing cells; to measure the bottom decile,
+use a percentile of -0.1.}
 
 \item{count}{The number of top expressing cells to use. Only one of
 \code{percentile} and \code{count} can be provided. If both are omitted,
@@ -27,7 +29,7 @@ the mean expression of all cells is returned.}
 A data frame with columns for count and mean.
 }
 \description{
-Find the cells with the highest expression of the given parameter
+Find the cells with the highest (or lowest) expression of the given parameter
 within the given phenotype.
 Report the mean expression of the high-expressing cells.
 }

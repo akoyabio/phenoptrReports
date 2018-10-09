@@ -2,7 +2,7 @@
 % Please edit documentation in R/mean_expression.R
 \name{compute_mean_expression_many}
 \alias{compute_mean_expression_many}
-\title{Compute mean expression of top-expressing cells for multiple phenotypes}
+\title{Compute mean expression of cells for multiple phenotypes and markers.}
 \usage{
 compute_mean_expression_many(csd, phenotypes, params,
   tissue_categories = NULL, percentile = NULL, count = NULL)
@@ -21,7 +21,9 @@ expression column names.}
 \item{tissue_categories}{Optional vector of tissue category names to include.}
 
 \item{percentile}{The percentile cutoff for top-expressing cells. For
-example, to measure the top quartile, the percentile is 0.75.}
+example, to measure the top quartile, the percentile is 0.75. Negative
+numbers will use low-expressing cells; to measure the bottom decile,
+use a percentile of -0.1.}
 
 \item{count}{The number of top expressing cells to use. Only one of
 \code{percentile} and \code{count} can be provided. If both are omitted,
@@ -33,11 +35,26 @@ A data frame with columns for count and mean for each \code{param_pair}.
 }
 \description{
 For each given combination of phenotype and expression parameter,
-find the cells with the highest expression within the phenotype.
-Report the mean expression of the high-expressing cells.
+report the mean expression of the given marker in the specified cells.
 }
 \details{
-High expression may be specified by a percentile cutoff or a count of cells.
+This is a very flexible function. If \code{percentile} and \code{count} are both
+omitted, it will compute the mean expression for all cells in the
+given phenotype. If either \code{percentile} or \code{count} is given, the mean
+expression of the highest expressing cells is computed. If a negative
+\code{percentile} is given, the lowest percentile is used; for example
+\code{percentile=-.1} would give the expression of the lowest-expressing
+decile.
+
+By default, this function aggregates by \code{Slide ID} and \code{Tissue Category}.
+To compute mean expression by a different aggregate, pass a data frame nested by
+the desired columns. For example, to aggregate by field and tissue
+category, pass
+\code{tidyr::nest(csd, -`Slide ID`, -`Sample Name`, -`Tissue Category`)}
+as the \code{csd} parameter.
+
+To aggregate over all cells, include \code{"Total Cells"=NA} as one of the
+phenotypes.
 }
 \seealso{
 Other aggregation functions: \code{\link{compute_density_from_cell_summary}},

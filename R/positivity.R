@@ -26,10 +26,7 @@ compute_positivity_many = function(csd, phenotypes, positivity_pairs,
 {
   check_phenotypes(purrr::map_chr(positivity_pairs, 1), phenotypes)
 
-  if (!is.null(tissue_categories))
-    csd = csd %>% dplyr::filter(`Tissue Category` %in% tissue_categories)
-
-  csd = make_nested(csd)
+  csd = make_nested(csd, tissue_categories)
 
   # Function to compute all positivities for a single nested data frame
   compute_data_frame = function(d) {

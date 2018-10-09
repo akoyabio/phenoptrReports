@@ -2,12 +2,16 @@
 % Please edit documentation in R/utilities.R
 \name{make_nested}
 \alias{make_nested}
-\title{Make a nested data frame with one row per Slide ID and Tissue Category.}
+\title{Make a nested data frame with one row per Slide ID and
+optionally Tissue Category.}
 \usage{
-make_nested(csd)
+make_nested(csd, tissue_categories = NULL)
 }
 \arguments{
 \item{csd}{Cell seg data to use, possibly nested already.}
+
+\item{tissue_categories}{If provided, the result will be filtered
+and nested by the provided categories.}
 }
 \value{
 A nested data frame.

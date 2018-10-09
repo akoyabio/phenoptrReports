@@ -3,13 +3,28 @@ utils::globalVariables(c(
   "data"
 ))
 
-#' Compute mean expression of top-expressing cells for multiple phenotypes
+#' Compute mean expression of cells for multiple phenotypes and markers.
 #'
 #' For each given combination of phenotype and expression parameter,
-#' find the cells with the highest expression within the phenotype.
-#' Report the mean expression of the high-expressing cells.
+#' report the mean expression of the given marker in the specified cells.
 #'
-#' High expression may be specified by a percentile cutoff or a count of cells.
+#' This is a very flexible function. If `percentile` and `count` are both
+#' omitted, it will compute the mean expression for all cells in the
+#' given phenotype. If either `percentile` or `count` is given, the mean
+#' expression of the highest expressing cells is computed. If a negative
+#' `percentile` is given, the lowest percentile is used; for example
+#' `percentile=-.1` would give the expression of the lowest-expressing
+#' decile.
+#'
+#' By default, this function aggregates by `Slide ID` and `Tissue Category`.
+#' To compute mean expression by a different aggregate, pass a data frame nested by
+#' the desired columns. For example, to aggregate by field and tissue
+#' category, pass
+#' ``tidyr::nest(csd, -`Slide ID`, -`Sample Name`, -`Tissue Category`)``
+#' as the `csd` parameter.
+#'
+#' To aggregate over all cells, include `"Total Cells"=NA` as one of the
+#' phenotypes.
 #'
 #' @param csd Cell seg data to use. This should already have been filtered
 #'   for the slides or fields of interest. It may already be nested by
@@ -20,7 +35,9 @@ utils::globalVariables(c(
 #'   expression column names.
 #' @param tissue_categories Optional vector of tissue category names to include.
 #' @param percentile The percentile cutoff for top-expressing cells. For
-#'   example, to measure the top quartile, the percentile is 0.75.
+#'   example, to measure the top quartile, the percentile is 0.75. Negative
+#'   numbers will use low-expressing cells; to measure the bottom decile,
+#'   use a percentile of -0.1.
 #' @param count The number of top expressing cells to use. Only one of
 #'   `percentile` and `count` can be provided. If both are omitted,
 #'   all cells matching the phenotype are used and the result is the
@@ -35,11 +52,7 @@ compute_mean_expression_many = function(
 {
   check_phenotypes(names(params), phenotypes)
 
-  if (!is.null(tissue_categories)) {
-    csd = csd %>% dplyr::filter(`Tissue Category` %in% tissue_categories)
-  }
-
-  csd = make_nested(csd)
+  csd = make_nested(csd, tissue_categories)
 
   # Function to compute all expressions for a single nested data frame
   compute_means = function(d) {
@@ -54,10 +67,15 @@ compute_mean_expression_many = function(
 
       # Make nice column names so we can bind them all together
       count_name = paste(name, 'Count')
-      param_what = dplyr::case_when(!is.null(percentile) ~
-                                      paste0(' >', percentile*100, '%ile'),
-                          !is.null(count) ~paste(' Top', count),
-                          TRUE ~ '')
+
+      # Avoid `-NULL` in the case_when...
+      safe_percentile = ifelse(is.null(percentile), 0, percentile)
+
+      param_what = dplyr::case_when(
+        !is.null(percentile) && percentile > 0 ~ paste0(' >= ', safe_percentile*100, '%ile'),
+        !is.null(percentile) && percentile < 0 ~ paste0(' <= ', -safe_percentile*100, '%ile'),
+        !is.null(count) ~ paste(' Top', count),
+        TRUE ~ '')
       param_name = paste0(name, param_what, ' ', param)
       d %>% dplyr::rename(!!count_name := count, !!param_name := mean)
     })
@@ -84,9 +102,9 @@ compute_mean_expression_many = function(
   result
 }
 
-#' Compute mean expression of top-expressing cells for a single phenotype
+#' Compute mean expression of cells for a single phenotype and marker.
 #'
-#' Find the cells with the highest expression of the given parameter
+#' Find the cells with the highest (or lowest) expression of the given parameter
 #' within the given phenotype.
 #' Report the mean expression of the high-expressing cells.
 #'
@@ -96,7 +114,9 @@ compute_mean_expression_many = function(
 #'   [phenoptr::select_rows].
 #' @param param The parameter (column) to report, as a string.
 #' @param percentile The percentile cutoff for top-expressing cells. For
-#'   example, to measure the top quartile, the percentile is 0.75.
+#'   example, to measure the top quartile, the percentile is 0.75. Negative
+#'   numbers will use low-expressing cells; to measure the bottom decile,
+#'   use a percentile of -0.1.
 #' @param count The number of top expressing cells to use. Only one of
 #'   `percentile` and `count` can be provided. If both are omitted,
 #'   the mean expression of all cells is returned.
@@ -116,8 +136,8 @@ compute_mean_expression = function(
   if (!is.null(percentile) && !is.null(count))
     stop("Please specify only one of percentile or count, not both")
 
-  if (!is.null(percentile) && (percentile<0 || percentile > 1))
-    stop("percentile must be in the range 0 - 1.")
+  if (!is.null(percentile) && (percentile==0 || percentile< -1 || percentile > 1))
+    stop("percentile must be non-zero and in the range -1 to 1.")
 
   if (!is.null(count) && count < 1)
     stop("count must be >= 1.")
@@ -126,8 +146,13 @@ compute_mean_expression = function(
   d = csd[phenoptr::select_rows(csd, phenotype),][[param]]
 
   if (!is.null(percentile)) {
-    cutoff = stats::quantile(d, percentile, na.rm=TRUE)
-    m = mean(d[d>=cutoff], na.rm=TRUE)
+    # Top or bottom percentile
+    cutoff = stats::quantile(d, abs(percentile), na.rm=TRUE)
+    if (percentile > 0) {
+      m = mean(d[d>=cutoff], na.rm=TRUE)
+    } else {
+      m = mean(d[d<=cutoff], na.rm=TRUE)
+    }
   } else if (!is.null(count)) {
     # Top n
     m = mean(d[dplyr::min_rank(dplyr::desc(d)) <= count], na.rm=TRUE)
