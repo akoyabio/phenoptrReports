@@ -31,7 +31,7 @@ all cells matching the phenotype are used and the result is the
 overall mean expression.}
 }
 \value{
-A data frame with columns for count and mean for each \code{param_pair}.
+A data frame with a column for mean for each \code{param_pair}.
 }
 \description{
 For each given combination of phenotype and expression parameter,
