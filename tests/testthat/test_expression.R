@@ -40,6 +40,45 @@ test_that("mean expression per phenotype and tissue category calculation works",
                                     count=20)
 })
 
+test_that("mean expression with multiple markers works", {
+  csd_path = test_path('test_data', 'Consolidated_data.txt')
+  csd = phenoptr::read_cell_seg_data(csd_path)
+  tissue_categories = c("Tumor", "Stroma")
+  phenotypes = phenoptr::parse_phenotypes('CD8+', 'CD68+')
+  params = list("CD8+" = "Membrane PDL1 (Opal 520) Mean",
+                "CD68+" = "Membrane PDL1 (Opal 520) Mean",
+                "CD68+" = "Membrane PD1 (Opal 650) Mean")
+
+  ex = compute_mean_expression_many(csd, phenotypes, params, tissue_categories)
+
+  expect_equal(names(ex),
+               c("Slide ID", "Tissue Category",
+                 "CD8+ Membrane PDL1 (Opal 520) Mean",
+                 "CD68+ Membrane PDL1 (Opal 520) Mean",
+                 "CD68+ Membrane PD1 (Opal 650) Mean"))
+
+  expect_equal(ex$`CD8+ Membrane PDL1 (Opal 520) Mean`,
+               c(0.856125, 2.03454545454545, 3.3575, 2.33060714285714, 1.94514285714286,
+                 1.48879069767442))
+
+  expect_equal(ex$`CD68+ Membrane PDL1 (Opal 520) Mean`,
+               c(5.96084615384615, 5.03644186046512, 8.04607407407407, 6.45196590909091,
+                 4.96588888888889, 5.38612962962963))
+
+  expect_equal(ex$`CD68+ Membrane PD1 (Opal 650) Mean`,
+               c(3.61384615384615, 5.70811627906977, 2.37055555555556, 3.16760227272727,
+                 3.79894444444444, 5.07297222222222))
+
+  # Mean expression of top 20 cells, just check that it runs
+  ex = compute_mean_expression_many(csd, phenotypes, params, tissue_categories,
+                                    count=20)
+  expect_equal(names(ex),
+               c("Slide ID", "Tissue Category",
+                 "CD8+ Top 20 Membrane PDL1 (Opal 520) Mean",
+                 "CD68+ Top 20 Membrane PDL1 (Opal 520) Mean",
+                 "CD68+ Top 20 Membrane PD1 (Opal 650) Mean"))
+})
+
 test_that('mean expression per field works', {
   csd_path = test_path('test_data', 'Consolidated_data.txt')
   csd = phenoptr::read_cell_seg_data(csd_path)

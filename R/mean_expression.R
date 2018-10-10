@@ -42,7 +42,7 @@ utils::globalVariables(c(
 #'   `percentile` and `count` can be provided. If both are omitted,
 #'   all cells matching the phenotype are used and the result is the
 #'   overall mean expression.
-#' @return A data frame with columns for count and mean for each `param_pair`.
+#' @return A data frame with a column for mean for each `param_pair`.
 #' @family aggregation functions
 #' @importFrom magrittr %>%
 #' @importFrom rlang !! :=
@@ -56,18 +56,17 @@ compute_mean_expression_many = function(
 
   # Function to compute all expressions for a single nested data frame
   compute_means = function(d) {
-    purrr::map_dfc(names(params), ~{
+    purrr::map_dfc(seq_along(params), function(ix) {
       # Phenotype name, phenotype selector, expression parameter name
-      name = .x
+      # Use numeric indexing on params to allow multiple markers per phenotype
+      name = names(params)[ix]
       phenotype = phenotypes[[name]]
-      param = params[[name]]
+      param = params[[ix]]
 
       # Compute a single expression value
       d = compute_mean_expression(d, phenotype, param, percentile, count)
 
       # Make nice column names so we can bind them all together
-      count_name = paste(name, 'Count')
-
       # Avoid `-NULL` in the case_when...
       safe_percentile = ifelse(is.null(percentile), 0, percentile)
 
@@ -77,7 +76,9 @@ compute_mean_expression_many = function(
         !is.null(count) ~ paste(' Top', count),
         TRUE ~ '')
       param_name = paste0(name, param_what, ' ', param)
-      d %>% dplyr::rename(!!count_name := count, !!param_name := mean)
+      d %>%
+        dplyr::select(-count) %>%
+        dplyr::rename(!!param_name := mean)
     })
   }
 
