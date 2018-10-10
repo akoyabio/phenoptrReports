@@ -3,9 +3,9 @@ Title: Create reports using Phenoptics data
 Version: 0.0.0.9000
 Authors@R: c(
     person("Kent S", "Johnson", role = c("aut", "cre"),
-           email = "kent.johnson@perkinelmer.com"),
-    person("PerkinElmer, Inc.", role="cph"))
-Copyright: PerkinElmer
+           email = "kjohnson@akoyabio.com"),
+    person("Akoya Biosciences", role="cph"))
+Copyright: Akoya Biosciences
 Description: Creates diagnostic and summary reports from inForm data.
 Depends: R (>= 3.5.0)
 License: Zlib | file LICENSE
@@ -33,7 +33,7 @@ Imports:
     UpSetR (>= 1.4.0),
     utils
 Remotes:
-    PerkinElmer/phenoptr,
+    akoyabio/phenoptr,
     hms-dbmi/UpSetR
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.0
