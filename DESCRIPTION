@@ -33,7 +33,7 @@ Imports:
     UpSetR (>= 1.4.0),
     utils
 Remotes:
-    PerkinElmer/phenoptr@9006,
+    PerkinElmer/phenoptr,
     hms-dbmi/UpSetR
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.0
