@@ -8,7 +8,7 @@ test_that("file generation works", {
   output_dir = normalizePath(test_path('results'), winslash='/', mustWork=FALSE)
   if (dir.exists(output_dir)) {
     unlink(output_dir, recursive=TRUE)
-    sys.sleep(0.1) # Wait for it...
+    Sys.sleep(0.1) # Wait for it...
   }
   dir.create(output_dir)
 
