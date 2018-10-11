@@ -1,0 +1,133 @@
+---
+title: "Signal to Noise Measurements"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+params:
+  export_path: 
+    label: "Path to directory with component data"
+    value: F:\Opal\180926 9color\181010 9 color libraries for Kent\Export new bands
+    input: file
+---
+
+<style type="text/css">
+table {
+    width: auto !important;
+    max-width: 100%;
+    margin-bottom: 20px;
+    margin-left: 0px;
+}
+</style>
+
+```{r setup, echo=FALSE,include=FALSE,message=FALSE}
+knitr::opts_chunk$set(echo=FALSE,fig.width=9, fig.height=6, 
+                      comment=NA, warning=FALSE, message=FALSE)
+
+library(tidyverse)
+library(phenoptr)
+```
+
+Signal-to-noise measurements  on singly-stained samples
+from <pre>`r params$export_path`</pre>.
+
+```{r functions}
+process_file = function(path, primary_fluor, percentile=NULL) {
+  # Read the components and get the primary one
+  comps = read_components(path)
+
+  if (!primary_fluor %in% names(comps))
+    stop('Primary fluor ', primary_fluor, ' not found in component data file"', path, '"')
+
+  primary = comps[[primary_fluor]]
+
+  # Find the top-expressing `percentile` pixels
+  if (is.null(percentile)) {
+    # Find the top-expressing 3200 pixels, approximately.
+    # The magic number is from Carla
+    percentile = 1-3200/prod(dim(primary))
+  }
+
+  cutoff = quantile(primary, percentile)
+  mask = primary >= cutoff
+
+  signals = purrr::map_dfc(comps, ~ dplyr::tibble(Mean=mean(.x[mask]))) %>%
+    purrr::set_names(names(comps))
+
+  sn = signals / signals[[primary_fluor]]
+
+  signals$Primary = sn$Primary = primary_fluor
+  signals$Source = sn$Source = basename(path)
+
+  list(signals=signals, sn=sn)
+}
+
+# Guess a fluor name from a file path
+file_to_fluor = function(path) {
+  # For now, everything before the first _ is some kind of identifier
+  code = stringr::str_extract(basename(path), '[^_]+')
+  switch (code,
+          'DAPI' = 'DAPI',
+          '431' = 'Opal 480',
+          'AF' = 'Autofluorescence',
+          paste('Opal', code))
+}
+
+```
+
+```{r data}
+comp_files = list.files(params$export_path, pattern='component_data.tif', full.names=TRUE)
+
+# Put DAPI first
+dapi_files = stringr::str_detect(comp_files, 'DAPI')
+comp_files = c(comp_files[dapi_files], comp_files[!dapi_files])
+crosstalk = purrr::map_dfr(comp_files, function(path) {
+  process_file(path, file_to_fluor(path))$sn
+})
+
+crosstalk = crosstalk %>%
+  dplyr::select(Primary, Source, DAPI, dplyr::everything())
+```
+
+```{r format}
+library(formattable)
+
+to_display = crosstalk %>% 
+  select(-Primary, -Autofluorescence) %>% 
+  mutate_at(-1, percent, digits=1)
+
+# Put columns in alpha order with DAPI first
+to_display = to_display[sort(names(to_display))] %>% 
+  select(Source, matches('DAPI'), everything())
+
+# Make a color_tile variation
+my_color = function(x) {
+  color = ifelse(x==1, 'transparent',
+         ifelse(x<0.005, 'green',
+                ifelse(x<0.01, 'olive',
+                       ifelse(x<0.1, 'goldenrod',
+                              ifelse(x<0.3, 'darkorange', 'orangered')))))
+  csscolor(color)
+}
+
+my_color = function(x) {
+  color = ifelse(x==1, 'white',
+         ifelse(x<=0.005, '#1a9850',
+                ifelse(x<0.01, '#1a9850',
+                       ifelse(x<0.1, '#fdae61',
+                              ifelse(x<0.3, '#f46d43', '#d73027')))))
+  csscolor(color)
+}
+
+my_font_weight= function(x) ifelse(x>0.005, 'bold', 'normal')
+my_color_tile = function (...) 
+{
+    formatter("span", style = function(x) formattable::style(display = "block", 
+        padding = "0 4px", `border-radius` = "4px",
+        color = my_color(x), `font-weight`=my_font_weight(x)))
+}
+
+formats = purrr::map(names(to_display)[-1], my_color_tile) %>% 
+  purrr::set_names(names(to_display)[-1])
+
+formattable(to_display, formats, align=c('l', rep('r', ncol(to_display)-1)))
+```
+

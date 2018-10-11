@@ -52,3 +52,18 @@ write_summary_charts = function(worksheet_path, output_path) {
                     output_format=output_format,
                     params=list(data_path=worksheet_path))
 }
+
+#' Create a signal-to-noise report for simplex samples
+#'
+#' @param export_path Path to a directory containing component_data files
+signal_to_noise = function(export_path) {
+  stopifnot(dir.exists(export_path))
+
+  rmd_path = system.file("rmd", "Signal_to_noise.Rmd",
+                         package="phenoptrReports")
+
+  output_path = file.path(export_path, 'Signal_to_noise.html')
+  rmarkdown::render(rmd_path, output_file=output_path,
+                    params=list(export_path = export_path))
+
+}
