@@ -22,6 +22,7 @@ test_that("file generation works", {
                   output_dir = output_dir,
                   phenotype_values = list(
                     list(phenotype = "CD8+", expression = "Membrane PDL1 (Opal 520) Mean"),
+                    list(phenotype = "CD8+", expression = "Membrane PD1 (Opal 650) Mean"),
                     list(phenotype = "CD68+", expression = "Membrane PDL1 (Opal 520) Mean"),
                     list(phenotype = "FoxP3+", expression = 'NA'),
                     list(phenotype = "CK+", expression = "Membrane PDL1 (Opal 520) Mean"),
@@ -54,6 +55,6 @@ test_that("file generation works", {
     skip = ifelse(sheet=='H-Score', 2, 1)
     actual_sheet = read_excel(actual_results, sheet, skip=skip)
     expected_sheet = read_excel(expected_results, sheet, skip=skip)
-    expect_equal(actual_sheet, expected_sheet)
+    expect_equal(actual_sheet, expected_sheet, info=paste('Sheet name:', sheet))
   }
 })
