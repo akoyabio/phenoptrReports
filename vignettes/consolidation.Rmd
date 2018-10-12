@@ -1,0 +1,96 @@
+---
+title: "Consolidating inForm data"
+author: "Kent Johnson"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Data consolidation overview
+
+The first step in a `phenoptrReports` analysis is data consolidation.
+
+The consolidation step combines the output from multiple inForm projects into a 
+single consolidated data file and creates columns for each individual
+phenotype. The inputs to this step are merged cell seg data files from
+multiple inForm projects. The output is a consolidated data file and a
+summary report for each file. 
+
+NOTE: The consolidation step will fail if 
+the Slide IDs and Cell IDs in the merge files do not exactly agree. This can
+happen, for example, if
+
+- the projects use different cell segmentation parameters
+- different fields were included in the merge step
+- a region of interest or disinterest was drawn in the merge step
+
+Run the consolidation step even if your data comes from a single
+inForm project. This creates a data file in the format that the analysis
+step uses.
+
+## Detailed steps
+
+#### Choose "Consolidate and summarize" from the RStudio Addins menu
+
+Thus will open the consolidation app.
+
+![](figures/Consolidate_addin.png)
+
+#### Select input files  
+
+Click the "Browse Input" button in the "Select merge data files" section of 
+the GUI. Use the file selection dialog to select your inForm merge data files.
+If the files are in multiple directories, click the Browse button multiple
+times to select them.
+  
+![](figures/Select_merge_files.PNG "")
+
+#### Select output directory
+
+Click the "Browse Output" button in the "Select output directory" section of
+the GUI. Use the directory selection dialog to create a new directory to
+contain the output files.
+
+![](figures/Select_output_directory.PNG)
+
+#### Process files
+
+Click the "Process Files" button to start processing of the selected files. 
+
+![](figures/Process_files.png)
+
+A small progress meter will open to show progress. Any errors will be shown
+in the RStudio Console pane.
+
+![](figures/Processing_please_wait.png)
+
+#### View summary reports
+
+When processing completes, the output directory will contain
+several files:
+
+- `Consolidated_data.txt` - A data file containing the consolidated results
+- `Consolidated_data.html` - A report containing summary information about
+  the consolidated data
+- Summary reports for each merge file that contributed to the result
+
+The consolidated data file is used for the actual analysis. The summary reports
+contain an overview of the data, including
+
+- number of fields per slide
+- number of cells of each phenotype per slide
+- visualizations of the combination phenotypes present in the data
+
+#### Next: Analysis
+
+Continue to `vignette('analysis')` to learn how to complete your analysis.

@@ -2,3 +2,4 @@ tests/testthat/results
 .Rproj.user
 .Rhistory
 .RData
+inst/doc

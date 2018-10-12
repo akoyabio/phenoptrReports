@@ -1,6 +1,7 @@
 Package: phenoptrReports
 Title: Create reports using Phenoptics data
-Version: 0.0.0.9000
+Version: 0.1.0.0
+Date: 2018-10-15
 Authors@R: c(
     person("Kent S", "Johnson", role = c("aut", "cre"),
            email = "kjohnson@akoyabio.com"),
@@ -39,3 +40,9 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.0
 Suggests:
     testthat
+URL:
+    https://akoyabio.github.io/phenoptrReports/,
+    https://github.com/akoyabio/phenoptrReports/
+BugReports: https://github.com/akoyabio/phenoptrReports/issues
+Maintainer: Kent S Johnson <kjohnson@akoyabio.com>
+VignetteBuilder: knitr
