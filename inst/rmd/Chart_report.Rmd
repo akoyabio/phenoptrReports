@@ -178,7 +178,7 @@ if ('Mean Expression' %in% sheet_names) {
       if (length(tall_one_measure) > 1) {
         cat(stringr::str_glue('## {d$Measure[1]} ({i} of {length(tall_one_measure)})\n\n'))
       } else {
-        cat(stringr::str_glue('## {d$Measure[1]}'))
+        cat(stringr::str_glue('## {d$Measure[1]}\n\n'))
       }
       p = ggplot(d, aes(Phenotype, Mean, fill=Phenotype)) +
         base_line +

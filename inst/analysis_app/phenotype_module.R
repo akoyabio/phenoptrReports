@@ -44,6 +44,8 @@ phenotype_module = function(input, output, session, phenotypes) {
         shiny::p('Individual phenotypes can be combined with slash (/) or comma (,).'),
         shiny::p('Combine with a slash to define double positive phenotypes, for example CD3+/CD8+.'),
         shiny::p('Combine with a comma to allow either phenotype, for example CD68+,CD163+.'),
+        shiny::p(shiny::a('Online Help',
+                          href="https://akoyabio.github.io/phenoptrReports/articles/analysis.html")),
         title = 'Defining phenotypes',
         footer=NULL, easyClose = TRUE, fade = FALSE))
   })

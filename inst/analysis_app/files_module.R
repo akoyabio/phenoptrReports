@@ -56,7 +56,11 @@ browse_file_module = function(input, output, session, default_dir,
 files_module_ui = function(id) {
   ns = shiny::NS(id)
 
-  intro = shiny::p('Use this panel to select input files and an output directory.')
+  intro = shiny::tagList(
+    shiny::p('Use this panel to select input files and an output directory.',
+    shiny::HTML('&nbsp;&nbsp;'),
+    shiny::a('Online Help',
+      href="https://akoyabio.github.io/phenoptrReports/articles/analysis.html")))
   shiny::tabPanel(
     'Files',
      intro,
@@ -79,7 +83,7 @@ files_module_ui = function(id) {
        shiny::hr(),
 
        browse_file_module_ui(ns('score_file'),
-         'Optional: Select a scoring file to compute positivity or H-Score.',
+         'Optional: Select a scoring file to compute H-Score.',
          'Browse...')
      ))
   )

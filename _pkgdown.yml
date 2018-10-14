@@ -1,0 +1,85 @@
+url: http://akoyabio.github.io/phenoptrReports
+
+template:
+  params:
+    bootswatch: cerulean
+
+navbar:
+  type: inverse
+  title: "phenoptrReports"
+  left:
+    - icon: fa-home fa-lg
+      href: index.html
+    - text: "Tutorials"
+      menu:
+        - text: "Consolidating inForm data"
+          href: articles/consolidation.html
+        - text: "Analyzing inForm data"
+          href: articles/analysis.html
+    - text: "Reference"
+      href: reference/index.html
+  right:
+   - icon: fa-newspaper-o
+     text: "news"
+     href: news/index.html
+   - icon: fa-github fa-lg
+     text: github
+     href: https://github.com/akoyabio/phenoptrReports
+
+articles:
+  - title: Tutorials
+    contents:
+    - consolidation
+    - analysis
+
+reference:
+  - title: RStudio Addins
+    desc: These functions are added to the RStudio Addins menu. Selecting
+          one opens a GUI.
+    contents:
+      - '`analysis_app`'
+      - '`merge_addin`'
+  - title: Consolidation
+    desc: These functions implement the consolidation step.
+    contents:
+      - '`merge_and_split_cell_seg_data`'
+      - '`merge_and_summarize_cell_seg_data`'
+  - title: Calculations
+    desc: These functions perform the calculations for an analysis.
+    contents:
+      - '`compute_density_from_cell_summary`'
+      - '`compute_density_from_table`'
+      - '`compute_h_score`'
+      - '`compute_h_score_from_score_data`'
+      - '`compute_mean_expression`'
+      - '`compute_mean_expression_many`'
+      - '`compute_positivity`'
+      - '`compute_positivity_many`'
+      - '`counts_to_percents`'
+      - '`count_phenotypes`'
+  - title: Reporting
+    desc: These functions write analysis results to Excel worksheets.
+    contents:
+      - '`write_counts_sheet`'
+      - '`write_density_sheet`'
+      - '`write_expression_sheet`'
+      - '`write_h_score_sheet`'
+      - '`write_percents_sheet`'
+      - '`write_plot_sheet`'
+      - '`write_sheet`'
+      - '`write_summary_charts`'
+      - '`write_summary_report`'
+      - '`write_summary_sheet`'
+  - title: Helper functions
+    contents:
+      - '`add_tissue_category_totals`'
+      - '`check_phenotypes`'
+      - '`make_nested`'
+      - '`make_unique_names`'
+      - '`order_by_slide_and_tissue_category`'
+      - '`split_phenotypes`'
+      - '`upset_data`'
+      - '`upset_plot`'
+
+toc:
+  depth: 4

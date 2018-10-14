@@ -2,6 +2,9 @@
 ^\.Rproj\.user$
 
 .lintr
+^docs$
 ^inst/analysis_app/sample_data$
 ^tools$
 ^tests/testthat/results$
+^_pkgdown\.yml$
+
