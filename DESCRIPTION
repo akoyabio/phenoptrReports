@@ -1,6 +1,6 @@
 Package: phenoptrReports
 Title: Create reports using Phenoptics data
-Version: 0.1.0.0
+Version: 0.1.0
 Date: 2018-10-15
 Authors@R: c(
     person("Kent S", "Johnson", role = c("aut", "cre"),
