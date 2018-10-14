@@ -23,7 +23,10 @@ shiny::shinyUI(shiny::tagList(
   shiny::tabPanel('Run',
                   shiny::actionButton('process', 'Create Report'),
                   shiny::br(), shiny::br(),
-                  shiny::p('This script will be saved and run.'),
+                  shiny::p('This script will be saved and run.',
+                           shiny::HTML('&nbsp;&nbsp;'),
+                           shiny::a('Online Help',
+                                    href="https://akoyabio.github.io/phenoptrReports/articles/analysis.html")),
                   shiny::verbatimTextOutput('the_script')
   )
 
