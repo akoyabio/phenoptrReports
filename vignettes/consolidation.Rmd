@@ -93,4 +93,6 @@ contain an overview of the data, including
 
 #### Next: Analysis
 
-Continue to `vignette('analysis')` to learn how to complete your analysis.
+Continue to the 
+[next tutorial](analysis.html)
+to learn how to complete your analysis.
