@@ -16,6 +16,17 @@ table {
     margin-bottom: 20px;
     margin-left: 0px;
 }
+
+.fill-cell>tbody>tr>td {
+  padding: 0px;
+  border-color: black;
+  border: 1px solid;
+}
+
+.fill-cell>thead>tr>th {
+  border-color: black;
+  border: 1px solid;
+}
 </style>
 
 ```{r setup, echo=FALSE,include=FALSE,message=FALSE}
@@ -98,36 +109,61 @@ to_display = crosstalk %>%
 to_display = to_display[sort(names(to_display))] %>% 
   select(Source, matches('DAPI'), everything())
 
+my_gradient = function(colors) {
+  grad = colorRamp(colors, space='Lab')
+  function(x) {
+    color = grad(x)
+    colnames(color)= c('red', 'green', 'blue')
+    csscolor(round(t(color), 0), format='rgb')
+  }
+}
+
+# Overall maximum
+limit = max({x<-unlist(to_display[,-1]); x[x<1]})
+
+# Colors for the green-yellow-red/orange ramp
+# Excel colors from Carla
+# green = '#00B050'
+# yellow = '#FFEB84'
+# red_orange = '#ED7D31'
+
+# These are a bit more saturated
+green = '#08b151'
+yellow = 'gold'
+red_orange = 'red'
+
+my_color = function(x) {
+  cutpt = 0.015
+  green_ramp = my_gradient(c(green, yellow))
+  yellow_ramp = my_gradient(c(yellow, red_orange))
+  ifelse(x==1, csscolor('white'), # Don't show 100%
+         ifelse(x<=cutpt, green_ramp(x/cutpt),
+                yellow_ramp((x-cutpt)/(limit-cutpt))))
+}
+
+my_font_weight= function(x) ifelse(x>0.005 & x<1, 'bold', 'normal')
+
 # Make a color_tile variation
-my_color = function(x) {
-  color = ifelse(x==1, 'transparent',
-         ifelse(x<0.005, 'green',
-                ifelse(x<0.01, 'olive',
-                       ifelse(x<0.1, 'goldenrod',
-                              ifelse(x<0.3, 'darkorange', 'orangered')))))
-  csscolor(color)
-}
-
-my_color = function(x) {
-  color = ifelse(x==1, 'white',
-         ifelse(x<=0.005, '#1a9850',
-                ifelse(x<0.01, '#1a9850',
-                       ifelse(x<0.1, '#fdae61',
-                              ifelse(x<0.3, '#f46d43', '#d73027')))))
-  csscolor(color)
-}
-
-my_font_weight= function(x) ifelse(x>0.005, 'bold', 'normal')
 my_color_tile = function (...) 
 {
     formatter("span", style = function(x) formattable::style(display = "block", 
-        padding = "0 4px", `border-radius` = "4px",
-        color = my_color(x), `font-weight`=my_font_weight(x)))
+        padding = "3px", `border-radius` = "0px",
+        `background-color` = my_color(x), 
+        color = ifelse(x==1, 'white', 'black'),
+        `font-weight`=my_font_weight(x)))
+}
+
+padded_cell = function (...) 
+{
+    formatter("span", style = function(x) formattable::style(display = "block", 
+        padding = "3px"))
 }
 
 formats = purrr::map(names(to_display)[-1], my_color_tile) %>% 
-  purrr::set_names(names(to_display)[-1])
+  purrr::set_names(names(to_display)[-1]) %>% 
+  c(list(Source=padded_cell('Source')))
 
-formattable(to_display, formats, align=c('l', rep('r', ncol(to_display)-1)))
+formattable(to_display, formats, align=c('l', rep('r', ncol(to_display)-1)),
+            table.attr = "class=\"table table-condensed fill-cell\"")
 ```
 
