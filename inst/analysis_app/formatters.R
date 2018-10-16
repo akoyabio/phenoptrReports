@@ -31,10 +31,13 @@ format_all = function(all_data) {
 
 # Initial matter
 format_header = function() {
-  'library(tidyverse)
+  stringr::str_glue('# Created by phenoptrReports {packageVersion("phenoptrReports")} on {Sys.Date()}
+# http://akoyabio.github.io/phenoptrReports
+
+library(tidyverse)
 library(phenoptr)
 library(phenoptrReports)
-library(openxlsx)\n\n'
+library(openxlsx)\n\n')
 }
 
 # Format reading cell seg data and making summary table
