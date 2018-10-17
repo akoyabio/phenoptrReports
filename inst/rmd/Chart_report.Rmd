@@ -214,7 +214,7 @@ if ('H-Score' %in% sheet_names) {
     gather('Bin', 'Percent',  -`Slide ID`, -`Tissue Category`) %>% 
     mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`))
   
-  # H-Score plots as one bar per slide so we don't have to split_slides
+  # Cumulative percent plots as one bar per slide so we don't have to split_slides
   cat('##', title, '\n\n')
   p = ggplot(tall,
          aes(`Slide ID`, Percent, fill=Bin)) +
@@ -223,6 +223,20 @@ if ('H-Score' %in% sheet_names) {
     scale_fill_manual(values=phenoptr_colors[c(1, 2, 4, 3)]) + 
     scale_y_continuous(labels=scales::percent) +
     labs(x='', y='Percent Total Cells per Bin') +
+    theme_phenoptr +
+    theme(axis.text.x=element_text(face='bold', angle=90))
+   
+    print(p)
+    cat('\n\n')
+
+  # H-Score is also one plot
+  h_score = h_score %>% 
+    mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`))
+  cat('##', h_score_title, '\n\n')
+  p = ggplot(h_score, aes(`Slide ID`, `H-Score`)) +
+    geom_col(fill=phenoptr_colors[1]) +
+    facet_grid(`Tissue Category` ~ ., switch='x') +
+    labs(x='', y='H-Score') +
     theme_phenoptr +
     theme(axis.text.x=element_text(face='bold', angle=90))
    
