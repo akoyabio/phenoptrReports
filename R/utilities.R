@@ -72,3 +72,11 @@ check_phenotypes = function(params, phenotypes) {
     stop("These phenotypes are not defined: ",
          paste(missing_phenotypes, collapse=' ,'), '.')
 }
+
+#' Get the name of the column that distinguishes fields in a merged cell
+#' seg data file.
+#' @param csd Cell seg data
+#' @return A column name (as a string)
+field_column = function(csd) {
+  if_else('Annotation ID' %in% names(csd), 'Annotation ID', 'Sample Name')
+}

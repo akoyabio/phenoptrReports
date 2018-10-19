@@ -4,6 +4,7 @@ shinyServer(function(input, output, server) {
   # Data container. Will contain
   # available_phenotypes - Base names (no +/-) of all available phenotypes
   # expression_columns - Names of mean expression columns
+  # field_col - Name of the column that distinguishes fields
   # phenotype_modules - A list of phenotype_module
   # slide_id_prefix - Slide ID prefix to remove
   # tissue_categories - User-selected tissue categories
@@ -37,6 +38,7 @@ shinyServer(function(input, output, server) {
     d = phenoptr::read_cell_seg_data(file_data$input_path())
     tissue_categories = unique(d$`Tissue Category`)
     the_data$expression_columns = stringr::str_subset(names(d), 'Mean$')
+    the_data$field_col = phenoptrReports:::field_column(d)
 
     the_data$available_phenotypes = available_phenotypes = names(d) %>%
       stringr::str_subset('Phenotype ') %>%

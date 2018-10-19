@@ -35,6 +35,7 @@ if (is.null(params$csd_path) == is.null(params$csd))
   stop('csd_path or csd must be provided but not both.')
 
 csd = if (!is.null(params$csd)) params$csd else read_cell_seg_data(params$csd_path)
+field_col = phenoptrReports:::field_column(csd)
 
 # If csd_path was provided, look for a companion 'rejected' file
 rejected = NULL
@@ -66,23 +67,23 @@ if (!is.null(params$dataset_name)) {
 
 ## Slides and fields
 
-This file contains data on `r n_distinct(csd[['Sample Name']])` fields 
+This file contains data on `r n_distinct(csd[[field_col]])` fields 
 taken from `r n_distinct(csd[['Slide ID']])` slides:
 
 ```{r}
 csd %>% group_by(`Slide ID`) %>% 
-  summarize(`Number of fields`=n_distinct(`Sample Name`))
+  summarize(`Number of fields`=n_distinct(!!rlang::sym(field_col)))
 ```
 
 ```{r results='asis'}
 if (!is.null(rejected)) {
   cat('\n\n### Rejected fields\n\n')
-  cat(n_distinct(rejected[['Sample Name']]), 
+  cat(n_distinct(rejected[[field_col]]), 
       ' fields from ', n_distinct(rejected[['Slide ID']]), 
       ' slides were rejected in the merge step:\n\n', sep='')
   
   rejected %>% group_by(`Slide ID`) %>% 
-    summarize(`Number of fields`=n_distinct(`Sample Name`))
+    summarize(`Number of fields`=n_distinct(!!rlang::sym(field_col)))
 }
 ```
 

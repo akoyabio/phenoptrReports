@@ -19,7 +19,7 @@ format_all = function(all_data) {
 
   paste0(
     format_header(),
-    format_path(all_data$input_path),
+    format_path(all_data$input_path, all_data$field_col),
     format_tissue_categories(all_data$tissue_categories),
     format_phenotypes(phenos),
     ifelse(has$density, format_density(all_data$summary_path), ''),
@@ -41,7 +41,7 @@ library(openxlsx)\n\n')
 }
 
 # Format reading cell seg data and making summary table
-format_path = function(path) {
+format_path = function(path, field_col) {
   path = stringr::str_replace_all(path, '\\\\', '/')
   stringr::str_glue('# Read the consolidated data file
 csd_path = "{path}"
@@ -49,7 +49,7 @@ csd = read_cell_seg_data(csd_path)
 
 # Make a table summarizing the number of fields per slide
 summary_table = csd %>% group_by(`Slide ID`) %>%
-                    summarize(`Number of fields`=n_distinct(`Sample Name`))\n\n\n')
+                    summarize(`Number of fields`=n_distinct(`{field_col}`))\n\n\n')
 }
 
 # Format tissue categories

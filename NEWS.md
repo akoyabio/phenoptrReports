@@ -8,6 +8,7 @@ New features:
 Bug fixes:
 - Fix order of slides in Mean Expression report
 - Don't crash cell seg summary report when a slide has only one phenotype
+- Correctly report number of fields for data derived from a whole-slide scan
 
 # phenoptrReports 0.1.0.0
 **2018-10-15**

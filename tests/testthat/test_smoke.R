@@ -20,6 +20,7 @@ test_that("file generation works", {
                   summary_path = file.path(data_dir, "Merge_cell_seg_data_summary.txt"),
                   score_path = file.path(data_dir, "Merge_score_data.txt"),
                   output_dir = output_dir,
+                  field_col = 'Sample Name',
                   phenotype_values = list(
                     list(phenotype = "CD8+", expression = "Membrane PDL1 (Opal 520) Mean"),
                     list(phenotype = "CD8+", expression = "Membrane PD1 (Opal 650) Mean"),
