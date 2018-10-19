@@ -35,6 +35,10 @@ shinyServer(function(input, output, server) {
     shiny::req(file_data$input_path())
 
     # Read the data file and get some info about it
+    shiny::showModal(
+      shiny::modalDialog(
+        shiny::p('Reading input data...'), title='Please wait', footer=NULL))
+
     d = phenoptr::read_cell_seg_data(file_data$input_path())
     tissue_categories = unique(d$`Tissue Category`)
     the_data$expression_columns = stringr::str_subset(names(d), 'Mean$')
@@ -46,6 +50,8 @@ shinyServer(function(input, output, server) {
 
     the_data$slide_id_prefix = slide_id_prefix =
       find_common_prefix(unique(d$`Slide ID`))
+
+    shiny::removeModal()
 
     # Create the initial GUI with tissue and phenotype selectors
     new_ui = shiny::tagList(
