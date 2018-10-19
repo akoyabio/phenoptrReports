@@ -164,7 +164,8 @@ if (!'Phenotype' %in% names(csd) && require(UpSetR)) {
   # And for each slide
   for (slide in unique(csd$`Slide ID`)) {
     cat('\n\n#### Phenotype combinations, ', slide, '\n\n', sep='')
-    print(upset_plot(csd %>% filter(`Slide ID`==slide)))
+    p = upset_plot(csd %>% filter(`Slide ID`==slide))
+    if (is.null(p)) cat('This slide has only one positive phenotype.\n\n') else print(p)
   }
 }
 ```

@@ -87,16 +87,8 @@ compute_mean_expression_many = function(
     dplyr::select(-data) %>%
     tidyr::unnest()
 
-  # Fix up the row order so Slide ID order is preserved and
-  # tissue categories are in the order given
   if (!is.null(tissue_categories)) {
-    slides = unique(result$`Slide ID`)
-    slide_order = seq_along(slides) %>% rlang::set_names(slides)
-    tissue_order = seq_along(tissue_categories) %>%
-      rlang::set_names(tissue_categories)
-    result = result %>%
-      dplyr::arrange(slide_order[`Slide ID`],
-                     tissue_order[`Tissue Category`]) %>%
+    result = order_by_slide_and_tissue_category(result, tissue_categories) %>%
       dplyr::select(`Slide ID`, `Tissue Category`, dplyr::everything())
   }
 

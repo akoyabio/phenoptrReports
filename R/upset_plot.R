@@ -32,6 +32,11 @@ upset_data = function(d) {
 upset_plot = function(csd, expected=NULL) {
   d = upset_data(csd)
 
+  # UpSetR fails if there is only a single positive phenotype
+  # In that case just return NULL
+  if (sum(colSums(d)>0) < 2)
+    return(NULL)
+
   # If we have expected phenotypes, convert to the form
   # upset uses.
   if (is.null(expected)) queries = NULL else {
