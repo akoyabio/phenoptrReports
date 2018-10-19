@@ -5,7 +5,7 @@ output: rmarkdown::html_vignette
 params:
   export_path: 
     label: "Path to directory with component data"
-    value: F:\Opal\180926 9color\181010 9 color libraries for Kent\Export new bands
+    value: F:\Opal\Export_test
     input: file
 ---
 
@@ -40,7 +40,11 @@ library(phenoptr)
 Signal-to-noise measurements  on singly-stained samples
 from <pre>`r params$export_path`</pre>.
 
+### Crosstalk
+
 ```{r functions}
+n_bright = 3200 # Number of bright pixels to find
+
 process_file = function(path, primary_fluor, percentile=NULL) {
   # Progress output
   message('Processing fluor ', primary_fluor, ' from ', path)
@@ -55,9 +59,9 @@ process_file = function(path, primary_fluor, percentile=NULL) {
 
   # Find the top-expressing `percentile` pixels
   if (is.null(percentile)) {
-    # Find the top-expressing 3200 pixels, approximately.
+    # Find the top-expressing n_bright pixels, approximately.
     # The magic number is from Carla
-    percentile = 1-3200/prod(dim(primary))
+    percentile = 1-n_bright/prod(dim(primary))
   }
 
   cutoff = quantile(primary, percentile)
@@ -166,3 +170,19 @@ formattable::formattable(to_display, formats,
             table.attr = "class=\"table table-condensed fill-cell\"")
 ```
 
+### What is this?
+
+The crosstalk table shows the relative signal level of each fluor in
+the components where the fluor should not express.
+
+For each image, the brightest `r scales::comma(n_bright)` pixels are found. 
+The report computes the mean expression of those pixels in each component.
+The ratio of non-signal component strength to signal component strength
+is reported as a percent.
+
+Each column in the report shows crosstalk into the component named
+at the top of the column. Crosstalk comes from
+the fluors represented by the files listed in the first column.
+
+<br><br><br>
+<p align='center'>![](Akoya.png){height=50px style='border:none;'}</p>
