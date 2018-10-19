@@ -87,7 +87,7 @@ file_to_fluor = function(path) {
   if (stringr::str_detect(name, 'AF')) return('Autofluorescence')
 
   # If Opal is in the name, find the following number
-  opal_match = stringr::str_match(name, 'Opal[^\\d]{0,1}(\\d+)')[1,2]
+  opal_match = stringr::str_match(name, 'Opal[^\\d]{0,1}(\\d{3})[^\\d]')[1,2]
 
   if (is.na(opal_match)) {
     # If the name starts with three digits followed by a non-digit, use that
