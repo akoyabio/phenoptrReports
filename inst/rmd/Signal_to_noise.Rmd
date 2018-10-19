@@ -42,6 +42,9 @@ from <pre>`r params$export_path`</pre>.
 
 ```{r functions}
 process_file = function(path, primary_fluor, percentile=NULL) {
+  # Progress output
+  message('Processing fluor ', primary_fluor, ' from ', path)
+  
   # Read the components and get the primary one
   comps = read_components(path)
 
@@ -71,17 +74,6 @@ process_file = function(path, primary_fluor, percentile=NULL) {
   list(signals=signals, sn=sn)
 }
 
-# Guess a fluor name from a file path
-file_to_fluor = function(path) {
-  # For now, everything before the first _ is some kind of identifier
-  code = stringr::str_extract(basename(path), '[^_]+')
-  switch (code,
-          'DAPI' = 'DAPI',
-          '431' = 'Opal 480',
-          'AF' = 'Autofluorescence',
-          paste('Opal', code))
-}
-
 ```
 
 ```{r data}
@@ -91,7 +83,7 @@ comp_files = list.files(params$export_path, pattern='component_data.tif', full.n
 dapi_files = stringr::str_detect(comp_files, 'DAPI')
 comp_files = c(comp_files[dapi_files], comp_files[!dapi_files])
 crosstalk = purrr::map_dfr(comp_files, function(path) {
-  process_file(path, file_to_fluor(path))$sn
+  process_file(path, phenoptrReports:::file_to_fluor(path))$sn
 })
 
 crosstalk = crosstalk %>%
@@ -101,20 +93,22 @@ crosstalk = crosstalk %>%
 ```{r format}
 library(formattable)
 
+message('Creating report')
+
 to_display = crosstalk %>% 
-  select(-Primary, -Autofluorescence) %>% 
-  mutate_at(-1, percent, digits=1)
+  dplyr::select(-Primary, -Autofluorescence) %>% 
+  dplyr::mutate_at(-1, percent, digits=1)
 
 # Put columns in alpha order with DAPI first
 to_display = to_display[sort(names(to_display))] %>% 
-  select(Source, matches('DAPI'), everything())
+  dplyr::select(Source, dplyr::matches('DAPI'), dplyr::everything())
 
 my_gradient = function(colors) {
   grad = colorRamp(colors, space='Lab')
   function(x) {
     color = grad(x)
     colnames(color)= c('red', 'green', 'blue')
-    csscolor(round(t(color), 0), format='rgb')
+    formattable::csscolor(round(t(color), 0), format='rgb')
   }
 }
 
@@ -146,7 +140,9 @@ my_font_weight= function(x) ifelse(x>0.005 & x<1, 'bold', 'normal')
 # Make a color_tile variation
 my_color_tile = function (...) 
 {
-    formatter("span", style = function(x) formattable::style(display = "block", 
+    formattable::formatter("span", 
+                           style = function(x) 
+                             formattable::style(display = "block", 
         padding = "3px", `border-radius` = "0px",
         `background-color` = my_color(x), 
         color = ifelse(x==1, 'white', 'black'),
@@ -155,7 +151,9 @@ my_color_tile = function (...)
 
 padded_cell = function (...) 
 {
-    formatter("span", style = function(x) formattable::style(display = "block", 
+    formattable::formatter("span", 
+                           style = function(x) 
+                             formattable::style(display = "block", 
         padding = "3px"))
 }
 
@@ -163,7 +161,8 @@ formats = purrr::map(names(to_display)[-1], my_color_tile) %>%
   purrr::set_names(names(to_display)[-1]) %>% 
   c(list(Source=padded_cell('Source')))
 
-formattable(to_display, formats, align=c('l', rep('r', ncol(to_display)-1)),
+formattable::formattable(to_display, formats, 
+                         align=c('l', rep('r', ncol(to_display)-1)),
             table.attr = "class=\"table table-condensed fill-cell\"")
 ```
 
