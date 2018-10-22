@@ -55,6 +55,38 @@ devtools::install_github("akoyabio/phenoptrReports")
 A `phenoptrReports` analysis has two major steps - data consolidation and data
 aggregation.
 
+### Data requirements
+
+`phenoptrReports` creates reports based on inForm output files.
+
+#### Tissue segmentation
+
+inForm projects used with `phenoptrReports` must include a tissue 
+segmentation step.
+
+#### Phenotypes
+
+The names of positive phenotypes used with `phenoptrReports` must end
+with "+", for example "CD8+" or "FoxP3+". Negative and "Other"
+phenotype names should not end in "+".
+
+#### Merged cell seg data
+
+The primary source data for `phenoptrReports` is 
+one or more merged cell seg data files created in the inForm merge step.
+You may use multiple merge files from multiple inForm projects with different 
+phenotypes. The Slide ID and Cell ID fields in multiple merge files 
+must agree exactly. 
+
+#### Other files
+
+Two other input files are optional. 
+
+If provided, `phenotprReports` will use a merged cell seg summary file
+to compute tissue area and cell density within tissue categories. 
+A score data summary file is used to compute H-Score per slide and 
+tissue category.
+
 ### Data consolidation
 
 Start the consolidation step by selecting **Consolidate and summarize** from
