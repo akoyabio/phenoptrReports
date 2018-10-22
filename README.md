@@ -73,7 +73,7 @@ phenotype names should not end in "+".
 #### Merged cell seg data
 
 The primary source data for `phenoptrReports` is 
-one or more merged cell seg data files created in the inForm merge step.
+one or more merged cell seg data files created in the inForm Review/Merge tab.
 You may use multiple merge files from multiple inForm projects with different 
 phenotypes. The Slide ID and Cell ID fields in multiple merge files 
 must agree exactly. 

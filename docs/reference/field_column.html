@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Count phenotypes per slide and tissue category — count_phenotypes • phenoptrReports</title>
+<title>Get the name of the column that distinguishes fields in a merged cell
+seg data file. — field_column • phenoptrReports</title>
 
 <link rel="shortcut icon" type="image/x-icon" href="../favicon.ico">
 
@@ -32,11 +33,11 @@
 
 
 
-<meta property="og:title" content="Count phenotypes per slide and tissue category — count_phenotypes" />
+<meta property="og:title" content="Get the name of the column that distinguishes fields in a merged cell
+seg data file. — field_column" />
 
-<meta property="og:description" content="Count selected phenotypes, aggregating by Slide ID and Tissue Category.
-If multiple tissue categories are selected, include a Total row for
-each Slide ID." />
+<meta property="og:description" content="Get the name of the column that distinguishes fields in a merged cell
+seg data file." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -125,59 +126,33 @@ each Slide ID." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Count phenotypes per slide and tissue category</h1>
-    <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/count_phenotypes.R'><code>R/count_phenotypes.R</code></a></small>
-    <div class="hidden name"><code>count_phenotypes.Rd</code></div>
+    <h1>Get the name of the column that distinguishes fields in a merged cell
+seg data file.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/utilities.R'><code>R/utilities.R</code></a></small>
+    <div class="hidden name"><code>field_column.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Count selected phenotypes, aggregating by Slide ID and Tissue Category.
-If multiple tissue categories are selected, include a Total row for
-each Slide ID.</p>
+    <p>Get the name of the column that distinguishes fields in a merged cell
+seg data file.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>count_phenotypes</span>(<span class='no'>csd</span>, <span class='no'>phenotypes</span>, <span class='no'>tissue_categories</span>)</pre>
+    <pre class="usage"><span class='fu'>field_column</span>(<span class='no'>csd</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>csd</th>
-      <td><p>Cell seg data to use. This should already have been filtered
-for the slides or fields of interest.</p></td>
-    </tr>
-    <tr>
-      <th>phenotypes</th>
-      <td><p>A named list of phenotype selectors
-(see <a href='http://akoyabio.github.io/phenoptr/reference/parse_phenotypes.html'>phenoptr::parse_phenotypes</a>). Results will be
-reported in the same order as phenotypes are listed here. To include a
-row total, <code>phenotypes</code> should contain a "Total" item.</p></td>
-    </tr>
-    <tr>
-      <th>tissue_categories</th>
-      <td><p>A character vector of tissue category names
-of interest.</p></td>
+      <td><p>Cell seg data</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data frame with columns for Slide ID, Tissue Category, cell
-counts for each requested phenotype, and total cells.</p>
-    
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p>Other aggregation functions: <code><a href='compute_density_from_cell_summary.html'>compute_density_from_cell_summary</a></code>,
-  <code><a href='compute_density_from_table.html'>compute_density_from_table</a></code>,
-  <code><a href='compute_h_score_from_score_data.html'>compute_h_score_from_score_data</a></code>,
-  <code><a href='compute_h_score.html'>compute_h_score</a></code>,
-  <code><a href='compute_mean_expression_many.html'>compute_mean_expression_many</a></code>,
-  <code><a href='compute_mean_expression.html'>compute_mean_expression</a></code>,
-  <code><a href='compute_positivity_many.html'>compute_positivity_many</a></code>,
-  <code><a href='compute_positivity.html'>compute_positivity</a></code>,
-  <code><a href='counts_to_percents.html'>counts_to_percents</a></code></p></div>
+    <p>A column name (as a string)</p>
     
 
   </div>
@@ -187,8 +162,6 @@ counts for each requested phenotype, and total cells.</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-
-      <li><a href="#see-also">See also</a></li>
           </ul>
 
   </div>

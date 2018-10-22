@@ -1,4 +1,5 @@
-# phenoptrReports 0.1.0.9000
+# phenoptrReports 0.1.1.0
+**2018-10-22**
 
 New features:
 - Add version number, date stamp and doco link to generated script file #2

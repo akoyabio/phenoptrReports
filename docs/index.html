@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">phenoptrReports</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0.0</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
       </span>
     </div>
 
@@ -130,6 +130,32 @@ devtools::install_github("akoyabio/phenoptrReports")</code></pre>
 <h2 class="hasAnchor">
 <a href="#getting-started" class="anchor"></a>Getting Started</h2>
 <p>A <code>phenoptrReports</code> analysis has two major steps - data consolidation and data aggregation.</p>
+<div id="data-requirements" class="section level3">
+<h3 class="hasAnchor">
+<a href="#data-requirements" class="anchor"></a>Data requirements</h3>
+<p><code>phenoptrReports</code> creates reports based on inForm output files.</p>
+<div id="tissue-segmentation" class="section level4">
+<h4 class="hasAnchor">
+<a href="#tissue-segmentation" class="anchor"></a>Tissue segmentation</h4>
+<p>inForm projects used with <code>phenoptrReports</code> must include a tissue segmentation step.</p>
+</div>
+<div id="phenotypes" class="section level4">
+<h4 class="hasAnchor">
+<a href="#phenotypes" class="anchor"></a>Phenotypes</h4>
+<p>The names of positive phenotypes used with <code>phenoptrReports</code> must end with “+”, for example “CD8+” or “FoxP3+”. Negative and “Other” phenotype names should not end in “+”.</p>
+</div>
+<div id="merged-cell-seg-data" class="section level4">
+<h4 class="hasAnchor">
+<a href="#merged-cell-seg-data" class="anchor"></a>Merged cell seg data</h4>
+<p>The primary source data for <code>phenoptrReports</code> is one or more merged cell seg data files created in the inForm Review/Merge tab. You may use multiple merge files from multiple inForm projects with different phenotypes. The Slide ID and Cell ID fields in multiple merge files must agree exactly.</p>
+</div>
+<div id="other-files" class="section level4">
+<h4 class="hasAnchor">
+<a href="#other-files" class="anchor"></a>Other files</h4>
+<p>Two other input files are optional.</p>
+<p>If provided, <code>phenotprReports</code> will use a merged cell seg summary file to compute tissue area and cell density within tissue categories. A score data summary file is used to compute H-Score per slide and tissue category.</p>
+</div>
+</div>
 <div id="data-consolidation" class="section level3">
 <h3 class="hasAnchor">
 <a href="#data-consolidation" class="anchor"></a>Data consolidation</h3>
