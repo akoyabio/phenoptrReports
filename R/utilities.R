@@ -73,32 +73,3 @@ check_phenotypes = function(params, phenotypes) {
          paste(missing_phenotypes, collapse=' ,'), '.')
 }
 
-#' Guess a fluor name from the name of a singleplex image.
-#'
-#' This only works for DAPI, AF and Opal fluors
-#'
-#' @param path A file path
-#' @return A fluor name
-file_to_fluor = function(path) {
-  name = basename(path)
-
-  # Check a couple of easy special cases
-  if (stringr::str_detect(name, 'DAPI')) return('DAPI')
-  if (stringr::str_detect(name, 'AF')) return('Autofluorescence')
-
-  # If Opal is in the name, find the following number
-  opal_match = stringr::str_match(name, 'Opal[^\\d]{0,1}(\\d{3})[^\\d]')[1,2]
-
-  if (is.na(opal_match)) {
-    # If the name starts with three digits followed by a non-digit, use that
-    opal_match = stringr::str_match(name, '^(\\d{3})[^\\d]')[1,2]
-  }
-
-  if (is.na(opal_match))
-    stop("Cant' guess fluor name for ", name)
-
-  # Fixup for 430 and 431 => 480
-  if (opal_match %in% c('430', '431')) opal_match = '480'
-
-  return(stringr::str_glue('Opal {opal_match}'))
-}
