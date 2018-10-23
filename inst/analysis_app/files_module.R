@@ -107,10 +107,11 @@ files_module = function(input, output, session) {
        if (is.null(d)) {
          browse_error = 'Error reading file.'
        } else if ('Phenotype' %in% names(d) ||
-                  (sum(stringr::str_detect(names(d), 'Phenotype '))==0) ||
-                  !'Slide ID' %in% names(d) ||
-                  !'Tissue Category' %in% names(d)) {
+                  (sum(stringr::str_detect(names(d), 'Phenotype '))==0)) {
          browse_error = 'Please select a consolidated data file.'
+       }else if (!'Slide ID' %in% names(d) ||
+                 !'Tissue Category' %in% names(d)) {
+         browse_error = 'This analysis requires a data file with "Slide ID" and "Tissue Category" columns.'
        } else {
          browse_error = ''
        }
