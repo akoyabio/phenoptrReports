@@ -172,7 +172,7 @@ to_display = to_display[sort(names(to_display))] %>%
 min_own_value = to_display %>% mutate(Fluor=primary_fluors) %>% 
   dplyr::select(-Source) %>% 
   tidyr::gather('Component', 'Value', -Fluor) %>% 
-  dplyr::filter(Fluor==Component) %>% 
+  dplyr::filter(stringr::str_detect(Component, Fluor)) %>% 
   dplyr::pull(Value) %>% 
   min()
 
@@ -210,13 +210,14 @@ if (require(ggridges)){
   all_primaries %>% 
     filter(primary > 0) %>% 
     ggplot(aes(log10(primary), forcats::fct_rev(Source), fill=Fluor)) +
-    geom_density_ridges(aes(height=..density..), color='gray50', stat='density') +
-    xlim(-1, NA) +
+    geom_density_ridges(color='gray50') +
     labs(x=expression(bold(log[10](Expression))), y='') +
     scale_fill_brewer(palette='Spectral') +
     guides(color='none', fill='none') +
     theme_minimal() +
-    theme(axis.text.y=element_text(face='bold', hjust=0))
+    theme(axis.text.y=element_text(face='bold', hjust=0, vjust=0)) +
+    scale_x_continuous(expand = c(0.01, 0), limits=c(-1, NA)) +
+    scale_y_discrete(expand = c(0.01, 0))
 } else {
   # ggplot version
   ggplot(all_primaries, aes(log10(primary), color=Fluor, fill=Fluor)) +

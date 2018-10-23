@@ -14,6 +14,7 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     dplyr (>= 0.7.5),
+    formattable (>= 0.2),
     forcats,
     ggplot2 (>= 2.2.0),
     knitr,
@@ -26,6 +27,7 @@ Imports:
     readxl,
     rlang,
     rmarkdown,
+    scales,
     shiny (>= 0.13),
     stringr,
     tibble,
@@ -39,6 +41,7 @@ Remotes:
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.0
 Suggests:
+    ggridges,
     testthat
 URL:
     https://akoyabio.github.io/phenoptrReports/,

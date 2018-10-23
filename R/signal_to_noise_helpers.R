@@ -50,10 +50,11 @@ process_file = function(path, primary_fluor,
   # Read the components and get the primary one
   comps = read_components(path)
 
-  if (!primary_fluor %in% names(comps))
+  primary_fluor_ix = which(stringr::str_detect(names(comps), primary_fluor))
+  if (length(primary_fluor_ix) != 1)
     stop('Primary fluor ', primary_fluor, ' not found in component data file"', path, '"')
 
-  primary = comps[[primary_fluor]]
+  primary = comps[[primary_fluor_ix]]
 
   # Find the top-expressing `percentile` pixels
   if (is.null(percentile)) {
@@ -69,7 +70,7 @@ process_file = function(path, primary_fluor,
   signals = purrr::map_dfc(comps, ~ dplyr::tibble(Mean=mean(.x[mask]))) %>%
     purrr::set_names(names(comps))
 
-  sn = signals / signals[[primary_fluor]]
+  sn = signals / signals[[primary_fluor_ix]]
 
   signals$Primary = sn$Primary = primary_fluor
   signals$Source = sn$Source = basename(path)

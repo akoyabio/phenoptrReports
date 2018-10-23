@@ -40,7 +40,7 @@ signal_to_noise_addin = function() {
       shiny::br(), shiny::br(),
 
       shiny::actionButton('browse', 'Browse...'),
-      shiny::br(),
+      shiny::br(), shiny::br(),
       shiny::textOutput('export_dir')
       ),
 
