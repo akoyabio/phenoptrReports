@@ -69,7 +69,8 @@ format_phenotypes = function(vals) {
   phenos = unique(phenos)
 
   # Always do all cells
-  if (!any(stringr::str_detect(phenos, 'Total|All')))
+  if (!any(stringr::str_detect(phenos,
+                               stringr::regex('Total|All', ignore_case=TRUE))))
     phenos = c(unique(phenos), 'Total Cells')
 
   phenos_string = paste(phenos, collapse='", "')
