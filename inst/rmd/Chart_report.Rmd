@@ -97,27 +97,38 @@ if ('Cell Counts' %in% sheet_names) {
   tall = counts %>%
     gather('Phenotype', 'Cell Count', -`Slide ID`, -`Tissue Category`) %>%
     filter(!Phenotype %in% c('Other', 'Total Cells')) %>% 
-    mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`)) %>% 
-    split_slides
+    mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`))
+  
+  # If any count > 2000 we will make two sets of plots
+  plot_limits = if (max(tall$`Cell Count`) > 2000) c(NA, 1000) else NA
+  
+  tall = tall %>% split_slides
 
-  walk2(seq_along(tall), tall, function(i, d) {
-    if (length(tall) > 1) {
-      cat(stringr::str_glue('## Phenotype cell counts per tissue category and slide ({i} of {length(tall)})\n\n'))
-    } else {
-      cat('## Phenotype cell counts per tissue category and slide\n\n')
-    }
-    p = ggplot(d,
-                   aes(Phenotype, `Cell Count`, fill=Phenotype)) +
-      base_line +
-      geom_col() +
-      facet_grid(`Tissue Category` ~ `Slide ID`, switch='x') +
-      scale_fill_phenoptr + scale_x_expand +
-      labs(x='Slide ID') +
-      theme_phenoptr
-   
-    print(p)
-    cat('\n\n')
-  })
+  for (plot_limit in plot_limits) {
+    walk2(seq_along(tall), tall, function(i, d) {
+      limit_text = if(is.na(plot_limit)) '' else ' (limited range)'
+      if (length(tall) > 1) {
+        cat(stringr::str_glue('## Phenotype cell counts per tissue category and slide{limit_text} ({i} of {length(tall)})\n\n'))
+      } else {
+        cat('## Phenotype cell counts per tissue category and slide',
+            limit_text, '\n\n')
+      }
+      p = ggplot(d,
+                     aes(Phenotype, `Cell Count`, fill=Phenotype)) +
+        base_line +
+        geom_col() +
+        facet_grid(`Tissue Category` ~ `Slide ID`, switch='x') +
+        scale_fill_phenoptr + scale_x_expand +
+        labs(x='Slide ID') +
+        theme_phenoptr
+      
+      if (!is.na(plot_limit))
+        p = p + coord_cartesian(ylim=c(0, plot_limit))
+      
+      print(p)
+      cat('\n\n')
+    })
+  }
 }
 
 ```
@@ -131,27 +142,38 @@ if ('Cell Densities' %in% sheet_names) {
   tall = density %>% gather('Phenotype', 'Density',
                                     -`Slide ID`, -`Tissue Category`) %>%
     filter(!Phenotype %in% c('Tissue Area (mm2)', 'Other', 'Total Cells')) %>% 
-    mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`)) %>%
-    split_slides
+    mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`)) 
   
-  walk2(seq_along(tall), tall, function(i, d) {
-    if (length(tall) > 1) {
-      cat(stringr::str_glue('## Phenotype cell density per tissue category and slide ({i} of {length(tall)})\n\n'))
-    } else {
-      cat('## Phenotype cell density per tissue category and slide\n\n')
-    }
-    p = ggplot(d,
-               aes(Phenotype, Density, fill=Phenotype)) +
-      base_line +
-      geom_col() +
-      facet_grid(`Tissue Category` ~ `Slide ID`, switch='x') +
-      scale_fill_phenoptr + scale_x_expand +
-      labs(x='Slide ID', y=expression(bold(paste('Cell Density (', cells/mm^2, ')')))) +
-      theme_phenoptr
-   
-    print(p)
-    cat('\n\n')
-  })
+  # If any Density > 2000 we will make two sets of plots
+  plot_limits = if (max(tall$Density) > 2000) c(NA, 1000) else NA
+  
+  tall = tall %>% split_slides
+
+  for (plot_limit in plot_limits) {
+    walk2(seq_along(tall), tall, function(i, d) {
+        limit_text = if(is.na(plot_limit)) '' else ' (limited range)'
+      if (length(tall) > 1) {
+        cat(stringr::str_glue('## Phenotype cell density per tissue category and slide{limit_text} ({i} of {length(tall)})\n\n'))
+      } else {
+        cat('## Phenotype cell density per tissue category and slide',
+        limit_text, '\n\n')
+      }
+      p = ggplot(d,
+                 aes(Phenotype, Density, fill=Phenotype)) +
+        base_line +
+        geom_col() +
+        facet_grid(`Tissue Category` ~ `Slide ID`, switch='x') +
+        scale_fill_phenoptr + scale_x_expand +
+        labs(x='Slide ID', y=expression(bold(paste('Cell Density (', cells/mm^2, ')')))) +
+        theme_phenoptr
+      
+      if (!is.na(plot_limit))
+        p = p + coord_cartesian(ylim=c(0, plot_limit))
+
+            print(p)
+      cat('\n\n')
+    })
+  }
 }
 ```
 

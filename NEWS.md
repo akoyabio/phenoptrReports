@@ -1,3 +1,9 @@
+# phenoptrReports 0.1.1.9000
+
+New features:
+- Chart report includes count and density charts with truncated Y-axis 
+  if any count or density > 2000
+  
 # phenoptrReports 0.1.1.0
 **2018-10-22**
 
