@@ -1,0 +1,308 @@
+---
+title: "Unmixing Error Measurements"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+params:
+  export_path: 
+    label: "Path to directory with component data"
+    value: F:\Opal\Export_test
+    input: file
+---
+
+<style type="text/css">
+table {
+    width: auto !important;
+    max-width: 100%;
+    margin-bottom: 20px;
+    margin-left: 0px;
+}
+
+.fill-cell>tbody>tr>td {
+  padding: 0px;
+  border-color: black;
+  border: 1px solid;
+}
+
+.fill-cell>thead>tr>th {
+  border-color: black;
+  border: 1px solid;
+}
+
+img {
+  border: none;
+}
+</style>
+
+```{r setup, echo=FALSE,include=FALSE,message=FALSE}
+knitr::opts_chunk$set(echo=FALSE,fig.width=9, fig.height=6, 
+                      comment=NA, warning=FALSE, message=FALSE)
+
+library(tidyverse)
+library(formattable)
+library(phenoptr)
+```
+
+Unmixing error measurements on singly-stained samples
+from <pre>`r params$export_path`</pre>.
+
+```{r functions}
+n_bright = 3200 # Number of bright pixels to find
+skip_fraction = 0.0001
+```
+
+```{r data}
+comp_files = list.files(params$export_path, pattern='component_data.tif', full.names=TRUE)
+
+# Put DAPI first
+dapi_files = stringr::str_detect(comp_files, 'DAPI')
+comp_files = c(comp_files[dapi_files], comp_files[!dapi_files])
+comp_names = basename(comp_files)
+primary_fluors = purrr::map_chr(comp_names, phenoptrReports:::file_to_fluor)
+all_data = purrr::map2(comp_files, primary_fluors, 
+                       phenoptrReports:::process_file, 
+                       n_bright=n_bright, skip_fraction=skip_fraction) %>% 
+    purrr::set_names(comp_names)
+
+```
+### Crosstalk by image
+
+This table shows crosstalk from the primary fluor to other components
+in the same image. This is a measure of unmixing error.
+
+
+```{r crosstalk}
+message('Creating report')
+
+crosstalk = all_data %>%
+  purrr::map('sn') %>% dplyr::bind_rows() %>% 
+  dplyr::select(Primary, Source, DAPI, dplyr::everything())
+
+to_display = crosstalk %>% 
+  dplyr::select(-Primary, -Autofluorescence) %>% 
+  dplyr::mutate_at(-1, percent, digits=1)
+
+# Put columns in alpha order with DAPI first
+to_display = to_display[sort(names(to_display))] %>% 
+  dplyr::select(Source, dplyr::matches('DAPI'), dplyr::everything())
+
+my_gradient = function(colors) {
+  grad = colorRamp(colors, space='Lab')
+  function(x) {
+    color = grad(x)
+    colnames(color)= c('red', 'green', 'blue')
+    formattable::csscolor(round(t(color), 0), format='rgb')
+  }
+}
+
+# Overall maximum
+limit = max({x<-unlist(to_display[,-1]); x[x<1]})
+
+# Colors for the green-yellow-red/orange ramp
+# Excel colors from Carla
+# green = '#00B050'
+# yellow = '#FFEB84'
+# red_orange = '#ED7D31'
+
+# These are a bit more saturated
+green = '#08b151'
+yellow = 'gold'
+red_orange = 'red'
+
+my_color = function(x) {
+  cutpt = 0.015
+  green_ramp = my_gradient(c(green, yellow))
+  yellow_ramp = my_gradient(c(yellow, red_orange))
+  ifelse(x==1, csscolor('white'), # Don't show 100%
+         ifelse(x<=cutpt, green_ramp(x/cutpt),
+                yellow_ramp((x-cutpt)/(limit-cutpt))))
+}
+
+my_font_weight= function(x) ifelse(x>0.005 & x<1, 'bold', 'normal')
+
+# Make a color_tile variation
+my_color_tile = function (...) 
+{
+    formattable::formatter("span", 
+                           style = function(x) 
+                             formattable::style(display = "block", 
+        padding = "3px", `border-radius` = "0px",
+        `background-color` = my_color(x), 
+        color = ifelse(x==1, 'white', 'black'),
+        `font-weight`=my_font_weight(x)))
+}
+
+padded_cell = function (...) 
+{
+    formattable::formatter("span", 
+                           style = function(x) 
+                             formattable::style(display = "block", 
+        padding = "3px"))
+}
+
+formats = purrr::map(names(to_display)[-1], my_color_tile) %>% 
+  purrr::set_names(names(to_display)[-1]) %>% 
+  c(list(Source=padded_cell('Source')))
+
+formattable::formattable(to_display, formats, 
+                         align=c('l', rep('r', ncol(to_display)-1)),
+            table.attr = "class=\"table table-condensed fill-cell\"")
+```
+
+### Crosstalk by component
+
+This table estimates crosstalk from other fluors to the primary fluor
+as a percent of the primary fluor. 
+This estimates the effect of unmixing error on other signals.
+
+
+```{r crosstalk_by_component}
+signals = all_data %>%
+  purrr::map('signals') %>% dplyr::bind_rows() %>% 
+  dplyr::select(Primary, Source, DAPI, dplyr::everything())
+
+to_display = signals %>% 
+  dplyr::select(-Primary, -Autofluorescence) %>% 
+  dplyr::mutate_at(-1, ~percent(.x/max(.x), digits=1))
+
+# Put columns in alpha order with DAPI first
+to_display = to_display[sort(names(to_display))] %>% 
+  dplyr::select(Source, dplyr::matches('DAPI'), dplyr::everything())
+
+# We need to know the smallest relative value in own fluor
+min_own_value = to_display %>% mutate(Fluor=primary_fluors) %>% 
+  dplyr::select(-Source) %>% 
+  tidyr::gather('Component', 'Value', -Fluor) %>% 
+  dplyr::filter(stringr::str_detect(Component, Fluor)) %>% 
+  dplyr::pull(Value) %>% 
+  min()
+
+limit = max({x<-unlist(to_display[,-1]); x[x<min_own_value]})
+
+formats = purrr::map(names(to_display)[-1], my_color_tile) %>% 
+  purrr::set_names(names(to_display)[-1]) %>% 
+  c(list(Source=padded_cell('Source')))
+
+formattable::formattable(to_display, formats, 
+                         align=c('l', rep('r', ncol(to_display)-1)),
+            table.attr = "class=\"table table-condensed fill-cell\"")
+```
+
+### Pixel intensity
+
+This plot shows the relative number of pixels at each intensity.
+Intensity is shown on a log scale.
+
+```{r}
+density_fig_height = 0.5 * length(comp_files)
+```
+
+```{r fig.height=density_fig_height}
+# Make density plots using random sampled data
+all_primaries = data_frame(
+  Source=factor(comp_names, levels=comp_names), 
+  Fluor=factor(primary_fluors, levels=unique(primary_fluors)),
+  data=purrr::map(all_data, 
+                  ~data_frame(primary=as.numeric(.x$primary)) %>%
+                    sample_frac(size=0.1))) %>% 
+  unnest
+
+if (require(ggridges)){
+  all_primaries %>% 
+    filter(primary > 0) %>% 
+    ggplot(aes(log10(primary), forcats::fct_rev(Source), fill=Fluor)) +
+    geom_density_ridges(color='gray50') +
+    labs(x=expression(bold(log[10](Expression))), y='') +
+    scale_fill_brewer(palette='Spectral') +
+    guides(color='none', fill='none') +
+    theme_minimal() +
+    theme(axis.text.y=element_text(face='bold', hjust=0, vjust=0)) +
+    scale_x_continuous(expand = c(0.01, 0), limits=c(-1, NA)) +
+    scale_y_discrete(expand = c(0.01, 0))
+} else {
+  # ggplot version
+  ggplot(all_primaries, aes(log10(primary), color=Fluor, fill=Fluor)) +
+           geom_density() +
+    facet_wrap(~Source, ncol=1, strip.position='left', scales='free_y') +
+    xlim(-1, NA) +
+    labs(x=expression(bold(log[10](Expression))), y='') +
+    scale_color_brewer(palette='Spectral') +
+    scale_fill_brewer(palette='Spectral') +
+    guides(color='none', fill='none') +
+    theme_minimal() +
+    theme(strip.text.y=element_text(face='bold', angle=180, hjust=0),
+          axis.ticks.y=element_blank(),
+          axis.text.y=element_blank(),
+          panel.grid.major=element_blank(),
+          panel.grid.minor=element_blank(),)
+}
+
+```
+
+### Signal strength
+
+This table shows signal strength for each component, measured at the brightest
+pixels of the primary fluor. This is the raw data underlying the crosstalk 
+tables.
+
+```{r signals}
+to_display = signals %>% 
+  dplyr::select(-Primary, -Autofluorescence) %>% 
+  dplyr::mutate_at(-1, round, digits=2)
+
+# Put columns in alpha order with DAPI first
+to_display = to_display[sort(names(to_display))] %>% 
+  dplyr::select(Source, dplyr::matches('DAPI'), dplyr::everything())
+
+knitr::kable(to_display)
+```
+
+### What is this?
+
+#### Image analysis
+
+For each image, the brightest `r scales::comma(n_bright)` pixels
+in the primary component are found (ignoring the 
+`r scales::percent(skip_fraction)` very brightest).
+
+For these pixels, the mean signal level in each component is computed.
+
+#### Crosstalk by image
+
+The crosstalk by image table shows the relative signal level of each fluor in
+the components where the fluor should not express.
+
+The ratio of non-signal component strength to signal component strength
+within a single image is reported as a percent. 
+This is a measure of unmixing error.
+
+Each column in the report shows crosstalk into the component named
+at the top of the column. Crosstalk comes from
+the fluors represented by the files listed in the first column.
+
+#### Crosstalk by component
+
+The crosstalk by component table estimates the amount of crosstalk 
+from non-signal fluors to each component. 
+
+For each component, it shows the crosstalk from other 
+fluors as a percent of the mean signal for the expressing component.
+This estimates the effect of unmixing error on other signals.
+
+If multiple samples are available for the expressing component, the largest
+mean is used.
+
+#### Pixel intensity
+
+These plots show the relative numbers of pixels at each pixel intensity.
+The Y-axis varies between plots; the X-axis is the log base 10 of pixel
+intensity.
+
+#### Signal strength
+
+The signal strength table shows the mean expression of each fluor
+in the bright pixels. This is the raw data underlying the crosstalk tables.
+Crosstalk by image normalizes this data by row; 
+crosstalk by component normalizes by column.
+
+<br><br><br>
+<p align='center'>![](Akoya.png){height=50px style='border:none;'}</p>

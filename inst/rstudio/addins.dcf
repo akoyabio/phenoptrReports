@@ -7,3 +7,8 @@ Name: Analyze consolidated data
 Description: Create aggregate statistics from a consolidated data file.
 Binding: analysis_app
 Interactive: true
+
+Name: Unmixing error report
+Description: Generate an unmixing error (crosstalk) report for simplex samples.
+Binding: unmixing_error_addin
+Interactive: true
