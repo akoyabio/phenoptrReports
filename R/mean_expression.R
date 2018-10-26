@@ -1,6 +1,6 @@
 # Suppress CMD CHECK notes for things that look like global vars
 utils::globalVariables(c(
-  "data"
+  "data", "name"
 ))
 
 #' Compute mean expression of cells for multiple phenotypes and markers.
@@ -45,7 +45,7 @@ utils::globalVariables(c(
 #' @return A data frame with a column for mean for each `param_pair`.
 #' @family aggregation functions
 #' @importFrom magrittr %>%
-#' @importFrom rlang !! :=
+#' @importFrom rlang !!!
 #' @export
 compute_mean_expression_many = function(
   csd, phenotypes, params, tissue_categories=NULL, percentile=NULL, count=NULL)
@@ -54,9 +54,32 @@ compute_mean_expression_many = function(
 
   csd = make_nested(csd, tissue_categories)
 
+  # If we are grouping by Slide ID and Tissue Category, and have more than
+  # one TC, we will add Total rows later. Figure out now whether we will
+  # need to do that.
+  add_tc_totals = (length(tissue_categories)>1
+    && length(names(csd)) == 3
+    && 'Slide ID' %in% names(csd)
+    && 'Tissue Category' %in% names(csd))
+
+  # Figure out what we will call the eventual expression columns.
+  # Avoid `-NULL` in the case_when...
+  safe_percentile = ifelse(is.null(percentile), 0, percentile)
+
+  param_what = dplyr::case_when(
+    !is.null(percentile) && percentile > 0
+      ~ paste0(' >= ', safe_percentile*100, '%ile'),
+    !is.null(percentile) && percentile < 0
+      ~ paste0(' <= ', -safe_percentile*100, '%ile'),
+    !is.null(count) ~ paste(' Top', count),
+    TRUE ~ '')
+
+  param_names = paste0(names(params), param_what, ' ', params)
+
   # Function to compute all expressions for a single nested data frame
+  # Returns a data frame with columns for count, mean, and name
   compute_means = function(d) {
-    purrr::map_dfc(seq_along(params), function(ix) {
+    purrr::map_dfr(seq_along(params), function(ix) {
       # Phenotype name, phenotype selector, expression parameter name
       # Use numeric indexing on params to allow multiple markers per phenotype
       name = names(params)[ix]
@@ -66,19 +89,8 @@ compute_mean_expression_many = function(
       # Compute a single expression value
       d = compute_mean_expression(d, phenotype, param, percentile, count)
 
-      # Make nice column names so we can bind them all together
-      # Avoid `-NULL` in the case_when...
-      safe_percentile = ifelse(is.null(percentile), 0, percentile)
-
-      param_what = dplyr::case_when(
-        !is.null(percentile) && percentile > 0 ~ paste0(' >= ', safe_percentile*100, '%ile'),
-        !is.null(percentile) && percentile < 0 ~ paste0(' <= ', -safe_percentile*100, '%ile'),
-        !is.null(count) ~ paste(' Top', count),
-        TRUE ~ '')
-      param_name = paste0(name, param_what, ' ', param)
-      d %>%
-        dplyr::select(-count) %>%
-        dplyr::rename(!!param_name := mean)
+      d$name = param_names[ix]
+      d
     })
   }
 
@@ -87,12 +99,30 @@ compute_mean_expression_many = function(
     dplyr::select(-data) %>%
     tidyr::unnest()
 
-  if (!is.null(tissue_categories)) {
-    result = order_by_slide_and_tissue_category(result, tissue_categories) %>%
-      dplyr::select(`Slide ID`, `Tissue Category`, dplyr::everything())
+  if (!add_tc_totals) {
+    # Names of the non-expression columns
+    cols = utils::head(names(result), -3)
+    result = result %>% dplyr::select(-count) %>% tidyr::spread(name, mean)
+
+    # Fix up column order to match the parameter order
+    return(result[, c(cols, param_names)])
   }
 
-  result
+  # Add "All" rows by Slide ID, spread to columns, and fix column order
+  # to match params
+  result %>% dplyr::group_by(`Slide ID`, name) %>%
+    tidyr::nest() %>%
+    dplyr::mutate(data=purrr::map(data, function(d) {
+      total = dplyr::data_frame(count=sum(d$count),
+                                mean=sum(d$count*d$mean)/sum(d$count))
+      total$`Tissue Category` = 'All'
+      dplyr::bind_rows(d, total)
+    })) %>%
+    tidyr::unnest() %>%
+    dplyr::select(-count) %>%
+    tidyr::spread(name, mean) %>%
+    order_by_slide_and_tissue_category(tissue_categories) %>%
+    dplyr::select(`Slide ID`, `Tissue Category`, !!!param_names)
 }
 
 #' Compute mean expression of cells for a single phenotype and marker.

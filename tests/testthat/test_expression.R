@@ -2,8 +2,8 @@ library(testthat)
 library(phenoptrReports)
 context("expression")
 
-# Note: The hard-coded test values in these tests were computed using variations
-# of this snippet from the original MeanOfTop20.R:
+# Note: The original hard-coded test values in these tests were computed using
+# variations of this snippet from the original MeanOfTop20.R:
 # means = csd %>%
 #   select(`Slide ID`,`Sample Name`, contains('Mean')) %>% # Select just the columns we need
 #   gather('Metric', 'Value', -`Sample Name`,-`Slide ID`) %>% # Convert to a tall data frame
@@ -11,6 +11,8 @@ context("expression")
 #   top_n(20, Value) %>% # This picks the top n within each group
 #   summarize(mean = mean(Value)) %>% # Compute the means
 #   spread(Metric, mean) # Spread out again to wide data frame
+#
+# The "All" values were hand-checked.
 
 test_that("mean expression per phenotype and tissue category calculation works", {
   csd_path = test_path('test_data', 'Consolidated_data.txt')
@@ -23,21 +25,34 @@ test_that("mean expression per phenotype and tissue category calculation works",
 
   ex = compute_mean_expression_many(csd, phenotypes, params, tissue_categories)
 
+  expect_equal(names(ex), c("Slide ID", "Tissue Category",
+                            "CD8+ Membrane PDL1 (Opal 520) Mean",
+                            "CD68+ Membrane PDL1 (Opal 520) Mean",
+                            "Total Cells Membrane PDL1 (Opal 520) Mean"))
+
   expect_equal(ex$`CD8+ Membrane PDL1 (Opal 520) Mean`,
-               c(0.856125, 2.03454545454545, 3.3575, 2.33060714285714, 1.94514285714286,
-                 1.48879069767442))
+               c(0.856125, 2.03454545454545, 1.7203,
+                 3.3575, 2.33060714285714, 2.55880555555556,
+                 1.94514285714286, 1.48879069767442, 1.55268))
 
   expect_equal(ex$`CD68+ Membrane PDL1 (Opal 520) Mean`,
-               c(5.96084615384615, 5.03644186046512, 8.04607407407407, 6.45196590909091,
-                 4.96588888888889, 5.38612962962963))
+               c(5.96084615384615, 5.03644186046512, 5.15782828282828,
+                 8.04607407407407, 6.45196590909091, 6.8262347826087,
+                 4.96588888888889, 5.38612962962963, 5.32609523809524))
 
   expect_equal(ex$`Total Cells Membrane PDL1 (Opal 520) Mean`,
-               c(1.1494983277592, 3.26520479041916, 4.2125047318612, 3.57091484375,
-                 1.70227677100494, 2.2841306156406))
+               c(1.1494983277592, 3.26520479041916, 2.16948383371825,
+                 4.2125047318612, 3.57091484375, 3.78343730407523,
+                 1.70227677100494, 2.2841306156406, 2.08889275843007))
 
   # Mean expression of top 20 cells, just check that it runs
   ex = compute_mean_expression_many(csd, phenotypes, params, tissue_categories,
                                     count=20)
+
+  expect_equal(names(ex), c("Slide ID", "Tissue Category",
+                            "CD8+ Top 20 Membrane PDL1 (Opal 520) Mean",
+                            "CD68+ Top 20 Membrane PDL1 (Opal 520) Mean",
+                            "Total Cells Top 20 Membrane PDL1 (Opal 520) Mean"))
 })
 
 test_that("mean expression with multiple markers works", {
@@ -58,16 +73,19 @@ test_that("mean expression with multiple markers works", {
                  "CD68+ Membrane PD1 (Opal 650) Mean"))
 
   expect_equal(ex$`CD8+ Membrane PDL1 (Opal 520) Mean`,
-               c(0.856125, 2.03454545454545, 3.3575, 2.33060714285714, 1.94514285714286,
-                 1.48879069767442))
+               c(0.856125, 2.03454545454545, 1.7203,
+                 3.3575, 2.33060714285714, 2.55880555555556,
+                 1.94514285714286, 1.48879069767442, 1.55268))
 
   expect_equal(ex$`CD68+ Membrane PDL1 (Opal 520) Mean`,
-               c(5.96084615384615, 5.03644186046512, 8.04607407407407, 6.45196590909091,
-                 4.96588888888889, 5.38612962962963))
+               c(5.96084615384615, 5.03644186046512, 5.15782828282828,
+                 8.04607407407407, 6.45196590909091, 6.8262347826087,
+                 4.96588888888889, 5.38612962962963, 5.32609523809524))
 
   expect_equal(ex$`CD68+ Membrane PD1 (Opal 650) Mean`,
-               c(3.61384615384615, 5.70811627906977, 2.37055555555556, 3.16760227272727,
-                 3.79894444444444, 5.07297222222222))
+               c(3.61384615384615, 5.70811627906977, 5.43311111111111,
+                 2.37055555555556, 3.16760227272727, 2.98046956521739,
+                 3.79894444444444, 5.07297222222222, 4.89096825396825))
 
   # Mean expression of top 20 cells, just check that it runs
   ex = compute_mean_expression_many(csd, phenotypes, params, tissue_categories,
@@ -143,4 +161,8 @@ test_that('mean expression by percentile works', {
   ex = compute_mean_expression_many(csd, phenotypes, params, tissue_categories,
                                     percentile=-0.1)
 
+  expect_equal(names(ex), c("Slide ID", "Tissue Category",
+                            "CD8+ <= 10%ile Membrane PDL1 (Opal 520) Mean",
+                            "CD68+ <= 10%ile Membrane PDL1 (Opal 520) Mean",
+                            "Total Cells <= 10%ile Membrane PDL1 (Opal 520) Mean"))
 })

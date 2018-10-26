@@ -10,8 +10,8 @@
 #' @export
 order_by_slide_and_tissue_category = function(d, tissue_categories) {
   # Lookup table for ordering tissue categories
-  tissue_order = 1:(length(tissue_categories)+1) %>%
-    rlang::set_names(c(tissue_categories, 'Total'))
+  tissue_order = 1:(length(tissue_categories)+2) %>%
+    rlang::set_names(c(tissue_categories, 'Total', 'All'))
 
   d %>%
     dplyr::arrange(`Slide ID`, tissue_order[`Tissue Category`])
@@ -78,5 +78,6 @@ check_phenotypes = function(params, phenotypes) {
 #' @param csd Cell seg data
 #' @return A column name (as a string)
 field_column = function(csd) {
-  if_else('Annotation ID' %in% names(csd), 'Annotation ID', 'Sample Name')
+  dplyr::if_else('Annotation ID' %in% names(csd),
+                 'Annotation ID', 'Sample Name')
 }
