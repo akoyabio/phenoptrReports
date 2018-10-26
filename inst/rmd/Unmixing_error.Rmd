@@ -1,5 +1,5 @@
 ---
-title: "Signal to Noise Measurements"
+title: "Unmixing Error Measurements"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 params:
@@ -42,7 +42,7 @@ library(formattable)
 library(phenoptr)
 ```
 
-Signal-to-noise measurements  on singly-stained samples
+Unmixing error measurements on singly-stained samples
 from <pre>`r params$export_path`</pre>.
 
 ```{r functions}

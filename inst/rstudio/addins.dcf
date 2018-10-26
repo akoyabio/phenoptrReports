@@ -8,7 +8,7 @@ Description: Create aggregate statistics from a consolidated data file.
 Binding: analysis_app
 Interactive: true
 
-Name: Signal-to-noise report
-Description: Generate a signal-to-noise (crosstalk) report for simplex samples.
-Binding: signal_to_noise_addin
+Name: Unmixing error report
+Description: Generate an unmixing error (crosstalk) report for simplex samples.
+Binding: unmixing_error_addin
 Interactive: true

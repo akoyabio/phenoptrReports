@@ -1,21 +1,22 @@
 # This is an RStudio Addin that provides a GUI frontend
-# to signal_to_noise_report.
+# to unmixing_error_report.
 
-#' Generate a signal-to-noise (crosstalk) report for a selected export folder.
+#' Generate an unmixing error (crosstalk) report for a selected export folder.
 #'
-#' `signal_to_noise_addin` opens a GUI that allows you to select
+#' `unmixing_error_addin` opens a GUI that allows you to select
 #' an export folder containing component data files for singleplex samples.
-#' A signal-to-noise report is created for the samples and saved in
+#' An unmixing error report is created for the samples and saved in
 #' the source directory.
 #'
 #' The report generator tries to identify the Opal fluor for each source file
-#' by looking at the file name. It recognizes "DAPI", "AF", and "Opal_nnn".
+#' by looking at the file name. It recognizes "DAPI", "AF", "Opalnnn",
+#' and "Opal_nnn".
 #' It also recognizes three leading digits as the number of an Opal fluor.
 #' @export
-signal_to_noise_addin = function() {
+unmixing_error_addin = function() {
   intro <- shiny::tagList(shiny::p(
     'This app reads component data files for singleplex samples',
-    'and creates a signal-to-noise report showing crosstalk between the samples.'
+    'and creates an unmixing error report showing crosstalk between the samples.'
   ))
 
   ui <- miniUI::miniPage(
@@ -27,7 +28,7 @@ signal_to_noise_addin = function() {
       }
       h3 { margin-top: 10px; }
     "))),
-    miniUI::gadgetTitleBar("Signal-to-noise report",
+    miniUI::gadgetTitleBar("Unmixing error report",
       right=miniUI::miniTitleBarButton('done', 'Create Report', primary=TRUE)),
 
     miniUI::miniContentPanel(
@@ -70,7 +71,7 @@ signal_to_noise_addin = function() {
       if (error_text == '') {
         shiny::showNotification('Processing, please wait!', duration=NULL,
                                 closeButton=FALSE, type='message')
-        phenoptrReports::signal_to_noise_report(export_dir())
+        phenoptrReports::unmixing_error_report(export_dir())
         shiny::stopApp()
       } else {
         shiny::showNotification(error_text, type='message')

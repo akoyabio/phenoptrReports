@@ -53,17 +53,26 @@ write_summary_charts = function(worksheet_path, output_path) {
                     params=list(data_path=worksheet_path))
 }
 
-#' Create a signal-to-noise report for simplex samples
+#' Create an unmixing error report for simplex samples
 #'
+#' `export_path` should be the path to
+#' an export folder containing component data files for singleplex samples.
+#' An unmixing error report is created for the samples and saved in
+#' the source directory.
+#'
+#' The report generator tries to identify the Opal fluor for each source file
+#' by looking at the file name. It recognizes "DAPI", "AF", "Opalnnn"
+#' and "Opal_nnn".
+#' It also recognizes three leading digits as the number of an Opal fluor.
 #' @param export_path Path to a directory containing component_data files.
 #' @export
-signal_to_noise_report = function(export_path=NULL) {
+unmixing_error_report = function(export_path=NULL) {
   stopifnot(dir.exists(export_path))
 
-  rmd_path = system.file("rmd", "Signal_to_noise.Rmd",
+  rmd_path = system.file("rmd", "Unmixing_error.Rmd",
                          package="phenoptrReports")
 
-  output_path = file.path(export_path, 'Signal_to_noise.html')
+  output_path = file.path(export_path, 'Unmixing_error.html')
   rmarkdown::render(rmd_path, output_file=output_path,
                     params=list(export_path = export_path))
 }
