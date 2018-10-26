@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 ## Data consolidation overview
 
-The first step in a `phenoptrReports` analysis is data consolidation.
+The first step in a `phenoptrReports` data analysis is data consolidation.
 
 The consolidation step combines the output from multiple inForm projects into a 
 single consolidated data file and creates columns for each individual
@@ -37,6 +37,27 @@ happen, for example, if
 Run the consolidation step even if your data comes from a single
 inForm project. This creates a data file in the format that the analysis
 step uses.
+
+## Data requirements
+
+#### Merged cell seg data
+
+The primary source data for `phenoptrReports` is 
+one or more merged cell seg data files created in the inForm Review/Merge tab.
+You may use multiple merge files from multiple inForm projects with different 
+phenotypes. The Slide ID and Cell ID fields in multiple merge files 
+must agree exactly. 
+
+#### Tissue segmentation
+
+inForm projects used with `phenoptrReports` must include a tissue 
+segmentation step.
+
+#### Phenotypes
+
+The names of positive phenotypes used with `phenoptrReports` must end
+with "+", for example "CD8+" or "FoxP3+". Negative and "Other"
+phenotype names should not end in "+".
 
 ## Detailed steps
 

@@ -1,10 +1,12 @@
-# phenoptrReports 0.1.1.9000
+# phenoptrReports 0.1.2
+**2018-10-26**
 
 New features:
+- New unmixing error report.
 - Mean expression sheet includes tissue category "All" with mean expression
   across all requested categories.
 - Chart report includes count and density charts with truncated Y-axis 
-  if any count or density > 2000
+  if any count or density > 2000.
   
 # phenoptrReports 0.1.1.0
 **2018-10-22**

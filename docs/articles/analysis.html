@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.2</span>
       </span>
     </div>
 
@@ -51,6 +51,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/unmixing_error.html">Unmixing error report</a>
+    </li>
+    <li>
       <a href="../articles/consolidation.html">Consolidating inForm data</a>
     </li>
     <li>
@@ -92,7 +95,7 @@
       <h1>Analyzing inForm data</h1>
                         <h4 class="author">Kent Johnson</h4>
             
-            <h4 class="date">2018-10-22</h4>
+            <h4 class="date">2018-10-26</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/akoyabio/phenoptrReports/blob/master/vignettes/analysis.Rmd"><code>vignettes/analysis.Rmd</code></a></small>
       <div class="hidden name"><code>analysis.Rmd</code></div>
@@ -111,6 +114,22 @@
 <li>define the desired analysis</li>
 <li>create the final reports</li>
 </ul>
+<div id="data-requirements" class="section level3">
+<h3 class="hasAnchor">
+<a href="#data-requirements" class="anchor"></a>Data requirements</h3>
+<div id="consolidated-cell-seg-data" class="section level4">
+<h4 class="hasAnchor">
+<a href="#consolidated-cell-seg-data" class="anchor"></a>Consolidated cell seg data</h4>
+<p>The primary source data for the analysis report is a consolidated data file created by the <em>Consolidate and summarize</em> app.</p>
+<p>If you have only one merge file, from a single inForm project, you should still use <em>Consolidate and summarize</em> to convert the file to the format used by the analysis report.</p>
+</div>
+<div id="other-files" class="section level4">
+<h4 class="hasAnchor">
+<a href="#other-files" class="anchor"></a>Other files</h4>
+<p>Two other input files are optional.</p>
+<p>If provided, <code>phenotprReports</code> will use a merged cell seg summary file to compute tissue area and cell density within tissue categories. A score data summary file is used to compute H-Score per slide and tissue category.</p>
+</div>
+</div>
 </div>
 <div id="detailed-steps" class="section level2">
 <h2 class="hasAnchor">
@@ -188,7 +207,16 @@
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#analysis-overview">Analysis overview</a></li>
+<li>
+<a href="#analysis-overview">Analysis overview</a><ul class="nav nav-pills nav-stacked">
+<li>
+<a href="#data-requirements">Data requirements</a><ul class="nav nav-pills nav-stacked">
+<li><a href="#consolidated-cell-seg-data">Consolidated cell seg data</a></li>
+      <li><a href="#other-files">Other files</a></li>
+      </ul>
+</li>
+      </ul>
+</li>
       <li>
 <a href="#detailed-steps">Detailed steps</a><ul class="nav nav-pills nav-stacked">
 <li><a href="#start-the-analysis-app">Start the analysis app</a></li>

@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">phenoptrReports</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.2</span>
       </span>
     </div>
 
@@ -51,6 +51,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="articles/unmixing_error.html">Unmixing error report</a>
+    </li>
+    <li>
       <a href="articles/consolidation.html">Consolidating inForm data</a>
     </li>
     <li>
@@ -92,11 +95,19 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#phenoptrreports" class="anchor"></a>phenoptrReports <img src="reference/figures/Akoya.png" align="right" height="50px">
 </h1></div>
-<div id="data-aggregation-and-reporting-for-inform-data" class="section level2">
+<div id="introduction" class="section level2">
 <h2 class="hasAnchor">
-<a href="#data-aggregation-and-reporting-for-inform-data" class="anchor"></a>Data aggregation and reporting for inForm data</h2>
-<p><code>phenoptrReports</code> analyzes cell phenotype and expression data created by Akoya Biosciences’ inForm<sup>®</sup> software.</p>
-<p>Applications in this package use data from multiple inForm projects to aggregate phenoype counts, density, mean expression and H-Score for each slide and tissue category in an experiment.</p>
+<a href="#introduction" class="anchor"></a>Introduction</h2>
+<p><code>phenoptrReports</code> generates reports based on data created by Akoya Biosciences’ inForm<sup>®</sup> software.</p>
+<div id="unmixing-error-report" class="section level3">
+<h3 class="hasAnchor">
+<a href="#unmixing-error-report" class="anchor"></a>Unmixing error report</h3>
+<p>The unmixing error report analyzes unmixed, singleplex images to help evaluate staining and unmixing quality. This report shows crosstalk between components and highlights potential problem areas in assay development.</p>
+</div>
+<div id="data-aggregation-and-reporting" class="section level3">
+<h3 class="hasAnchor">
+<a href="#data-aggregation-and-reporting" class="anchor"></a>Data aggregation and reporting</h3>
+<p>The consolidation and analysis applications in <code>phenoptrReports</code> analyze cell phenotype and expression data created by inForm. They use data from multiple inForm projects to aggregate phenoype counts, density, mean expression and H-Score for each slide and tissue category in an experiment.</p>
 <p>For each analysis, the applications create</p>
 <ul>
 <li>a consolidated data file</li>
@@ -104,13 +115,15 @@
 <li>a Word document with visualizations of the results</li>
 <li>an R script which provides an audit trail and can be used to reproduce or modify the analysis.</li>
 </ul>
+<hr>
 <p><code>phenoptrReports</code> is part of the Akoya Biosciences Phenoptics™ family of Quantitative Pathology Research Solutions. For more information visit the Phenoptics™ <a href="http://www.perkinelmer.com/cancer-immunology/index.html">home page</a>.</p>
 <hr>
+</div>
 </div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<p><code>phenoptrReports</code> requires the <a href="https://www.r-project.org/">R environment</a> for statistical computing, version 3.3.0 or higher. To install R, visit the <a href="https://cloud.r-project.org/">R download</a> page.</p>
+<p><code>phenoptrReports</code> requires the <a href="https://www.r-project.org/">R environment</a> for statistical computing, version 3.5.0 or higher. To install R, visit the <a href="https://cloud.r-project.org/">R download</a> page.</p>
 <p>The analysis apps in <code>phenoptrReports</code> run as “Addins” to the <a href="https://www.rstudio.com/products/rstudio/">RStudio IDE</a>, which must also be installed.</p>
 <ol>
 <li>Install R. Download the most recent version from <a href="https://cloud.r-project.org/" class="uri">https://cloud.r-project.org/</a>.</li>
@@ -129,40 +142,18 @@ devtools::install_github("akoyabio/phenoptrReports")</code></pre>
 <div id="getting-started" class="section level2">
 <h2 class="hasAnchor">
 <a href="#getting-started" class="anchor"></a>Getting Started</h2>
-<p>A <code>phenoptrReports</code> analysis has two major steps - data consolidation and data aggregation.</p>
-<div id="data-requirements" class="section level3">
+<div id="unmixing-error-report-1" class="section level3">
 <h3 class="hasAnchor">
-<a href="#data-requirements" class="anchor"></a>Data requirements</h3>
-<p><code>phenoptrReports</code> creates reports based on inForm output files.</p>
-<div id="tissue-segmentation" class="section level4">
-<h4 class="hasAnchor">
-<a href="#tissue-segmentation" class="anchor"></a>Tissue segmentation</h4>
-<p>inForm projects used with <code>phenoptrReports</code> must include a tissue segmentation step.</p>
-</div>
-<div id="phenotypes" class="section level4">
-<h4 class="hasAnchor">
-<a href="#phenotypes" class="anchor"></a>Phenotypes</h4>
-<p>The names of positive phenotypes used with <code>phenoptrReports</code> must end with “+”, for example “CD8+” or “FoxP3+”. Negative and “Other” phenotype names should not end in “+”.</p>
-</div>
-<div id="merged-cell-seg-data" class="section level4">
-<h4 class="hasAnchor">
-<a href="#merged-cell-seg-data" class="anchor"></a>Merged cell seg data</h4>
-<p>The primary source data for <code>phenoptrReports</code> is one or more merged cell seg data files created in the inForm Review/Merge tab. You may use multiple merge files from multiple inForm projects with different phenotypes. The Slide ID and Cell ID fields in multiple merge files must agree exactly.</p>
-</div>
-<div id="other-files" class="section level4">
-<h4 class="hasAnchor">
-<a href="#other-files" class="anchor"></a>Other files</h4>
-<p>Two other input files are optional.</p>
-<p>If provided, <code>phenotprReports</code> will use a merged cell seg summary file to compute tissue area and cell density within tissue categories. A score data summary file is used to compute H-Score per slide and tissue category.</p>
-</div>
+<a href="#unmixing-error-report-1" class="anchor"></a>Unmixing error report</h3>
+<p>For more information about the unmixing error report, see the <a href="articles/unmixing_error.html">Unmixing error report</a> tutorial.</p>
 </div>
 <div id="data-consolidation" class="section level3">
 <h3 class="hasAnchor">
 <a href="#data-consolidation" class="anchor"></a>Data consolidation</h3>
-<p>Start the consolidation step by selecting <strong>Consolidate and summarize</strong> from the RStudio Addins menu.</p>
+<p>A <code>phenoptrReports</code> data analysis has two major steps - data consolidation and data aggregation. Start the consolidation step by selecting <strong>Consolidate and summarize</strong> from the RStudio Addins menu.</p>
 <p>The consolidation step combines the output from multiple inForm projects into a single consolidated data file, creating columns for each individual phenotype. The inputs to this step are merged cell seg data files created by inForm. The output is a consolidated data file and a summary report for each file.</p>
 <p>Run the consolidation step even if your data comes from a single inForm project. This creates a data file in the format that the analysis step uses.</p>
-<p>For detailed instructions, see <code><a href="articles/consolidation.html">vignette('consolidation')</a></code>.</p>
+<p>For detailed instructions and requirements, see the <a href="articles/consolidation.html">Consolidating inForm data</a> tutorial.</p>
 </div>
 <div id="data-analysis" class="section level3">
 <h3 class="hasAnchor">
@@ -176,7 +167,7 @@ devtools::install_github("akoyabio/phenoptrReports")</code></pre>
 <p>The most important input file is the consolidated data file from the consolidation step. Selecting a summary cell seg data file enables density calculations; selecting a score data file enables H-Score calculation.</p>
 <p>To define the analysis, you select tissue categories, phenotypes, and markers of interest.</p>
 <p>To create the finalreports, the analysis app writes and runs an R script. The script computes the aggregated statistics, writes them to an Excel workbook, and creates visualizations of the results in a Word document.</p>
-<p>For detailed instructions, see <code><a href="articles/analysis.html">vignette('analysis')</a></code>.</p>
+<p>For detailed instructions and requirements, see the <a href="articles/analysis.html">Analyzing inForm data</a> tutorial.</p>
 </div>
 </div>
 </div>

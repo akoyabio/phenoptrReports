@@ -4,6 +4,7 @@ pkgdown_sha: 3b3188bfbbd8cc42daa3218f3884b85fd5122372
 articles:
   analysis: analysis.html
   consolidation: consolidation.html
+  unmixing_error: unmixing_error.html
 urls:
   reference: http://akoyabio.github.io/phenoptrReports/reference
   article: http://akoyabio.github.io/phenoptrReports/articles

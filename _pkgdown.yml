@@ -12,6 +12,8 @@ navbar:
       href: index.html
     - text: "Tutorials"
       menu:
+        - text: "Unmixing error report"
+          href: articles/unmixing_error.html
         - text: "Consolidating inForm data"
           href: articles/consolidation.html
         - text: "Analyzing inForm data"
@@ -29,6 +31,7 @@ navbar:
 articles:
   - title: Tutorials
     contents:
+    - unmixing_error
     - consolidation
     - analysis
 
@@ -39,6 +42,7 @@ reference:
     contents:
       - '`analysis_app`'
       - '`merge_addin`'
+      - '`unmixing_error_addin`'
   - title: Consolidation
     desc: These functions implement the consolidation step.
     contents:
@@ -57,7 +61,7 @@ reference:
       - '`compute_positivity_many`'
       - '`counts_to_percents`'
       - '`count_phenotypes`'
-  - title: Reporting
+  - title: Data reporting
     desc: These functions write analysis results to Excel worksheets.
     contents:
       - '`write_counts_sheet`'
@@ -78,6 +82,7 @@ reference:
       - '`make_unique_names`'
       - '`order_by_slide_and_tissue_category`'
       - '`split_phenotypes`'
+      - '`unmixing_error_report`'
       - '`upset_data`'
       - '`upset_plot`'
 

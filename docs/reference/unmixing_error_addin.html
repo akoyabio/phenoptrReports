@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Compute cell densities from counts and tissue area — compute_density_from_cell_summary • phenoptrReports</title>
+<title>Generate an unmixing error (crosstalk) report for a selected export folder. — unmixing_error_addin • phenoptrReports</title>
 
 <link rel="shortcut icon" type="image/x-icon" href="../favicon.ico">
 
@@ -32,10 +32,12 @@
 
 
 
-<meta property="og:title" content="Compute cell densities from counts and tissue area — compute_density_from_cell_summary" />
+<meta property="og:title" content="Generate an unmixing error (crosstalk) report for a selected export folder. — unmixing_error_addin" />
 
-<meta property="og:description" content="Compute cell density from a table of cell counts and tissue areas
-read from a summary cell seg data file." />
+<meta property="og:description" content="unmixing_error_addin opens a GUI that allows you to select
+an export folder containing component data files for singleplex samples.
+An unmixing error report is created for the samples and saved in
+the source directory." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -127,71 +129,36 @@ read from a summary cell seg data file." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Compute cell densities from counts and tissue area</h1>
-    <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/compute_density.R'><code>R/compute_density.R</code></a></small>
-    <div class="hidden name"><code>compute_density_from_cell_summary.Rd</code></div>
+    <h1>Generate an unmixing error (crosstalk) report for a selected export folder.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/unmixing_error_addin.R'><code>R/unmixing_error_addin.R</code></a></small>
+    <div class="hidden name"><code>unmixing_error_addin.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Compute cell density from a table of cell counts and tissue areas
-read from a summary cell seg data file.</p>
+    <p><code>unmixing_error_addin</code> opens a GUI that allows you to select
+an export folder containing component data files for singleplex samples.
+An unmixing error report is created for the samples and saved in
+the source directory.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>compute_density_from_cell_summary</span>(<span class='no'>counts</span>, <span class='no'>summary_path</span>, <span class='no'>tissue_categories</span>,
-  <span class='kw'>pixels_per_micron</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"phenoptr.pixels.per.micron"</span>))</pre>
-    
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>counts</th>
-      <td><p>A data frame with columns for <code>Slide ID</code>, <code>Tissue Category</code>,
-and counts, such as the output of <a href='count_phenotypes.html'>count_phenotypes</a>.</p></td>
-    </tr>
-    <tr>
-      <th>summary_path</th>
-      <td><p>Path(s) to cell seg data summary table(s) containing
-sample names and tissue categories matching <code>counts</code>.</p></td>
-    </tr>
-    <tr>
-      <th>tissue_categories</th>
-      <td><p>A character vector of tissue category names
-of interest.</p></td>
-    </tr>
-    <tr>
-      <th>pixels_per_micron</th>
-      <td><p>Conversion factor to microns.</p></td>
-    </tr>
-    </table>
-    
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    <pre class="usage"><span class='fu'>unmixing_error_addin</span>()</pre>
+        
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>A data table with counts converted to density in  \(cells / mm^2\).</p>
-    
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p>Other aggregation functions: <code><a href='compute_density_from_table.html'>compute_density_from_table</a></code>,
-  <code><a href='compute_h_score_from_score_data.html'>compute_h_score_from_score_data</a></code>,
-  <code><a href='compute_h_score.html'>compute_h_score</a></code>,
-  <code><a href='compute_mean_expression_many.html'>compute_mean_expression_many</a></code>,
-  <code><a href='compute_mean_expression.html'>compute_mean_expression</a></code>,
-  <code><a href='compute_positivity_many.html'>compute_positivity_many</a></code>,
-  <code><a href='compute_positivity.html'>compute_positivity</a></code>,
-  <code><a href='count_phenotypes.html'>count_phenotypes</a></code>,
-  <code><a href='counts_to_percents.html'>counts_to_percents</a></code></p></div>
+    <p>The report generator tries to identify the Opal fluor for each source file
+by looking at the file name. It recognizes "DAPI", "AF", "Opalnnn",
+and "Opal_nnn".
+It also recognizes three leading digits as the number of an Opal fluor.</p>
     
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#value">Value</a></li>
-
-      <li><a href="#see-also">See also</a></li>
+      <li><a href="#details">Details</a></li>
           </ul>
 
   </div>

@@ -61,7 +61,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.2</span>
       </span>
     </div>
 
@@ -80,6 +80,9 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/unmixing_error.html">Unmixing error report</a>
+    </li>
     <li>
       <a href="../articles/consolidation.html">Consolidating inForm data</a>
     </li>
@@ -150,6 +153,12 @@
           <p><code><a href="merge_addin.html">merge_addin()</a></code> </p>
         </td>
         <td><p>Merge and summarize cell seg data files</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="unmixing_error_addin.html">unmixing_error_addin()</a></code> </p>
+        </td>
+        <td><p>Generate an unmixing error (crosstalk) report for a selected export folder.</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -243,7 +252,7 @@ and create summary reports</p></td>
     </tbody><tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-reporting" class="hasAnchor"><a href="#section-reporting" class="anchor"></a>Reporting</h2>
+          <h2 id="section-data-reporting" class="hasAnchor"><a href="#section-data-reporting" class="anchor"></a>Data reporting</h2>
           <p class="section-desc"><p>These functions write analysis results to Excel worksheets.</p></p>
         </th>
       </tr>
@@ -357,6 +366,12 @@ categories in the given order and the
       </tr><tr>
         
         <td>
+          <p><code><a href="unmixing_error_report.html">unmixing_error_report()</a></code> </p>
+        </td>
+        <td><p>Create an unmixing error report for simplex samples</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="upset_data.html">upset_data()</a></code> </p>
         </td>
         <td><p>Make a data set for use with UpSetR</p></td>
@@ -377,7 +392,7 @@ categories in the given order and the
       <li><a href="#section-rstudio-addins">RStudio Addins</a></li>
       <li><a href="#section-consolidation">Consolidation</a></li>
       <li><a href="#section-calculations">Calculations</a></li>
-      <li><a href="#section-reporting">Reporting</a></li>
+      <li><a href="#section-data-reporting">Data reporting</a></li>
       <li><a href="#section-helper-functions">Helper functions</a></li>
     </ul>
   </div>

@@ -1,0 +1,71 @@
+---
+title: "Unmixing error report"
+author: "Kent Johnson"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    toc_depth: 4
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The unmixing error report analyzes unmixed, singleplex images
+to help evaluate staining and unmixing quality. This report
+shows crosstalk between components and
+highlights potential problem areas in assay development.
+
+## Data requirements
+
+The input to this report is an inForm export directory containing
+singleplex images
+which have been unmixed by inForm using a candidate spectral library.
+
+Singleplex images are taken from slides stained with a single fluorophore
+and no counterstain (except on the DAPI singleplex). The export directory
+should contain component data files from
+one or more images for each fluor in the experiment.
+
+The report generator must identify the Opal fluor for each source file by
+looking at the file name. It recognizes names containing
+"DAPI", "AF", "Opalnnn" and "Opal_nnn". 
+It also recognizes three leading digits as the number of an Opal fluor.
+
+
+## Detailed steps
+
+#### Choose "Unmixing error report" from the RStudio Addins menu
+
+Thus will open the error reporting app.
+
+![](figures/Unmixing_error_addin.png)
+
+#### Select input files  
+
+Click the "Browse" button in the "Select Export directory" section of 
+the GUI. Use the directory selection dialog to select the directory containing
+exported component data files.
+  
+![](figures/Select_export_directory.png "")
+
+#### Create report
+
+Click the "Create Report" button to start processing of the selected directory. 
+
+![](figures/Create_unmixing_error_report.png)
+
+When the report is complete, the app window will close. Any errors will be
+reported in the RStudio Console pane.
+
+#### View the report
+
+When processing completes, the export directory will contain
+a file `Unmixing_error_report.html` which may be viewed in any web browser.

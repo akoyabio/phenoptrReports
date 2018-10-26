@@ -31,6 +31,26 @@ There are three parts to creating an analysis:
 - define the desired analysis
 - create the final reports
 
+### Data requirements
+
+#### Consolidated cell seg data
+
+The primary source data for the analysis report is a consolidated
+data file created by the *Consolidate and summarize* app.
+
+If you have only one merge file, from a single inForm project, you should
+still use *Consolidate and summarize* to convert the file to the format
+used by the analysis report.
+
+#### Other files
+
+Two other input files are optional. 
+
+If provided, `phenotprReports` will use a merged cell seg summary file
+to compute tissue area and cell density within tissue categories. 
+A score data summary file is used to compute H-Score per slide and 
+tissue category.
+
 ## Detailed steps
 
 ### Start the analysis app

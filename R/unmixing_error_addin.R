@@ -103,6 +103,6 @@ unmixing_error_addin = function() {
   }
 
   # Run the gadget in a dialog
-  viewer <- shiny::dialogViewer('Create signal-to-noise report')
+  viewer <- shiny::dialogViewer('Create unmixing error report')
   shiny::runGadget(ui, server, viewer = viewer)
 }

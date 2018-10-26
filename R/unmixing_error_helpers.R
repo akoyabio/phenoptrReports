@@ -36,19 +36,20 @@ file_to_fluor = function(path) {
 #' @param primary_fluor Component name of the signal fluor
 #' @param percentile Percentile for high-expressing pixels. If omitted,
 #'   the brightest n_bright pixels will be used after discarding `skip_percent`.
+#' @param n_bright The number of bright pixels to select for analysis.
 #' @param skip_fraction The fraction of brightest pixels that will be ignored.
 #' @return A list containing
 #'   - signals - The mean expression of each fluor in the selected bright pixels
 #'   - sn - The expression of non-primary fluors as a fraction of the primary
 #'   - primary - Component plane for the primary fluor (a large matrix)
-process_file = function(path, primary_fluor,
+process_singleplex_image = function(path, primary_fluor,
                         percentile=NULL,
-                        n_bright=null, skip_fraction=0.0001) {
+                        n_bright=NULL, skip_fraction=0.0001) {
   # Progress output
   message('Processing fluor ', primary_fluor, ' from ', path)
 
   # Read the components and get the primary one
-  comps = read_components(path)
+  comps = phenoptr::read_components(path)
 
   primary_fluor_ix = which(stringr::str_detect(names(comps), primary_fluor))
   if (length(primary_fluor_ix) != 1)
@@ -63,8 +64,8 @@ process_file = function(path, primary_fluor,
     percentile = 1-n_bright/prod(dim(primary))-skip_fraction
   }
 
-  low_cutoff = quantile(primary, percentile)
-  high_cutoff = quantile(primary, 1-skip_fraction)
+  low_cutoff = stats::quantile(primary, percentile)
+  high_cutoff = stats::quantile(primary, 1-skip_fraction)
   mask = primary >= low_cutoff & primary < high_cutoff
 
   signals = purrr::map_dfc(comps, ~ dplyr::tibble(Mean=mean(.x[mask]))) %>%

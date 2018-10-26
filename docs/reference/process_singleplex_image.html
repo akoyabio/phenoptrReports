@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Compute cell densities from counts and tissue area — compute_density_from_cell_summary • phenoptrReports</title>
+<title>Read a singleplex image and extract signal information — process_singleplex_image • phenoptrReports</title>
 
 <link rel="shortcut icon" type="image/x-icon" href="../favicon.ico">
 
@@ -32,10 +32,9 @@
 
 
 
-<meta property="og:title" content="Compute cell densities from counts and tissue area — compute_density_from_cell_summary" />
+<meta property="og:title" content="Read a singleplex image and extract signal information — process_singleplex_image" />
 
-<meta property="og:description" content="Compute cell density from a table of cell counts and tissue areas
-read from a summary cell seg data file." />
+<meta property="og:description" content="Read a singleplex image and extract signal information" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -127,60 +126,54 @@ read from a summary cell seg data file." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Compute cell densities from counts and tissue area</h1>
-    <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/compute_density.R'><code>R/compute_density.R</code></a></small>
-    <div class="hidden name"><code>compute_density_from_cell_summary.Rd</code></div>
+    <h1>Read a singleplex image and extract signal information</h1>
+    <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/unmixing_error_helpers.R'><code>R/unmixing_error_helpers.R</code></a></small>
+    <div class="hidden name"><code>process_singleplex_image.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Compute cell density from a table of cell counts and tissue areas
-read from a summary cell seg data file.</p>
+    <p>Read a singleplex image and extract signal information</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>compute_density_from_cell_summary</span>(<span class='no'>counts</span>, <span class='no'>summary_path</span>, <span class='no'>tissue_categories</span>,
-  <span class='kw'>pixels_per_micron</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"phenoptr.pixels.per.micron"</span>))</pre>
+    <pre class="usage"><span class='fu'>process_singleplex_image</span>(<span class='no'>path</span>, <span class='no'>primary_fluor</span>, <span class='kw'>percentile</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>n_bright</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>skip_fraction</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>counts</th>
-      <td><p>A data frame with columns for <code>Slide ID</code>, <code>Tissue Category</code>,
-and counts, such as the output of <a href='count_phenotypes.html'>count_phenotypes</a>.</p></td>
+      <th>path</th>
+      <td><p>Path to a component_data.tif file</p></td>
     </tr>
     <tr>
-      <th>summary_path</th>
-      <td><p>Path(s) to cell seg data summary table(s) containing
-sample names and tissue categories matching <code>counts</code>.</p></td>
+      <th>primary_fluor</th>
+      <td><p>Component name of the signal fluor</p></td>
     </tr>
     <tr>
-      <th>tissue_categories</th>
-      <td><p>A character vector of tissue category names
-of interest.</p></td>
+      <th>percentile</th>
+      <td><p>Percentile for high-expressing pixels. If omitted,
+the brightest n_bright pixels will be used after discarding <code>skip_percent</code>.</p></td>
     </tr>
     <tr>
-      <th>pixels_per_micron</th>
-      <td><p>Conversion factor to microns.</p></td>
+      <th>n_bright</th>
+      <td><p>The number of bright pixels to select for analysis.</p></td>
+    </tr>
+    <tr>
+      <th>skip_fraction</th>
+      <td><p>The fraction of brightest pixels that will be ignored.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data table with counts converted to density in  \(cells / mm^2\).</p>
-    
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+    <p>A list containing</p><ul>
+<li><p>signals - The mean expression of each fluor in the selected bright pixels</p></li>
+<li><p>sn - The expression of non-primary fluors as a fraction of the primary</p></li>
+<li><p>primary - Component plane for the primary fluor (a large matrix)</p></li>
+</ul>
 
-    <div class='dont-index'><p>Other aggregation functions: <code><a href='compute_density_from_table.html'>compute_density_from_table</a></code>,
-  <code><a href='compute_h_score_from_score_data.html'>compute_h_score_from_score_data</a></code>,
-  <code><a href='compute_h_score.html'>compute_h_score</a></code>,
-  <code><a href='compute_mean_expression_many.html'>compute_mean_expression_many</a></code>,
-  <code><a href='compute_mean_expression.html'>compute_mean_expression</a></code>,
-  <code><a href='compute_positivity_many.html'>compute_positivity_many</a></code>,
-  <code><a href='compute_positivity.html'>compute_positivity</a></code>,
-  <code><a href='count_phenotypes.html'>count_phenotypes</a></code>,
-  <code><a href='counts_to_percents.html'>counts_to_percents</a></code></p></div>
     
 
   </div>
@@ -190,8 +183,6 @@ of interest.</p></td>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-
-      <li><a href="#see-also">See also</a></li>
           </ul>
 
   </div>

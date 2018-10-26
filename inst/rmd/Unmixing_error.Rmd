@@ -59,7 +59,7 @@ comp_files = c(comp_files[dapi_files], comp_files[!dapi_files])
 comp_names = basename(comp_files)
 primary_fluors = purrr::map_chr(comp_names, phenoptrReports:::file_to_fluor)
 all_data = purrr::map2(comp_files, primary_fluors, 
-                       phenoptrReports:::process_file, 
+                       phenoptrReports:::process_singleplex_image, 
                        n_bright=n_bright, skip_fraction=skip_fraction) %>% 
     purrr::set_names(comp_names)
 
