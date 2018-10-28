@@ -1,11 +1,11 @@
 # This is an RStudio Addin that provides a GUI frontend
-# to unmixing_error_report.
+# to unmixing_quality_report.
 
-#' Generate an unmixing error (crosstalk) report for a selected export folder.
+#' Generate an unmixing quality (crosstalk) report for a selected export folder.
 #'
-#' `unmixing_error_addin` opens a GUI that allows you to select
+#' `unmixing_quality_addin` opens a GUI that allows you to select
 #' an export folder containing component data files for singleplex samples.
-#' An unmixing error report is created for the samples and saved in
+#' An unmixing quality report is created for the samples and saved in
 #' the source directory.
 #'
 #' The report generator tries to identify the Opal fluor for each source file
@@ -13,10 +13,10 @@
 #' and "Opal_nnn".
 #' It also recognizes three leading digits as the number of an Opal fluor.
 #' @export
-unmixing_error_addin = function() {
+unmixing_quality_addin = function() {
   intro <- shiny::tagList(shiny::p(
     'This app reads component data files for singleplex samples',
-    'and creates an unmixing error report showing crosstalk between the samples.'
+    'and creates an unmixing quality report showing crosstalk between the samples.'
   ))
 
   ui <- miniUI::miniPage(
@@ -28,7 +28,7 @@ unmixing_error_addin = function() {
       }
       h3 { margin-top: 10px; }
     "))),
-    miniUI::gadgetTitleBar("Unmixing error report",
+    miniUI::gadgetTitleBar("Unmixing quality report",
       right=miniUI::miniTitleBarButton('done', 'Create Report', primary=TRUE)),
 
     miniUI::miniContentPanel(
@@ -71,7 +71,7 @@ unmixing_error_addin = function() {
       if (error_text == '') {
         shiny::showNotification('Processing, please wait!', duration=NULL,
                                 closeButton=FALSE, type='message')
-        phenoptrReports::unmixing_error_report(export_dir())
+        phenoptrReports::unmixing_quality_report(export_dir())
         shiny::stopApp()
       } else {
         shiny::showNotification(error_text, type='message')
@@ -103,6 +103,6 @@ unmixing_error_addin = function() {
   }
 
   # Run the gadget in a dialog
-  viewer <- shiny::dialogViewer('Create unmixing error report')
+  viewer <- shiny::dialogViewer('Create unmixing quality report')
   shiny::runGadget(ui, server, viewer = viewer)
 }

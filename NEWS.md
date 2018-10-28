@@ -2,7 +2,7 @@
 **2018-10-26**
 
 New features:
-- New unmixing error report.
+- New unmixing quality report.
 - Mean expression sheet includes tissue category "All" with mean expression
   across all requested categories.
 - Chart report includes count and density charts with truncated Y-axis 

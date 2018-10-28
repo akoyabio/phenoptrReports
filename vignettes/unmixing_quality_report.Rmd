@@ -1,5 +1,5 @@
 ---
-title: "Unmixing error report"
+title: "Unmixing quality report"
 author: "Kent Johnson"
 date: "`r Sys.Date()`"
 output: 
@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-The unmixing error report analyzes unmixed, singleplex images
+The unmixing quality report analyzes unmixed, singleplex images
 to help evaluate staining and unmixing quality. This report
 shows crosstalk between components and
 highlights potential problem areas in assay development.
@@ -42,11 +42,11 @@ It also recognizes three leading digits as the number of an Opal fluor.
 
 ## Detailed steps
 
-#### Choose "Unmixing error report" from the RStudio Addins menu
+#### Choose "Unmixing quality report" from the RStudio Addins menu
 
-Thus will open the error reporting app.
+Thus will open the quality reporting app.
 
-![](figures/Unmixing_error_addin.png)
+![](figures/Unmixing_quality_addin.png)
 
 #### Select input files  
 
@@ -60,7 +60,7 @@ exported component data files.
 
 Click the "Create Report" button to start processing of the selected directory. 
 
-![](figures/Create_unmixing_error_report.png)
+![](figures/Create_unmixing_quality_report.png)
 
 When the report is complete, the app window will close. Any errors will be
 reported in the RStudio Console pane.
@@ -68,4 +68,4 @@ reported in the RStudio Console pane.
 #### View the report
 
 When processing completes, the export directory will contain
-a file `Unmixing_error_report.html` which may be viewed in any web browser.
+a file `Unmixing_quality_report.html` which may be viewed in any web browser.

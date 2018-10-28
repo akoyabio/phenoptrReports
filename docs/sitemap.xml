@@ -73,10 +73,10 @@
     <loc>http://akoyabio.github.io/phenoptrReports/reference/split_phenotypes.html</loc>
   </url>
   <url>
-    <loc>http://akoyabio.github.io/phenoptrReports/reference/unmixing_error_addin.html</loc>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/unmixing_quality_addin.html</loc>
   </url>
   <url>
-    <loc>http://akoyabio.github.io/phenoptrReports/reference/unmixing_error_report.html</loc>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/unmixing_quality_report.html</loc>
   </url>
   <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/upset_data.html</loc>
@@ -121,6 +121,6 @@
     <loc>http://akoyabio.github.io/phenoptrReports/articles/consolidation.html</loc>
   </url>
   <url>
-    <loc>http://akoyabio.github.io/phenoptrReports/articles/unmixing_error.html</loc>
+    <loc>http://akoyabio.github.io/phenoptrReports/articles/unmixing_quality_report.html</loc>
   </url>
 </urlset>

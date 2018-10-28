@@ -6,9 +6,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Authors • phenoptrReports</title>
+<title>Generate an unmixing quality (crosstalk) report for a selected export folder. — unmixing_quality_addin • phenoptrReports</title>
 
-<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+<link rel="shortcut icon" type="image/x-icon" href="../favicon.ico">
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -27,12 +27,18 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
-<link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script>
+<link href="../pkgdown.css" rel="stylesheet">
+<script src="../pkgdown.js"></script>
 
 
 
-<meta property="og:title" content="Authors" />
+<meta property="og:title" content="Generate an unmixing quality (crosstalk) report for a selected export folder. — unmixing_quality_addin" />
+
+<meta property="og:description" content="unmixing_quality_addin opens a GUI that allows you to select
+an export folder containing component data files for singleplex samples.
+An unmixing quality report is created for the samples and saved in
+the source directory." />
+<meta name="twitter:card" content="summary" />
 
 
 
@@ -48,7 +54,7 @@
   </head>
 
   <body>
-    <div class="container template-authors">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
@@ -60,7 +66,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="index.html">phenoptrReports</a>
+        <a class="navbar-link" href="../index.html">phenoptrReports</a>
         <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.2</span>
       </span>
     </div>
@@ -68,7 +74,7 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -81,24 +87,24 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="articles/unmixing_quality_report.html">Unmixing quality report</a>
+      <a href="../articles/unmixing_quality_report.html">Unmixing quality report</a>
     </li>
     <li>
-      <a href="articles/consolidation.html">Consolidating inForm data</a>
+      <a href="../articles/consolidation.html">Consolidating inForm data</a>
     </li>
     <li>
-      <a href="articles/analysis.html">Analyzing inForm data</a>
+      <a href="../articles/analysis.html">Analyzing inForm data</a>
     </li>
   </ul>
 </li>
 <li>
-  <a href="reference/index.html">Reference</a>
+  <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="news/index.html">
+  <a href="../news/index.html">
     <span class="fa fa-newspaper-o"></span>
      
     news
@@ -121,26 +127,42 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Authors</h1>
+    <h1>Generate an unmixing quality (crosstalk) report for a selected export folder.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/unmixing_quality_addin.R'><code>R/unmixing_quality_addin.R</code></a></small>
+    <div class="hidden name"><code>unmixing_quality_addin.Rd</code></div>
     </div>
 
-    <ul class="list-unstyled">
-      <li>
-        <p><strong>Kent S Johnson</strong>. Author, maintainer. 
-        </p>
-      </li>
-      <li>
-        <p><strong>Akoya Biosciences</strong>. Copyright holder. 
-        </p>
-      </li>
-    </ul>
+    <div class="ref-description">
+    
+    <p><code>unmixing_quality_addin</code> opens a GUI that allows you to select
+an export folder containing component data files for singleplex samples.
+An unmixing quality report is created for the samples and saved in
+the source directory.</p>
+    
+    </div>
+
+    <pre class="usage"><span class='fu'>unmixing_quality_addin</span>()</pre>
+        
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The report generator tries to identify the Opal fluor for each source file
+by looking at the file name. It recognizes "DAPI", "AF", "Opalnnn",
+and "Opal_nnn".
+It also recognizes three leading digits as the number of an Opal fluor.</p>
+    
 
   </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      
+      <li><a href="#details">Details</a></li>
+          </ul>
 
+  </div>
 </div>
-
 
       <footer>
       <div class="copyright">

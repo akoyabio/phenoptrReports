@@ -1,5 +1,5 @@
 ---
-title: "Unmixing Error Measurements"
+title: "Unmixing Quality Report"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 params:
@@ -42,8 +42,8 @@ library(formattable)
 library(phenoptr)
 ```
 
-Unmixing error measurements on singly-stained samples
-from <pre>`r params$export_path`</pre>.
+Unmixing quality report for singly-stained samples
+from <pre><strong>`r params$export_path`</strong></pre>.
 
 ```{r functions}
 n_bright = 3200 # Number of bright pixels to find

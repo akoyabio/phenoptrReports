@@ -5,9 +5,9 @@
 `phenoptrReports` generates reports based on  data
 created by Akoya Biosciences' inForm<sup>&reg;</sup> software.
 
-### Unmixing error report
+### Unmixing quality report
 
-The unmixing error report analyzes unmixed, singleplex images
+The unmixing quality report analyzes unmixed, singleplex images
 to help evaluate staining and unmixing quality. This report
 shows crosstalk between components and
 highlights potential problem areas in assay development.
@@ -64,10 +64,10 @@ devtools::install_github("akoyabio/phenoptrReports")
 
 ## Getting Started
 
-### Unmixing error report
+### Unmixing quality report
 
-For more information about the unmixing error report, see the 
-[Unmixing error report](articles/unmixing_error.html) tutorial.
+For more information about the unmixing quality report, see the 
+[Unmixing quality report](articles/unmixing_quality_report.html) tutorial.
 
 
 ### Data consolidation
