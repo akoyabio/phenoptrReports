@@ -1,3 +1,9 @@
+# phenoptrReports 0.1.2.9000
+
+Bug fixes:
+- `compute_mean_expression_many` ignores duplicate parameter definitions 
+  instead of stopping with an obscure error.
+
 # phenoptrReports 0.1.2
 **2018-10-26**
 

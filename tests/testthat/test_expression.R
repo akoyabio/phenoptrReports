@@ -21,6 +21,7 @@ test_that("mean expression per phenotype and tissue category calculation works",
   phenotypes = phenoptr::parse_phenotypes('CD8+', 'CD68+', 'Total Cells')
   params = list("CD8+" = "Membrane PDL1 (Opal 520) Mean",
                 "CD68+" = "Membrane PDL1 (Opal 520) Mean",
+                "CD68+" = "Membrane PDL1 (Opal 520) Mean", # Duplicate s/b ignored
                 "Total Cells" = "Membrane PDL1 (Opal 520) Mean")
 
   ex = compute_mean_expression_many(csd, phenotypes, params, tissue_categories)

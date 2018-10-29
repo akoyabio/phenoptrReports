@@ -76,6 +76,15 @@ compute_mean_expression_many = function(
 
   param_names = paste0(names(params), param_what, ' ', params)
 
+  # Don't allow duplicate measures, it breaks downstream and is not helpful
+  dups = duplicated(param_names)
+  if (any(dups)) {
+    warning('Removing duplicate expression parameters: ',
+            paste(param_names[dups], collapse=', '))
+    params = params[!dups]
+    param_names = param_names[!dups]
+  }
+
   # Function to compute all expressions for a single nested data frame
   # Returns a data frame with columns for count, mean, and name
   compute_means = function(d) {
