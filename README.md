@@ -34,7 +34,7 @@ For each analysis, the applications create
 `phenoptrReports` is part of the Akoya Biosciences Phenoptics&trade; family of
 Quantitative Pathology Research Solutions. For more information
 visit the Phenoptics&trade;
-[home page](http://www.perkinelmer.com/cancer-immunology/index.html).
+[home page](http://www.perkinelmer.com/category/quantitative-pathology-research).
 
 ----
 

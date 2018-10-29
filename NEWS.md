@@ -1,5 +1,8 @@
 # phenoptrReports 0.1.2.9000
 
+Misc:
+- Update the link to Phenoptics home page.
+
 Bug fixes:
 - `compute_mean_expression_many` ignores duplicate parameter definitions 
   instead of stopping with an obscure error.
