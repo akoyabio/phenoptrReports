@@ -32,10 +32,15 @@ compute_density_from_cell_summary =
   # `Tissue Category` total name to match what `count_phenotypes` gives us,
   # and aggregate by `Slide ID` and `Tissue Category`
   summary_data = purrr::map_dfr(summary_path, phenoptr::read_cell_seg_data,
-                                              pixels_per_micron=pixels_per_micron) %>%
-    dplyr::select(`Slide ID`, `Tissue Category`, Phenotype,
-                  `Tissue Category Area (sq microns)`) %>%
-    dplyr::filter(Phenotype=='All')
+                                              pixels_per_micron=pixels_per_micron)
+
+  if ('Phenotype' %in% names(summary_data))
+    summary_data = summary_data %>% dplyr::filter(Phenotype=='All')
+
+  summary_data = summary_data %>%
+    dplyr::select(`Slide ID`, `Tissue Category`,
+                  `Tissue Category Area (sq microns)`)
+
   compute_density_from_table(counts, summary_data, tissue_categories)
 }
 

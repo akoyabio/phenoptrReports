@@ -6,6 +6,8 @@ Misc:
 Bug fixes:
 - `compute_mean_expression_many` ignores duplicate parameter definitions 
   instead of stopping with an obscure error.
+- `compute_density_from_cell_summary` doesn't require a `Phenotype` column
+  in the cell seg summary data.
 
 # phenoptrReports 0.1.2
 **2018-10-26**
