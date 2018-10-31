@@ -24,7 +24,9 @@ test_that("mean expression per phenotype and tissue category calculation works",
                 "CD68+" = "Membrane PDL1 (Opal 520) Mean", # Duplicate s/b ignored
                 "Total Cells" = "Membrane PDL1 (Opal 520) Mean")
 
-  ex = compute_mean_expression_many(csd, phenotypes, params, tissue_categories)
+  ex = expect_warning(
+    compute_mean_expression_many(csd, phenotypes, params, tissue_categories),
+    regexp='Removing duplicate')
 
   expect_equal(names(ex), c("Slide ID", "Tissue Category",
                             "CD8+ Membrane PDL1 (Opal 520) Mean",
@@ -47,8 +49,10 @@ test_that("mean expression per phenotype and tissue category calculation works",
                  1.70227677100494, 2.2841306156406, 2.08889275843007))
 
   # Mean expression of top 20 cells, just check that it runs
-  ex = compute_mean_expression_many(csd, phenotypes, params, tissue_categories,
-                                    count=20)
+  ex = expect_warning(
+    compute_mean_expression_many(csd, phenotypes, params, tissue_categories,
+                                    count=20),
+    regexp='Removing duplicate')
 
   expect_equal(names(ex), c("Slide ID", "Tissue Category",
                             "CD8+ Top 20 Membrane PDL1 (Opal 520) Mean",

@@ -2,12 +2,11 @@
 
 Misc:
 - Update the link to Phenoptics home page.
-
-Bug fixes:
 - `compute_mean_expression_many` ignores duplicate parameter definitions 
   instead of stopping with an obscure error.
 - `compute_density_from_cell_summary` doesn't require a `Phenotype` column
   in the cell seg summary data.
+- `split_phenotypes` doesn't require a `Confidence` column in the source data.
 
 # phenoptrReports 0.1.2
 **2018-10-26**

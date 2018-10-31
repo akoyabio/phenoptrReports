@@ -166,7 +166,7 @@ split_phenotypes = function(csd) {
   new_columns = new_columns %>% rlang::set_names(new_names)
 
   # Build a new data frame
-  csd %>% dplyr::select(-Phenotype, -Confidence) %>%
+  csd %>% dplyr::select(-Phenotype, -dplyr::contains('Confidence')) %>%
     dplyr::bind_cols(new_columns)
 }
 
