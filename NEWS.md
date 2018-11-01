@@ -7,6 +7,7 @@ Misc:
 - `compute_density_from_cell_summary` doesn't require a `Phenotype` column
   in the cell seg summary data.
 - `split_phenotypes` doesn't require a `Confidence` column in the source data.
+- `split_phenotypes` recognizes whitespace as a phenotype separator.
 
 # phenoptrReports 0.1.2
 **2018-10-26**

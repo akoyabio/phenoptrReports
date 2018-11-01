@@ -136,7 +136,7 @@ split_phenotypes = function(csd) {
 
   # Look for positive phenotypes
   phenotypes = unique(csd$Phenotype) %>%
-    stringr::str_split('/') %>%
+    stringr::str_split('/|(\\s+)') %>% # Split on single / or any whitespace
     purrr::flatten_chr()
   positives = phenotypes[endsWith(phenotypes, '+')] %>% unique()
 
