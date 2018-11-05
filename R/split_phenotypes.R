@@ -1,4 +1,4 @@
-# Functions to merge 'classic' cell seg data files and convert to
+# Functions to consolidate 'classic' cell seg data files and convert to
 # a phenotype per marker form.
 
 # Suppress CMD CHECK notes for things that look like global vars
@@ -9,25 +9,25 @@ utils::globalVariables(c(
   "Confidence"
 ))
 
-#' Merge cell seg data files from parallel projects
+#' Consolidate cell seg data files from parallel projects
 #' and create summary reports
 #'
-#' Calls [merge_and_split_cell_seg_data] to merge the supplied
+#' Calls [consolidate_and_split_cell_seg_data] to consolidate the supplied
 #' cell seg data files. Additionally calls [write_summary_report] to
-#' create a summary report for each source file and the merged data.
+#' create a summary report for each source file and the consolidated data.
 #'
-#' Writes the merged data to `Consolidated_data.txt` in the output
+#' Writes the consolidated data to `Consolidated_data.txt` in the output
 #' directory.
 #'
 #' @param csd_files A list or vector of paths to cell seg data files.
 #' @param output_dir Path to a directory where the results will be saved.
 #' @param update_progress Callback function which is called with progress.
-#' @return A single data frame containing merged data and columns for each
+#' @return A single data frame containing consolidated data and columns for each
 #'   single phenotype, invisibly.
-#' @family merge functions
+#' @family consolidation functions
 #' @importFrom magrittr %>%
 #' @export
-merge_and_summarize_cell_seg_data = function(csd_files, output_dir,
+consolidate_and_summarize_cell_seg_data = function(csd_files, output_dir,
                                              update_progress=NULL) {
   # Make some names, these will be for files and headers
   names = make_unique_names(csd_files)
@@ -51,9 +51,9 @@ merge_and_summarize_cell_seg_data = function(csd_files, output_dir,
     write_summary_report(csd=d, output_path=out_path, dataset_name=n)
   })
 
-  # Merge and write the consolidated data
+  # Consolidate and write the consolidated data
   update_progress(detail='Merging...')
-  csd = merge_and_split_cell_seg_data(data=data)
+  csd = consolidate_and_split_cell_seg_data(data=data)
   readr::write_tsv(csd, file.path(output_dir, 'Consolidated_data.txt'))
 
   # And the report
@@ -65,9 +65,9 @@ merge_and_summarize_cell_seg_data = function(csd_files, output_dir,
   invisible(csd)
 }
 
-#' Merge cell seg data files from parallel projects
+#' Consolidate cell seg data files from parallel projects
 #'
-#' Merge several cell seg data files, each with its own `Phenotype` column,
+#' Consolidate several cell seg data files, each with its own `Phenotype` column,
 #' into a single file with separate columns for each phenotype.
 #'
 #' The
@@ -77,12 +77,12 @@ merge_and_summarize_cell_seg_data = function(csd_files, output_dir,
 #' @param csd_files A list or vector of paths to cell seg data files.
 #' @param data A list of data tables from read_cell_seg_data. Exactly one
 #'   of `files` or `data` should be provided.
-#' @return A single data frame containing merged data and columns for each
+#' @return A single data frame containing consolidated data and columns for each
 #'   single phenotype.
-#' @family merge functions
+#' @family consolidation functions
 #' @importFrom magrittr %>%
 #' @export
-merge_and_split_cell_seg_data = function(csd_files=NULL, data=NULL) {
+consolidate_and_split_cell_seg_data = function(csd_files=NULL, data=NULL) {
   if (is.null(csd_files) == is.null(data))
     stop("Provide either 'csd_files' or 'data' but not both.")
 

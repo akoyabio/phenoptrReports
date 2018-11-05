@@ -365,6 +365,7 @@ insert_page_breaks <- function(wb, sheet_name, d, grid_spacing,
   }
 }
 
+# Merge cells in a worksheet and outline the result
 merge_and_outline_cells = function(wb, sheet_name, rows, cols) {
   openxlsx::mergeCells(wb, sheet_name, rows=rows, cols=cols)
   outline_cells(wb, sheet_name, rows, cols)
