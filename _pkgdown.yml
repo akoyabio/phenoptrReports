@@ -40,14 +40,16 @@ reference:
     desc: These functions are added to the RStudio Addins menu. Selecting
           one opens a GUI.
     contents:
-      - '`analysis_app`'
       - '`merge_addin`'
+      - '`consolidate_addin`'
+      - '`analysis_app`'
       - '`unmixing_quality_addin`'
-  - title: Consolidation
-    desc: These functions implement the consolidation step.
+  - title: Merging and Consolidation
+    desc: These functions implement the merge and consolidation apps.
     contents:
-      - '`merge_and_split_cell_seg_data`'
-      - '`merge_and_summarize_cell_seg_data`'
+      - '`merge_cell_seg_files`'
+      - '`consolidate_and_split_cell_seg_data`'
+      - '`consolidate_and_summarize_cell_seg_data`'
   - title: Calculations
     desc: These functions perform the calculations for an analysis.
     contents:

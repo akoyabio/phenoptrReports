@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Compute positivity of a single phenotype — compute_positivity • phenoptrReports</title>
+<title>Consolidate and summarize cell seg data files — consolidate_addin • phenoptrReports</title>
 
 <link rel="shortcut icon" type="image/x-icon" href="../favicon.ico">
 
@@ -32,9 +32,12 @@
 
 
 
-<meta property="og:title" content="Compute positivity of a single phenotype — compute_positivity" />
+<meta property="og:title" content="Consolidate and summarize cell seg data files — consolidate_addin" />
 
-<meta property="og:description" content="Compute positivity of a single phenotype" />
+<meta property="og:description" content="consolidate_addin opens a GUI that allows you to select multiple
+cell seg data files. The selected files will be consolidated
+to a single file which is saved to an output directory
+along with summary reports for each file." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -126,69 +129,28 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Compute positivity of a single phenotype</h1>
-    <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/positivity.R'><code>R/positivity.R</code></a></small>
-    <div class="hidden name"><code>compute_positivity.Rd</code></div>
+    <h1>Consolidate and summarize cell seg data files</h1>
+    <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/consolidate_gadget_addin.R'><code>R/consolidate_gadget_addin.R</code></a></small>
+    <div class="hidden name"><code>consolidate_addin.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Compute positivity of a single phenotype</p>
+    <p><code>consolidate_addin</code> opens a GUI that allows you to select multiple
+cell seg data files. The selected files will be consolidated
+to a single file which is saved to an output directory
+along with summary reports for each file.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>compute_positivity</span>(<span class='no'>csd</span>, <span class='no'>phenotype</span>, <span class='no'>positivity</span>)</pre>
-    
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>csd</th>
-      <td><p>Cell seg data to use. This should already have been filtered
-for the slides or fields of interest.</p></td>
-    </tr>
-    <tr>
-      <th>phenotype</th>
-      <td><p>A phenotype selector. This will be passed to
-<code><a href='http://akoyabio.github.io/phenoptr/reference/select_rows.html'>select_rows</a></code>.</p></td>
-    </tr>
-    <tr>
-      <th>positivity</th>
-      <td><p>A one-sided formula giving the positivity expression
-to evaluate.</p></td>
-    </tr>
-    </table>
-    
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>A data frame with columns for count (total number of cells of
-the given phenotype),
-positive (count of positive cells)
-and fraction (fraction of positive cells).</p>
-    
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p>Other aggregation functions: <code><a href='compute_density_from_cell_summary.html'>compute_density_from_cell_summary</a></code>,
-  <code><a href='compute_density_from_table.html'>compute_density_from_table</a></code>,
-  <code><a href='compute_h_score_from_score_data.html'>compute_h_score_from_score_data</a></code>,
-  <code><a href='compute_h_score.html'>compute_h_score</a></code>,
-  <code><a href='compute_mean_expression_many.html'>compute_mean_expression_many</a></code>,
-  <code><a href='compute_mean_expression.html'>compute_mean_expression</a></code>,
-  <code><a href='compute_positivity_many.html'>compute_positivity_many</a></code>,
-  <code><a href='count_phenotypes.html'>count_phenotypes</a></code>,
-  <code><a href='counts_to_percents.html'>counts_to_percents</a></code></p></div>
-    
+    <pre class="usage"><span class='fu'>consolidate_addin</span>()</pre>
+        
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#value">Value</a></li>
-
-      <li><a href="#see-also">See also</a></li>
-          </ul>
+                </ul>
 
   </div>
 </div>

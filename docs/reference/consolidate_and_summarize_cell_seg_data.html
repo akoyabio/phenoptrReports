@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Compute positivity of a single phenotype — compute_positivity • phenoptrReports</title>
+<title>Consolidate cell seg data files from parallel projects
+and create summary reports — consolidate_and_summarize_cell_seg_data • phenoptrReports</title>
 
 <link rel="shortcut icon" type="image/x-icon" href="../favicon.ico">
 
@@ -32,9 +33,12 @@
 
 
 
-<meta property="og:title" content="Compute positivity of a single phenotype — compute_positivity" />
+<meta property="og:title" content="Consolidate cell seg data files from parallel projects
+and create summary reports — consolidate_and_summarize_cell_seg_data" />
 
-<meta property="og:description" content="Compute positivity of a single phenotype" />
+<meta property="og:description" content="Calls consolidate_and_split_cell_seg_data to consolidate the supplied
+cell seg data files. Additionally calls write_summary_report to
+create a summary report for each source file and the consolidated data." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -126,57 +130,53 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Compute positivity of a single phenotype</h1>
-    <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/positivity.R'><code>R/positivity.R</code></a></small>
-    <div class="hidden name"><code>compute_positivity.Rd</code></div>
+    <h1>Consolidate cell seg data files from parallel projects
+and create summary reports</h1>
+    <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/split_phenotypes.R'><code>R/split_phenotypes.R</code></a></small>
+    <div class="hidden name"><code>consolidate_and_summarize_cell_seg_data.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Compute positivity of a single phenotype</p>
+    <p>Calls <a href='consolidate_and_split_cell_seg_data.html'>consolidate_and_split_cell_seg_data</a> to consolidate the supplied
+cell seg data files. Additionally calls <a href='write_summary_report.html'>write_summary_report</a> to
+create a summary report for each source file and the consolidated data.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>compute_positivity</span>(<span class='no'>csd</span>, <span class='no'>phenotype</span>, <span class='no'>positivity</span>)</pre>
+    <pre class="usage"><span class='fu'>consolidate_and_summarize_cell_seg_data</span>(<span class='no'>csd_files</span>, <span class='no'>output_dir</span>,
+  <span class='kw'>update_progress</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>csd</th>
-      <td><p>Cell seg data to use. This should already have been filtered
-for the slides or fields of interest.</p></td>
+      <th>csd_files</th>
+      <td><p>A list or vector of paths to cell seg data files.</p></td>
     </tr>
     <tr>
-      <th>phenotype</th>
-      <td><p>A phenotype selector. This will be passed to
-<code><a href='http://akoyabio.github.io/phenoptr/reference/select_rows.html'>select_rows</a></code>.</p></td>
+      <th>output_dir</th>
+      <td><p>Path to a directory where the results will be saved.</p></td>
     </tr>
     <tr>
-      <th>positivity</th>
-      <td><p>A one-sided formula giving the positivity expression
-to evaluate.</p></td>
+      <th>update_progress</th>
+      <td><p>Callback function which is called with progress.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data frame with columns for count (total number of cells of
-the given phenotype),
-positive (count of positive cells)
-and fraction (fraction of positive cells).</p>
+    <p>A single data frame containing consolidated data and columns for each
+single phenotype, invisibly.</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Writes the consolidated data to <code>Consolidated_data.txt</code> in the output
+directory.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other aggregation functions: <code><a href='compute_density_from_cell_summary.html'>compute_density_from_cell_summary</a></code>,
-  <code><a href='compute_density_from_table.html'>compute_density_from_table</a></code>,
-  <code><a href='compute_h_score_from_score_data.html'>compute_h_score_from_score_data</a></code>,
-  <code><a href='compute_h_score.html'>compute_h_score</a></code>,
-  <code><a href='compute_mean_expression_many.html'>compute_mean_expression_many</a></code>,
-  <code><a href='compute_mean_expression.html'>compute_mean_expression</a></code>,
-  <code><a href='compute_positivity_many.html'>compute_positivity_many</a></code>,
-  <code><a href='count_phenotypes.html'>count_phenotypes</a></code>,
-  <code><a href='counts_to_percents.html'>counts_to_percents</a></code></p></div>
+    <div class='dont-index'><p>Other consolidation functions: <code><a href='consolidate_and_split_cell_seg_data.html'>consolidate_and_split_cell_seg_data</a></code></p></div>
     
 
   </div>
@@ -186,6 +186,8 @@ and fraction (fraction of positive cells).</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
 
       <li><a href="#see-also">See also</a></li>
           </ul>

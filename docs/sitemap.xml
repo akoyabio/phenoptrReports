@@ -37,6 +37,15 @@
     <loc>http://akoyabio.github.io/phenoptrReports/reference/compute_positivity_many.html</loc>
   </url>
   <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/consolidate_addin.html</loc>
+  </url>
+  <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/consolidate_and_split_cell_seg_data.html</loc>
+  </url>
+  <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/consolidate_and_summarize_cell_seg_data.html</loc>
+  </url>
+  <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/counts_to_percents.html</loc>
   </url>
   <url>
@@ -58,10 +67,7 @@
     <loc>http://akoyabio.github.io/phenoptrReports/reference/merge_addin.html</loc>
   </url>
   <url>
-    <loc>http://akoyabio.github.io/phenoptrReports/reference/merge_and_split_cell_seg_data.html</loc>
-  </url>
-  <url>
-    <loc>http://akoyabio.github.io/phenoptrReports/reference/merge_and_summarize_cell_seg_data.html</loc>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/merge_cell_seg_files.html</loc>
   </url>
   <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/order_by_slide_and_tissue_category.html</loc>

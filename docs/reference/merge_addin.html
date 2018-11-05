@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Merge and summarize cell seg data files — merge_addin • phenoptrReports</title>
+<title>Merge cell seg data files — merge_addin • phenoptrReports</title>
 
 <link rel="shortcut icon" type="image/x-icon" href="../favicon.ico">
 
@@ -32,12 +32,14 @@
 
 
 
-<meta property="og:title" content="Merge and summarize cell seg data files — merge_addin" />
+<meta property="og:title" content="Merge cell seg data files — merge_addin" />
 
-<meta property="og:description" content="merge_addin opens a GUI that allows you to select multiple
-cell seg data files. The selected files will be consolidated
-to a single file which is saved to an output directory
-along with summary reports for each file." />
+<meta property="og:description" content="merge_addin opens a GUI that allows you to select a directory containing
+cell seg data files from multiple, individual fields. The selected files
+will be merged
+to a single file which is saved to the source directory.
+This is similar to the function of the inForm Merge tab but
+does not include the ability to review and reject individual fields." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -67,7 +69,7 @@ along with summary reports for each file." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.2</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.3</span>
       </span>
     </div>
 
@@ -87,7 +89,7 @@ along with summary reports for each file." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/unmixing_error.html">Unmixing error report</a>
+      <a href="../articles/unmixing_quality_report.html">Unmixing quality report</a>
     </li>
     <li>
       <a href="../articles/consolidation.html">Consolidating inForm data</a>
@@ -129,17 +131,19 @@ along with summary reports for each file." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Merge and summarize cell seg data files</h1>
+    <h1>Merge cell seg data files</h1>
     <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/merge_gadget_addin.R'><code>R/merge_gadget_addin.R</code></a></small>
     <div class="hidden name"><code>merge_addin.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p><code>merge_addin</code> opens a GUI that allows you to select multiple
-cell seg data files. The selected files will be consolidated
-to a single file which is saved to an output directory
-along with summary reports for each file.</p>
+    <p><code>merge_addin</code> opens a GUI that allows you to select a directory containing
+cell seg data files from multiple, individual fields. The selected files
+will be merged
+to a single file which is saved to the source directory.
+This is similar to the function of the inForm Merge tab but
+does not include the ability to review and reject individual fields.</p>
     
     </div>
 

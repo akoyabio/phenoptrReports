@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">phenoptrReports</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.2</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.3</span>
       </span>
     </div>
 
@@ -99,15 +99,15 @@
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
 <p><code>phenoptrReports</code> generates reports based on data created by Akoya Biosciences’ inForm<sup>®</sup> software.</p>
-<div id="unmixing-quality-report" class="section level3">
+<div id="merging-data-from-individual-fields" class="section level3">
 <h3 class="hasAnchor">
-<a href="#unmixing-quality-report" class="anchor"></a>Unmixing quality report</h3>
-<p>The unmixing quality report analyzes unmixed, singleplex images to help evaluate staining and unmixing quality. This report shows crosstalk between components and highlights potential problem areas in assay development.</p>
+<a href="#merging-data-from-individual-fields" class="anchor"></a>Merging data from individual fields</h3>
+<p>The “Merge cell seg files” application merges inForm data files from individual fields to create “Merge” data files. This is similar to the inForm Merge tab but does not include the ability to review and reject individual fields.</p>
 </div>
 <div id="data-aggregation-and-reporting" class="section level3">
 <h3 class="hasAnchor">
 <a href="#data-aggregation-and-reporting" class="anchor"></a>Data aggregation and reporting</h3>
-<p>The consolidation and analysis applications in <code>phenoptrReports</code> analyze cell phenotype and expression data created by inForm. They use data from multiple inForm projects to aggregate phenoype counts, density, mean expression and H-Score for each slide and tissue category in an experiment.</p>
+<p>The consolidation and analysis applications in <code>phenoptrReports</code> use merged data files to analyze cell phenotype and expression data created by inForm. They use data from multiple inForm projects to aggregate phenoype counts, density, mean expression and H-Score for each slide and tissue category in an experiment.</p>
 <p>For each analysis, the applications create</p>
 <ul>
 <li>a consolidated data file</li>
@@ -115,6 +115,11 @@
 <li>a Word document with visualizations of the results</li>
 <li>an R script which provides an audit trail and can be used to reproduce or modify the analysis.</li>
 </ul>
+</div>
+<div id="unmixing-quality-report" class="section level3">
+<h3 class="hasAnchor">
+<a href="#unmixing-quality-report" class="anchor"></a>Unmixing quality report</h3>
+<p>The unmixing quality report analyzes unmixed, singleplex images to help evaluate staining and unmixing quality. This report shows crosstalk between components and highlights potential problem areas in assay development.</p>
 <hr>
 <p><code>phenoptrReports</code> is part of the Akoya Biosciences Phenoptics™ family of Quantitative Pathology Research Solutions. For more information visit the Phenoptics™ <a href="http://www.perkinelmer.com/category/quantitative-pathology-research">home page</a>.</p>
 <hr>
@@ -142,10 +147,10 @@ devtools::install_github("akoyabio/phenoptrReports")</code></pre>
 <div id="getting-started" class="section level2">
 <h2 class="hasAnchor">
 <a href="#getting-started" class="anchor"></a>Getting Started</h2>
-<div id="unmixing-quality-report-1" class="section level3">
+<div id="merging-data-from-individual-fields-1" class="section level3">
 <h3 class="hasAnchor">
-<a href="#unmixing-quality-report-1" class="anchor"></a>Unmixing quality report</h3>
-<p>For more information about the unmixing quality report, see the <a href="articles/unmixing_quality_report.html">Unmixing quality report</a> tutorial.</p>
+<a href="#merging-data-from-individual-fields-1" class="anchor"></a>Merging data from individual fields</h3>
+<p>Use the “Merge cell seg files” addin to merge inForm data from individual fields into “Merge” data files. This is similar to the function of the inForm Merge tab and should be used only when the inForm Merge is not available.</p>
 </div>
 <div id="data-consolidation" class="section level3">
 <h3 class="hasAnchor">
@@ -168,6 +173,11 @@ devtools::install_github("akoyabio/phenoptrReports")</code></pre>
 <p>To define the analysis, you select tissue categories, phenotypes, and markers of interest.</p>
 <p>To create the finalreports, the analysis app writes and runs an R script. The script computes the aggregated statistics, writes them to an Excel workbook, and creates visualizations of the results in a Word document.</p>
 <p>For detailed instructions and requirements, see the <a href="articles/analysis.html">Analyzing inForm data</a> tutorial.</p>
+</div>
+<div id="unmixing-quality-report-1" class="section level3">
+<h3 class="hasAnchor">
+<a href="#unmixing-quality-report-1" class="anchor"></a>Unmixing quality report</h3>
+<p>For more information about the unmixing quality report, see the <a href="articles/unmixing_quality_report.html">Unmixing quality report</a> tutorial.</p>
 </div>
 </div>
 </div>

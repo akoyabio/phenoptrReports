@@ -1,4 +1,5 @@
-# phenoptrReports 0.1.2.9000
+# phenoptrReports 0.1.3
+**2018-11-05**
 
 New features:
 - New RStudio Addin - "Merge cell seg files" merges inForm output from 

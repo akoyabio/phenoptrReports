@@ -61,7 +61,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.2</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.3</span>
       </span>
     </div>
 
@@ -144,15 +144,21 @@
       <tr>
         
         <td>
-          <p><code><a href="analysis_app.html">analysis_app()</a></code> </p>
+          <p><code><a href="merge_addin.html">merge_addin()</a></code> </p>
         </td>
-        <td><p>Run the Analysis app</p></td>
+        <td><p>Merge cell seg data files</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="merge_addin.html">merge_addin()</a></code> </p>
+          <p><code><a href="consolidate_addin.html">consolidate_addin()</a></code> </p>
         </td>
-        <td><p>Merge and summarize cell seg data files</p></td>
+        <td><p>Consolidate and summarize cell seg data files</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="analysis_app.html">analysis_app()</a></code> </p>
+        </td>
+        <td><p>Run the Analysis app</p></td>
       </tr><tr>
         
         <td>
@@ -163,22 +169,28 @@
     </tbody><tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-consolidation" class="hasAnchor"><a href="#section-consolidation" class="anchor"></a>Consolidation</h2>
-          <p class="section-desc"><p>These functions implement the consolidation step.</p></p>
+          <h2 id="section-merging-and-consolidation" class="hasAnchor"><a href="#section-merging-and-consolidation" class="anchor"></a>Merging and Consolidation</h2>
+          <p class="section-desc"><p>These functions implement the merge and consolidation apps.</p></p>
         </th>
       </tr>
       <tr>
         
         <td>
-          <p><code><a href="merge_and_split_cell_seg_data.html">merge_and_split_cell_seg_data()</a></code> </p>
+          <p><code><a href="merge_cell_seg_files.html">merge_cell_seg_files()</a></code> </p>
         </td>
-        <td><p>Merge cell seg data files from parallel projects</p></td>
+        <td><p>Merge inForm output from multiple fields.</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="merge_and_summarize_cell_seg_data.html">merge_and_summarize_cell_seg_data()</a></code> </p>
+          <p><code><a href="consolidate_and_split_cell_seg_data.html">consolidate_and_split_cell_seg_data()</a></code> </p>
         </td>
-        <td><p>Merge cell seg data files from parallel projects
+        <td><p>Consolidate cell seg data files from parallel projects</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="consolidate_and_summarize_cell_seg_data.html">consolidate_and_summarize_cell_seg_data()</a></code> </p>
+        </td>
+        <td><p>Consolidate cell seg data files from parallel projects
 and create summary reports</p></td>
       </tr>
     </tbody><tbody>
@@ -390,7 +402,7 @@ categories in the given order and the
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#section-rstudio-addins">RStudio Addins</a></li>
-      <li><a href="#section-consolidation">Consolidation</a></li>
+      <li><a href="#section-merging-and-consolidation">Merging and Consolidation</a></li>
       <li><a href="#section-calculations">Calculations</a></li>
       <li><a href="#section-data-reporting">Data reporting</a></li>
       <li><a href="#section-helper-functions">Helper functions</a></li>
