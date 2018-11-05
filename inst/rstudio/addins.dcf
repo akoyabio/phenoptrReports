@@ -1,5 +1,10 @@
+Name: Merge cell seg files
+Description: Merge inForm data from individual fields, creating a merge data file.
+Binding: merge_addin
+Interactive: true
+
 Name: Consolidate and summarize
-Description: Consolidate and summarize multiple cell seg data files.
+Description: Consolidate and summarize multiple cell seg data files, creating a consolidated file and summary reports.
 Binding: consolidate_addin
 Interactive: true
 

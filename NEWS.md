@@ -1,5 +1,10 @@
 # phenoptrReports 0.1.2.9000
 
+New features:
+- New RStudio Addin - "Merge cell seg files" merges inForm output from 
+  individual fields, similar to the inForm Merge tab.
+- `merge_cell_seg_files` function performs the merge.
+
 Misc:
 - Update the link to Phenoptics home page.
 - `compute_mean_expression_many` ignores duplicate parameter definitions 

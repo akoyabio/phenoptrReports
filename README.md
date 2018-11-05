@@ -2,20 +2,20 @@
 
 ## Introduction
 
-`phenoptrReports` generates reports based on  data
+`phenoptrReports` generates reports based on data
 created by Akoya Biosciences' inForm<sup>&reg;</sup> software.
 
-### Unmixing quality report
+### Merging data from individual fields
 
-The unmixing quality report analyzes unmixed, singleplex images
-to help evaluate staining and unmixing quality. This report
-shows crosstalk between components and
-highlights potential problem areas in assay development.
+The "Merge cell seg files" application merges inForm data files from individual
+fields to create "Merge" data files. This is similar to the inForm Merge tab but
+does not include the ability to review and reject individual fields.
 
 ### Data aggregation and reporting
 
 The consolidation and analysis applications in
-`phenoptrReports` analyze cell phenotype and expression data
+`phenoptrReports` use merged data files to 
+analyze cell phenotype and expression data
 created by inForm. They use data from multiple inForm projects
 to aggregate phenoype counts, density, 
 mean expression and
@@ -28,6 +28,13 @@ For each analysis, the applications create
 - a Word document with visualizations of the results
 - an R script which provides
   an audit trail and can be used to reproduce or modify the analysis.
+
+### Unmixing quality report
+
+The unmixing quality report analyzes unmixed, singleplex images
+to help evaluate staining and unmixing quality. This report
+shows crosstalk between components and
+highlights potential problem areas in assay development.
 
 ----
 
@@ -64,11 +71,11 @@ devtools::install_github("akoyabio/phenoptrReports")
 
 ## Getting Started
 
-### Unmixing quality report
+### Merging data from individual fields
 
-For more information about the unmixing quality report, see the 
-[Unmixing quality report](articles/unmixing_quality_report.html) tutorial.
-
+Use the "Merge cell seg files" addin to merge inForm data from individual fields
+into "Merge" data files. This is similar to the function of the inForm Merge
+tab and should be used only when the inForm Merge is not available.
 
 ### Data consolidation
 
@@ -111,3 +118,8 @@ workbook, and creates visualizations of the results in a Word document.
 For detailed instructions and requirements, see the 
 [Analyzing inForm data](articles/analysis.html) tutorial.
 
+
+### Unmixing quality report
+
+For more information about the unmixing quality report, see the 
+[Unmixing quality report](articles/unmixing_quality_report.html) tutorial.
