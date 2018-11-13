@@ -1,3 +1,9 @@
+# phenoptrReports 0.1.3.9000
+
+- `consolidate_and_summarize_cell_seg_data` processes files pairwise
+  for reduced memory requirements.
+- Removed `consolidate_and_split_cell_seg_data`
+
 # phenoptrReports 0.1.3
 **2018-11-05**
 

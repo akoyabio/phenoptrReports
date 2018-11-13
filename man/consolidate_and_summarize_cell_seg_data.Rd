@@ -20,15 +20,16 @@ A single data frame containing consolidated data and columns for each
 single phenotype, invisibly.
 }
 \description{
-Calls \link{consolidate_and_split_cell_seg_data} to consolidate the supplied
-cell seg data files. Additionally calls \link{write_summary_report} to
-create a summary report for each source file and the consolidated data.
+Consolidate several cell seg data files, each with its own \code{Phenotype} column,
+into a single file with separate columns for each phenotype.
 }
 \details{
-Writes the consolidated data to \code{Consolidated_data.txt} in the output
+Create a summary report for each source file and the consolidated data.
+
+Write the consolidated data to \code{Consolidated_data.txt} in the output
 directory.
+
+The
+individual files must all have exactly the same \code{Sample Name} and \code{Cell ID}
+columns. \link{split_phenotypes} is called to split the \code{Phenotype} columns.
 }
-\seealso{
-Other consolidation functions: \code{\link{consolidate_and_split_cell_seg_data}}
-}
-\concept{consolidation functions}

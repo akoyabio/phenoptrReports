@@ -12,48 +12,69 @@ utils::globalVariables(c(
 #' Consolidate cell seg data files from parallel projects
 #' and create summary reports
 #'
-#' Calls [consolidate_and_split_cell_seg_data] to consolidate the supplied
-#' cell seg data files. Additionally calls [write_summary_report] to
-#' create a summary report for each source file and the consolidated data.
+#' Consolidate several cell seg data files, each with its own `Phenotype` column,
+#' into a single file with separate columns for each phenotype.
 #'
-#' Writes the consolidated data to `Consolidated_data.txt` in the output
+#' Create a summary report for each source file and the consolidated data.
+#'
+#' Write the consolidated data to `Consolidated_data.txt` in the output
 #' directory.
+#'
+#' The
+#' individual files must all have exactly the same `Sample Name` and `Cell ID`
+#' columns. [split_phenotypes] is called to split the `Phenotype` columns.
 #'
 #' @param csd_files A list or vector of paths to cell seg data files.
 #' @param output_dir Path to a directory where the results will be saved.
 #' @param update_progress Callback function which is called with progress.
 #' @return A single data frame containing consolidated data and columns for each
 #'   single phenotype, invisibly.
-#' @family consolidation functions
 #' @importFrom magrittr %>%
 #' @export
 consolidate_and_summarize_cell_seg_data = function(csd_files, output_dir,
                                              update_progress=NULL) {
-  # Make some names, these will be for files and headers
-  names = make_unique_names(csd_files)
-
   if (!dir.exists(output_dir))
     stopifnot(dir.create(output_dir, recursive=TRUE))
+
+  csd_files = unlist(csd_files)
+  if (!is.character(csd_files) || !all(purrr::map_lgl(csd_files, file.exists)))
+    stop('Please pass a list of paths to existing cell seg data files.')
 
   # Make a progress function if we don't have one so we don't have to
   # check every time
   if (!is.function(update_progress))
     update_progress = function(...) {}
 
-  # Read all the files so we read each one only once
-  update_progress(detail='Reading source files.')
-  data = purrr::map(csd_files, phenoptr::read_cell_seg_data)
+  # Make some names, these will be for files and headers
+  names = make_unique_names(csd_files)
 
-  # Summary reports for the raw data
-  purrr::walk2(names, data, function(n, d) {
-    update_progress(detail=paste0('Writing report for "', n, '".'))
-    out_path = file.path(output_dir, paste0(n, '.html'))
-    write_summary_report(csd=d, output_path=out_path, dataset_name=n)
+  # Function to read a file, create a summary report, split phenotypes
+  process_one_file <- function(name, path) {
+    update_progress(detail=paste0('Reading "', name, '".'))
+    d = phenoptr::read_cell_seg_data(path)
+
+    update_progress(detail=paste0('Writing report for "', name, '".'))
+    out_path = file.path(output_dir, paste0(name, '.html'))
+    write_summary_report(csd=d, output_path=out_path, dataset_name=name)
+
+    d %>% split_phenotypes()
+  }
+
+  # Process the first file, we will use it as the basis for the result
+  csd = process_one_file(names[1], csd_files[1])
+
+  # Read subsequent files, report, split phenotypes, join with the first file.
+  purrr::walk2(names[-1], csd_files[-1], function(name, path) {
+    csd2 = process_one_file(name, path) %>%
+      dplyr::select(`Sample Name`, `Cell ID`, dplyr::starts_with('Phenotype '))
+
+    if (nrow(csd2) != nrow(csd))
+      stop(paste0('Number of rows in data frames do not match.'))
+    csd <<- dplyr::inner_join(csd, csd2, by=c('Sample Name', 'Cell ID'))
   })
 
-  # Consolidate and write the consolidated data
-  update_progress(detail='Merging...')
-  csd = consolidate_and_split_cell_seg_data(data=data)
+  # Write out the result
+  update_progress(detail='Writing consolidated data.')
   readr::write_tsv(csd, file.path(output_dir, 'Consolidated_data.txt'))
 
   # And the report
@@ -63,58 +84,6 @@ consolidate_and_summarize_cell_seg_data = function(csd_files, output_dir,
     dataset_name='Consolidated data')
 
   invisible(csd)
-}
-
-#' Consolidate cell seg data files from parallel projects
-#'
-#' Consolidate several cell seg data files, each with its own `Phenotype` column,
-#' into a single file with separate columns for each phenotype.
-#'
-#' The
-#' individual files must all have exactly the same `Sample Name` and `Cell ID`
-#' columns. [split_phenotypes] is called to split the `Phenotype` columns.
-#'
-#' @param csd_files A list or vector of paths to cell seg data files.
-#' @param data A list of data tables from read_cell_seg_data. Exactly one
-#'   of `files` or `data` should be provided.
-#' @return A single data frame containing consolidated data and columns for each
-#'   single phenotype.
-#' @family consolidation functions
-#' @importFrom magrittr %>%
-#' @export
-consolidate_and_split_cell_seg_data = function(csd_files=NULL, data=NULL) {
-  if (is.null(csd_files) == is.null(data))
-    stop("Provide either 'csd_files' or 'data' but not both.")
-
-  if (!is.null(csd_files)) {
-    csd_files = unlist(csd_files)
-    if (!is.character(csd_files) || !all(purrr::map_lgl(csd_files, file.exists)))
-      stop('Please pass a list of paths to existing cell seg data files.')
-
-    data = purrr::map(csd_files, phenoptr::read_cell_seg_data)
-  } else {
-    if (!all(purrr::map_lgl(data, ~inherits(., 'data.frame'))))
-      stop("Please pass a list of data frames as 'data'.")
-  }
-
-  # Read the first file, we will use it as the basis for the result
-  csd = data[[1]] %>% split_phenotypes()
-
-  # Read subsequent files, split phenotypes, join with the first file.
-  for (csd2 in data[-1]) {
-    csd2 = csd2 %>%
-      split_phenotypes() %>%
-      dplyr::select(`Sample Name`, `Cell ID`, dplyr::starts_with('Phenotype '))
-
-    if (nrow(csd2) != nrow(csd))
-      stop(paste0('Number of rows in data frames do not match.'))
-    csd = dplyr::inner_join(csd, csd2, by=c('Sample Name', 'Cell ID'))
-  }
-
-  if (nrow(csd) != nrow(data[[1]]))
-    stop('Rows of data frames do not match.')
-
-  csd
 }
 
 #' Split a phenotype column

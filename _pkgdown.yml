@@ -48,7 +48,6 @@ reference:
     desc: These functions implement the merge and consolidation apps.
     contents:
       - '`merge_cell_seg_files`'
-      - '`consolidate_and_split_cell_seg_data`'
       - '`consolidate_and_summarize_cell_seg_data`'
   - title: Calculations
     desc: These functions perform the calculations for an analysis.

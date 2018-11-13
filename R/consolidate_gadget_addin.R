@@ -111,7 +111,7 @@ consolidate_addin = function() {
       error_text = get_error_text()
 
       if (error_text == '') {
-        progress <- shiny::Progress$new(max=length(file_list())+4)
+        progress <- shiny::Progress$new(max=2*length(file_list())+2)
         progress$set(message = 'Processing files, please wait!',
                      value = 0)
         update_progress <- function(detail = NULL) {
