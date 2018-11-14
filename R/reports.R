@@ -18,9 +18,15 @@ write_summary_report = function(csd_path=NULL, csd=NULL,
   rmd_path = system.file("rmd", "Cell_seg_summary_report.Rmd",
                          package="phenoptrReports")
 
-  rmarkdown::render(rmd_path, output_file=output_path,
+  # Fail soft so calling scripts can continue.
+  # consolidate_and_summarize_cell_seg_data, in particular, has less
+  # stringent requirements than the summary report.
+  tryCatch(rmarkdown::render(rmd_path, output_file=output_path,
                     params=list(csd_path=csd_path, csd=csd,
-                                dataset_name=dataset_name))
+                                dataset_name=dataset_name)),
+           error = function(e) {
+             cat('Unable to write summary report\n', e$message, '\n')
+           })
 }
 
 #' Create summary charts from the results of an analysis

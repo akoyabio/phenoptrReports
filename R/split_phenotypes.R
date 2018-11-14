@@ -53,6 +53,9 @@ consolidate_and_summarize_cell_seg_data = function(csd_files, output_dir,
     update_progress(detail=paste0('Reading "', name, '".'))
     d = phenoptr::read_cell_seg_data(path)
 
+    if (any(!c('Sample Name', 'Cell ID') %in% names(d)))
+      stop('Consolidation requires "Sample Name" and "Cell ID" columns in each data file.')
+
     update_progress(detail=paste0('Writing report for "', name, '".'))
     out_path = file.path(output_dir, paste0(name, '.html'))
     write_summary_report(csd=d, output_path=out_path, dataset_name=name)

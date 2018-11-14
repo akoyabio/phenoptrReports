@@ -2,6 +2,7 @@
 
 - `consolidate_and_summarize_cell_seg_data` processes files pairwise
   for reduced memory requirements.
+- Better error handling in `consolidate_and_summarize_cell_seg_data`.
 - Removed `consolidate_and_split_cell_seg_data`
 
 # phenoptrReports 0.1.3
