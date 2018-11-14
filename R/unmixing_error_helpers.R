@@ -1,4 +1,4 @@
-# Helpers for signal-to-noise report
+# Helpers for unmixing quality report
 
 #' Guess a fluor name from the name of a singleplex image.
 #'
