@@ -1,0 +1,96 @@
+---
+title: "Background Levels Report"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+params:
+  export_path: 
+    label: "Path to directory with component data"
+    value: I:\ManualVsBond\ExportNoUnmix
+    input: file
+---
+
+<style type="text/css">
+table {
+    width: auto !important;
+    max-width: 100%;
+    margin-bottom: 20px;
+    margin-left: 0px;
+}
+
+.fill-cell>tbody>tr>td {
+  padding: 0px;
+  border-color: black;
+  border: 1px solid;
+}
+
+.fill-cell>thead>tr>th {
+  border-color: black;
+  border: 1px solid;
+}
+
+img {
+  border: none;
+}
+</style>
+
+```{r setup, echo=FALSE,include=FALSE,message=FALSE}
+knitr::opts_chunk$set(echo=FALSE,fig.width=9, fig.height=6, 
+                      comment=NA, warning=FALSE, message=FALSE)
+
+library(dplyr)
+library(formattable)
+library(phenoptr)
+
+export_path = params$export_path
+```
+
+Background levels report for samples
+from <pre><strong>`r export_path`</strong></pre>.
+
+```{r functions}
+bright_percentile = 0.9
+dark_percentile = 0.1
+```
+
+```{r data}
+comp_files = list.files(export_path, pattern='component_data.tif', full.names=TRUE)
+```
+
+### Pixel intensity by image
+
+These plots show the relative number of pixels at each intensity for each
+component of each image.
+Intensity is shown on a log scale.
+
+```{r}
+density_fig_height = 4
+```
+
+```{r fig.height=density_fig_height}
+# Make density plots using random sampled data
+all_components = data_frame()
+for (path in comp_files) {
+  d = phenoptrReports:::component_ridge_plot(path, bandwidth=NULL)
+  print(d$plot)
+  cat('\n\n\n')
+  all_components = dplyr::bind_rows(all_components, d$data)
+}
+
+component_fig_height = 0.5 * n_distinct(all_components$Source)
+```
+
+
+### Pixel intensity by component
+
+```{r fig.height=component_fig_height}
+palette = RColorBrewer::brewer.pal(length(levels(all_components$Fluor)), 'Spectral')
+
+purrr::walk2(rev(levels(all_components$Fluor)), rev(palette), 
+   function(fluor, fill) {
+     print(phenoptrReports:::fluor_ridge_plot(
+       all_components %>% filter(Fluor==fluor), fluor, fill, bandwidth=NULL))
+})
+
+```
+<br><br><br>
+<p align='center'>![](Akoya.png){height=50px style='border:none;'}</p>
