@@ -73,6 +73,32 @@ check_phenotypes = function(params, phenotypes) {
          paste(missing_phenotypes, collapse=' ,'), '.')
 }
 
+#' Check that a user-specified phenotype definition
+#' can be formed from available phenotypes.
+#' @param pheno Text destription of a phenotype,
+#' for `phenoptr::parse_phenotypes`.
+#' @param available A character vector of available phenotypes
+#' @return An error message or empty string
+validate_phenotype_definitions = function(pheno, available) {
+  if (is.null(pheno) || pheno==''
+      || stringr::str_detect(pheno, 'Total|All'))
+    return('')
+
+  phenos = stringr::str_split(pheno, '[,/]')[[1]] %>%
+    stringr::str_trim()
+
+  if (!all(stringr::str_detect(phenos, '[+-]$')))
+    return('Phenotype definitions must end with + or -.')
+
+  phenos = stringr::str_remove(phenos, '[+-]$')
+  missing = !phenos %in% available
+  if (any(missing))
+    return(paste0('Unknown phenotype(s): ', paste(phenos[missing], sep=', ')))
+
+  return('')
+}
+
+
 #' Get the name of the column that distinguishes fields in a merged cell
 #' seg data file.
 #' @param csd Cell seg data

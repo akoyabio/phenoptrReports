@@ -56,26 +56,6 @@ phenotype_module = function(input, output, session, phenotypes) {
   }))
 }
 
-# Check that pheno can be formed from available phenotypes.
-# Returns an error message or empty string
-validate_phenotype_definitions = function(pheno, available) {
-  if (is.null(pheno) || pheno==''
-      || stringr::str_detect(pheno, 'Total|All'))
-    return('')
-
-  phenos = stringr::str_split(pheno, '[,/]')[[1]] %>%
-    stringr::str_trim()
-
-  if (!all(stringr::str_detect(phenos, '[+-]$')))
-    return('Phenotype definitions must end with + or -.')
-
-  phenos = stringr::str_remove(phenos, '[+-]$')
-  missing = !phenos %in% available
-  if (any(missing))
-    return(paste0('Unknown phenotype(s): ', paste(phenos[missing], sep=', ')))
-
-  return('')
-}
 
 phenotype_module_test = function() {
   choices = c('Nucleaus PDL-1 Mean', 'Membrane PDL-1 Mean')
