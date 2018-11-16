@@ -1,5 +1,5 @@
 ---
-title: "Background Levels Report"
+title: "Component Levels Report"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 params:
@@ -42,15 +42,12 @@ library(formattable)
 library(phenoptr)
 
 export_path = params$export_path
+quantiles = c(0.1, 0.99)
+
 ```
 
-Background levels report for samples
+This report shows component levels for samples
 from <pre><strong>`r export_path`</strong></pre>.
-
-```{r functions}
-bright_percentile = 0.9
-dark_percentile = 0.1
-```
 
 ```{r data}
 comp_files = list.files(export_path, pattern='component_data.tif', full.names=TRUE)
@@ -58,7 +55,7 @@ comp_files = list.files(export_path, pattern='component_data.tif', full.names=TR
 
 ### Pixel intensity by image
 
-These plots show the relative number of pixels at each intensity for each
+These plots show the number of pixels at each intensity for each
 component of each image.
 Intensity is shown on a log scale.
 
@@ -69,12 +66,15 @@ density_fig_height = 4
 ```{r fig.height=density_fig_height}
 # Make density plots using random sampled data
 all_components = data_frame()
+all_quants = data_frame()
 for (path in comp_files) {
-  d = phenoptrReports:::component_ridge_plot(path, bandwidth=NULL)
+  d = phenoptrReports:::component_ridge_plot(path, quantiles=quantiles)
   print(d$plot)
   cat('\n\n\n')
   all_components = dplyr::bind_rows(all_components, d$data)
+  all_quants = dplyr::bind_rows(all_quants, d$quants)
 }
+
 
 component_fig_height = 0.5 * n_distinct(all_components$Source)
 ```
@@ -83,12 +83,16 @@ component_fig_height = 0.5 * n_distinct(all_components$Source)
 ### Pixel intensity by component
 
 ```{r fig.height=component_fig_height}
-palette = RColorBrewer::brewer.pal(length(levels(all_components$Fluor)), 'Spectral')
 
-purrr::walk2(rev(levels(all_components$Fluor)), rev(palette), 
+fluors = sort(unique(all_components$Fluor))
+palette = RColorBrewer::brewer.pal(length(fluors), 'Spectral')
+
+purrr::walk2(fluors, palette, 
    function(fluor, fill) {
      print(phenoptrReports:::fluor_ridge_plot(
-       all_components %>% filter(Fluor==fluor), fluor, fill, bandwidth=NULL))
+       all_components %>% filter(Fluor==fluor),
+       all_quants %>% filter(Fluor==fluor), 
+       fluor, fill))
 })
 
 ```
