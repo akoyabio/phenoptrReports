@@ -1,4 +1,4 @@
-# Helpers for background levels report
+# Helpers for component levels report
 
 log_offset = 0.01
 xlim_lower = -2
