@@ -10,6 +10,10 @@ params:
 ---
 
 <style type="text/css">
+body {
+    max-width: 800px;
+}
+
 table {
     width: auto !important;
     max-width: 100%;
@@ -51,7 +55,8 @@ skip_fraction = 0.0001
 ```
 
 ```{r data}
-comp_files = list.files(params$export_path, pattern='component_data.tif', full.names=TRUE)
+export_path = params$export_path
+comp_files = list.files(export_path, pattern='component_data.tif', full.names=TRUE)
 
 # Put DAPI first
 dapi_files = stringr::str_detect(comp_files, 'DAPI')
