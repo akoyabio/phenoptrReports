@@ -1,15 +1,23 @@
 ---
 title: "Component Levels Report"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 4
 params:
   export_path: 
     label: "Path to directory with component data"
-    value: I:\ManualVsBond\ExportNoUnmix
+    #value: I:/ManualVsBond/Test/
+    value: I:\20180831 New 7-Color Drop out\20180830-B-6-plex T68148 Tonsil Drop-Out\Export
     input: file
 ---
 
 <style type="text/css">
+body {
+    max-width: 800px;
+}
+
 table {
     width: auto !important;
     max-width: 100%;
@@ -51,6 +59,8 @@ from <pre><strong>`r export_path`</strong></pre>.
 
 ```{r data}
 comp_files = list.files(export_path, pattern='component_data.tif', full.names=TRUE)
+if (length(comp_files) == 0)
+  stop('No component data files found at "', export_path, '"')
 ```
 
 ### Pixel intensity by image
@@ -63,16 +73,18 @@ Intensity is shown on a log scale.
 density_fig_height = 4
 ```
 
-```{r fig.height=density_fig_height}
+```{r fig.height=density_fig_height,results='asis'}
 # Make density plots using random sampled data
 all_components = data_frame()
 all_quants = data_frame()
+all_clipping = data_frame()
 for (path in comp_files) {
   d = phenoptrReports:::component_ridge_plot(path, quantiles=quantiles)
   print(d$plot)
-  cat('\n\n\n')
+  cat('\n\n  \n----\n  \n')
   all_components = dplyr::bind_rows(all_components, d$data)
   all_quants = dplyr::bind_rows(all_quants, d$quants)
+  all_clipping = dplyr::bind_rows(all_clipping, d$clipping)
 }
 
 
@@ -82,7 +94,7 @@ component_fig_height = 0.5 * n_distinct(all_components$Source)
 
 ### Pixel intensity by component
 
-```{r fig.height=component_fig_height}
+```{r fig.height=component_fig_height,results='asis'}
 
 fluors = sort(unique(all_components$Fluor))
 palette = RColorBrewer::brewer.pal(length(fluors), 'Spectral')
@@ -92,9 +104,24 @@ purrr::walk2(fluors, palette,
      print(phenoptrReports:::fluor_ridge_plot(
        all_components %>% filter(Fluor==fluor),
        all_quants %>% filter(Fluor==fluor), 
+       all_clipping %>% filter(Fluor==fluor),
        fluor, fill))
+    cat('\n\n  \n----\n  \n')
 })
 
 ```
+
+### Signal to noise
+
+This table shows the ratio of the `r scales::percent(quantiles[2])`ile signal
+level to the `r scales::percent(quantiles[1])`ile signal level.
+
+```{r}
+all_quants %>% dplyr::mutate(SN=round(.[[4]]/.[[3]], 1)) %>% 
+  dplyr::select(Fluor, Source, SN) %>% 
+  tidyr::spread(Fluor, SN) %>% 
+  knitr::kable()
+```
+
 <br><br><br>
 <p align='center'>![](Akoya.png){height=50px style='border:none;'}</p>

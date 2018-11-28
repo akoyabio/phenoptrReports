@@ -1,5 +1,8 @@
 # Helpers for background levels report
 
+log_offset = 0.01
+xlim_lower = -2
+
 #' Create a ggridges plot for a component data file
 #' @param path Full path to a component data file
 #' @return A list with plot (a ggplot object) and data (a long data frame
@@ -30,15 +33,27 @@ component_ridge_plot = function(path, quantiles=c(0.1, 0.99)) {
   quants_to_plot = quants %>% dplyr::select(-Source) %>%
     tidyr::gather(level, value, -Fluor)
 
-  subtitle = stringr::str_glue(
-    'Gray lines show {names(quants)[3]} and {names(quants)[4]} quantiles.')
+  # How much data are we clipping (because it is 0)
+  clipping = comps %>% group_by(Fluor, Source) %>%
+    summarize(clip_frac=sum(value==0)/n())
 
-  p =ggplot(comps) +
-    geom_bar(aes(log10(value+0.001), color=Fluor, fill=Fluor),
-             width=0.01, position='identity') +
-    geom_vline(data=quants_to_plot, aes(xintercept=log10(value+0.001))) +
+  clipping_to_plot = clipping %>% mutate(
+    pct=scales::percent(clip_frac, accuracy=1), x=xlim_lower+0.1, y=Inf)
+  clipping_to_plot$pct[1] = paste0('Clipping: ', clipping_to_plot$pct[1])
+
+  subtitle = stringr::str_glue(
+    'Gray lines show {names(quants)[3]} and {names(quants)[4]} percentiles. Values of 0 are clipped.')
+
+  # Some component data has very few distinct values. That makes density
+  # plots look really weird, with peaks at each distinct value.
+  # A histogram with lots of bins works pretty well with few or many values.
+  p = ggplot(comps %>% filter(value>0)) +
+    geom_histogram(bins=1000,aes(log10(value), color=Fluor, fill=Fluor)) +
+    geom_vline(data=quants_to_plot, aes(xintercept=log10(value+log_offset))) +
+    geom_text(data=clipping_to_plot, aes(x, y, label=pct),
+              hjust=0, vjust= 1.2, size=3, fontface='bold') +
     facet_wrap(~Fluor, ncol=1, strip.position='left', scales='free_y') +
-    xlim(-2, NA) +
+    xlim(xlim_lower, NA) +
     labs(x=expression(bold(log[10](Expression))), y='',
          title=name, subtitle=subtitle) +
     scale_color_brewer(palette='Spectral') +
@@ -51,57 +66,31 @@ component_ridge_plot = function(path, quantiles=c(0.1, 0.99)) {
           panel.grid.major=element_blank(),
           panel.grid.minor=element_blank())
 
-
-  ## This is the old ridge plot version.
-  #   if (require(ggridges)){
-  #   comps %>%
-  #     ggplot(aes(log10(value+0.001), Fluor, fill=Fluor)) +
-  #     geom_density_ridges(color='gray50', bandwidth=bandwidth) +
-  #     labs(x=expression(bold(log[10](Expression))), y='', title=name) +
-  #     scale_fill_brewer(palette='Spectral') +
-  #     guides(color='none', fill='none') +
-  #     theme_minimal() +
-  #     theme(axis.text.y=element_text(face='bold', hjust=0, vjust=0)) +
-  #     scale_x_continuous(expand = c(0.01, 0), limits=c(-2, NA)) +
-  #     scale_y_discrete(expand = c(0.01, 0))
-  # } else {
-  #   # ggplot version
-  #   ggplot(comps, aes(log10(value+0.001), color=Fluor, fill=Fluor)) +
-  #     geom_density(bw=bandwidth) +
-  #     facet_wrap(~Fluor, ncol=1, strip.position='left', scales='free_y') +
-  #     xlim(-2, NA) +
-  #     labs(x=expression(bold(log[10](Expression))), y='', title=name) +
-  #     scale_color_brewer(palette='Spectral') +
-  #     scale_fill_brewer(palette='Spectral') +
-  #     guides(color='none', fill='none') +
-  #     theme_minimal() +
-  #     theme(strip.text.y=element_text(face='bold', angle=180, hjust=0),
-  #           axis.ticks.y=element_blank(),
-  #           axis.text.y=element_blank(),
-  #           panel.grid.major=element_blank(),
-  #           panel.grid.minor=element_blank(),)
-  # }
-
-  list(plot=p, data=comps, quants=quants)
+  list(plot=p, data=comps, quants=quants, clipping=clipping)
 }
 
-fluor_ridge_plot = function(d, quants, name, fill) {
+fluor_ridge_plot = function(d, quants, clipping, name, fill) {
   library(ggplot2)
   message('Processing ', name)
 
+  clipping_to_plot = clipping %>% mutate(
+    pct=scales::percent(clip_frac, accuracy=1), x=xlim_lower+0.1, y=Inf)
+  clipping_to_plot$pct[1] = paste0('Clipping: ', clipping_to_plot$pct[1])
+
   subtitle = stringr::str_glue(
-    'Gray lines show {names(quants)[3]} and {names(quants)[4]} quantiles.')
+    'Gray lines show {names(quants)[3]} and {names(quants)[4]} percentiles. Values of 0 are clipped.')
 
   # For plotting a long data frame is better
   quants_to_plot = quants %>% dplyr::select(-Fluor) %>%
     tidyr::gather(level, value, -Source)
 
-  ggplot(d) +
-    geom_bar(aes(log10(value+0.001)), color=fill, fill=fill,
-             width=0.01, position='identity') +
-    geom_vline(data=quants_to_plot, aes(xintercept=log10(value+0.001))) +
+  ggplot(d %>% filter(value>0)) +
+    geom_histogram(bins=1000, aes(log10(value)), color=fill, fill=fill) +
+    geom_vline(data=quants_to_plot, aes(xintercept=log10(value+log_offset))) +
+    geom_text(data=clipping_to_plot, aes(x, y, label=pct),
+              hjust=0, vjust= 1.2, size=3, fontface='bold') +
     facet_wrap(~Source, ncol=1, strip.position='left', scales='free_y') +
-    xlim(-2, NA) +
+    xlim(xlim_lower, NA) +
     labs(x=expression(bold(log[10](Expression))), y='',
          title=name, subtitle=subtitle) +
     guides(color='none', fill='none') +
@@ -111,30 +100,4 @@ fluor_ridge_plot = function(d, quants, name, fill) {
           axis.text.y=element_blank(),
           panel.grid.major=element_blank(),
           panel.grid.minor=element_blank())
-
-  # if (require(ggridges)){
-  #   d %>%
-  #     ggplot(aes(log10(value+0.001), Source)) +
-  #     geom_density_ridges(color='gray50', fill=fill, bandwidth=bandwidth) +
-  #     labs(x=expression(bold(log[10](Expression))), y='', title=name) +
-  #     guides(color='none', fill='none') +
-  #     theme_minimal() +
-  #     theme(axis.text.y=element_text(face='bold', hjust=0, vjust=0)) +
-  #     scale_x_continuous(expand = c(0.01, 0), limits=c(-2, NA)) +
-  #     scale_y_discrete(expand = c(0.01, 0))
-  # } else {
-  #   # ggplot version
-  #   ggplot(d, aes(log10(value+0.001))) +
-  #     geom_density(bw=bandwidth, color='gray50', fill=fill) +
-  #     facet_wrap(~Source, ncol=1, strip.position='left', scales='free_y') +
-  #     xlim(-2, NA) +
-  #     labs(x=expression(bold(log[10](Expression))), y='', title=name) +
-  #     guides(color='none', fill='none') +
-  #     theme_minimal() +
-  #     theme(strip.text.y=element_text(face='bold', angle=180, hjust=0),
-  #           axis.ticks.y=element_blank(),
-  #           axis.text.y=element_blank(),
-  #           panel.grid.major=element_blank(),
-  #           panel.grid.minor=element_blank(),)
-  # }
 }
