@@ -8,8 +8,6 @@ output:
 params:
   export_path: 
     label: "Path to directory with component data"
-    #value: I:/ManualVsBond/Test/
-    value: I:\20180831 New 7-Color Drop out\20180830-B-6-plex T68148 Tonsil Drop-Out\Export
     input: file
 ---
 
@@ -50,6 +48,7 @@ library(formattable)
 library(phenoptr)
 
 export_path = params$export_path
+export_folder = dirname(export_path)
 quantiles = c(0.1, 0.99)
 
 ```
@@ -87,6 +86,9 @@ for (path in comp_files) {
   all_clipping = dplyr::bind_rows(all_clipping, d$clipping)
 }
 
+# Save some data
+readr::write_csv(all_quants, file.path(export_folder, 'all_quants.csv'))
+readr::write_csv(all_clipping, file.path(export_folder, 'all_clipping.csv'))
 
 component_fig_height = 0.5 * n_distinct(all_components$Source)
 ```

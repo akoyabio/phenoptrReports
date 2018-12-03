@@ -3,7 +3,7 @@
 log_offset = 0.01
 xlim_lower = -2
 
-#' Create a ggridges plot for a component data file
+#' Create a ridge plot for a single component data file
 #' @param path Full path to a component data file
 #' @return A list with plot (a ggplot object) and data (a long data frame
 #' containing sampled component data)
@@ -69,6 +69,12 @@ component_ridge_plot = function(path, quantiles=c(0.1, 0.99)) {
   list(plot=p, data=comps, quants=quants, clipping=clipping)
 }
 
+#' Create a ridge plot for a single fluor in multiple fields
+#' @param d Data for the fluor
+#' @param quants Quantiles for the fluor data
+#' @param clipping Clipping fractions for the fluor
+#' @param name Fluor name
+#' @param fill Fill color for the plot
 fluor_ridge_plot = function(d, quants, clipping, name, fill) {
   library(ggplot2)
   message('Processing ', name)
