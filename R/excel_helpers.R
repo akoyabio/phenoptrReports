@@ -270,18 +270,21 @@ write_plot_sheet = function(wb, plot, sheet_name='Phenotypes',
 #' @param sheet_name Name for the worksheet.
 #' @param sheet_title Title header for the plot.
 #' @param header_col Column number to start the `sheet_title`
-write_sheet <- function(wb, d, sheet_name, sheet_title, header_col) {
+#' @param keepNA If TRUE, NA values are written as #N/A; else they are blank.
+#' @export
+write_sheet <- function(wb, d, sheet_name, sheet_title, header_col, keepNA=TRUE) {
   # Make a new sheet
   openxlsx::addWorksheet(wb, sheet_name)
 
   # Write a bold header across all the data columns
-  openxlsx::writeData(wb, sheet_name, startCol=header_col, sheet_title)
+  # writeData doesn't like 'glue' objects so unclass.
+  openxlsx::writeData(wb, sheet_name, startCol=header_col, unclass(sheet_title))
   openxlsx::addStyle(wb, sheet_name, bold_wrap_style, rows=1, cols=1:header_col)
   merge_and_outline_cells(wb, sheet_name, rows=1, cols=header_col:ncol(d))
 
   # Write the table
   openxlsx::writeData(wb, sheet_name, d, startRow=2,
-                      headerStyle=bold_wrap_style, keepNA=TRUE)
+                      headerStyle=bold_wrap_style, keepNA=keepNA)
 
   first_data_row = 3
 
@@ -299,7 +302,8 @@ write_sheet <- function(wb, d, sheet_name, sheet_title, header_col) {
   format_slide_id(wb, sheet_name, d, first_data_row)
 
   # Wider Tissue Category column
-  openxlsx::setColWidths(wb, sheet_name, 2, 11)
+  if ('Tissue Category' %in% names(d))
+    openxlsx::setColWidths(wb, sheet_name, 2, 11)
 
   grid_spacing = add_grid_lines(wb, sheet_name, d, header_col, first_data_row)
 
@@ -316,6 +320,8 @@ format_slide_id <- function(wb, sheet_name, d, first_data_row) {
 
 # Set up grid lines per slide if there are multiple tissue categories
 add_grid_lines <- function(wb, sheet_name, d, header_col, first_data_row) {
+  if (!'Tissue Category' %in% names(d)) return(1)
+
   grid_spacing = length(unique(d$`Tissue Category`))
   if (grid_spacing > 1) {
     # Borders at left, right and bottom of the data portion
