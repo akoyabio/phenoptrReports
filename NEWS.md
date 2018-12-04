@@ -1,5 +1,6 @@
 # phenoptrReports 0.1.3.9000
 
+- Unmixing quality report works when DAPI and AF components are not present.
 - `consolidate_and_summarize_cell_seg_data` processes files pairwise
   for reduced memory requirements.
 - Better error handling in `consolidate_and_summarize_cell_seg_data`.

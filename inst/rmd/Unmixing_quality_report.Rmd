@@ -59,7 +59,7 @@ export_path = params$export_path
 comp_files = list.files(export_path, pattern='component_data.tif', full.names=TRUE)
 
 # Put DAPI first
-dapi_files = stringr::str_detect(comp_files, 'DAPI')
+dapi_files = stringr::str_detect(basename(comp_files), 'DAPI')
 comp_files = c(comp_files[dapi_files], comp_files[!dapi_files])
 comp_names = basename(comp_files)
 primary_fluors = purrr::map_chr(comp_names, phenoptrReports:::file_to_fluor)
@@ -80,10 +80,10 @@ message('Creating report')
 
 crosstalk = all_data %>%
   purrr::map('sn') %>% dplyr::bind_rows() %>% 
-  dplyr::select(Primary, Source, DAPI, dplyr::everything())
+  dplyr::select(Primary, Source, dplyr::matches('DAPI'), dplyr::everything())
 
 to_display = crosstalk %>% 
-  dplyr::select(-Primary, -Autofluorescence) %>% 
+  dplyr::select(-Primary, -dplyr::matches('Autofluorescence')) %>% 
   dplyr::mutate_at(-1, percent, digits=1)
 
 # Put columns in alpha order with DAPI first
@@ -163,10 +163,10 @@ This estimates the effect of unmixing error on other signals.
 ```{r crosstalk_by_component}
 signals = all_data %>%
   purrr::map('signals') %>% dplyr::bind_rows() %>% 
-  dplyr::select(Primary, Source, DAPI, dplyr::everything())
+  dplyr::select(Primary, Source, dplyr::matches('DAPI'), dplyr::everything())
 
 to_display = signals %>% 
-  dplyr::select(-Primary, -Autofluorescence) %>% 
+  dplyr::select(-Primary, -dplyr::matches('Autofluorescence')) %>% 
   dplyr::mutate_at(-1, ~percent(.x/max(.x), digits=1))
 
 # Put columns in alpha order with DAPI first
@@ -251,7 +251,7 @@ tables.
 
 ```{r signals}
 to_display = signals %>% 
-  dplyr::select(-Primary, -Autofluorescence) %>% 
+  dplyr::select(-Primary, -dplyr::matches('Autofluorescence')) %>% 
   dplyr::mutate_at(-1, round, digits=2)
 
 # Put columns in alpha order with DAPI first
