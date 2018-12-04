@@ -9,20 +9,18 @@
 <title>Consolidate cell seg data files from parallel projects
 and create summary reports — consolidate_and_summarize_cell_seg_data • phenoptrReports</title>
 
-<link rel="shortcut icon" type="image/x-icon" href="../favicon.ico">
-
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.1/clipboard.min.js" integrity="sha256-hIvIxeqhGZF+VVeM55k0mJvWpQ6gTkWk3Emc+NmowYA=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
 <!-- sticky kit -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
@@ -36,15 +34,15 @@ and create summary reports — consolidate_and_summarize_cell_seg_data • pheno
 <meta property="og:title" content="Consolidate cell seg data files from parallel projects
 and create summary reports — consolidate_and_summarize_cell_seg_data" />
 
-<meta property="og:description" content="Calls consolidate_and_split_cell_seg_data to consolidate the supplied
-cell seg data files. Additionally calls write_summary_report to
-create a summary report for each source file and the consolidated data." />
+<meta property="og:description" content="Consolidate several cell seg data files, each with its own Phenotype column,
+into a single file with separate columns for each phenotype." />
 <meta name="twitter:card" content="summary" />
 
 
 
 <!-- mathjax -->
-<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -68,7 +66,7 @@ create a summary report for each source file and the consolidated data." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.4</span>
       </span>
     </div>
 
@@ -88,13 +86,13 @@ create a summary report for each source file and the consolidated data." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/unmixing_quality_report.html">Unmixing quality report</a>
-    </li>
-    <li>
       <a href="../articles/consolidation.html">Consolidating inForm data</a>
     </li>
     <li>
       <a href="../articles/analysis.html">Analyzing inForm data</a>
+    </li>
+    <li>
+      <a href="../articles/unmixing_quality_report.html">Unmixing quality report</a>
     </li>
   </ul>
 </li>
@@ -138,9 +136,8 @@ and create summary reports</h1>
 
     <div class="ref-description">
     
-    <p>Calls <a href='consolidate_and_split_cell_seg_data.html'>consolidate_and_split_cell_seg_data</a> to consolidate the supplied
-cell seg data files. Additionally calls <a href='write_summary_report.html'>write_summary_report</a> to
-create a summary report for each source file and the consolidated data.</p>
+    <p>Consolidate several cell seg data files, each with its own <code>Phenotype</code> column,
+into a single file with separate columns for each phenotype.</p>
     
     </div>
 
@@ -171,12 +168,12 @@ single phenotype, invisibly.</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Writes the consolidated data to <code>Consolidated_data.txt</code> in the output
+    <p>Create a summary report for each source file and the consolidated data.</p>
+<p>Write the consolidated data to <code>Consolidated_data.txt</code> in the output
 directory.</p>
-    
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p>Other consolidation functions: <code><a href='consolidate_and_split_cell_seg_data.html'>consolidate_and_split_cell_seg_data</a></code></p></div>
+<p>The
+individual files must all have exactly the same <code>Sample Name</code> and <code>Cell ID</code>
+columns. <a href='split_phenotypes.html'>split_phenotypes</a> is called to split the <code>Phenotype</code> columns.</p>
     
 
   </div>
@@ -188,8 +185,6 @@ directory.</p>
       <li><a href="#value">Value</a></li>
 
       <li><a href="#details">Details</a></li>
-
-      <li><a href="#see-also">See also</a></li>
           </ul>
 
   </div>
@@ -201,9 +196,8 @@ directory.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.2.0.</p>
 </div>
-
       </footer>
    </div>
 

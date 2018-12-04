@@ -12,12 +12,12 @@ navbar:
       href: index.html
     - text: "Tutorials"
       menu:
-        - text: "Unmixing quality report"
-          href: articles/unmixing_quality_report.html
         - text: "Consolidating inForm data"
           href: articles/consolidation.html
         - text: "Analyzing inForm data"
           href: articles/analysis.html
+        - text: "Unmixing quality report"
+          href: articles/unmixing_quality_report.html
     - text: "Reference"
       href: reference/index.html
   right:

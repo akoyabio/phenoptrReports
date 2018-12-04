@@ -1,5 +1,11 @@
-# phenoptrReports 0.1.3.9000
+# phenoptrReports 0.1.4
+**2018-12-04**
 
+New features:
+- Component levels report shows signal levels of bright and dark pixels
+  in multiplex images.
+  
+Misc:
 - Unmixing quality report works when DAPI and AF components are not present.
 - `consolidate_and_summarize_cell_seg_data` processes files pairwise
   for reduced memory requirements.

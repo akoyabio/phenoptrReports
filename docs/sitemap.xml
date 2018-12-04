@@ -4,13 +4,28 @@
     <loc>http://akoyabio.github.io/phenoptrReports/index.html</loc>
   </url>
   <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/addin_10_merge.html</loc>
+  </url>
+  <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/addin_20_consolidate.html</loc>
+  </url>
+  <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/addin_30_analysis_app.html</loc>
+  </url>
+  <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/addin_40_unmixing_quality.html</loc>
+  </url>
+  <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/addin_50_component_levels.html</loc>
+  </url>
+  <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/add_tissue_category_totals.html</loc>
   </url>
   <url>
-    <loc>http://akoyabio.github.io/phenoptrReports/reference/analysis_app.html</loc>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/check_phenotypes.html</loc>
   </url>
   <url>
-    <loc>http://akoyabio.github.io/phenoptrReports/reference/check_phenotypes.html</loc>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/component_levels_report.html</loc>
   </url>
   <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/compute_density_from_cell_summary.html</loc>
@@ -37,12 +52,6 @@
     <loc>http://akoyabio.github.io/phenoptrReports/reference/compute_positivity_many.html</loc>
   </url>
   <url>
-    <loc>http://akoyabio.github.io/phenoptrReports/reference/consolidate_addin.html</loc>
-  </url>
-  <url>
-    <loc>http://akoyabio.github.io/phenoptrReports/reference/consolidate_and_split_cell_seg_data.html</loc>
-  </url>
-  <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/consolidate_and_summarize_cell_seg_data.html</loc>
   </url>
   <url>
@@ -64,9 +73,6 @@
     <loc>http://akoyabio.github.io/phenoptrReports/reference/make_unique_names.html</loc>
   </url>
   <url>
-    <loc>http://akoyabio.github.io/phenoptrReports/reference/merge_addin.html</loc>
-  </url>
-  <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/merge_cell_seg_files.html</loc>
   </url>
   <url>
@@ -79,9 +85,6 @@
     <loc>http://akoyabio.github.io/phenoptrReports/reference/split_phenotypes.html</loc>
   </url>
   <url>
-    <loc>http://akoyabio.github.io/phenoptrReports/reference/unmixing_quality_addin.html</loc>
-  </url>
-  <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/unmixing_quality_report.html</loc>
   </url>
   <url>
@@ -89,6 +92,9 @@
   </url>
   <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/upset_plot.html</loc>
+  </url>
+  <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/validate_phenotype_definitions.html</loc>
   </url>
   <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/write_counts_sheet.html</loc>
