@@ -8,6 +8,7 @@ output:
 params:
   export_path: 
     label: "Path to directory with component data"
+    value: I:/ManualVsBond/Test
     input: file
 ---
 

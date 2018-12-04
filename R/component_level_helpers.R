@@ -63,7 +63,7 @@ component_ridge_plot = function(path, quantiles=c(0.1, 0.99)) {
     theme(strip.text.y=element_text(face='bold', angle=180, hjust=0),
           axis.ticks.y=element_blank(),
           axis.text.y=element_blank(),
-          panel.grid.major=element_blank(),
+          panel.grid.major.y=element_blank(),
           panel.grid.minor=element_blank())
 
   list(plot=p, data=comps, quants=quants, clipping=clipping)
@@ -104,6 +104,6 @@ fluor_ridge_plot = function(d, quants, clipping, name, fill) {
     theme(strip.text.y=element_text(face='bold', size=rel(0.9), angle=180, hjust=0),
           axis.ticks.y=element_blank(),
           axis.text.y=element_blank(),
-          panel.grid.major=element_blank(),
+          panel.grid.major.y=element_blank(),
           panel.grid.minor=element_blank())
 }
