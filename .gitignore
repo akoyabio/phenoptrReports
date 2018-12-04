@@ -3,3 +3,4 @@ tests/testthat/results
 .Rhistory
 .RData
 inst/doc
+inst/rmd/*.html
