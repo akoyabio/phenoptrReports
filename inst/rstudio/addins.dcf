@@ -1,10 +1,13 @@
 Name: Merge cell seg files
-Description: Merge inForm data from individual fields, creating a merge data file.
+Description: Merge inForm data from individual fields from a single project,
+    creating a merge data file.
 Binding: merge_addin
 Interactive: true
 
 Name: Consolidate and summarize
-Description: Consolidate and summarize multiple cell seg data files, creating a consolidated file and summary reports.
+Description: Consolidate and summarize merged cell seg data files
+    from multiple projects,
+    creating a consolidated file and summary reports.
 Binding: consolidate_addin
 Interactive: true
 
@@ -16,4 +19,9 @@ Interactive: true
 Name: Unmixing quality report
 Description: Generate an unmixing quality (crosstalk) report for simplex samples.
 Binding: unmixing_quality_addin
+Interactive: true
+
+Name: Component levels report
+Description: Generate a component levels report for multiplex samples.
+Binding: component_levels_addin
 Interactive: true

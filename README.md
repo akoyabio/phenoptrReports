@@ -36,6 +36,12 @@ to help evaluate staining and unmixing quality. This report
 shows crosstalk between components and
 highlights potential problem areas in assay development.
 
+### Component levels report
+
+The component levels report analyzes unmixed, multiplex images to help
+evaluate staining levels for an entire experiment. This report shows
+the distribution of signal and dark pixels for all components.
+
 ----
 
 `phenoptrReports` is part of the Akoya Biosciences Phenoptics&trade; family of

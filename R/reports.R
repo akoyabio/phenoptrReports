@@ -82,3 +82,22 @@ unmixing_quality_report = function(export_path=NULL) {
   rmarkdown::render(rmd_path, output_file=output_path,
                     params=list(export_path = export_path))
 }
+
+#' Create a component levels report for multiplex samples
+#'
+#' `export_path` should be the path to
+#' an export folder containing component data files for multiplex samples.
+#' A component levels report is created for the samples and saved in
+#' the source directory.
+#' @param export_path Path to a directory containing component_data files.
+#' @export
+component_levels_report = function(export_path=NULL) {
+  stopifnot(dir.exists(export_path))
+
+  rmd_path = system.file("rmd", "Component_levels_report.Rmd",
+                         package="phenoptrReports")
+
+  output_path = file.path(export_path, 'Component_levels_report.html')
+  rmarkdown::render(rmd_path, output_file=output_path,
+                    params=list(export_path = export_path))
+}
