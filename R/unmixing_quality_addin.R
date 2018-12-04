@@ -3,7 +3,7 @@
 
 #' Generate an unmixing quality (crosstalk) report for a selected export folder.
 #'
-#' `unmixing_quality_addin` opens a GUI that allows you to select
+#' `addin_40_unmixing_quality` opens a GUI that allows you to select
 #' an export folder containing component data files for singleplex samples.
 #' An unmixing quality report is created for the samples and saved in
 #' the source directory.
@@ -13,7 +13,7 @@
 #' and "Opal_nnn".
 #' It also recognizes three leading digits as the number of an Opal fluor.
 #' @export
-unmixing_quality_addin = function() {
+addin_40_unmixing_quality = function() {
   intro <- shiny::tagList(shiny::p(
     'This app reads component data files for singleplex samples',
     'and creates an unmixing quality report showing crosstalk between the samples.'

@@ -1,27 +1,31 @@
+# This file defines the entries in the RStudio Addins menu.
+# Menu items are ordered by the name of the binding function;
+# that is the reason for the odd names.
+
 Name: Merge cell seg files
 Description: Merge inForm data from individual fields from a single project,
     creating a merge data file.
-Binding: merge_addin
+Binding: addin_10_merge
 Interactive: true
 
 Name: Consolidate and summarize
 Description: Consolidate and summarize merged cell seg data files
     from multiple projects,
     creating a consolidated file and summary reports.
-Binding: consolidate_addin
+Binding: addin_20_consolidate
 Interactive: true
 
 Name: Analyze consolidated data
 Description: Create aggregate statistics from a consolidated data file.
-Binding: analysis_app
+Binding: addin_30_analysis_app
 Interactive: true
 
 Name: Unmixing quality report
 Description: Generate an unmixing quality (crosstalk) report for simplex samples.
-Binding: unmixing_quality_addin
+Binding: addin_40_unmixing_quality
 Interactive: true
 
 Name: Component levels report
 Description: Generate a component levels report for multiplex samples.
-Binding: component_levels_addin
+Binding: addin_50_component_levels
 Interactive: true

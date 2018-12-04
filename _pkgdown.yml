@@ -31,19 +31,20 @@ navbar:
 articles:
   - title: Tutorials
     contents:
-    - unmixing_quality_report
     - consolidation
     - analysis
+    - unmixing_quality_report
 
 reference:
   - title: RStudio Addins
     desc: These functions are added to the RStudio Addins menu. Selecting
           one opens a GUI.
     contents:
-      - '`merge_addin`'
-      - '`consolidate_addin`'
-      - '`analysis_app`'
-      - '`unmixing_quality_addin`'
+      - '`addin_10_merge`'
+      - '`addin_20_consolidate`'
+      - '`addin_30_analysis_app`'
+      - '`addin_40_unmixing_quality`'
+      - '`addin_50_component_levels`'
   - title: Merging and Consolidation
     desc: These functions implement the merge and consolidation apps.
     contents:
@@ -62,7 +63,12 @@ reference:
       - '`compute_positivity_many`'
       - '`counts_to_percents`'
       - '`count_phenotypes`'
-  - title: Data reporting
+  - title: Data reporting - HTML
+    desc: These functions write analysis results to HTML reports.
+    contents:
+      - '`unmixing_quality_report`'
+      - '`component_levels_report`'
+  - title: Data reporting - Excel
     desc: These functions write analysis results to Excel worksheets.
     contents:
       - '`write_counts_sheet`'

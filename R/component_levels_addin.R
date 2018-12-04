@@ -3,12 +3,12 @@
 
 #' Generate a component levels report for a selected export folder.
 #'
-#' `component_levels_addin` opens a GUI that allows you to select
+#' `addin_50_component_levels` opens a GUI that allows you to select
 #' an export folder containing component data files for multiplex samples.
 #' A component levels report is created for the samples and saved in
 #' the export directory.
 #' @export
-component_levels_addin = function() {
+addin_50_component_levels = function() {
   intro <- shiny::tagList(shiny::p(
     'This app reads component data files for multiplex samples',
     'and creates a component levels report showing signal levels',

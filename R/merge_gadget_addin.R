@@ -3,14 +3,14 @@
 
 #' Merge cell seg data files
 #'
-#' `merge_addin` opens a GUI that allows you to select a directory containing
+#' `addin_10_merge` opens a GUI that allows you to select a directory containing
 #' cell seg data files from multiple, individual fields. The selected files
 #' will be merged
 #' to a single file which is saved to the source directory.
 #'  This is similar to the function of the inForm Merge tab but
 #' does not include the ability to review and reject individual fields.
 #' @export
-merge_addin = function() {
+addin_10_merge = function() {
   intro <- shiny::tagList(shiny::p(
       'This app merges multiple inForm cell seg data files',
       'into a single file. The merged file will be written',

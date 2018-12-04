@@ -3,12 +3,12 @@
 
 #' Consolidate and summarize cell seg data files
 #'
-#' `consolidate_addin` opens a GUI that allows you to select multiple
+#' `addin_20_consolidate` opens a GUI that allows you to select multiple
 #' cell seg data files. The selected files will be consolidated
 #' to a single file which is saved to an output directory
 #' along with summary reports for each file.
 #' @export
-consolidate_addin = function() {
+addin_20_consolidate = function() {
   intro <- shiny::tagList(shiny::p(
       'This app consolidates multiple inForm cell seg data files',
       'into a single file. The consolidated file will be written',
