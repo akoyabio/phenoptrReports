@@ -4,8 +4,8 @@
 #' creating "Merge" data files. This is similar to the inForm Merge tab but
 #' does not include the ability to review and reject individual fields.
 #' @param base_path Path to a directory containing files to merge. All
-#' @param update_progress Callback function which is called with progress.
 #' elegible files in this directory will be merged.
+#' @param update_progress Callback function which is called with progress.
 #' @export
 merge_cell_seg_files = function(base_path, update_progress=NULL) {
 
