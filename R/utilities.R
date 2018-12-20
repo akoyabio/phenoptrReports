@@ -79,6 +79,7 @@ check_phenotypes = function(params, phenotypes) {
 #' for `phenoptr::parse_phenotypes`.
 #' @param available A character vector of available phenotypes
 #' @return An error message or empty string
+#' @export
 validate_phenotype_definitions = function(pheno, available) {
   if (is.null(pheno) || pheno==''
       || stringr::str_detect(pheno, 'Total|All'))
