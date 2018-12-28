@@ -1,6 +1,6 @@
+context("smoke")
 library(testthat)
 library(readxl)
-context("smoke")
 
 test_that("file generation works", {
   # Make a test directory

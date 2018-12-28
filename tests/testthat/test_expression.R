@@ -1,6 +1,6 @@
+context("expression")
 library(testthat)
 library(phenoptrReports)
-context("expression")
 
 # Note: The original hard-coded test values in these tests were computed using
 # variations of this snippet from the original MeanOfTop20.R:

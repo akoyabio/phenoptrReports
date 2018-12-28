@@ -1,5 +1,5 @@
-library(testthat)
 context("utilities")
+library(testthat)
 
 test_that("file_to_fluor works", {
   # Values that work

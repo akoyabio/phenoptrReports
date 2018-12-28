@@ -1,5 +1,5 @@
-library(testthat)
 context("split_phenotypes")
+library(testthat)
 
 test_that("make_unique_names works", {
   paths = c(
