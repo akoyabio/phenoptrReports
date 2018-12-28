@@ -17,9 +17,7 @@ addin_10_merge = function() {
       'to the source directory.'
     ),
     shiny::p('The source directory should contain inForm data files',
-             'created from individual fields.'),
-    shiny::p(shiny::a('Online Help',
-      href='https://akoyabio.github.io/phenoptrReports/articles/merging.html')))
+             'created from individual fields.'))
 
   ui <- miniUI::miniPage(
     shiny::tags$head(
@@ -30,6 +28,7 @@ addin_10_merge = function() {
       }
       h3 { margin-top: 10px; }
     "))),
+
     miniUI::gadgetTitleBar("Merge inForm data",
       right=miniUI::miniTitleBarButton('done', 'Process Files', primary=TRUE)),
 
@@ -44,8 +43,10 @@ addin_10_merge = function() {
         shiny::br(), shiny::br(),
 
         shiny::actionButton('browse_source', 'Browse Input...'),
+        shiny::checkboxInput('recursive', 'Include subdirectories'),
         shiny::h4('Selected directory:'),
-        shiny::textOutput('source_dir')
+        shiny::textOutput('source_dir'),
+        shiny::textOutput('file_message')
       ),
 
       shiny::h4(shiny::textOutput('error'), style='color: maroon')
@@ -66,20 +67,35 @@ addin_10_merge = function() {
       set_error_text()
     })
 
+    # Update file_count
+    file_count = shiny::reactive({
+      shiny::req(source_dir())
+      files = list.files(source_dir(), pattern='_cell_seg_data.txt',
+                         recursive=input$recursive)
+      length(files)
+    })
+
+    # Update file_message
+    shiny::observe({
+      msg = paste0('Data from ', file_count(), ' field(s) will be processed.')
+      output$file_message = shiny::renderText(msg)
+    })
+
     # Handle the done button by processing files or showing an error
     shiny::observeEvent(input$done, {
       error_text = get_error_text()
 
       if (error_text == '') {
         progress <- shiny::Progress$new(
-          max=merge_progress_count(source_dir()))
+          max=merge_progress_count(source_dir(), input$recursive))
         progress$set(message = 'Processing files, please wait!',
                      value = 0)
         update_progress <- function(detail = NULL) {
           progress$set(value = progress$getValue()+1, detail = detail)
         }
 
-        phenoptrReports::merge_cell_seg_files(source_dir(), update_progress)
+        phenoptrReports::merge_cell_seg_files(source_dir(),
+                                              update_progress, input$recursive)
         update_progress(detail='Done!')
         Sys.sleep(0.5)
         shiny::stopApp()
@@ -103,10 +119,10 @@ addin_10_merge = function() {
     get_error_text = function() {
       if (is.null(source_dir())) {
         'Please select a source directory to process.'
-      } else if (length(list.files(source_dir(),
+      } else if (length(list.files(source_dir(), recursive=input$recursive,
                                    pattern='Merge', ignore.case=TRUE)) > 0) {
         'Please select a source directory which does not contain existing merge files.'
-      } else if (merge_progress_count(source_dir())==0) {
+      } else if (merge_progress_count(source_dir(), input$recursive)==0) {
         'Please a source directory containing inForm output files.'
       } else
         ''

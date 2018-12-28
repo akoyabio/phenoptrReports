@@ -1,5 +1,9 @@
 # phenoptrReports 0.1.4.9000
 
+New features:
+- The "Merge cell seg files" addin now supports searching sub-directories
+  for target files.
+  
 Bug fix:
 - `compute_density` works with "square microns" spelled as inForm does.
 
