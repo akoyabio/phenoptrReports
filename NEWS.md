@@ -1,3 +1,8 @@
+# phenoptrReports 0.1.4.9000
+
+Bug fix:
+- `compute_density` works with "square microns" spelled as inForm does.
+
 # phenoptrReports 0.1.4
 **2018-12-04**
 

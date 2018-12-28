@@ -1,6 +1,7 @@
 # Suppress CMD CHECK notes for things that look like global vars
 utils::globalVariables(c(
   "Tissue Category Area (sq microns)",
+  "Tissue Category Area (square microns)",
   "Tissue Area",
   "."
 ))
@@ -39,7 +40,7 @@ compute_density_from_cell_summary =
 
   summary_data = summary_data %>%
     dplyr::select(`Slide ID`, `Tissue Category`,
-                  `Tissue Category Area (sq microns)`)
+                  dplyr::starts_with('Tissue Category Area'))
 
   compute_density_from_table(counts, summary_data, tissue_categories)
 }
@@ -63,10 +64,15 @@ compute_density_from_table = function(counts, areas, tissue_categories) {
   stopifnot(inherits(areas, 'data.frame'))
 
   # Normalize the name of the area column
+  # Two different column names and two spellings of 'square'. Just brute force.
   if ("Region Area (sq microns)" %in% names(areas))
     areas = areas %>% dplyr::rename(`Tissue Area`="Region Area (sq microns)")
+  else if ("Region Area (square microns)" %in% names(areas))
+    areas = areas %>% dplyr::rename(`Tissue Area`="Region Area (square microns)")
   else if ('Tissue Category Area (sq microns)' %in% names(areas))
     areas = areas %>% dplyr::rename(`Tissue Area`='Tissue Category Area (sq microns)')
+  else if ('Tissue Category Area (square microns)' %in% names(areas))
+    areas = areas %>% dplyr::rename(`Tissue Area`='Tissue Category Area (square microns)')
   else stopifnot('Tissue Area' %in% names(areas))
 
   areas = areas %>%
