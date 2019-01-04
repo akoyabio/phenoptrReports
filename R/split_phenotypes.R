@@ -75,11 +75,13 @@ consolidate_and_summarize_cell_seg_data = function(csd_files, output_dir,
       dplyr::select(`Sample Name`, `Cell ID`, dplyr::starts_with('Phenotype '))
 
     if (nrow(csd2) != start_row_count)
-      stop('Number of rows in data frames do not match. Failed at\n', path)
+      stop('Number of rows in data frames do not match.\n',
+           nrow(csd2), ' != ', start_row_count, ' Failed at\n', path)
     csd <<- dplyr::inner_join(csd, csd2, by=c('Sample Name', 'Cell ID'))
 
     if (nrow(csd) != start_row_count)
-      stop('Sample Names or Cell IDs do not match (rows dropped in join). Failed at\n', path)
+      stop('Sample Names or Cell IDs do not match (rows dropped in join).\n',
+           nrow(csd), ' != ', start_row_count, ' Failed at\n', path)
   })
 
   # Write out the result
