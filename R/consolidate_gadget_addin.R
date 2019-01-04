@@ -115,6 +115,7 @@ addin_20_consolidate = function() {
         progress$set(message = 'Processing files, please wait!',
                      value = 0)
         update_progress <- function(detail = NULL) {
+          cat(detail, '\n')
           progress$set(value = progress$getValue()+1, detail = detail)
         }
         phenoptrReports::consolidate_and_summarize_cell_seg_data(file_list(),

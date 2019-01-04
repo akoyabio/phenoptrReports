@@ -3,6 +3,8 @@
 New features:
 - The "Merge cell seg files" addin now supports searching sub-directories
   for target files.
+- More informative error message if consolidation fails due to mis-matched
+  data files.
   
 Bug fix:
 - `compute_density` works with "square microns" spelled as inForm does.
