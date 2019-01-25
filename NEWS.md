@@ -1,4 +1,5 @@
-# phenoptrReports 0.1.4.9000
+# phenoptrReports 0.1.5
+**2019-01-25**
 
 New features:
 - The "Merge cell seg files" addin now supports searching sub-directories
