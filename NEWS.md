@@ -3,6 +3,8 @@
 New features:
 - The "Merge cell seg files" addin now supports searching sub-directories
   for target files.
+- The "Consolidate and summarize" addin remembers the last directory
+  for subsequent selections.
 - More informative error message if consolidation fails due to mis-matched
   data files.
   

@@ -64,17 +64,24 @@ addin_20_consolidate = function() {
   server <- function(input, output, session) {
     file_list = shiny::reactiveVal()
     output_dir = shiny::reactiveVal()
+    default_dir = ''
 
     # Handle the browse_source button by putting up a file browser
     # to select data files and adding the result to file_list
     shiny::observeEvent(input$browse_source, {
       shiny::req(input$browse_source)
+
+      default = dplyr::if_else(default_dir=='', '', paste0(default_dir, '/*.txt'))
       files = utils::choose.files(
+        default=default,
         caption='Select merge data files',
         filters = utils::Filters['txt',])
 
       if (length(files) == 0)
         return()
+
+      # Set the default directory even if nothing valid is selected
+      default_dir <<- dirname(files[1])
 
       # Only allow cell_seg_data.txt files, and not rejected!
       is_cell_seg = stringr::str_detect(files,
@@ -99,6 +106,7 @@ addin_20_consolidate = function() {
     shiny::observeEvent(input$browse_output, {
       shiny::req(input$browse_output)
       output_dir(utils::choose.dir(
+        default=default_dir,
         caption='Select an output folder'
       ))
 
