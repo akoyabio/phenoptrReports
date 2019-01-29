@@ -78,13 +78,15 @@ split_slides = function(d) {
   map(slide_groups, ~d %>% filter(`Slide ID` %in% .x))
 }
 
-# Create a tissue category factor which has Tumor first and Total last
+# Create a tissue category factor which has Tumor first and Total / All last
 order_tissue_categories = function(cats) {
   cats = factor(cats)
   if ('Tumor' %in% cats)
     cats = forcats::fct_relevel(cats, 'Tumor')
   if ('Total' %in% cats)
     cats = forcats::fct_relevel(cats, 'Total', after=Inf)
+  if ('All' %in% cats)
+    cats = forcats::fct_relevel(cats, 'All', after=Inf)
   cats
 }
 ```
@@ -119,7 +121,7 @@ if ('Cell Counts' %in% sheet_names) {
         geom_col() +
         facet_grid(`Tissue Category` ~ `Slide ID`, switch='x') +
         scale_fill_phenoptr + scale_x_expand +
-        labs(x='Slide ID') +
+        labs(x='Slide ID', y='Cell Count') +
         theme_phenoptr
       
       if (!is.na(plot_limit))
@@ -220,7 +222,20 @@ if ('Mean Expression' %in% sheet_names) {
 ```{r h_score,results='asis'}
 
 if ('H-Score' %in% sheet_names) {
-  h_score = read_xlsx(data_path, 'H-Score', skip=2)
+  if ('.name_repair' %in% names(formals(read_xlsx))) {
+    # readxl version 1.2.0 adds a .name_repair option. We don't want name repair
+    # and have to turn it off if present. We will get duplicate column names
+    # that we handle by selecting by index.
+    h_score = read_xlsx(data_path, 'H-Score', skip=2, .name_repair='minimal')
+  } else {
+    # Older readxl appends '__1' to column names
+    h_score = read_xlsx(data_path, 'H-Score', skip=2)%>%
+      rename_all(~stringr::str_remove(.x, '__1'))
+  }
+  
+  # Select needed columns and order tissue category
+  h_score = h_score[, c(1:2, 7:11)] %>% 
+    mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`))
   
   # Find the marker from the first row, if present
   h_score_title = read_xlsx(data_path, 'H-Score', range='C1', col_names=FALSE) %>% 
@@ -231,10 +246,8 @@ if ('H-Score' %in% sheet_names) {
   
   # Clean up duplicate names and reshape for plotting
   tall = h_score %>%
-    select(`Slide ID`, `Tissue Category`, 7:10) %>%
-    rename_all(~stringr::str_remove(.x, '__1')) %>% 
-    gather('Bin', 'Percent',  -`Slide ID`, -`Tissue Category`) %>% 
-    mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`))
+    select(-`H-Score`) %>% 
+    gather('Bin', 'Percent',  -`Slide ID`, -`Tissue Category`)
   
   # Cumulative percent plots as one bar per slide so we don't have to split_slides
   cat('##', title, '\n\n')
@@ -252,8 +265,6 @@ if ('H-Score' %in% sheet_names) {
     cat('\n\n')
 
   # H-Score is also one plot
-  h_score = h_score %>% 
-    mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`))
   cat('##', h_score_title, '\n\n')
   p = ggplot(h_score, aes(`Slide ID`, `H-Score`)) +
     geom_col(fill=phenoptr_colors[1]) +

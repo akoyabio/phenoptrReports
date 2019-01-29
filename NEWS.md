@@ -1,3 +1,12 @@
+# phenoptrReports 0.1.5.9000
+
+Bug fix:
+- Clean up chart output
+  - "All" tissue category is last in charts which have it, same as "Total".
+  - Fix "Cell Count" axis label
+  - Fix legend in H-Score chart - "name repair" in readxl version 1.2.0 
+    created unexpected column names which were shown in the legend.
+    
 # phenoptrReports 0.1.5
 **2019-01-25**
 
