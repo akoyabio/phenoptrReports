@@ -1,8 +1,13 @@
 # phenoptrReports 0.1.5.9000
 
+New features:
+- Component levels report includes pair plots of component vs component
+  for each source image.
+  
 Bug fixes:
 - Component levels report
   - Write CSV files to the export directory, not its parent.
+  - Fix height of "Pixel intensity by component" charts.
   
 - Clean up chart output
   - "All" tissue category is last in charts which have it, same as "Total".

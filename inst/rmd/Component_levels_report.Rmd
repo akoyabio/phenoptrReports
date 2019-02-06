@@ -57,9 +57,11 @@ This report shows component levels for samples
 from <pre><strong>`r export_path`</strong></pre>.
 
 ```{r data}
-comp_files = list.files(export_path, pattern='component_data.tif', full.names=TRUE)
+comp_files = list.files(export_path, pattern='component_data.tif', full.names=TRUE) %>% 
+  purrr::set_names(., basename(.))
 if (length(comp_files) == 0)
   stop('No component data files found at "', export_path, '"')
+
 ```
 
 ### Pixel intensity by image
@@ -69,35 +71,38 @@ component of each image.
 Intensity is shown on a log scale.
 
 ```{r}
-density_fig_height = 4
+# Initial data acquisition and creation of the first round of plots
+# all_data is a list of lists of plot, data, quants, clipping
+all_data = purrr::map(comp_files, phenoptrReports:::component_ridge_plot, quantiles=quantiles)
+
+# Save some data
+all_quants = purrr::map_dfr(all_data, 'quants')
+readr::write_csv(all_quants, file.path(export_path, 'all_quants.csv'))
+
+all_clipping = purrr::map_dfr(all_data, 'clipping')
+readr::write_csv(all_clipping, file.path(export_path, 'all_clipping.csv'))
+
+all_components = purrr::map_dfr(all_data, 'data')
+density_fig_height =  1 + 0.5 * n_distinct(all_components$Fluor)
 ```
 
 ```{r fig.height=density_fig_height,results='asis'}
-# Make density plots using random sampled data
-all_components = data_frame()
-all_quants = data_frame()
-all_clipping = data_frame()
-for (path in comp_files) {
-  d = phenoptrReports:::component_ridge_plot(path, quantiles=quantiles)
+# Output density plots by file
+message('Creating histograms by source')
+purrr::iwalk(all_data, function(d, n) {
+  message('Processing ', n)
   print(d$plot)
   cat('\n\n  \n----\n  \n')
-  all_components = dplyr::bind_rows(all_components, d$data)
-  all_quants = dplyr::bind_rows(all_quants, d$quants)
-  all_clipping = dplyr::bind_rows(all_clipping, d$clipping)
-}
+})
 
-# Save some data
-readr::write_csv(all_quants, file.path(export_path, 'all_quants.csv'))
-readr::write_csv(all_clipping, file.path(export_path, 'all_clipping.csv'))
-
-component_fig_height = 0.5 * n_distinct(all_components$Source)
+component_fig_height = 1 + 0.5 * n_distinct(all_components$Source)
 ```
 
 
 ### Pixel intensity by component
 
 ```{r fig.height=component_fig_height,results='asis'}
-
+message('Creating histograms by component')
 fluors = sort(unique(all_components$Fluor))
 palette = RColorBrewer::brewer.pal(length(fluors), 'Spectral')
 
@@ -111,6 +116,23 @@ purrr::walk2(fluors, palette,
     cat('\n\n  \n----\n  \n')
 })
 
+```
+
+### Pair plots
+
+Pair plots show the expression of each marker against each other marker.
+They may help identify crosstalk between markers.
+
+```{r fig.width=8,fig.height=8.5,results='asis'}
+message('Creating pair plots')
+purrr::iwalk(all_data, function(d, n) {
+  # Unstack and subsample
+  message('Processing ', n)
+  d = d$data %>% select(-Source) %>% unstack(value ~ Fluor) %>% sample_n(2000)
+  pairs(d, pch='.', cex=3, col=scales::alpha('black', 0.2),
+              main=n)
+  cat('\n\n  \n----\n  \n')
+})
 ```
 
 ### Signal to noise
