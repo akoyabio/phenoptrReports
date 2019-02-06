@@ -2,6 +2,8 @@
 ^\.Rproj\.user$
 
 .lintr
+.reviewboardrc
+
 ^docs$
 ^inst/analysis_app/sample_data$
 ^tools$

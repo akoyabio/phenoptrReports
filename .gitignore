@@ -2,5 +2,8 @@ tests/testthat/results
 .Rproj.user
 .Rhistory
 .RData
+
+.reviewboardrc
+
 inst/doc
 inst/rmd/*.html
