@@ -49,7 +49,6 @@ library(formattable)
 library(phenoptr)
 
 export_path = params$export_path
-export_folder = dirname(export_path)
 quantiles = c(0.1, 0.99)
 
 ```
@@ -88,8 +87,8 @@ for (path in comp_files) {
 }
 
 # Save some data
-readr::write_csv(all_quants, file.path(export_folder, 'all_quants.csv'))
-readr::write_csv(all_clipping, file.path(export_folder, 'all_clipping.csv'))
+readr::write_csv(all_quants, file.path(export_path, 'all_quants.csv'))
+readr::write_csv(all_clipping, file.path(export_path, 'all_clipping.csv'))
 
 component_fig_height = 0.5 * n_distinct(all_components$Source)
 ```

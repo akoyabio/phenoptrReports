@@ -1,6 +1,9 @@
 # phenoptrReports 0.1.5.9000
 
-Bug fix:
+Bug fixes:
+- Component levels report
+  - Write CSV files to the export directory, not its parent.
+  
 - Clean up chart output
   - "All" tissue category is last in charts which have it, same as "Total".
   - Fix "Cell Count" axis label

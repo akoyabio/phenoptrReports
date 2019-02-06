@@ -11,8 +11,12 @@ xlim_lower = -2
 # @param path Full path to a component data file
 # @param quantiles A length 2 vector of quantiles to show and report,
 #   or NULL to use the default quantiles of 0.1 and 0.99.
-# @return A list with plot (a ggplot object) and data (a long data frame
-# containing sampled component data)
+# @return A list containing
+#  - plot - a ggplot object containing the ridge plot
+#  - data - a long data frame containing sampled component data
+#  - quants - a data frame containing the requested quantiles for each component
+#  - clipping - a data frame with the percent of pixels clipped to zero for
+#    each component
 component_ridge_plot = function(path, quantiles=NULL) {
   message('Processing ', basename(path))
 
