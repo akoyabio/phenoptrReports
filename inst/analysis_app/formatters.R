@@ -15,6 +15,7 @@ format_all = function(all_data) {
   has$phenotypes = length(phenos) > 0
   has$density = has$phenotypes && !is.null(all_data$summary_path)
   has$expression = any(purrr::map_lgl(phenos, ~!.x$expression %in% c('', 'NA')))
+  has$include_nearest = all_data$include_nearest && length(phenos) >= 2
   has$h_score = !is.null(all_data$score_path)
 
   paste0(
@@ -25,6 +26,7 @@ format_all = function(all_data) {
     ifelse(has$density, format_density(all_data$summary_path), ''),
     format_expression(phenos),
     ifelse(has$h_score, format_h_score(all_data$score_path), ''),
+    ifelse(has$include_nearest, format_nearest_neighbors(), ''),
     format_cleanup(all_data$slide_id_prefix, all_data$use_regex, has),
     format_trailer(all_data$output_dir, has))
 }
@@ -120,7 +122,14 @@ format_h_score = function(score_path) {
   stringr::str_glue(
 "# Compute H-Score
 score_path = '{score_path}'
-h_score = compute_h_score_from_score_data(csd, score_path, tissue_categories)\n\n\n")
+h_score = compute_h_score_from_score_data(csd, score_path, tissue_categories)\n\n")
+}
+
+format_nearest_neighbors = function() {
+  stringr::str_glue(
+"# Summarize nearest neighbor distances
+nearest_neighbors = nearest_neighbor_summary(csd, phenotypes)
+\n\n\n")
 }
 
 format_cleanup = function(slide_id_prefix, use_regex, has) {
@@ -157,6 +166,9 @@ percents = cleanup(percents)\n")
   if (has$h_score)
     start = paste0(start, "h_score = cleanup(h_score)\n")
 
+  if (has$include_nearest)
+    start = paste0(start, "nearest_neighbors = cleanup(nearest_neighbors)\n")
+
   paste(start, '\n\n')
 }
 
@@ -181,7 +193,11 @@ expression = ifelse(has$expression,
 ", "")
 
 h_score = ifelse(has$h_score,
-                    "write_h_score_sheet(wb, h_score)
+                 "write_h_score_sheet(wb, h_score)
+", "")
+
+nearest = ifelse(has$include_nearest,
+                    "write_nearest_neighbor_summary_sheet(wb, nearest_neighbors)
 ", "")
 
 end = stringr::str_glue(
@@ -195,7 +211,7 @@ charts_path = file.path("{output_dir}", "Charts.docx")
 write_summary_charts(workbook_path, charts_path)
 ')
 
-paste0(start, counts, density, expression, h_score, end)
+paste0(start, counts, density, expression, h_score, nearest, end)
 }
 
 

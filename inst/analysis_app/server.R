@@ -9,6 +9,7 @@ shinyServer(function(input, output, server) {
   # slide_id_prefix - Slide ID prefix to remove
   # tissue_categories - User-selected tissue categories
   # use_regex - Is slide_id_prefix a regular expression?
+  # include_nearest - Include nearest neighbor summary?
   the_data = reactiveValues()
 
   # File selection
@@ -29,8 +30,8 @@ shinyServer(function(input, output, server) {
   # Handle changes in file_data$input_path by initializing the Analysis tab
   shiny::observe({
     # Remove any existing output panels
-    purrr::safely(shiny::removeUI)('#well1')
-    purrr::safely(shiny::removeUI)('#well2')
+    wells = c('#well1', '#well2', '#well3')
+    wells %>% purrr::walk(~purrr::safely(shiny::removeUI)(.x))
 
     shiny::req(file_data$input_path())
 
@@ -73,10 +74,17 @@ shinyServer(function(input, output, server) {
       # Second well panel holds phenotype modules.
       # Start it with one phenotype module and a button to add more.
       shiny::div(id='well2', shiny::wellPanel(
-      paste('Available phenotypes:', paste(available_phenotypes, collapse=', ')),
-      phenotype_module_ui('pheno0', the_data$expression_columns),
-      shiny::actionButton('add', 'Add another phenotype')
-    )))
+        paste('Available phenotypes:', paste(available_phenotypes, collapse=', ')),
+        phenotype_module_ui('pheno0', the_data$expression_columns),
+        shiny::actionButton('add', 'Add another phenotype')
+      )),
+
+      # Third well panel holds options for spatial processing
+      shiny::div(id='well3', shiny::wellPanel(
+        shiny::checkboxInput('include_nearest',
+                             label='Include nearest neighbor summary')
+      ))
+    )
 
     shiny::insertUI('#placeholder', 'afterBegin', new_ui)
 
@@ -88,13 +96,13 @@ shinyServer(function(input, output, server) {
   })
 
   # Handle changes to Slide ID prefix by saving values
-  observe({
+  shiny::observe({
     the_data$slide_id_prefix = input$slide_id_prefix
     the_data$use_regex = input$use_regex
   })
 
   # Handle Add button by adding another phenotype_module_ui
-  observeEvent(input$add, {
+  shiny::observeEvent(input$add, {
     id = paste0('pheno', input$add)
     ui = phenotype_module_ui(id, the_data$expression_columns, show_help=FALSE)
     insertUI('#add', 'beforeBegin', ui)
@@ -105,6 +113,11 @@ shinyServer(function(input, output, server) {
                                             the_data$available_phenotypes)))
   })
 
+  # Handle the nearest neighbor checkbox
+  shiny::observeEvent(input$include_nearest, {
+    the_data$include_nearest = shiny::isTruthy(input$include_nearest)
+  })
+
   # Update the error message
   shiny::observe({
     if (is.null(file_data$input_path())) {
@@ -113,6 +126,9 @@ shinyServer(function(input, output, server) {
       analysis_error ='Please select an output directory in the Files tab.'
     } else if (length(input$tissue_categories)==0) {
       analysis_error = 'Please select tissue categories.'
+    } else if (shiny::isTruthy(the_data$include_nearest)
+               && length(the_data$phenotype_modules) < 2) {
+      analysis_error = 'Spatial statistics require at least two phenotypes.'
     } else {
       analysis_error = ''
     }
