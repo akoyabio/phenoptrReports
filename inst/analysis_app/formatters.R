@@ -1,6 +1,11 @@
 # Output formatting
 # These functions build a script based on the user inputs
 
+# List to accumulate pairs of (table name, table writing function name)
+# This reduces the repetition of names and the number of conditional outputs.
+# Sadly it must be at global scope to be shared between all these functions.
+table_pairs = list()
+
 # Format everything.
 format_all = function(all_data) {
   phenotype_values = all_data$phenotype_values
@@ -17,6 +22,9 @@ format_all = function(all_data) {
   has$expression = any(purrr::map_lgl(phenos, ~!.x$expression %in% c('', 'NA')))
   has$include_nearest = all_data$include_nearest && length(phenos) >= 2
   has$h_score = !is.null(all_data$score_path)
+
+  # Re-initialize
+  table_pairs <<- list()
 
   paste0(
     format_header(),
@@ -39,11 +47,13 @@ format_header = function() {
 library(tidyverse)
 library(phenoptr)
 library(phenoptrReports)
-library(openxlsx)\n\n')
+library(openxlsx)
+\n\n')
 }
 
 # Format reading cell seg data and making summary table
 format_path = function(path, field_col) {
+  table_pairs <<- c(table_pairs, list(c('summary_table', 'write_summary_sheet')))
   path = stringr::str_replace_all(path, '\\\\', '/')
   stringr::str_glue('# Read the consolidated data file
 csd_path = "{path}"
@@ -51,7 +61,8 @@ csd = read_cell_seg_data(csd_path)
 
 # Make a table summarizing the number of fields per slide
 summary_table = csd %>% group_by(`Slide ID`) %>%
-                    summarize(`Number of fields`=n_distinct(`{field_col}`))\n\n\n')
+                    summarize(`Number of fields`=n_distinct(`{field_col}`))
+\n\n')
 }
 
 # Format tissue categories
@@ -75,24 +86,33 @@ format_phenotypes = function(vals) {
                                stringr::regex('Total|All', ignore_case=TRUE))))
     phenos = c(unique(phenos), 'Total Cells')
 
+  table_pairs <<- c(table_pairs, list(
+    c('counts', 'write_counts_sheet'),
+    c('percents', 'write_percents_sheet')
+  ))
+
   phenos_string = paste(phenos, collapse='", "')
   stringr::str_glue('# Define phenotypes
 phenotypes = parse_phenotypes("{phenos_string}")
 
 # Count phenotypes per tissue category
 counts = count_phenotypes(csd, phenotypes, tissue_categories)
-percents = counts_to_percents(counts)\n\n\n')
+percents = counts_to_percents(counts)
+\n\n')
 }
 
 # Format density calculation
 format_density = function(summary_path) {
+  table_pairs <<- c(table_pairs, list(c('densities', 'write_density_sheet')))
+
   stringr::str_glue(
 '# Path to a cell seg summary file, used for the tissue category area
 summary_path = "{summary_path}"
 
 # Using the counts computed above and the tissue area from the summary,
 # compute cell densities for each phenotype
-densities = compute_density_from_cell_summary(counts, summary_path, tissue_categories)\n\n\n')
+densities = compute_density_from_cell_summary(counts, summary_path, tissue_categories)
+\n\n')
 }
 
 # Format the expression parameters
@@ -102,6 +122,9 @@ format_expression = function(vals) {
   phenos = vals %>%
     purrr::discard(~.x$expression %in% c('', 'NA'))
   if (length(phenos) == 0) return('')
+
+  table_pairs <<- c(table_pairs,
+                    list(c('expression_means', 'write_expression_sheet')))
 
   pairs = purrr::map_chr(phenos,
                          ~stringr::str_glue('"{.x$phenotype}" = "{.x$expression}"'))
@@ -119,17 +142,23 @@ expression_means = csd %>%
 }
 
 format_h_score = function(score_path) {
+  table_pairs <<- c(table_pairs, list(c('h_score', 'write_h_score_sheet')))
+
   stringr::str_glue(
 "# Compute H-Score
 score_path = '{score_path}'
-h_score = compute_h_score_from_score_data(csd, score_path, tissue_categories)\n\n")
+h_score = compute_h_score_from_score_data(csd, score_path, tissue_categories)
+\n\n")
 }
 
 format_nearest_neighbors = function() {
+  table_pairs <<- c(table_pairs,
+                    list(c('nearest_neighbors', 'write_nearest_neighbor_summary_sheet')))
+
   stringr::str_glue(
 "# Summarize nearest neighbor distances
 nearest_neighbors = nearest_neighbor_summary(csd, phenotypes)
-\n\n\n")
+\n\n")
 }
 
 format_cleanup = function(slide_id_prefix, use_regex, has) {
@@ -150,68 +179,40 @@ cleanup = function(d) {{
   d$`Slide ID` = str_remove(d$`Slide ID`, '^{slide_id_prefix}')
   d
 }}
+\n\n")
 
-summary_table = cleanup(summary_table)\n\n")
+  # Add a cleanup call for each table
+  purrr::walk(table_pairs, ~{
+    start <<- stringr::str_glue("{start}{.x[[1]]} = cleanup({.x[[1]]})\n\n")
+  })
 
-  if (has$phenotypes)
-    start = paste0(start, "counts = cleanup(counts)
-percents = cleanup(percents)\n")
-
-  if (has$density)
-    start = paste0(start, "densities = cleanup(densities)\n")
-
-  if (has$expression)
-    start = paste0(start, "expression_means = cleanup(expression_means)\n")
-
-  if (has$h_score)
-    start = paste0(start, "h_score = cleanup(h_score)\n")
-
-  if (has$include_nearest)
-    start = paste0(start, "nearest_neighbors = cleanup(nearest_neighbors)\n")
-
-  paste(start, '\n\n')
+  paste(start, '\n')
 }
 
 format_trailer = function(output_dir, has) {
 start =
 '# Write it all out to an Excel workbook
 wb = createWorkbook()
-write_summary_sheet(wb, summary_table)
 '
-
-counts = ifelse(has$phenotypes,
-"write_counts_sheet(wb, counts)
-write_percents_sheet(wb, percents)
-", "")
-
-density = ifelse(has$density,
-"write_density_sheet(wb, densities)
-", "")
-
-expression = ifelse(has$expression,
-                    "write_expression_sheet(wb, expression_means)
-", "")
-
-h_score = ifelse(has$h_score,
-                 "write_h_score_sheet(wb, h_score)
-", "")
-
-nearest = ifelse(has$include_nearest,
-                    "write_nearest_neighbor_summary_sheet(wb, nearest_neighbors)
-", "")
+# Add a write call for each table
+purrr::walk(table_pairs, ~{
+  start <<- stringr::str_glue("{start}{.x[[2]]}(wb, {.x[[1]]})\n\n")
+})
 
 end = stringr::str_glue(
 '
 
-workbook_path = file.path("{output_dir}", "Results.xlsx")
+workbook_path = file.path("{output_dir}",
+                          "Results.xlsx")
 saveWorkbook(wb, workbook_path, overwrite=TRUE)
 
 # Write summary charts
-charts_path = file.path("{output_dir}", "Charts.docx")
+charts_path = file.path("{output_dir}",
+                        "Charts.docx")
 write_summary_charts(workbook_path, charts_path)
 ')
 
-paste0(start, counts, density, expression, h_score, nearest, end)
+paste0(start, end)
 }
 
 
