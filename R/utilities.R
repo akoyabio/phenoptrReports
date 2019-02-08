@@ -105,6 +105,9 @@ validate_phenotype_definitions = function(pheno, available) {
 #' @param csd Cell seg data
 #' @return A column name (as a string)
 field_column = function(csd) {
-  dplyr::if_else('Annotation ID' %in% names(csd),
+  col = dplyr::if_else('Annotation ID' %in% names(csd),
                  'Annotation ID', 'Sample Name')
+  if (!col %in% names(csd))
+    stop('Cell seg table does not include "Sample Name" or "Annotation ID".')
+  col
 }

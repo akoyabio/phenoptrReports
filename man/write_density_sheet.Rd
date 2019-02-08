@@ -25,6 +25,7 @@ Write a formatted density table to a sheet in an Excel workbook.
 Other output functions: \code{\link{write_counts_sheet}},
   \code{\link{write_expression_sheet}},
   \code{\link{write_h_score_sheet}},
+  \code{\link{write_nearest_neighbor_summary_sheet}},
   \code{\link{write_percents_sheet}},
   \code{\link{write_plot_sheet}},
   \code{\link{write_summary_sheet}}

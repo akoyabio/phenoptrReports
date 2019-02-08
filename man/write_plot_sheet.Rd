@@ -24,6 +24,7 @@ Other output functions: \code{\link{write_counts_sheet}},
   \code{\link{write_density_sheet}},
   \code{\link{write_expression_sheet}},
   \code{\link{write_h_score_sheet}},
+  \code{\link{write_nearest_neighbor_summary_sheet}},
   \code{\link{write_percents_sheet}},
   \code{\link{write_summary_sheet}}
 }

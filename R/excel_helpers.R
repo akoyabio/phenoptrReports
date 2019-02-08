@@ -152,6 +152,33 @@ write_expression_sheet = function(wb, exprs,
                      gridExpand=TRUE, stack=TRUE)
 }
 
+#' Write a nearest neighbor summary to an Excel workbook
+#'
+#' Write a formatted nearest neighbor summary table to a
+#' sheet in an Excel workbook.
+#'
+#' @param wb An openxlsx Workbook from [openxlsx::createWorkbook]
+#' @param stats A summary data frame.
+#' @param sheet_name Optional name for the worksheet.
+#' @param sheet_title Optional title header for the table.
+#' @family output functions
+#' @export
+write_nearest_neighbor_summary_sheet = function(wb, stats,
+                          sheet_name='Nearest Neighbors',
+                          sheet_title='Nearest Neighbor Distances for Phenotype Pairs (microns)')
+{
+  write_sheet(wb, stats, sheet_name, sheet_title, 2)
+
+  data_rows = 1:nrow(stats)+2
+  data_cols = 4:ncol(stats)
+
+  # Format with two decimal places
+  openxlsx::addStyle(wb, sheet_name, two_decimal_style,
+                     rows=data_rows, cols=data_cols,
+                     gridExpand=TRUE, stack=TRUE)
+}
+
+
 #' Write an H-Score table to an Excel workbook
 #'
 #' Write a formatted H-Score table to a sheet in an Excel workbook.
