@@ -277,3 +277,41 @@ if ('H-Score' %in% sheet_names) {
     cat('\n\n')
 }
 ```
+
+```{r neigbors,results='asis'}
+
+if ('Nearest Neighbors' %in% sheet_names) {
+  neighbors = read_xlsx(workbook_path, 'Nearest Neighbors', skip=1)
+  
+  # Filter out Total Cells, they are not interesting and add clutter
+  neighbors = neighbors %>% filter(From != 'Total Cells', To != 'Total Cells')
+  
+  # Find overall max so we can use the same fill scale on every plot
+  max_median = max(neighbors$Median, na.rm=TRUE)
+  
+  # Split to multiple pages
+  neighbors = split_slides(neighbors)
+  iwalk(neighbors, function(d, i) {
+    if (length(neighbors) > 1) {
+      cat(str_glue('## Median Distance to Nearest Neighbor ({i} of {length(neighbors)})\n\n'))
+    } else {
+      cat('## Median Distance to Nearest Neighbor\n\n')
+    }
+    p = ggplot(d, aes(To, From, fill=Median)) +
+      geom_raster(na.rm=TRUE) +
+      facet_wrap(~ `Slide ID`) +
+      scale_fill_gradientn('Median\nDistance', na.value='grey90', 
+                           limits=c(0, max_median),
+                           colors=RColorBrewer::brewer.pal(9, 'Spectral')) +
+      theme_phenoptr +
+      # Overrides for theme_phenoptr elements
+      theme(strip.text.x=element_text(face='bold', angle=0),
+            axis.text.x=element_text(size=8, angle=90, hjust=1)) +
+      coord_equal()
+  
+   
+    print(p)
+    cat('\n\n')
+  })
+}
+```
