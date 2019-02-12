@@ -4,10 +4,10 @@
 \alias{write_summary_charts}
 \title{Create summary charts from the results of an analysis}
 \usage{
-write_summary_charts(worksheet_path, output_path)
+write_summary_charts(workbook_path, output_path)
 }
 \arguments{
-\item{worksheet_path}{Path to an Excel file containing sheets written
+\item{workbook_path}{Path to an Excel file containing sheets written
 by \link{write_counts_sheet}, etc.}
 
 \item{output_path}{Path to write the resulting file.}

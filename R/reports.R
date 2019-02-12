@@ -34,12 +34,12 @@ write_summary_report = function(csd_path=NULL, csd=NULL,
 #' Creates a Microsoft Word file or HTML report containing summary charts
 #' derived from an analysis. The file type is determined by the file extension
 #' of `output_path`, which must be either `.docx` or `.html`.
-#' @param worksheet_path Path to an Excel file containing sheets written
+#' @param workbook_path Path to an Excel file containing sheets written
 #'   by [write_counts_sheet], etc.
 #' @param output_path Path to write the resulting file.
 #' @export
-write_summary_charts = function(worksheet_path, output_path) {
-  stopifnot(file.exists(worksheet_path))
+write_summary_charts = function(workbook_path, output_path) {
+  stopifnot(file.exists(workbook_path))
 
   if (is.null(output_path))
     stop('You must provide an output path.')
@@ -56,7 +56,7 @@ write_summary_charts = function(worksheet_path, output_path) {
 
   rmarkdown::render(rmd_path, output_file=output_path,
                     output_format=output_format,
-                    params=list(data_path=worksheet_path))
+                    params=list(workbook_path=workbook_path))
 }
 
 #' Create an unmixing quality report for simplex samples

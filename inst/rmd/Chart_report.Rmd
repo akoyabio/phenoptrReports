@@ -5,7 +5,7 @@ output:
   html_vignette:
     df_print: kable
 params:
-  data_path:
+  workbook_path:
     input: file
     label: 'Path to Excel file:'
     value: ''
@@ -25,13 +25,13 @@ library(tidyr)
 knitr::opts_chunk$set(echo=FALSE,fig.width=10, fig.height=5.5, 
                       comment=NA, warning=FALSE, message=FALSE)
 
-data_path = params$data_path
+workbook_path = params$workbook_path
 max_slides_per_plot = params$max_slides_per_plot
 
 # Note: Using readxl rather than openxlsx for reading because
 # the check.names parameter of openxlsx::readWorkbook is kind of broken.
 # https://github.com/awalker89/openxlsx/issues/102
-sheet_names = readxl::excel_sheets(data_path)
+sheet_names = readxl::excel_sheets(workbook_path)
 
 # Boilerplate for ggplot theming
 phenoptr_colors = c(
@@ -95,7 +95,7 @@ order_tissue_categories = function(cats) {
 
 ```{r counts, results='asis'}
 if ('Cell Counts' %in% sheet_names) {
-  counts = read_xlsx(data_path, 'Cell Counts', skip=1)
+  counts = read_xlsx(workbook_path, 'Cell Counts', skip=1)
   tall = counts %>%
     gather('Phenotype', 'Cell Count', -`Slide ID`, -`Tissue Category`) %>%
     filter(!Phenotype %in% c('Other', 'Total Cells')) %>% 
@@ -138,7 +138,7 @@ if ('Cell Counts' %in% sheet_names) {
 ```{r density,results='asis'}
 
 if ('Cell Densities' %in% sheet_names) {
-  density = read_xlsx(data_path, 'Cell Densities', skip=1)
+  density = read_xlsx(workbook_path, 'Cell Densities', skip=1)
   
   # Reshape for plotting
   tall = density %>% gather('Phenotype', 'Density',
@@ -182,7 +182,7 @@ if ('Cell Densities' %in% sheet_names) {
 ```{r expression,results='asis'}
 
 if ('Mean Expression' %in% sheet_names) {
-  expression = read_xlsx(data_path, 'Mean Expression', skip=1)
+  expression = read_xlsx(workbook_path, 'Mean Expression', skip=1)
   
   # Reshape for plotting
   tall = expression %>% gather('Measure', 'Mean',
@@ -226,10 +226,10 @@ if ('H-Score' %in% sheet_names) {
     # readxl version 1.2.0 adds a .name_repair option. We don't want name repair
     # and have to turn it off if present. We will get duplicate column names
     # that we handle by selecting by index.
-    h_score = read_xlsx(data_path, 'H-Score', skip=2, .name_repair='minimal')
+    h_score = read_xlsx(workbook_path, 'H-Score', skip=2, .name_repair='minimal')
   } else {
     # Older readxl appends '__1' to column names
-    h_score = read_xlsx(data_path, 'H-Score', skip=2)%>%
+    h_score = read_xlsx(workbook_path, 'H-Score', skip=2)%>%
       rename_all(~stringr::str_remove(.x, '__1'))
   }
   
@@ -238,7 +238,7 @@ if ('H-Score' %in% sheet_names) {
     mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`))
   
   # Find the marker from the first row, if present
-  h_score_title = read_xlsx(data_path, 'H-Score', range='C1', col_names=FALSE) %>% 
+  h_score_title = read_xlsx(workbook_path, 'H-Score', range='C1', col_names=FALSE) %>% 
     unlist()
   if (stringr::str_detect(h_score_title, 'H-Score,')) {
     title = stringr::str_glue('Cumulative Percent of Cells in {stringr::str_remove(h_score_title, "H-Score,")} Bins')
