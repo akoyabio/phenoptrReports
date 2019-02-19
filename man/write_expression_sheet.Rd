@@ -22,7 +22,8 @@ and mean expression, such as the output of
 Write a formatted cell expression table to a sheet in an Excel workbook.
 }
 \seealso{
-Other output functions: \code{\link{write_counts_sheet}},
+Other output functions: \code{\link{write_count_within_sheet}},
+  \code{\link{write_counts_sheet}},
   \code{\link{write_density_sheet}},
   \code{\link{write_h_score_sheet}},
   \code{\link{write_nearest_neighbor_summary_sheet}},

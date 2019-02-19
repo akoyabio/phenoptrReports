@@ -259,6 +259,24 @@ write_h_score_sheet = function(wb, h_score,
                      gridExpand=TRUE, stack=TRUE)
 }
 
+#' Write a "count within" summary to an Excel workbook
+#'
+#' Write a formatted "count within" summary table to a
+#' sheet in an Excel workbook.
+#'
+#' @param wb An openxlsx Workbook from [openxlsx::createWorkbook]
+#' @param stats A summary data frame.
+#' @param sheet_name Optional name for the worksheet.
+#' @param sheet_title Optional title header for the table.
+#' @family output functions
+#' @export
+write_count_within_sheet = function(wb, stats,
+  sheet_name='Count Within',
+  sheet_title='Count of cells within the specified radius')
+{
+  write_sheet(wb, stats, sheet_name, sheet_title, 3, addGrid=FALSE)
+}
+
 #' Write a plot to an Excel workbook
 #'
 #' Write a plot to a sheet in an Excel workbook.
@@ -298,8 +316,12 @@ write_plot_sheet = function(wb, plot, sheet_name='Phenotypes',
 #' @param sheet_title Title header for the plot.
 #' @param header_col Column number to start the `sheet_title`
 #' @param keepNA If TRUE, NA values are written as #N/A; else they are blank.
+#' @param addGrid If TRUE, grid lines (and page breaks) are added based
+#' on the tissue categories in the data. If FALSE, no grid lines are added
+#' and page breaks are added where needed.
 #' @export
-write_sheet <- function(wb, d, sheet_name, sheet_title, header_col, keepNA=TRUE) {
+write_sheet <- function(wb, d, sheet_name, sheet_title, header_col,
+                        keepNA=TRUE, addGrid=TRUE) {
   # Make a new sheet
   openxlsx::addWorksheet(wb, sheet_name)
 
@@ -332,7 +354,11 @@ write_sheet <- function(wb, d, sheet_name, sheet_title, header_col, keepNA=TRUE)
   if ('Tissue Category' %in% names(d))
     openxlsx::setColWidths(wb, sheet_name, 2, 11)
 
-  grid_spacing = add_grid_lines(wb, sheet_name, d, header_col, first_data_row)
+  if (addGrid) {
+    grid_spacing = add_grid_lines(wb, sheet_name, d, header_col, first_data_row)
+  } else {
+    grid_spacing = 1
+  }
 
   # Page formatting
   insert_page_breaks(wb, sheet_name, d, grid_spacing)

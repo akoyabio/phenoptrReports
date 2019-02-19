@@ -4,7 +4,8 @@
 \alias{write_sheet}
 \title{Write a single sheet with formatting common to all sheets.}
 \usage{
-write_sheet(wb, d, sheet_name, sheet_title, header_col, keepNA = TRUE)
+write_sheet(wb, d, sheet_name, sheet_title, header_col, keepNA = TRUE,
+  addGrid = TRUE)
 }
 \arguments{
 \item{wb}{An openxlsx Workbook from \link[openxlsx:createWorkbook]{openxlsx::createWorkbook}}
@@ -18,6 +19,10 @@ write_sheet(wb, d, sheet_name, sheet_title, header_col, keepNA = TRUE)
 \item{header_col}{Column number to start the \code{sheet_title}}
 
 \item{keepNA}{If TRUE, NA values are written as #N/A; else they are blank.}
+
+\item{addGrid}{If TRUE, grid lines (and page breaks) are added based
+on the tissue categories in the data. If FALSE, no grid lines are added
+and page breaks are added where needed.}
 }
 \description{
 \itemize{

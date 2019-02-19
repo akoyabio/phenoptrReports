@@ -21,7 +21,8 @@ and counts, such as the output of \link{count_phenotypes}.}
 Write a formatted cell counts table to a sheet in an Excel workbook.
 }
 \seealso{
-Other output functions: \code{\link{write_density_sheet}},
+Other output functions: \code{\link{write_count_within_sheet}},
+  \code{\link{write_density_sheet}},
   \code{\link{write_expression_sheet}},
   \code{\link{write_h_score_sheet}},
   \code{\link{write_nearest_neighbor_summary_sheet}},

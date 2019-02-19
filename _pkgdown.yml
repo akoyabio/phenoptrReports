@@ -63,6 +63,7 @@ reference:
       - '`compute_positivity_many`'
       - '`counts_to_percents`'
       - '`count_phenotypes`'
+      - '`count_within_summary`'
       - '`nearest_neighbor_summary`'
   - title: Data reporting - HTML
     desc: These functions write analysis results to HTML reports.
@@ -73,6 +74,7 @@ reference:
     desc: These functions write analysis results to Excel worksheets.
     contents:
       - '`write_counts_sheet`'
+      - '`write_count_within_sheet`'
       - '`write_density_sheet`'
       - '`write_expression_sheet`'
       - '`write_h_score_sheet`'

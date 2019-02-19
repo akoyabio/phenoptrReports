@@ -20,7 +20,8 @@ write_plot_sheet(wb, plot, sheet_name = "Phenotypes",
 Write a plot to a sheet in an Excel workbook.
 }
 \seealso{
-Other output functions: \code{\link{write_counts_sheet}},
+Other output functions: \code{\link{write_count_within_sheet}},
+  \code{\link{write_counts_sheet}},
   \code{\link{write_density_sheet}},
   \code{\link{write_expression_sheet}},
   \code{\link{write_h_score_sheet}},

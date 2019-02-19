@@ -22,7 +22,8 @@ the title will be inferred from the \code{h_score} data if possible.}
 Write a formatted H-Score table to a sheet in an Excel workbook.
 }
 \seealso{
-Other output functions: \code{\link{write_counts_sheet}},
+Other output functions: \code{\link{write_count_within_sheet}},
+  \code{\link{write_counts_sheet}},
   \code{\link{write_density_sheet}},
   \code{\link{write_expression_sheet}},
   \code{\link{write_nearest_neighbor_summary_sheet}},
