@@ -10,6 +10,8 @@ shinyServer(function(input, output, server) {
   # tissue_categories - User-selected tissue categories
   # use_regex - Is slide_id_prefix a regular expression?
   # include_nearest - Include nearest neighbor summary?
+  # include_count_within - Include "count within radius" summary?
+  # radii - For count_within, if selected
   the_data = reactiveValues()
 
   # File selection
@@ -21,7 +23,7 @@ shinyServer(function(input, output, server) {
   # all_data() should not contain any reactive objects
   # This allows making test values for formatter
   all_data = reactive({
-    ad = c(reactiveValuesToList(the_data), purrr::map(file_data, ~.()))
+    ad = c(shiny::reactiveValuesToList(the_data), purrr::map(file_data, ~.()))
     ad$phenotype_values = purrr::map(ad$phenotype_modules, function(ph) ph())
     ad$phenotype_modules = NULL
     ad
@@ -81,8 +83,14 @@ shinyServer(function(input, output, server) {
 
       # Third well panel holds options for spatial processing
       shiny::div(id='well3', shiny::wellPanel(
-        shiny::checkboxInput('include_nearest',
-                             label='Include nearest neighbor summary')
+        shiny::fluidRow(
+          shiny::column(5, shiny::checkboxInput('include_nearest',
+                             label='Include nearest neighbor summary')),
+          shiny::column(5, shiny::checkboxInput('include_count_within',
+                               label='Include "count within radius" summary'))
+        ),
+          shiny::textInput('radii', value='15',
+            label='Radius or radii for "count within" (in microns, separate with comma or space)')
       ))
     )
 
@@ -118,6 +126,28 @@ shinyServer(function(input, output, server) {
     the_data$include_nearest = shiny::isTruthy(input$include_nearest)
   })
 
+  # Handle the count_within checkbox
+  shiny::observeEvent(input$include_count_within, {
+    the_data$include_count_within =
+      shiny::isTruthy(input$include_count_within)
+  })
+
+  # Handle the radii text box
+  shiny::observeEvent(input$radii, {
+    shiny::req(input$radii)
+
+    # Parse out comma/space delimited numbers
+    radii = input$radii %>%
+      stringr::str_trim() %>%
+      stringr::str_split('[, ] *') %>% purrr::pluck(1) %>%
+      purrr::map_dbl(~suppressWarnings(as.numeric(.x)))
+    if (length(radii) > 0 && !anyNA(radii)) {
+      the_data$radii = radii
+    } else {
+      the_data$radii = NULL
+    }
+  })
+
   # Update the error message
   shiny::observe({
     if (is.null(file_data$input_path())) {
@@ -126,9 +156,13 @@ shinyServer(function(input, output, server) {
       analysis_error ='Please select an output directory in the Files tab.'
     } else if (length(input$tissue_categories)==0) {
       analysis_error = 'Please select tissue categories.'
-    } else if (shiny::isTruthy(the_data$include_nearest)
+    } else if ((shiny::isTruthy(the_data$include_nearest)
+             || shiny::isTruthy(the_data$include_count_within))
                && length(the_data$phenotype_modules) < 2) {
       analysis_error = 'Spatial statistics require at least two phenotypes.'
+    } else if (shiny::isTruthy(the_data$include_count_within)
+               && !shiny::isTruthy(the_data$radii)) {
+      analysis_error = 'Radii for "count within" must be numeric and separated by space or comma.'
     } else {
       analysis_error = ''
     }

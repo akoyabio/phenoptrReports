@@ -20,8 +20,10 @@ format_all = function(all_data) {
   has$phenotypes = length(phenos) > 0
   has$density = has$phenotypes && !is.null(all_data$summary_path)
   has$expression = any(purrr::map_lgl(phenos, ~!.x$expression %in% c('', 'NA')))
-  has$include_nearest = all_data$include_nearest && length(phenos) >= 2
   has$h_score = !is.null(all_data$score_path)
+  has$include_nearest = all_data$include_nearest && length(phenos) >= 2
+  has$include_count_within = (all_data$include_count_within
+    && length(all_data$radii) > 0 && length(phenos) >= 2)
 
   # Re-initialize
   table_pairs <<- list()
@@ -35,6 +37,7 @@ format_all = function(all_data) {
     format_expression(phenos),
     ifelse(has$h_score, format_h_score(all_data$score_path), ''),
     ifelse(has$include_nearest, format_nearest_neighbors(), ''),
+    ifelse(has$include_count_within, format_count_within(all_data$radii), ''),
     format_cleanup(all_data$slide_id_prefix, all_data$use_regex, has),
     format_trailer(all_data$output_dir, has))
 }
@@ -158,6 +161,16 @@ format_nearest_neighbors = function() {
   stringr::str_glue(
 "# Summarize nearest neighbor distances
 nearest_neighbors = nearest_neighbor_summary(csd, phenotypes)
+\n\n")
+}
+
+format_count_within = function(radii) {
+  table_pairs <<- c(table_pairs,
+                    list(c('count_within', 'write_count_within_sheet')))
+  stringr::str_glue(
+"# Summary of cells within a specific distance
+radii = {deparse(radii)}
+count_within = count_within_summary(csd, radii, phenotypes, tissue_categories)
 \n\n")
 }
 

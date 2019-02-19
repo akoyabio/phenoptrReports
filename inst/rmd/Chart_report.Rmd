@@ -281,6 +281,8 @@ if ('H-Score' %in% sheet_names) {
 ```{r neigbors,results='asis'}
 
 if ('Nearest Neighbors' %in% sheet_names) {
+  # Make heat maps of the median distance between phenotypes,
+  # one heat map per slide.
   neighbors = read_xlsx(workbook_path, 'Nearest Neighbors', skip=1)
   
   # Filter out Total Cells, they are not interesting and add clutter
@@ -302,7 +304,7 @@ if ('Nearest Neighbors' %in% sheet_names) {
       facet_wrap(~ `Slide ID`) +
       scale_fill_gradientn('Median\nDistance', na.value='grey90', 
                            limits=c(0, max_median),
-                           colors=RColorBrewer::brewer.pal(9, 'Spectral')) +
+                           colors=RColorBrewer::brewer.pal(9, 'RdYlBu')) +
       theme_phenoptr +
       # Overrides for theme_phenoptr elements
       theme(strip.text.x=element_text(face='bold', angle=0),
@@ -315,3 +317,64 @@ if ('Nearest Neighbors' %in% sheet_names) {
   })
 }
 ```
+
+```{r count_within,results='asis'}
+if ('Count Within' %in% sheet_names) {
+  # Make heat maps of the "From with" count for every combination of
+  # slide, radius and tissue category.
+  counts = read_xlsx(workbook_path, 'Count Within', skip=1)
+  
+  # Filter out Total Cells, they are not interesting and add clutter,
+  # and From == To rows, they can have much higher counts that other
+  # combinations which make it hard to interpret the rest of the values.
+  counts = counts %>% filter(From != 'Total Cells', To != 'Total Cells')
+  counts$`From with`[counts$From==counts$To] = NA
+  
+  # We will group the plots by radius and tissue category,
+  # then split by pages.
+  radii = sort(unique(counts$Radius))
+  categories = levels(order_tissue_categories(counts$`Tissue Category`))
+  
+  # Find max count per radius and category so we can use the same 
+  # fill scale on every page within each group.
+  max_counts = counts %>% group_by(Radius, `Tissue Category`) %>% 
+    summarize(max=max(`From with`))
+  
+  # Split to multiple pages
+  split_counts = split_slides(counts)
+  
+  walk(radii, function(radius) {
+    walk(categories, function(category) {
+      iwalk(split_counts, function(d, i) {
+        d = d %>% filter(`Tissue Category`==category, radius==Radius)
+
+        if (length(split_counts) > 1) {
+          cat(str_glue('## Count of "From" cells in {category} with a "To" cell within {radius} microns ({i} of {length(split_counts)})\n\n'))
+        } else {
+          cat(str_glue('## Count of "From" cells in {category} with a "To" cell within {radius} microns\n\n'))
+        }
+        
+        # Find the max count for this group
+        max_count = max_counts %>% 
+          filter(`Tissue Category`==category, radius==Radius) %>% pluck('max')
+        
+        p = ggplot(d, aes(To, From, fill=`From with`)) +
+          geom_raster(na.rm=TRUE) +
+          facet_wrap(~ `Slide ID`) +
+          scale_fill_gradientn('Cell\nCount', na.value='grey90', 
+                               limits=c(0, max_count),
+                               colors=RColorBrewer::brewer.pal(9, 'RdYlBu')) +
+          theme_phenoptr +
+          # Overrides for theme_phenoptr elements that don't apply here
+          theme(strip.text.x=element_text(face='bold', angle=0),
+                axis.text.x=element_text(size=8, angle=90, hjust=1)) +
+          coord_equal()
+
+        print(p)
+        cat('\n\n')
+      })
+    })
+  })
+}
+```
+

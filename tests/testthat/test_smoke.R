@@ -22,6 +22,8 @@ test_that("file generation works", {
                   output_dir = output_dir,
                   field_col = 'Sample Name',
                   include_nearest = TRUE,
+                  include_count_within = TRUE,
+                  radii = c(10, 15),
                   phenotype_values = list(
                     list(phenotype = "CD8+", expression = "Membrane PDL1 (Opal 520) Mean"),
                     list(phenotype = "CD8+", expression = "Membrane PD1 (Opal 650) Mean"),
