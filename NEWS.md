@@ -1,8 +1,8 @@
 # phenoptrReports 0.1.5.9000
 
 New features:
-- Analysis app optionally creates a tabular summary and heatmap visualization
-  of nearest neighbor distance for all phenotype pairs.
+- Analysis app optionally creates tabular summaries and heatmap visualizations
+  of nearest neighbor distance and count within radius for all phenotype pairs.
 - Component levels report includes pair plots of component vs component
   for each source image.
   
