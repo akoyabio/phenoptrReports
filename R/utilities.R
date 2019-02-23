@@ -52,9 +52,10 @@ add_tissue_category_totals = function(d, tissue_categories) {
   if (length(tissue_categories) < 2)
     return(d)
 
-  totals = d %>% dplyr::group_by(`Slide ID`) %>%
-    dplyr::summarize_at(dplyr::vars(-(1:2)), sum)
-  totals$`Tissue Category` = 'Total'
+  totals = d %>% dplyr::select(-`Tissue Category`) %>%
+    dplyr::group_by(`Slide ID`) %>%
+    dplyr::summarize_all(sum) %>%
+    dplyr::mutate(`Tissue Category` = 'Total')
   result = dplyr::bind_rows(d, totals)
 
   result %>% order_by_slide_and_tissue_category(tissue_categories)

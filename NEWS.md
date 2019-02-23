@@ -11,6 +11,9 @@ Bug fixes:
   - Write CSV files to the export directory, not its parent.
   - Fix height of "Pixel intensity by component" charts.
   
+- Analyze consolidated data
+  - Update for dplyr 0.8 to fix #N/A values in Total lines of 
+    Cell Counts, Cell Percents and Cell Density sheets
 - Clean up chart output
   - "All" tissue category is last in charts which have it, same as "Total".
   - Fix "Cell Count" axis label
