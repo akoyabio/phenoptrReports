@@ -45,7 +45,7 @@ shinyServer(function(input, output, server) {
     d = phenoptr::read_cell_seg_data(file_data$input_path())
     tissue_categories = unique(d$`Tissue Category`)
     the_data$expression_columns = stringr::str_subset(names(d), 'Mean$')
-    the_data$field_col = phenoptrReports:::field_column(d)
+    the_data$field_col = phenoptr::field_column(d)
 
     the_data$available_phenotypes = available_phenotypes = names(d) %>%
       stringr::str_subset('Phenotype ') %>%

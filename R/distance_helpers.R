@@ -20,13 +20,9 @@ if (getRversion() >= "2.15.1")
 #' @export
 #' @importFrom magrittr %>%
 nearest_neighbor_summary = function(csd, phenotypes=NULL) {
-  # Make sure phenotypes is a named vector; we will use the names later.
-  if (is.null(phenotypes))
-    phenotypes = phenoptr::unique_phenotypes(csd)
-  if (!rlang::is_named(phenotypes))
-    phenotypes = rlang::set_names(phenotypes)
+  phenotypes = phenoptr::validate_phenotypes(phenotypes, csd)
 
-  field_col = rlang::sym(field_column(csd))
+  field_col = rlang::sym(phenoptr::field_column(csd))
 
   # Compute nearest neighbor distances for all cells, one field at a time.
   distances <- csd %>%
@@ -95,14 +91,10 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL) {
 #' @export
 #' @importFrom magrittr %>%
 count_within_summary = function(csd, radii, phenotypes=NULL, categories=NULL) {
-  # Make sure phenotypes is a non-NULL, named vector.
-  if (is.null(phenotypes))
-    phenotypes = phenoptr::unique_phenotypes(csd)
-  if (!rlang::is_named(phenotypes))
-    phenotypes = rlang::set_names(phenotypes)
+  phenotypes = phenoptr::validate_phenotypes(phenotypes, csd)
 
   # The column name that defines fields
-  field_col = rlang::sym(field_column(csd))
+  field_col = rlang::sym(phenoptr::field_column(csd))
 
   # All pairs of phenotypes as a list of vectors.
   # Order matters so this will include both (a, b) and (b, a).

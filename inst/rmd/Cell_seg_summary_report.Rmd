@@ -35,7 +35,7 @@ if (is.null(params$csd_path) == is.null(params$csd))
   stop('csd_path or csd must be provided but not both.')
 
 csd = if (!is.null(params$csd)) params$csd else read_cell_seg_data(params$csd_path)
-field_col = phenoptrReports:::field_column(csd)
+field_col = phenoptr::field_column(csd)
 
 # If csd_path was provided, look for a companion 'rejected' file
 rejected = NULL
