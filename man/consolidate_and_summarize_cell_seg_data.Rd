@@ -30,6 +30,7 @@ Write the consolidated data to \code{Consolidated_data.txt} in the output
 directory.
 
 The
-individual files must all have exactly the same \code{Sample Name} and \code{Cell ID}
+individual files must all have exactly the same
+\code{Sample Name} or \code{Annotation ID} and \code{Cell ID}
 columns. \link{split_phenotypes} is called to split the \code{Phenotype} columns.
 }

@@ -10,7 +10,8 @@ Bug fixes:
 - Component levels report
   - Write CSV files to the export directory, not its parent.
   - Fix height of "Pixel intensity by component" charts.
-  
+- Consolidate merged files
+  - Fix to recognize "Annotation ID" as the field name.
 - Analyze consolidated data
   - Update for dplyr 0.8 to fix #N/A values in Total lines of 
     Cell Counts, Cell Percents and Cell Density sheets
