@@ -304,7 +304,7 @@ if ('Nearest Neighbors' %in% sheet_names) {
       facet_wrap(~ `Slide ID`) +
       scale_fill_gradientn('Median\nDistance', na.value='grey90', 
                            limits=c(0, max_median),
-                           colors=RColorBrewer::brewer.pal(9, 'RdYlBu')) +
+                           colors=rev(RColorBrewer::brewer.pal(9, 'RdYlBu'))) +
       theme_phenoptr +
       # Overrides for theme_phenoptr elements
       theme(strip.text.x=element_text(face='bold', angle=0),
@@ -363,7 +363,7 @@ if ('Count Within' %in% sheet_names) {
           facet_wrap(~ `Slide ID`) +
           scale_fill_gradientn('Cell\nCount', na.value='grey90', 
                                limits=c(0, max_count),
-                               colors=RColorBrewer::brewer.pal(9, 'RdYlBu')) +
+                               colors=rev(RColorBrewer::brewer.pal(9, 'RdYlBu'))) +
           theme_phenoptr +
           # Overrides for theme_phenoptr elements that don't apply here
           theme(strip.text.x=element_text(face='bold', angle=0),
