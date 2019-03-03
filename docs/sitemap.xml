@@ -61,7 +61,7 @@
     <loc>http://akoyabio.github.io/phenoptrReports/reference/count_phenotypes.html</loc>
   </url>
   <url>
-    <loc>http://akoyabio.github.io/phenoptrReports/reference/field_column.html</loc>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/count_within_summary.html</loc>
   </url>
   <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/file_to_fluor.html</loc>
@@ -74,6 +74,9 @@
   </url>
   <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/merge_cell_seg_files.html</loc>
+  </url>
+  <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/nearest_neighbor_summary.html</loc>
   </url>
   <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/order_by_slide_and_tissue_category.html</loc>
@@ -100,6 +103,9 @@
     <loc>http://akoyabio.github.io/phenoptrReports/reference/write_counts_sheet.html</loc>
   </url>
   <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/write_count_within_sheet.html</loc>
+  </url>
+  <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/write_density_sheet.html</loc>
   </url>
   <url>
@@ -107,6 +113,9 @@
   </url>
   <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/write_h_score_sheet.html</loc>
+  </url>
+  <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/write_nearest_neighbor_summary_sheet.html</loc>
   </url>
   <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/write_percents_sheet.html</loc>

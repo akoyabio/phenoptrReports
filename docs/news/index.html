@@ -60,7 +60,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.6</span>
       </span>
     </div>
 
@@ -126,6 +126,30 @@
       <small>Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="phenoptrreports-0-1-6" class="section level1">
+<h1 class="page-header">
+<a href="#phenoptrreports-0-1-6" class="anchor"></a>phenoptrReports 0.1.6</h1>
+<p><strong>2019-03-03</strong></p>
+<p>New features:</p>
+<ul>
+<li>Analysis app optionally creates tabular summaries and heatmap visualizations of nearest neighbor distance and count within radius for all phenotype pairs.</li>
+<li>Component levels report includes pair plots of component vs component for each source image.</li>
+</ul>
+<p>Bug fixes:</p>
+<ul>
+<li>Component levels report</li>
+<li>Write CSV files to the export directory, not its parent.</li>
+<li>Fix height of “Pixel intensity by component” charts.</li>
+<li>Consolidate merged files</li>
+<li>Fix to recognize “Annotation ID” as the field name.</li>
+<li>Analyze consolidated data</li>
+<li>Update for dplyr 0.8 to fix #N/A values in Total lines of Cell Counts, Cell Percents and Cell Density sheets</li>
+<li>Clean up chart output</li>
+<li>“All” tissue category is last in charts which have it, same as “Total”.</li>
+<li>Fix “Cell Count” axis label</li>
+<li>Fix legend in H-Score chart - “name repair” in readxl version 1.2.0 created unexpected column names which were shown in the legend.</li>
+</ul>
+</div>
     <div id="phenoptrreports-0-1-5" class="section level1">
 <h1 class="page-header">
 <a href="#phenoptrreports-0-1-5" class="anchor"></a>phenoptrReports 0.1.5</h1>
@@ -200,7 +224,7 @@
 <p><strong>2018-10-22</strong></p>
 <p>New features:</p>
 <ul>
-<li>Add version number, date stamp and doco link to generated script file <a href='https://github.com/akoyabio/phenoptrReports/issues/2'>#2</a></li>
+<li>Add version number, date stamp and documentation link to generated script file <a href='https://github.com/akoyabio/phenoptrReports/issues/2'>#2</a></li>
 <li>Add H-Score chart to the generated charts</li>
 <li>Add Akoya logo to footer in chart report</li>
 </ul>
@@ -225,6 +249,7 @@
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
+        <li><a href="#phenoptrreports-0-1-6">0.1.6</a></li>
         <li><a href="#phenoptrreports-0-1-5">0.1.5</a></li>
         <li><a href="#phenoptrreports-0-1-4">0.1.4</a></li>
         <li><a href="#phenoptrreports-0-1-3">0.1.3</a></li>

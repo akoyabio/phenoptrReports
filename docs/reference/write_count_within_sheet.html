@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Compute positivity of multiple phenotypes — compute_positivity_many • phenoptrReports</title>
+<title>Write a "count within" summary to an Excel workbook — write_count_within_sheet • phenoptrReports</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,10 @@
 
 
 
-<meta property="og:title" content="Compute positivity of multiple phenotypes — compute_positivity_many" />
+<meta property="og:title" content="Write a "count within" summary to an Excel workbook — write_count_within_sheet" />
 
-<meta property="og:description" content="Compute positivity of multiple phenotypes" />
+<meta property="og:description" content="Write a formatted &quot;count within&quot; summary table to a
+sheet in an Excel workbook." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -125,62 +126,52 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Compute positivity of multiple phenotypes</h1>
-    <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/positivity.R'><code>R/positivity.R</code></a></small>
-    <div class="hidden name"><code>compute_positivity_many.Rd</code></div>
+    <h1>Write a "count within" summary to an Excel workbook</h1>
+    <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/excel_helpers.R'><code>R/excel_helpers.R</code></a></small>
+    <div class="hidden name"><code>write_count_within_sheet.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Compute positivity of multiple phenotypes</p>
+    <p>Write a formatted "count within" summary table to a
+sheet in an Excel workbook.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>compute_positivity_many</span>(<span class='no'>csd</span>, <span class='no'>phenotypes</span>, <span class='no'>positivity_pairs</span>,
-  <span class='kw'>tissue_categories</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>write_count_within_sheet</span>(<span class='no'>wb</span>, <span class='no'>stats</span>, <span class='kw'>sheet_name</span> <span class='kw'>=</span> <span class='st'>"Count Within"</span>,
+  <span class='kw'>sheet_title</span> <span class='kw'>=</span> <span class='st'>"Count of cells within the specified radius"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>csd</th>
-      <td><p>Cell seg data to use. This should already have been filtered
-for the slides or fields of interest.</p></td>
+      <th>wb</th>
+      <td><p>An openxlsx Workbook from <a href='https://www.rdocumentation.org/packages/openxlsx/topics/createWorkbook'>openxlsx::createWorkbook</a></p></td>
     </tr>
     <tr>
-      <th>phenotypes</th>
-      <td><p>A named list of phenotype selectors
-(see <a href='http://akoyabio.github.io/phenoptr/reference/parse_phenotypes.html'>phenoptr::parse_phenotypes</a>).</p></td>
+      <th>stats</th>
+      <td><p>A summary data frame.</p></td>
     </tr>
     <tr>
-      <th>positivity_pairs</th>
-      <td><p>A named list of pairs (lists) of phenotype names
-and positivity expressions. The expressions must be one-sided formulas
-such as <code>~`Membrane PDL1 (Opal 520) Mean`&gt;pdl1_threshold</code>.</p></td>
+      <th>sheet_name</th>
+      <td><p>Optional name for the worksheet.</p></td>
     </tr>
     <tr>
-      <th>tissue_categories</th>
-      <td><p>Optional vector of tissue category names to include.</p></td>
+      <th>sheet_title</th>
+      <td><p>Optional title header for the table.</p></td>
     </tr>
     </table>
     
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>A data frame with columns for count,
-positive count,
-and percent for each element of <code>positivity_pairs</code>.</p>
-    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other aggregation functions: <code><a href='compute_density_from_cell_summary.html'>compute_density_from_cell_summary</a></code>,
-  <code><a href='compute_density_from_table.html'>compute_density_from_table</a></code>,
-  <code><a href='compute_h_score_from_score_data.html'>compute_h_score_from_score_data</a></code>,
-  <code><a href='compute_h_score.html'>compute_h_score</a></code>,
-  <code><a href='compute_mean_expression_many.html'>compute_mean_expression_many</a></code>,
-  <code><a href='compute_mean_expression.html'>compute_mean_expression</a></code>,
-  <code><a href='compute_positivity.html'>compute_positivity</a></code>,
-  <code><a href='count_phenotypes.html'>count_phenotypes</a></code>,
-  <code><a href='counts_to_percents.html'>counts_to_percents</a></code></p></div>
+    <div class='dont-index'><p>Other output functions: <code><a href='write_counts_sheet.html'>write_counts_sheet</a></code>,
+  <code><a href='write_density_sheet.html'>write_density_sheet</a></code>,
+  <code><a href='write_expression_sheet.html'>write_expression_sheet</a></code>,
+  <code><a href='write_h_score_sheet.html'>write_h_score_sheet</a></code>,
+  <code><a href='write_nearest_neighbor_summary_sheet.html'>write_nearest_neighbor_summary_sheet</a></code>,
+  <code><a href='write_percents_sheet.html'>write_percents_sheet</a></code>,
+  <code><a href='write_plot_sheet.html'>write_plot_sheet</a></code>,
+  <code><a href='write_summary_sheet.html'>write_summary_sheet</a></code></p></div>
     
 
   </div>
@@ -189,8 +180,6 @@ and percent for each element of <code>positivity_pairs</code>.</p>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#value">Value</a></li>
-
       <li><a href="#see-also">See also</a></li>
           </ul>
 

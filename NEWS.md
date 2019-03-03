@@ -1,4 +1,5 @@
-# phenoptrReports 0.1.5.9000
+# phenoptrReports 0.1.6
+**2019-03-03**
 
 New features:
 - Analysis app optionally creates tabular summaries and heatmap visualizations

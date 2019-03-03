@@ -1,7 +1,7 @@
 Package: phenoptrReports
 Title: Create reports using Phenoptics data
-Version: 0.1.5.9000
-Date: 2018-11-05
+Version: 0.1.6
+Date: 2019-03-03
 Authors@R: c(
     person("Kent S", "Johnson", role = c("aut", "cre"),
            email = "kjohnson@akoyabio.com"),
@@ -22,7 +22,7 @@ Imports:
     magrittr,
     miniUI (>= 0.1.1),
     openxlsx,
-    phenoptr (> 0.1.4),
+    phenoptr (>= 0.1.5),
     purrr,
     readr,
     readxl,

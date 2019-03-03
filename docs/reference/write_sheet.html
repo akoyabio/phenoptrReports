@@ -69,7 +69,7 @@ Page breaks as needed
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.6</span>
       </span>
     </div>
 
@@ -148,7 +148,8 @@ Page breaks as needed
     
     </div>
 
-    <pre class="usage"><span class='fu'>write_sheet</span>(<span class='no'>wb</span>, <span class='no'>d</span>, <span class='no'>sheet_name</span>, <span class='no'>sheet_title</span>, <span class='no'>header_col</span>, <span class='kw'>keepNA</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>write_sheet</span>(<span class='no'>wb</span>, <span class='no'>d</span>, <span class='no'>sheet_name</span>, <span class='no'>sheet_title</span>, <span class='no'>header_col</span>, <span class='kw'>keepNA</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>addGrid</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -176,6 +177,12 @@ Page breaks as needed
     <tr>
       <th>keepNA</th>
       <td><p>If TRUE, NA values are written as #N/A; else they are blank.</p></td>
+    </tr>
+    <tr>
+      <th>addGrid</th>
+      <td><p>If TRUE, grid lines (and page breaks) are added based
+on the tissue categories in the data. If FALSE, no grid lines are added
+and page breaks are added where needed.</p></td>
     </tr>
     </table>
     
