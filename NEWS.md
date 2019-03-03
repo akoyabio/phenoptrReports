@@ -80,7 +80,7 @@ New features:
 **2018-10-22**
 
 New features:
-- Add version number, date stamp and doco link to generated script file #2
+- Add version number, date stamp and documentation link to generated script file #2
 - Add H-Score chart to the generated charts
 - Add Akoya logo to footer in chart report
 

@@ -8,7 +8,7 @@ can be formed from available phenotypes.}
 validate_phenotype_definitions(pheno, available)
 }
 \arguments{
-\item{pheno}{Text destription of a phenotype,
+\item{pheno}{Text description of a phenotype,
 for \code{phenoptr::parse_phenotypes}.}
 
 \item{available}{A character vector of available phenotypes}

@@ -8,6 +8,7 @@ Authors@R: c(
     person("Akoya Biosciences", role="cph"))
 Copyright: Akoya Biosciences
 Description: Creates diagnostic and summary reports from inForm data.
+Language: en-US
 Depends: R (>= 3.5.0)
 License: Zlib | file LICENSE
 Encoding: UTF-8

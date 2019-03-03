@@ -76,7 +76,7 @@ check_phenotypes = function(params, phenotypes) {
 
 #' Check that a user-specified phenotype definition
 #' can be formed from available phenotypes.
-#' @param pheno Text destription of a phenotype,
+#' @param pheno Text description of a phenotype,
 #' for `phenoptr::parse_phenotypes`.
 #' @param available A character vector of available phenotypes
 #' @return An error message or empty string

@@ -9,7 +9,7 @@ merge_cell_seg_files(base_path, update_progress = NULL,
 }
 \arguments{
 \item{base_path}{Path to a directory containing files to merge. All
-elegible files in this directory will be merged.}
+eligible files in this directory will be merged.}
 
 \item{update_progress}{Callback function which is called with progress.}
 

@@ -117,7 +117,7 @@ density calculations; selecting a score data file enables H-Score calculation.
 To define the analysis, you select tissue categories, phenotypes, and markers of 
 interest.
 
-To create the finalreports, the analysis app writes and runs an R script.
+To create the final reports, the analysis app writes and runs an R script.
 The script computes the aggregated statistics, writes them to an Excel
 workbook, and creates visualizations of the results in a Word document.
 

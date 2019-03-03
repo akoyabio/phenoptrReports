@@ -4,7 +4,7 @@
 #' creating "Merge" data files. This is similar to the inForm Merge tab but
 #' does not include the ability to review and reject individual fields.
 #' @param base_path Path to a directory containing files to merge. All
-#' elegible files in this directory will be merged.
+#' eligible files in this directory will be merged.
 #' @param update_progress Callback function which is called with progress.
 #' @param recursive If TRUE, will find files in subdirectories of `base_path`.
 #' @export
