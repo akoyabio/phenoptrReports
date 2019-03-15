@@ -28,7 +28,7 @@ merge_cell_seg_files = function(base_path, update_progress=NULL,
     for (file in files)
     {
       update_progress(file)
-      data = readr::read_tsv(file, na='#N/A')
+      data = readr::read_tsv(file, na='#N/A', col_types = cols())
       readr::write_tsv(data, outPath, na='#N/A', append=append)
       append = TRUE
     }
