@@ -1,3 +1,9 @@
+# phenoptrReports 0.1.6.900
+
+- More forgiving handling of duplicated records in the merge step.
+  It now ignores the dups with a warning.
+- Reduce the extraneous console output from the merge step.
+
 # phenoptrReports 0.1.6
 **2019-03-03**
 
