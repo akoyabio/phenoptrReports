@@ -65,6 +65,13 @@ consolidate_and_summarize_cell_seg_data = function(csd_files, output_dir,
       stop('Consolidation requires "', field_col,
            '" and "Cell ID" columns in each data file.')
 
+    dups = duplicated(d[, c(field_col, 'Cell ID')])
+    if (sum(dups > 0)) {
+      warning('Removing ', sum(dups), ' duplicated rows from ', name,
+           '. Did you merge an already merged file?')
+      d = d[!dups, ]
+    }
+
     update_progress(detail=paste0('Writing report for "', name, '".'))
     out_path = file.path(output_dir, paste0(name, '.html'))
     write_summary_report(csd=d, output_path=out_path, dataset_name=name)
