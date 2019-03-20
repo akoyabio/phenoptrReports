@@ -71,8 +71,8 @@ all_data = purrr::map2(comp_files, primary_fluors,
 ```
 ### Crosstalk by image
 
-This table shows crosstalk from the primary fluor to other components
-in the same image. This is a measure of unmixing error.
+This table shows crosstalk from each primary fluor to the other components
+in the same image. This is a measure of unmixing error. 
 
 
 ```{r crosstalk}
@@ -192,6 +192,54 @@ formattable::formattable(to_display, formats,
             table.attr = "class=\"table table-condensed fill-cell\"")
 ```
 
+### Guidance 
+
+<!--html_preserve-->
+<table border="2" style="border-collapse: collapse; width: 562pt;" width="748">
+	<colgroup>
+		<col style="width: 200pt;"/>
+		<col style="width: 151pt;"/>
+		<col style="width: 181pt;"/>
+	</colgroup>
+    <thead>
+		<tr height="33" style="height: 24.75pt;">
+			<td rowspan=2 style="border-bottom: 2px solid;"><strong>Crosstalk values for a given component</strong></td>
+			<td colspan=2><strong>Typical performance of component for different tasks</strong></td>
+		</tr>
+		<tr height="40" style="height: 30pt;">
+			<td style="border-bottom: 2px solid;">Expression&nbsp;<span class="il">level</span>&nbsp;assessment</td>
+			<td style="border-bottom: 2px solid;">Cell lineage/phenotype classification</td>
+		</tr>
+    </thead>
+	<tbody>
+		<tr style="height: 35pt;">
+			<td>All&nbsp;values in a column are &lt; 2%</td>
+			<td>Good</td>
+			<td>Good</td>
+		</tr>
+		<tr style="height: 35pt;">
+			<td>All values in a column are &lt; 5%<br>Some values are &gt; 2%</td>
+			<td>Marginal, depending on dynamic range of expression</td>
+			<td>Good</td>
+		</tr>
+		<tr style="height: 35pt;">
+			<td>All values in a column are &lt; 10%<br>Some values are &gt; 5%</td>
+			<td>Poor</td>
+			<td>Ok, may require more extensive classifier training</td>
+		</tr>
+		<tr style="height: 35pt;">
+			<td>Any crosstalk values &gt; 10%</td>
+			<td>Poor</td>
+			<td>Marginal, see <a href="https://www.akoyabio.com/application/files/7615/5198/0824/Opal_Assay_Development_Guide_10292017_v3.pdf">Opal Assay Development Guide</a> for advice</td>
+		</tr>
+	</tbody>
+</table>
+<!--/html_preserve-->
+
+This table suggests guidelines to help interpret the *Crosstalk by Component* table.
+Components used to assess expression levels have stricter requirements than
+components used for phenotyping.
+
 ### Pixel intensity
 
 This plot shows the relative number of pixels at each intensity.
@@ -269,11 +317,12 @@ For each image, the brightest `r scales::comma(n_bright)` pixels
 in the primary component are found (ignoring the 
 `r scales::percent(skip_fraction)` very brightest).
 
-For these pixels, the mean signal level in each component is computed.
+For these pixels, the mean signal level in each component is computed. 
+The values are shown in the Signal Strength table.
 
 #### Crosstalk by image
 
-The crosstalk by image table shows the relative signal level of each fluor in
+This table shows the relative signal level of each fluor in
 the components where the fluor should not express.
 
 The ratio of non-signal component strength to signal component strength
@@ -286,7 +335,7 @@ the fluors represented by the files listed in the first column.
 
 #### Crosstalk by component
 
-The crosstalk by component table estimates the amount of crosstalk 
+This table estimates the amount of crosstalk 
 from non-signal fluors to each component. 
 
 For each component, it shows the crosstalk from other 

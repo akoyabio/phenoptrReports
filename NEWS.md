@@ -1,5 +1,6 @@
 # phenoptrReports 0.1.6.900
 
+- Add "Guidance" section to the unmixing quality report.
 - Reverse the fill scale of the nearest neighbor heatmaps so red is closer.
 - More forgiving handling of duplicated records in the merge step.
   It now ignores the dups with a warning.
