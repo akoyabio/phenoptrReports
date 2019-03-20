@@ -304,7 +304,7 @@ if ('Nearest Neighbors' %in% sheet_names) {
       facet_wrap(~ `Slide ID`) +
       scale_fill_gradientn('Median\nDistance', na.value='grey90', 
                            limits=c(0, max_median),
-                           colors=rev(RColorBrewer::brewer.pal(9, 'RdYlBu'))) +
+                           colors=RColorBrewer::brewer.pal(9, 'RdYlBu')) +
       theme_phenoptr +
       # Overrides for theme_phenoptr elements
       theme(strip.text.x=element_text(face='bold', angle=0),
