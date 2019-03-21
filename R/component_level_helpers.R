@@ -23,19 +23,17 @@ component_ridge_plot = function(path, quantiles=NULL) {
   if (is.null(quantiles))
     quantiles = c(0.1, 0.99)
 
-  stopifnot(length(quantiles) == 2)
-
   name = basename(path) %>% stringr::str_remove('_component_data.tif')
 
   # Read and subsample the components and make a long data frame
   comps = phenoptr::read_components(path) %>%
     purrr::map(as.numeric) %>%
-    dplyr::as_data_frame() %>%
+    dplyr::as_tibble() %>%
     dplyr::sample_frac(size=0.05) %>%
     tidyr::gather('Fluor', 'value') %>%
     dplyr::mutate(Source=name)
 
-  # This gets `quants` as a data frame with `lower` and `upper` columns
+  # This gets `quants` as a data frame with columns for each quantile
   quants = comps %>%
     tidyr::nest(-Fluor, -Source) %>%
     dplyr::mutate(q=purrr::map(data, ~quantile(.$value, quantiles)
@@ -58,8 +56,10 @@ component_ridge_plot = function(path, quantiles=NULL) {
 
   clipping_to_plot$pct[1] = paste0('Clipping: ', clipping_to_plot$pct[1])
 
-  subtitle = stringr::str_glue(
-    'Gray lines show {names(quants)[3]} and {names(quants)[4]} percentiles. Values of 0 are clipped.')
+  subtitle = 'Values of 0 are clipped.'
+  if (length(quantiles) > 0)
+    subtitle = stringr::str_glue(
+      'Vertical lines show {cc_and(names(quants)[-(1:2)])} percentiles. {subtitle}')
 
   # Some component data has very few distinct values. That makes density
   # plots look really weird, with peaks at each distinct value.
@@ -105,8 +105,10 @@ fluor_ridge_plot = function(d, quants, clipping, name, fill) {
       pct=scales::percent(clip_frac, accuracy=1), x=xlim_lower+0.1, y=Inf)
   clipping_to_plot$pct[1] = paste0('Clipping: ', clipping_to_plot$pct[1])
 
-  subtitle = stringr::str_glue(
-    'Gray lines show {names(quants)[3]} and {names(quants)[4]} percentiles. Values of 0 are clipped.')
+  subtitle = 'Values of 0 are clipped.'
+  if (length(quantiles) > 0)
+    subtitle = stringr::str_glue(
+    'Vertical lines show {cc_and(names(quants)[-(1:2)])} percentiles. {subtitle}')
 
   # For plotting a long data frame is better
   quants_to_plot = quants %>%
@@ -134,4 +136,16 @@ fluor_ridge_plot = function(d, quants, clipping, name, fill) {
           axis.text.y=ggplot2::element_blank(),
           panel.grid.major.y=ggplot2::element_blank(),
           panel.grid.minor=ggplot2::element_blank())
+}
+
+#' Concatenate with comma and "and"
+#' @param s String vector
+#' @return A string
+cc_and = function(s) {
+  ret = paste(s[-length(s)], collapse=', ')
+  if (length(s) > 1)
+    ret = paste(ret, s[length(s)], sep=' and ')
+  else
+    ret = s
+  ret
 }

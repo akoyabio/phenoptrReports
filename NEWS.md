@@ -1,10 +1,12 @@
 # phenoptrReports 0.1.6.900
 
-- Add "Guidance" section to the unmixing quality report.
-- Reverse the fill scale of the nearest neighbor heatmaps so red is closer.
-- More forgiving handling of duplicated records in the merge step.
+- Merge addin is more forgiving handling of duplicated records.
   It now ignores the dups with a warning.
-- Reduce the extraneous console output from the merge step.
+- Merge addin has reduced console output from the merge step.
+- Reverse the fill scale of the nearest neighbor heatmaps so red is closer.
+- Add "Guidance" section to the unmixing quality report.
+- Component levels report shows a single quantile (99.9%ile).
+- Remove "Signal to noise" section from component levels report.
 
 # phenoptrReports 0.1.6
 **2019-03-03**

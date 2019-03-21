@@ -8,7 +8,7 @@ output:
 params:
   export_path: 
     label: "Path to directory with component data"
-    value: I:/ManualVsBond/Test
+    value: D:/ManualVsBond/Test
     input: file
 ---
 
@@ -49,7 +49,9 @@ library(formattable)
 library(phenoptr)
 
 export_path = params$export_path
-quantiles = c(0.1, 0.99)
+
+# Quantiles to show on the plots
+quantiles = 0.999
 
 ```
 
@@ -133,18 +135,6 @@ purrr::iwalk(all_data, function(d, n) {
               main=n)
   cat('\n\n  \n----\n  \n')
 })
-```
-
-### Signal to noise
-
-This table shows the ratio of the `r scales::percent(quantiles[2])`ile signal
-level to the `r scales::percent(quantiles[1])`ile signal level.
-
-```{r}
-all_quants %>% dplyr::mutate(SN=round(.[[4]]/.[[3]], 1)) %>% 
-  dplyr::select(Fluor, Source, SN) %>% 
-  tidyr::spread(Fluor, SN) %>% 
-  knitr::kable()
 ```
 
 <br><br><br>
