@@ -23,6 +23,7 @@ test_that("file generation works", {
                   field_col = 'Sample Name',
                   include_nearest = TRUE,
                   include_count_within = TRUE,
+                  include_distance_details = TRUE,
                   radii = c(10, 15),
                   phenotype_values = list(
                     list(phenotype = "CD8+", expression = "Membrane PDL1 (Opal 520) Mean"),
@@ -49,6 +50,7 @@ test_that("file generation works", {
   expect_true(file.exists(file.path(output_dir, 'Script.R')))
   expect_true(file.exists(actual_results))
   expect_true(file.exists(file.path(output_dir, 'Charts.docx')))
+  expect_true(file.exists(file.path(output_dir, 'nearest_neighbors.csv')))
 
   # Check numbers against known good
 

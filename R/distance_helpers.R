@@ -15,24 +15,30 @@ if (getRversion() >= "2.15.1")
 #'        `Cell Y Position`, field name and `Phenotype` columns.
 #' @param phenotypes Optional list of phenotypes to include. If omitted,
 #' will use `unique_phenotypes(csd)`.
+#' @param details_path If present, path to save a table with
+#' nearest-neighbor data for each cell.
 #' @return A data frame with summary statistics for each phenotype pair
 #' in each Slide ID.
 #' @export
 #' @importFrom magrittr %>%
-nearest_neighbor_summary = function(csd, phenotypes=NULL) {
+nearest_neighbor_summary = function(csd, phenotypes=NULL, details_path=NULL) {
   phenotypes = phenoptr::validate_phenotypes(phenotypes, csd)
 
   field_col = rlang::sym(phenoptr::field_column(csd))
 
   # Compute nearest neighbor distances for all cells, one field at a time.
   distances <- csd %>%
-    dplyr::select(`Cell X Position`, `Cell Y Position`, `Slide ID`,
+    dplyr::select(`Cell X Position`, `Cell Y Position`, `Cell ID`, `Slide ID`,
                   !!field_col, dplyr::starts_with('Phenotype')) %>%
     dplyr::group_by(`Slide ID`, !!field_col) %>%
     tidyr::nest() %>%
     dplyr::mutate(distance=purrr::map(data,
                            phenoptr::find_nearest_distance, phenotypes)) %>%
     tidyr::unnest()
+
+  # Optionally save details
+  if (!is.null(details_path))
+    readr::write_csv(distances, details_path, na='#N/A')
 
   # All pairs of phenotypes. Order matters so this will include both
   # (a, b) and (b, a).

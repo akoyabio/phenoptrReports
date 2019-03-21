@@ -6,6 +6,7 @@ Merge addin
 - Less noisy console output from the merge step.
 
 Analysis addin
+- Optionally save nearest-neighbor details for each cell.
 - Reverse the fill scale of the nearest neighbor heatmaps so red represents closer cells.
 
 Unmixing quality report

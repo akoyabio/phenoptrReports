@@ -4,7 +4,7 @@
 \alias{nearest_neighbor_summary}
 \title{Summarize nearest neighbor distances}
 \usage{
-nearest_neighbor_summary(csd, phenotypes = NULL)
+nearest_neighbor_summary(csd, phenotypes = NULL, details_path = NULL)
 }
 \arguments{
 \item{csd}{Cell seg data with \code{Cell X Position},
@@ -12,6 +12,9 @@ nearest_neighbor_summary(csd, phenotypes = NULL)
 
 \item{phenotypes}{Optional list of phenotypes to include. If omitted,
 will use \code{unique_phenotypes(csd)}.}
+
+\item{details_path}{If present, path to save a table with
+nearest-neighbor data for each cell.}
 }
 \value{
 A data frame with summary statistics for each phenotype pair

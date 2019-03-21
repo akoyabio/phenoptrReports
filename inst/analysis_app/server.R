@@ -11,6 +11,7 @@ shinyServer(function(input, output, server) {
   # use_regex - Is slide_id_prefix a regular expression?
   # include_nearest - Include nearest neighbor summary?
   # include_count_within - Include "count within radius" summary?
+  # include_distance_details - Write a detail table for distance metrics?
   # radii - For count_within, if selected
   the_data = reactiveValues()
 
@@ -84,10 +85,12 @@ shinyServer(function(input, output, server) {
       # Third well panel holds options for spatial processing
       shiny::div(id='well3', shiny::wellPanel(
         shiny::fluidRow(
-          shiny::column(5, shiny::checkboxInput('include_nearest',
+          shiny::column(4, shiny::checkboxInput('include_nearest',
                              label='Include nearest neighbor summary')),
-          shiny::column(5, shiny::checkboxInput('include_count_within',
-                               label='Include "count within radius" summary'))
+          shiny::column(4, shiny::checkboxInput('include_count_within',
+                                                label='Include "count within radius" summary')),
+          shiny::column(4, shiny::checkboxInput('include_distance_details',
+                                                label='Save nearest neighbor details'))
         ),
           shiny::textInput('radii', value='15',
             label='Radius or radii for "count within" (in microns, separate with comma or space)')
@@ -130,6 +133,12 @@ shinyServer(function(input, output, server) {
   shiny::observeEvent(input$include_count_within, {
     the_data$include_count_within =
       shiny::isTruthy(input$include_count_within)
+  })
+
+  # Handle the include_distance_details checkbox
+  shiny::observeEvent(input$include_distance_details, {
+    the_data$include_distance_details =
+      shiny::isTruthy(input$include_distance_details)
   })
 
   # Handle the radii text box

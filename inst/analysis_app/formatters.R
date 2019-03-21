@@ -22,6 +22,7 @@ format_all = function(all_data) {
   has$expression = any(purrr::map_lgl(phenos, ~!.x$expression %in% c('', 'NA')))
   has$h_score = !is.null(all_data$score_path)
   has$include_nearest = all_data$include_nearest && length(phenos) >= 2
+  has$include_nearest_details = has$include_nearest && all_data$include_distance_details
   has$include_count_within = (all_data$include_count_within
     && length(all_data$radii) > 0 && length(phenos) >= 2)
 
@@ -36,7 +37,8 @@ format_all = function(all_data) {
     ifelse(has$density, format_density(all_data$summary_path), ''),
     format_expression(phenos),
     ifelse(has$h_score, format_h_score(all_data$score_path), ''),
-    ifelse(has$include_nearest, format_nearest_neighbors(), ''),
+    ifelse(has$include_nearest,
+           format_nearest_neighbors(all_data$output_dir, has$include_nearest_details), ''),
     ifelse(has$include_count_within, format_count_within(all_data$radii), ''),
     format_cleanup(all_data$slide_id_prefix, all_data$use_regex, has),
     format_trailer(all_data$output_dir, has))
@@ -154,11 +156,18 @@ h_score = compute_h_score_from_score_data(csd, score_path, tissue_categories)
 \n\n")
 }
 
-format_nearest_neighbors = function() {
+format_nearest_neighbors = function(output_dir, include_distance_details) {
   table_pairs <<- c(table_pairs,
                     list(c('nearest_neighbors', 'write_nearest_neighbor_summary_sheet')))
 
-  stringr::str_glue(
+  if (include_distance_details)
+    stringr::str_glue(
+'# Summarize nearest neighbor distances
+nearest_detail_path = file.path("{output_dir}", "nearest_neighbors.csv")
+nearest_neighbors = nearest_neighbor_summary(csd, phenotypes, nearest_detail_path)
+\n\n')
+  else
+    stringr::str_glue(
 "# Summarize nearest neighbor distances
 nearest_neighbors = nearest_neighbor_summary(csd, phenotypes)
 \n\n")

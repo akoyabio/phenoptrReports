@@ -96,7 +96,7 @@ compute_positivity = function(csd, phenotype, positivity) {
 compute_h_score_from_score_data = function(csd, score_path,
                                            tissue_categories=NULL) {
   # Read the score data to get the required parameters
-  score_data = readr::read_tsv(score_path, n_max=1)
+  score_data = readr::read_tsv(score_path, n_max=1, col_types=readr::cols())
   score_names = c('Threshold 0/1+', 'Threshold 1+/2+', 'Threshold 2+/3+')
   if (!all(score_names %in% names(score_data)))
     stop('"', score_path, '" does not seem to be an H-Score data file.')
