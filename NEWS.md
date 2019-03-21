@@ -1,21 +1,22 @@
 # phenoptrReports 0.1.6.900
 
-Merge addin
-- More forgiving handling of duplicated records.
-  It now ignores the dups with a warning.
-- Less noisy console output from the merge step.
-
 Analysis addin
 - Optionally save nearest-neighbor details for each cell.
-- Reverse the fill scale of the nearest neighbor heatmaps so red represents closer cells.
+- Reverse the fill scale of the nearest neighbor heatmaps so red represents 
+  closer cells.
 
 Unmixing quality report
-- Add "Guidance" section
+- Add "Guidance" section.
 
 Component levels report
 - Show a single quantile (99.9%ile) in the signal histograms.
 - Omit Autofluorescence from the pairs plots.
 - Remove "Signal to noise" section.
+
+Merge addin
+- More forgiving handling of duplicated records.
+  It now ignores the dups with a warning.
+- Less noisy console output.
 
 # phenoptrReports 0.1.6
 **2019-03-03**

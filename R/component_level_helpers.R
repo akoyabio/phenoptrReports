@@ -106,7 +106,7 @@ fluor_ridge_plot = function(d, quants, clipping, name, fill) {
   clipping_to_plot$pct[1] = paste0('Clipping: ', clipping_to_plot$pct[1])
 
   subtitle = 'Values of 0 are clipped.'
-  if (length(quantiles) > 0)
+  if (length(quants) > 0)
     subtitle = stringr::str_glue(
     'Vertical lines show {cc_and(names(quants)[-(1:2)])} percentiles. {subtitle}')
 
