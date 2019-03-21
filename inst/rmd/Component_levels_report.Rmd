@@ -130,7 +130,10 @@ message('Creating pair plots')
 purrr::iwalk(all_data, function(d, n) {
   # Unstack and subsample
   message('Processing ', n)
-  d = d$data %>% select(-Source) %>% unstack(value ~ Fluor) %>% sample_n(2000)
+  d = d$data %>% select(-Source) %>% 
+    filter(!Fluor %in% c('Sample AF', 'AF', 'Autofluorescence')) %>% 
+    unstack(value ~ Fluor) %>% 
+    sample_n(2000)
   pairs(d, pch='.', cex=3, col=scales::alpha('black', 0.2),
               main=n)
   cat('\n\n  \n----\n  \n')
