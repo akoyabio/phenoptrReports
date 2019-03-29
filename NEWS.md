@@ -18,6 +18,9 @@ Merge addin
   It now ignores the dups with a warning.
 - Less noisy console output.
 
+General
+- Reports save temporary files in a subdirectory of the output directory (#5)
+
 # phenoptrReports 0.1.6
 **2019-03-03**
 

@@ -22,7 +22,8 @@ write_summary_report = function(csd_path=NULL, csd=NULL,
   # consolidate_and_summarize_cell_seg_data, in particular, has less
   # stringent requirements than the summary report.
   tryCatch(rmarkdown::render(rmd_path, output_file=output_path, quiet=TRUE,
-                    params=list(csd_path=csd_path, csd=csd,
+                             intermediates_dir=temp_dir_by(output_path),
+                             params=list(csd_path=csd_path, csd=csd,
                                 dataset_name=dataset_name)),
            error = function(e) {
              cat('Unable to write summary report\n', e$message, '\n')
@@ -55,6 +56,7 @@ write_summary_charts = function(workbook_path, output_path) {
                          package="phenoptrReports")
 
   rmarkdown::render(rmd_path, output_file=output_path, quiet=TRUE,
+                    intermediates_dir=temp_dir_by(output_path),
                     output_format=output_format,
                     params=list(workbook_path=workbook_path))
 }
@@ -80,6 +82,7 @@ unmixing_quality_report = function(export_path=NULL) {
 
   output_path = file.path(export_path, 'Unmixing_quality_report.html')
   rmarkdown::render(rmd_path, output_file=output_path, quiet=TRUE,
+                    intermediates_dir=temp_dir_by(output_path),
                     params=list(export_path = export_path))
 }
 
@@ -99,5 +102,11 @@ component_levels_report = function(export_path=NULL) {
 
   output_path = file.path(export_path, 'Component_levels_report.html')
   rmarkdown::render(rmd_path, output_file=output_path, quiet=TRUE,
+                    intermediates_dir=temp_dir_by(output_path),
                     params=list(export_path = export_path))
+}
+
+# Make the name of a temp dir in the same directory as an output file.
+temp_dir_by = function(output_path) {
+  file.path(dirname(output_path), 'temp')
 }
