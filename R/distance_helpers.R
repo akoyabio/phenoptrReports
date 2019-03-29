@@ -28,7 +28,7 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL, details_path=NULL) {
 
   # Compute nearest neighbor distances for all cells, one field at a time.
   distances <- csd %>%
-    dplyr::select(`Cell X Position`, `Cell Y Position`, `Cell ID`, `Slide ID`,
+    dplyr::select(`Slide ID`, `Cell ID`, `Cell X Position`, `Cell Y Position`,
                   !!field_col, dplyr::starts_with('Phenotype')) %>%
     dplyr::group_by(`Slide ID`, !!field_col) %>%
     tidyr::nest() %>%
