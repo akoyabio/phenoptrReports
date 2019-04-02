@@ -28,17 +28,20 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL, details_path=NULL) {
 
   # Compute nearest neighbor distances for all cells, one field at a time.
   distances <- csd %>%
-    dplyr::select(`Slide ID`, `Cell ID`, `Cell X Position`, `Cell Y Position`,
-                  !!field_col, dplyr::starts_with('Phenotype')) %>%
     dplyr::group_by(`Slide ID`, !!field_col) %>%
     tidyr::nest() %>%
     dplyr::mutate(distance=purrr::map(data,
                            phenoptr::find_nearest_distance, phenotypes)) %>%
     tidyr::unnest()
 
-  # Optionally save details
-  if (!is.null(details_path))
-    readr::write_csv(distances, details_path, na='#N/A')
+  # Optionally save details with a subset of columns
+  if (!is.null(details_path)) {
+    distances_subset = distances %>%
+      dplyr::select(`Slide ID`, `Cell ID`, `Cell X Position`, `Cell Y Position`,
+                    !!field_col, dplyr::starts_with('Phenotype'),
+                    dplyr::starts_with('Distance to'))
+    readr::write_csv(distances_subset, details_path, na='#N/A')
+  }
 
   # All pairs of phenotypes. Order matters so this will include both
   # (a, b) and (b, a).
@@ -109,10 +112,6 @@ count_within_summary = function(csd, radii, phenotypes=NULL, categories=NULL) {
 
   # Compute count_within for each field.
   distances <- csd %>%
-    # Select columns of interest and nest per field
-    dplyr::select(`Cell X Position`, `Cell Y Position`,
-                  `Slide ID`, `Tissue Category`,
-                  !!field_col, dplyr::starts_with('Phenotype')) %>%
     dplyr::group_by(`Slide ID`, !!field_col) %>%
     tidyr::nest() %>%
     # The actual calculation.
