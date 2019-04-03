@@ -11,6 +11,9 @@ Unmixing quality report
 Component levels report
 - Show a single quantile (99.9%ile) in the signal histograms.
 - Omit Autofluorescence from the pairs plots.
+- Use a common scale on the individual plots within each pairs plot to 
+  avoid exaggerating small signals.
+- Add "Guidance" section.
 - Remove "Signal to noise" section.
 
 Merge addin

@@ -134,11 +134,22 @@ purrr::iwalk(all_data, function(d, n) {
     filter(!Fluor %in% c('Sample AF', 'AF', 'Autofluorescence')) %>% 
     unstack(value ~ Fluor) %>% 
     sample_n(2000)
+  axis_max = max(d)
   pairs(d, pch='.', cex=3, col=scales::alpha('black', 0.2),
-              main=n)
+              main=n, xlim=c(0, axis_max), ylim=c(0, axis_max))
   cat('\n\n  \n----\n  \n')
 })
 ```
+
+### Guidance 
+
+- **Pixel intensity by image:** The top 99.9^th^ percentile pixel is usually 
+  reflective of 'positive' signal. If your multiplex panel is well-balanced, 
+  the 99.9^th^ percentile values should be similar between channels.
+- **Pixel intensity by component:** Allows you to quickly assess to see 
+  if there are any outliers or large-scale differences in staining intensity 
+  across the image set.
+- **Pair plots:** Tight correlations may indicate crosstalk between channels.
 
 <br><br><br>
 <p align='center'>![](Akoya.png){height=50px style='border:none;'}</p>
