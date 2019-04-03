@@ -26,8 +26,8 @@ compute_density_from_cell_summary =
   function(counts, summary_path, tissue_categories,
            pixels_per_micron=getOption('phenoptr.pixels.per.micron')) {
 
-  stopifnot('Slide ID' %in% names(counts),
-            'Tissue Category' %in% names(counts))
+  stopifnot('Slide ID' %in% names(counts))
+  stopifnot('Tissue Category' %in% names(counts))
 
   # Read the summary data, extract the columns we need, recode the
   # `Tissue Category` total name to match what `count_phenotypes` gives us,
@@ -86,7 +86,9 @@ compute_density_from_table = function(counts, areas, tissue_categories) {
   # Check that the files match
   missing_ids = setdiff(unique(counts$`Slide ID`), unique(areas$`Slide ID`))
   if (length(missing_ids) > 1)
-    stop(length(missing_ids), ' Slide IDs are missing from summary file.')
+    stop(length(missing_ids),
+         ' Slide IDs are missing from summary file (',
+         paste(missing_ids, collapse=', '), ').')
 
   # Join with the counts table and divide counts by area to get density
   densities = dplyr::left_join(counts, areas) %>%
