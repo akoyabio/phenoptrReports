@@ -51,6 +51,7 @@ test_that("file generation works", {
   expect_true(file.exists(actual_results))
   expect_true(file.exists(file.path(output_dir, 'Charts.docx')))
   expect_true(file.exists(file.path(output_dir, 'nearest_neighbors.csv')))
+  expect_true(file.exists(file.path(output_dir, 'count_within.csv')))
 
   # Check numbers against known good
 

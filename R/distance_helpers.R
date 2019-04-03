@@ -38,7 +38,9 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL, details_path=NULL) {
   if (!is.null(details_path)) {
     distances_subset = distances %>%
       dplyr::select(`Slide ID`, `Cell ID`, `Cell X Position`, `Cell Y Position`,
-                    !!field_col, dplyr::starts_with('Phenotype'),
+                    !!field_col,
+                    dplyr::contains('Tissue Category'),
+                    dplyr::starts_with('Phenotype'),
                     dplyr::starts_with('Distance to'))
     readr::write_csv(distances_subset, details_path, na='#N/A')
   }
@@ -88,6 +90,13 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL, details_path=NULL) {
 #' for each Slide ID in `csd` and each pair of phenotypes in `phenotypes`.
 #' See [phenoptr::count_within()] for details of the counts and the
 #' summary calculation.
+#'
+#' If `details_path` is provided, this will save a table with one
+#' row per cell and columns for each phenotype and radius giving
+#' the count of cells of that type within that distance. The detail table
+#' is computed without regard to tissue category so it may not exactly
+#' match the summary table. Details are only saved if the `akoyabio/rtree`
+#' package is available.
 #' @param csd Cell seg data with `Cell X Position`,
 #'        `Cell Y Position`, field name and `Phenotype` columns.
 #' @param radii Vector of radii to search within.
@@ -95,11 +104,14 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL, details_path=NULL) {
 #' will use `unique_phenotypes(csd)`. Counts are computed for all
 #' pairs of phenotypes.
 #' @param categories Optional list of tissue categories to compute within.
+#' @param details_path If present, path to save a table with
+#' nearest-neighbor data for each cell.
 #' @return A data frame with summary statistics for each phenotype pair
 #' in each Slide ID.
 #' @export
 #' @importFrom magrittr %>%
-count_within_summary = function(csd, radii, phenotypes=NULL, categories=NULL) {
+count_within_summary = function(csd, radii, phenotypes=NULL, categories=NA,
+                                details_path=NULL) {
   phenotypes = phenoptr::validate_phenotypes(phenotypes, csd)
 
   # The column name that defines fields
@@ -110,10 +122,34 @@ count_within_summary = function(csd, radii, phenotypes=NULL, categories=NULL) {
   pheno_pairs = purrr::cross2(names(phenotypes), names(phenotypes)) %>%
     purrr::map(unlist)
 
-  # Compute count_within for each field.
-  distances <- csd %>%
+  # Nest by field
+  nested = csd %>%
     dplyr::group_by(`Slide ID`, !!field_col) %>%
-    tidyr::nest() %>%
+    tidyr::nest()
+
+  # Compute and save the detail table if requested and available
+  if (!is.null(details_path)) {
+    if (!requireNamespace('rtree'))
+      warning('count_within details requires the akoyabio/rtree package.')
+    else {
+      # Just do the calculation again, it is fast enough.
+      # This is a bit of a cop-out but surfacing the details from
+      # count_within_many is a pain.
+      detail = nested %>%
+        dplyr::mutate(within=purrr::map(data,
+                      phenoptr::count_within_detail, phenotypes, radii)) %>%
+        tidyr::unnest() %>%
+        dplyr::select(`Slide ID`, `Cell ID`, `Cell X Position`, `Cell Y Position`,
+                      !!field_col,
+                      dplyr::contains('Tissue Category'),
+                      dplyr::starts_with('Phenotype'),
+                      dplyr::contains('within'))
+      readr::write_csv(detail, details_path, na='#N/A')
+    }
+  }
+
+  # Compute count_within for each field.
+  distances <- nested %>%
     # The actual calculation.
     # count_within_many handles multiple pairs, radii and tissue categories.
     dplyr::mutate(within=purrr::map(data, phenoptr::count_within_many,
@@ -125,7 +161,7 @@ count_within_summary = function(csd, radii, phenotypes=NULL, categories=NULL) {
 
   # Aggregate per slide. See ?phenoptr::count_within for explanation
   distances %>% dplyr::group_by(`Slide ID`, category, from, to, radius) %>%
-    dplyr::summarize(within=sum(from_count*within_mean),
+    dplyr::summarize(within=sum(from_count*within_mean, na.rm=TRUE),
               from_count=sum(from_count),
               to_count=sum(to_count),
               from_with=sum(from_with),

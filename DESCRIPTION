@@ -22,7 +22,7 @@ Imports:
     magrittr,
     miniUI (>= 0.1.1),
     openxlsx,
-    phenoptr (>= 0.1.5),
+    phenoptr (>= 0.1.5.9000),
     purrr,
     readr,
     readxl,

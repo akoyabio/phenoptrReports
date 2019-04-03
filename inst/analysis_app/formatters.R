@@ -21,10 +21,15 @@ format_all = function(all_data) {
   has$density = has$phenotypes && !is.null(all_data$summary_path)
   has$expression = any(purrr::map_lgl(phenos, ~!.x$expression %in% c('', 'NA')))
   has$h_score = !is.null(all_data$score_path)
+
   has$include_nearest = all_data$include_nearest && length(phenos) >= 2
-  has$include_nearest_details = has$include_nearest && all_data$include_distance_details
+  has$include_nearest_details =
+    has$include_nearest && all_data$include_distance_details
+
   has$include_count_within = (all_data$include_count_within
     && length(all_data$radii) > 0 && length(phenos) >= 2)
+  has$include_count_within_details =
+    has$include_count_within && all_data$include_distance_details
 
   # Re-initialize
   table_pairs <<- list()
@@ -38,8 +43,11 @@ format_all = function(all_data) {
     format_expression(phenos),
     ifelse(has$h_score, format_h_score(all_data$score_path), ''),
     ifelse(has$include_nearest,
-           format_nearest_neighbors(all_data$output_dir, has$include_nearest_details), ''),
-    ifelse(has$include_count_within, format_count_within(all_data$radii), ''),
+           format_nearest_neighbors(all_data$output_dir,
+                                    has$include_nearest_details), ''),
+    ifelse(has$include_count_within,
+           format_count_within(all_data$output_dir, all_data$radii,
+                               has$include_count_within_details), ''),
     format_cleanup(all_data$slide_id_prefix, all_data$use_regex, has),
     format_trailer(all_data$output_dir, has))
 }
@@ -173,10 +181,20 @@ nearest_neighbors = nearest_neighbor_summary(csd, phenotypes)
 \n\n")
 }
 
-format_count_within = function(radii) {
+format_count_within = function(output_dir, radii,
+                               include_count_within_details) {
   table_pairs <<- c(table_pairs,
                     list(c('count_within', 'write_count_within_sheet')))
-  stringr::str_glue(
+  if (include_count_within_details)
+    stringr::str_glue(
+'# Summary of cells within a specific distance
+radii = {deparse(radii)}
+count_detail_path = file.path("{output_dir}", "count_within.csv")
+count_within = count_within_summary(csd, radii, phenotypes,
+                                    tissue_categories, count_detail_path)
+\n\n')
+  else
+    stringr::str_glue(
 "# Summary of cells within a specific distance
 radii = {deparse(radii)}
 count_within = count_within_summary(csd, radii, phenotypes, tissue_categories)

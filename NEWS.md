@@ -1,7 +1,7 @@
 # phenoptrReports 0.1.6.900
 
 Analysis addin
-- Optionally save nearest-neighbor details for each cell.
+- Optionally save nearest-neighbor and count-within details for each cell.
 - Reverse the fill scale of the nearest neighbor heatmaps so red represents 
   closer cells.
 

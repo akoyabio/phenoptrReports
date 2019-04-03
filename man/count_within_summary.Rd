@@ -4,7 +4,8 @@
 \alias{count_within_summary}
 \title{Summarize "count within" distances}
 \usage{
-count_within_summary(csd, radii, phenotypes = NULL, categories = NULL)
+count_within_summary(csd, radii, phenotypes = NULL, categories = NA,
+  details_path = NULL)
 }
 \arguments{
 \item{csd}{Cell seg data with \code{Cell X Position},
@@ -17,6 +18,9 @@ will use \code{unique_phenotypes(csd)}. Counts are computed for all
 pairs of phenotypes.}
 
 \item{categories}{Optional list of tissue categories to compute within.}
+
+\item{details_path}{If present, path to save a table with
+nearest-neighbor data for each cell.}
 }
 \value{
 A data frame with summary statistics for each phenotype pair
@@ -27,4 +31,12 @@ Computes summary "count within" statistics
 for each Slide ID in \code{csd} and each pair of phenotypes in \code{phenotypes}.
 See \code{\link[phenoptr:count_within]{phenoptr::count_within()}} for details of the counts and the
 summary calculation.
+}
+\details{
+If \code{details_path} is provided, this will save a table with one
+row per cell and columns for each phenotype and radius giving
+the count of cells of that type within that distance. The detail table
+is computed without regard to tissue category so it may not exactly
+match the summary table. Details are only saved if the \code{akoyabio/rtree}
+package is available.
 }
