@@ -40,64 +40,64 @@ reference:
     desc: These functions are added to the RStudio Addins menu. Selecting
           one opens a GUI.
     contents:
-      - '`addin_10_merge`'
-      - '`addin_20_consolidate`'
-      - '`addin_30_analysis_app`'
-      - '`addin_40_unmixing_quality`'
-      - '`addin_50_component_levels`'
+      - addin_10_merge
+      - addin_20_consolidate
+      - addin_30_analysis_app
+      - addin_40_unmixing_quality
+      - addin_50_component_levels
   - title: Merging and Consolidation
     desc: These functions implement the merge and consolidation apps.
     contents:
-      - '`merge_cell_seg_files`'
-      - '`consolidate_and_summarize_cell_seg_data`'
+      - merge_cell_seg_files
+      - consolidate_and_summarize_cell_seg_data
   - title: Calculations
     desc: These functions perform the calculations for an analysis.
     contents:
-      - '`compute_density_from_cell_summary`'
-      - '`compute_density_from_table`'
-      - '`compute_h_score`'
-      - '`compute_h_score_from_score_data`'
-      - '`compute_mean_expression`'
-      - '`compute_mean_expression_many`'
-      - '`compute_positivity`'
-      - '`compute_positivity_many`'
-      - '`counts_to_percents`'
-      - '`count_phenotypes`'
-      - '`count_within_summary`'
-      - '`nearest_neighbor_summary`'
+      - compute_density_from_cell_summary
+      - compute_density_from_table
+      - compute_h_score
+      - compute_h_score_from_score_data
+      - compute_mean_expression
+      - compute_mean_expression_many
+      - compute_positivity
+      - compute_positivity_many
+      - counts_to_percents
+      - count_phenotypes
+      - count_within_summary
+      - nearest_neighbor_summary
   - title: Data reporting - HTML
     desc: These functions write analysis results to HTML reports.
     contents:
-      - '`unmixing_quality_report`'
-      - '`component_levels_report`'
+      - unmixing_quality_report
+      - component_levels_report
   - title: Data reporting - Excel
     desc: These functions write analysis results to Excel worksheets.
     contents:
-      - '`write_counts_sheet`'
-      - '`write_count_within_sheet`'
-      - '`write_density_sheet`'
-      - '`write_expression_sheet`'
-      - '`write_h_score_sheet`'
-      - '`write_nearest_neighbor_summary_sheet`'
-      - '`write_percents_sheet`'
-      - '`write_plot_sheet`'
-      - '`write_sheet`'
-      - '`write_summary_charts`'
-      - '`write_summary_report`'
-      - '`write_summary_sheet`'
+      - write_counts_sheet
+      - write_count_within_sheet
+      - write_density_sheet
+      - write_expression_sheet
+      - write_h_score_sheet
+      - write_nearest_neighbor_summary_sheet
+      - write_percents_sheet
+      - write_plot_sheet
+      - write_sheet
+      - write_summary_charts
+      - write_summary_report
+      - write_summary_sheet
   - title: Helper functions
     contents:
-      - '`add_tissue_category_totals`'
-      - '`check_phenotypes`'
-      - '`choose_directory`'
-      - '`choose_file`'
-      - '`make_nested`'
-      - '`make_unique_names`'
-      - '`order_by_slide_and_tissue_category`'
-      - '`split_phenotypes`'
-      - '`unmixing_quality_report`'
-      - '`upset_data`'
-      - '`upset_plot`'
+      - add_tissue_category_totals
+      - check_phenotypes
+      - choose_directory
+      - choose_file
+      - make_nested
+      - make_unique_names
+      - order_by_slide_and_tissue_category
+      - split_phenotypes
+      - unmixing_quality_report
+      - upset_data
+      - upset_plot
 
 toc:
   depth: 4
