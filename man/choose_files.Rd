@@ -5,7 +5,7 @@
 \title{Cross-platform choose files function}
 \usage{
 choose_files(caption = "Select files", default = "", multi = TRUE,
-  filters = utils::Filters)
+  filters = NULL)
 }
 \arguments{
 \item{caption}{Caption for the choose directory dialog}
@@ -14,7 +14,8 @@ choose_files(caption = "Select files", default = "", multi = TRUE,
 
 \item{multi}{Allow multiple files to be selected}
 
-\item{filters}{A matrix of filename filters}
+\item{filters}{A two-column matrix of filename filters, or a two-element
+vector containing a single filter.}
 }
 \value{
 The path to the selected file(s), or NA if the user canceled.

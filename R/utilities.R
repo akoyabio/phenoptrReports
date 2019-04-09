@@ -122,11 +122,15 @@ choose_directory = function(caption = 'Select folder', default='') {
 #' @param caption Caption for the choose directory dialog
 #' @param default Starting directory
 #' @param multi Allow multiple files to be selected
-#' @param filters A matrix of filename filters
+#' @param filters A two-column matrix of filename filters, or a two-element
+#' vector containing a single filter.
 #' @return The path to the selected file(s), or NA if the user canceled.
 #' @export
 choose_files = function(caption='Select files', default='',
-                        multi=TRUE, filters=utils::Filters) {
+                        multi=TRUE, filters=NULL) {
+  if (!is.null(filters) && is.vector(filters))
+    filters = matrix(filters, byrow=TRUE, ncol=2)
+
   if (function_exists('utils', 'choose.files')) {
     utils::choose.files(caption = caption, default=default,
                         multi=multi, filters=filters)

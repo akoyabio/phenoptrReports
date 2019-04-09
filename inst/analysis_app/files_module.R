@@ -30,7 +30,7 @@ browse_file_module = function(input, output, session, default_dir,
     path = phenoptrReports::choose_files(
       default=default,
       caption=caption,
-      filters = utils::Filters['txt',],
+      filters = c("Text files (*.txt)", "*.txt"),
       multi=FALSE)
 
     shiny::req(path)

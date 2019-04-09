@@ -75,7 +75,7 @@ addin_20_consolidate = function() {
       files = phenoptrReports::choose_files(
         default=default,
         caption='Select merge data files',
-        filters = utils::Filters['txt',])
+        filters = c("Text files (*.txt)", "*.txt"))
 
       if (length(files) == 0)
         return()
