@@ -27,7 +27,7 @@ browse_file_module = function(input, output, session, default_dir,
     if (default != '') default = paste0(default, '\\*.txt')
 
     shiny::req(input$browse)
-    path = purrr::possibly(utils::choose.files, otherwise=NULL)(
+    path = phenoptrReports::choose_files(
       default=default,
       caption=caption,
       filters = utils::Filters['txt',],
@@ -138,7 +138,7 @@ files_module = function(input, output, session) {
   # Handle the browse_output button by selecting a folder
   shiny::observeEvent(input$browse_output, {
     shiny::req(input$browse_output)
-    output_path = utils::choose.dir(
+    output_path = phenoptrReports::choose_directory(
       default=default_dir(),
       caption='Select an output folder'
     )

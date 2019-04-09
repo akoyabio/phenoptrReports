@@ -99,3 +99,52 @@ validate_phenotype_definitions = function(pheno, available) {
 
   return('')
 }
+
+#' Cross-platform choose directory function.
+#' @param caption Caption for the choose directory dialog
+#' @param default Starting directory
+#' @return The path to the selected directory, or NA if the user canceled.
+#' @export
+# Inspired by https://stackoverflow.com/questions/48218491/os-independent-way-to-select-directory-interactively-in-r
+choose_directory = function(caption = 'Select folder', default='') {
+  if (function_exists('utils', 'choose.dir')) {
+    utils::choose.dir(caption = caption, default=default)
+  } else if (function_exists('tcltk', 'tk_choose.dir')) {
+    tcltk::tk_choose.dir(caption = caption, default=default)
+  } else if (function_exists('rstudioapi', 'isAvailable') &&
+             rstudioapi::isAvailable() &&
+             rstudioapi::getVersion() > '1.1.287') {
+    rstudioapi::selectDirectory(caption = caption, path=default)
+  } else stop('No directory chooser available.')
+}
+
+#' Cross-platform choose files function
+#' @param caption Caption for the choose directory dialog
+#' @param default Starting directory
+#' @param multi Allow multiple files to be selected
+#' @param filters A matrix of filename filters
+#' @return The path to the selected file(s), or NA if the user canceled.
+#' @export
+choose_files = function(caption='Select files', default='',
+                        multi=TRUE, filters=utils::Filters) {
+  if (function_exists('utils', 'choose.files')) {
+    utils::choose.files(caption = caption, default=default,
+                        multi=multi, filters=filters)
+  } else if (function_exists('tcltk', 'tk_choose.files')) {
+    tcltk::tk_choose.files(caption = caption, default=default,
+                         multi=multi, filters=filters)
+  } else if (function_exists('rstudioapi', 'isAvailable') &&
+             rstudioapi::isAvailable() &&
+             rstudioapi::getVersion() > '1.1.287') {
+    rstudioapi::selectFile(caption = caption, path=default,
+                           filter=filters[nrow(filters),2])
+  } else stop('No file chooser available.')
+}
+
+#' Check if a function is available in a package
+#' @param package Name of the package
+#' @param fun Name of the function
+#' @return TRUE if the package is installed and contains the function.
+function_exists =function(package, fun) {
+  requireNamespace(package) && (fun %in% getNamespaceExports(package))
+}

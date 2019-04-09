@@ -89,6 +89,8 @@ reference:
     contents:
       - '`add_tissue_category_totals`'
       - '`check_phenotypes`'
+      - '`choose_directory`'
+      - '`choose_file`'
       - '`make_nested`'
       - '`make_unique_names`'
       - '`order_by_slide_and_tissue_category`'

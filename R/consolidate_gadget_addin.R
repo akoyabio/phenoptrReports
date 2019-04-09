@@ -72,7 +72,7 @@ addin_20_consolidate = function() {
       shiny::req(input$browse_source)
 
       default = dplyr::if_else(default_dir=='', '', paste0(default_dir, '/*.txt'))
-      files = utils::choose.files(
+      files = phenoptrReports::choose_files(
         default=default,
         caption='Select merge data files',
         filters = utils::Filters['txt',])
@@ -105,7 +105,7 @@ addin_20_consolidate = function() {
     # Handle the browse_output button by selecting a folder
     shiny::observeEvent(input$browse_output, {
       shiny::req(input$browse_output)
-      output_dir(utils::choose.dir(
+      output_dir(phenoptrReports::choose_directory(
         default=default_dir,
         caption='Select an output folder'
       ))

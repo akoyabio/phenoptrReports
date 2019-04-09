@@ -59,7 +59,7 @@ addin_10_merge = function() {
     # Handle the browse_source button by selecting a folder
     shiny::observeEvent(input$browse_source, {
       shiny::req(input$browse_source)
-      source_dir(utils::choose.dir(
+      source_dir(phenoptrReports::choose_directory(
         caption='Select a source folder'
       ))
 

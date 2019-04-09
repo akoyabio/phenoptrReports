@@ -1,4 +1,4 @@
-# phenoptrReports 0.1.6.900
+# phenoptrReports 0.1.6.9000
 
 Analysis addin
 - Optionally save nearest-neighbor and count-within details for each cell.
@@ -23,6 +23,7 @@ Merge addin
 
 General
 - Reports save temporary files in a subdirectory of the output directory (#5)
+- File and directory choosers are cross-platform (#8)
 
 # phenoptrReports 0.1.6
 **2019-03-03**

@@ -52,7 +52,7 @@ addin_50_component_levels = function() {
     # Handle the browse button by selecting a folder
     shiny::observeEvent(input$browse, {
       shiny::req(input$browse)
-      export_dir(utils::choose.dir(
+      export_dir(phenoptrReports::choose_directory(
         caption='Select an export folder'
       ))
 
