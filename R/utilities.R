@@ -109,12 +109,12 @@ validate_phenotype_definitions = function(pheno, available) {
 choose_directory = function(caption = 'Select folder', default='') {
   if (function_exists('utils', 'choose.dir')) {
     utils::choose.dir(caption = caption, default=default)
-  } else if (function_exists('tcltk', 'tk_choose.dir')) {
-    tcltk::tk_choose.dir(caption = caption, default=default)
   } else if (function_exists('rstudioapi', 'isAvailable') &&
              rstudioapi::isAvailable() &&
              rstudioapi::getVersion() > '1.1.287') {
     rstudioapi::selectDirectory(caption = caption, path=default)
+  } else if (function_exists('tcltk', 'tk_choose.dir')) {
+    tcltk::tk_choose.dir(caption = caption, default=default)
   } else stop('No directory chooser available.')
 }
 
@@ -134,14 +134,15 @@ choose_files = function(caption='Select files', default='',
   if (function_exists('utils', 'choose.files')) {
     utils::choose.files(caption = caption, default=default,
                         multi=multi, filters=filters)
-  } else if (function_exists('tcltk', 'tk_choose.files')) {
-    tcltk::tk_choose.files(caption = caption, default=default,
-                         multi=multi, filters=filters)
-  } else if (function_exists('rstudioapi', 'isAvailable') &&
+  } else if (!multi &&
+             function_exists('rstudioapi', 'isAvailable') &&
              rstudioapi::isAvailable() &&
              rstudioapi::getVersion() > '1.1.287') {
     rstudioapi::selectFile(caption = caption, path=default,
-                           filter=filters[nrow(filters),2])
+                           filter=filters[nrow(filters),1])
+  } else if (function_exists('tcltk', 'tk_choose.files')) {
+    tcltk::tk_choose.files(caption = caption, default=default,
+                         multi=multi, filters=filters)
   } else stop('No file chooser available.')
 }
 
