@@ -43,6 +43,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 Suggests:
     ggridges,
+    sessioninfo,
     testthat
 URL:
     https://akoyabio.github.io/phenoptrReports/,

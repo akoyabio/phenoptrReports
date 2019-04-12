@@ -4,6 +4,7 @@ Analysis addin
 - Optionally save nearest-neighbor and count-within details for each cell.
 - Reverse the fill scale of the nearest neighbor heatmaps so red represents 
   closer cells.
+- Write session info to `session_info.txt` in the output directory.
 
 Unmixing quality report
 - Add "Guidance" section.

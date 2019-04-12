@@ -54,7 +54,9 @@ format_all = function(all_data) {
 
 # Initial matter
 format_header = function() {
-  stringr::str_glue('# Created by phenoptrReports {packageVersion("phenoptrReports")} on {Sys.Date()}
+  stringr::str_glue(
+'# Created by phenoptr {packageVersion("phenoptr")} and phenoptrReports {packageVersion("phenoptrReports")} on {Sys.Date()}
+# http://akoyabio.github.io/phenoptr
 # http://akoyabio.github.io/phenoptrReports
 
 library(tidyverse)
@@ -250,6 +252,10 @@ saveWorkbook(wb, workbook_path, overwrite=TRUE)
 charts_path = file.path("{output_dir}",
                         "Charts.docx")
 write_summary_charts(workbook_path, charts_path)
+
+# Save session info
+info_path = file.path("{output_dir}", "session_info.txt")
+write_session_info(info_path)
 ')
 
 paste0(start, end)

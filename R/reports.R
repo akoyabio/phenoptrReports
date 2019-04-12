@@ -106,6 +106,24 @@ component_levels_report = function(export_path=NULL) {
                     params=list(export_path = export_path))
 }
 
+#' Write session info to a file
+#'
+#' This will write the output of `sessioninfo::session_info()`
+#' if it is available, otherwise `utils::sessionInfo()` is used.
+#' @param path Path to the output file
+#' @return None
+#' @export
+write_session_info = function(path) {
+  if (requireNamespace('sessioninfo'))
+    info = sessioninfo::session_info()
+  else
+    info = utils::sessionInfo()
+
+  sink(path)
+  on.exit(sink())
+  print(info)
+}
+
 # Make the name of a temp dir in the same directory as an output file.
 temp_dir_by = function(output_path) {
   file.path(dirname(output_path), 'temp')
