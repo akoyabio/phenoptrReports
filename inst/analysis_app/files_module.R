@@ -142,7 +142,7 @@ files_module = function(input, output, session) {
       default=default_dir(),
       caption='Select an output folder'
     )
-
+    shiny::req(output_path)
     output_path = normalizePath(output_path, winslash='/', mustWork=FALSE)
     output$output_dir = shiny::renderText(output_path)
     output_dir(output_path)
