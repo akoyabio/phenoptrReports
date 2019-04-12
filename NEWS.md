@@ -1,4 +1,4 @@
-# phenoptrReports 0.1.6.9000
+# phenoptrReports 0.1.7
 
 Analysis addin
 - Optionally save nearest-neighbor and count-within details for each cell.
