@@ -38,11 +38,14 @@ Imports:
     utils
 Remotes:
     akoyabio/phenoptr,
+    akoyabio/rtree,
     hms-dbmi/UpSetR
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 Suggests:
     ggridges,
+    rstudioapi,
+    rtree,
     sessioninfo,
     testthat
 URL:

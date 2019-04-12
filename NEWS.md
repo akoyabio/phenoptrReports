@@ -10,7 +10,7 @@ Unmixing quality report
 - Add "Guidance" section.
 
 Component levels report
-- Show a single quantile (99.9%ile) in the signal histograms.
+- Show a single quantile (99.9 percentile) in the signal histograms.
 - Omit Autofluorescence from the pairs plots.
 - Use a common scale on the individual plots within each pairs plot to 
   avoid exaggerating small signals.
@@ -19,7 +19,7 @@ Component levels report
 
 Merge addin
 - More forgiving handling of duplicated records.
-  It now ignores the dups with a warning.
+  It now ignores the duplicates with a warning.
 - Less noisy console output.
 
 General
