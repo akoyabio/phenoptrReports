@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.7</span>
       </span>
     </div>
 
@@ -94,7 +94,7 @@
       <h1>Analyzing inForm data</h1>
                         <h4 class="author">Kent Johnson</h4>
             
-            <h4 class="date">2019-03-03</h4>
+            <h4 class="date">2019-04-12</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/akoyabio/phenoptrReports/blob/master/vignettes/analysis.Rmd"><code>vignettes/analysis.Rmd</code></a></small>
       <div class="hidden name"><code>analysis.Rmd</code></div>
@@ -137,9 +137,7 @@
 <h3 class="hasAnchor">
 <a href="#start-the-analysis-app" class="anchor"></a>Start the analysis app</h3>
 <p>Choose “Analyze consolidated data” from the RStudio Addins menu to open the analysis app.</p>
-<div class="figure">
-<img src="figures/Analyze_addin.png">
-</div>
+<p><img src="figures/Analyze_addin.png"></p>
 </div>
 <div id="select-input-files" class="section level3">
 <h3 class="hasAnchor">
@@ -161,18 +159,14 @@
 <h4 class="hasAnchor">
 <a href="#tissue-categories" class="anchor"></a>Tissue categories</h4>
 <p>In this section, select the tissue categories to include in the analysis.</p>
-<div class="figure">
-<img src="figures/Tissue_categories.png">
-</div>
+<p><img src="figures/Tissue_categories.png"></p>
 </div>
 <div id="slide-id-prefix" class="section level4">
 <h4 class="hasAnchor">
 <a href="#slide-id-prefix" class="anchor"></a>Slide ID prefix</h4>
 <p>The Slide IDs in your data file may contain prefix information that is not wanted in the final report. Any text you enter here will be removed from the start of the Slide IDs. The text can be either an exact match or a <a href="http://r4ds.had.co.nz/strings.html#matching-patterns-with-regular-expressions">regular expression</a>. In either case it will match from the start of the Slide ID.</p>
 <p>Leave this field blank to use the existing Slide IDs unchanged.</p>
-<div class="figure">
-<img src="figures/Slide_id_prefix.png">
-</div>
+<p><img src="figures/Slide_id_prefix.png"></p>
 </div>
 <div id="define-phenotypes-and-markers" class="section level4">
 <h4 class="hasAnchor">
@@ -184,9 +178,7 @@
 <p>To analyze a multiple phenotype, combine individual phenotype definitions with slash (/) or comma (,). Combine with a slash to define double positive phenotypes, for example CD3+/CD8+. Combine with a comma to allow either phenotype, for example CD68+,CD163+.</p>
 <p>To compute mean expression of a marker for a phenotype, select the marker of interest in the Expression drop-down.</p>
 <p>To compute expression of multiple markers for a single phenotype, add a duplicate phenotype with the second marker selected. To compute expression of a marker for all cells, enter “Total Cells” as the phenotype.</p>
-<div class="figure">
-<img src="figures/Phenotypes.png">
-</div>
+<p><img src="figures/Phenotypes.png"></p>
 </div>
 </div>
 <div id="create-reports" class="section level3">
@@ -194,9 +186,7 @@
 <a href="#create-reports" class="anchor"></a>Create reports</h3>
 <p>The final tab in the analysis app is the Run tab. Click “Create Report” to run the displayed R script to create the final reports. Wait for the script to run; when it is finished, the app will close.</p>
 <p>The script computes aggregated statistics, writes them to an Excel workbook, and creates visualizations of the results in a Word document. The R script is saved in the output directory and may be inspected, modified or re-run if needed.</p>
-<div class="figure">
-<img src="figures/Create_report.png">
-</div>
+<p><img src="figures/Create_report.png"></p>
 </div>
 </div>
   </div>

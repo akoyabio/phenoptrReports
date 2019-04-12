@@ -22,7 +22,16 @@
     <loc>http://akoyabio.github.io/phenoptrReports/reference/add_tissue_category_totals.html</loc>
   </url>
   <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/cc_and.html</loc>
+  </url>
+  <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/check_phenotypes.html</loc>
+  </url>
+  <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/choose_directory.html</loc>
+  </url>
+  <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/choose_files.html</loc>
   </url>
   <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/component_levels_report.html</loc>
@@ -65,6 +74,9 @@
   </url>
   <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/file_to_fluor.html</loc>
+  </url>
+  <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/function_exists.html</loc>
   </url>
   <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/make_nested.html</loc>
@@ -122,6 +134,9 @@
   </url>
   <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/write_plot_sheet.html</loc>
+  </url>
+  <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/write_session_info.html</loc>
   </url>
   <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/write_sheet.html</loc>

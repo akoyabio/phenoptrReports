@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Summarize nearest neighbor distances — nearest_neighbor_summary • phenoptrReports</title>
+<title>Check if a function is available in a package — function_exists • phenoptrReports</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,10 +30,9 @@
 
 
 
-<meta property="og:title" content="Summarize nearest neighbor distances — nearest_neighbor_summary" />
+<meta property="og:title" content="Check if a function is available in a package — function_exists" />
 
-<meta property="og:description" content="Computes summary nearest neighbor statistics (mean, median, etc)
-for each Slide ID in csd and each pair of phenotypes in phenotypes." />
+<meta property="og:description" content="Check if a function is available in a package" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -126,44 +125,35 @@ for each Slide ID in csd and each pair of phenotypes in phenotypes." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Summarize nearest neighbor distances</h1>
-    <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/distance_helpers.R'><code>R/distance_helpers.R</code></a></small>
-    <div class="hidden name"><code>nearest_neighbor_summary.Rd</code></div>
+    <h1>Check if a function is available in a package</h1>
+    <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/utilities.R'><code>R/utilities.R</code></a></small>
+    <div class="hidden name"><code>function_exists.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Computes summary nearest neighbor statistics (mean, median, etc)
-for each Slide ID in <code>csd</code> and each pair of phenotypes in <code>phenotypes</code>.</p>
+    <p>Check if a function is available in a package</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>nearest_neighbor_summary</span>(<span class='no'>csd</span>, <span class='kw'>phenotypes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>details_path</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>function_exists</span>(<span class='no'>package</span>, <span class='no'>fun</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>csd</th>
-      <td><p>Cell seg data with <code>Cell X Position</code>,
-<code>Cell Y Position</code>, field name and <code>Phenotype</code> columns.</p></td>
+      <th>package</th>
+      <td><p>Name of the package</p></td>
     </tr>
     <tr>
-      <th>phenotypes</th>
-      <td><p>Optional list of phenotypes to include. If omitted,
-will use <code>unique_phenotypes(csd)</code>.</p></td>
-    </tr>
-    <tr>
-      <th>details_path</th>
-      <td><p>If present, path to save a table with
-nearest-neighbor data for each cell.</p></td>
+      <th>fun</th>
+      <td><p>Name of the function</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data frame with summary statistics for each phenotype pair
-in each Slide ID.</p>
+    <p>TRUE if the package is installed and contains the function.</p>
     
 
   </div>

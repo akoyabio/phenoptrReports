@@ -66,7 +66,7 @@ summary calculation." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.7</span>
       </span>
     </div>
 
@@ -142,7 +142,8 @@ summary calculation.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>count_within_summary</span>(<span class='no'>csd</span>, <span class='no'>radii</span>, <span class='kw'>phenotypes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>categories</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>count_within_summary</span>(<span class='no'>csd</span>, <span class='no'>radii</span>, <span class='kw'>phenotypes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>categories</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
+  <span class='kw'>details_path</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -166,12 +167,26 @@ pairs of phenotypes.</p></td>
       <th>categories</th>
       <td><p>Optional list of tissue categories to compute within.</p></td>
     </tr>
+    <tr>
+      <th>details_path</th>
+      <td><p>If present, path to save a table with
+nearest-neighbor data for each cell.</p></td>
+    </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A data frame with summary statistics for each phenotype pair
 in each Slide ID.</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>If <code>details_path</code> is provided, this will save a table with one
+row per cell and columns for each phenotype and radius giving
+the count of cells of that type within that distance. The detail table
+is computed without regard to tissue category so it may not exactly
+match the summary table. Details are only saved if the <code>akoyabio/rtree</code>
+package is available.</p>
     
 
   </div>
@@ -181,6 +196,8 @@ in each Slide ID.</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
           </ul>
 
   </div>
