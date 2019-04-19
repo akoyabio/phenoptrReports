@@ -131,16 +131,35 @@ choose_files = function(caption='Select files', default='',
   if (!is.null(filters) && is.vector(filters))
     filters = matrix(filters, byrow=TRUE, ncol=2)
 
+  # Use Windows-only choose.files() if available
   if (function_exists('utils', 'choose.files')) {
-    utils::choose.files(caption = caption, default=default,
+    files = utils::choose.files(caption = caption, default=default,
                         multi=multi, filters=filters)
-  } else if (!multi &&
+    return(files)
+  }
+
+  # If multi==FALSE, rstudioapi::selectFile() is the next best option.
+  # If multi==TRUE, use tcltk::tk_choose.files if it is available,
+  # it supports multiple selection; otherwise use
+  # selectFile() for single-file-only selection.
+
+  # tk_choose.files fails on RStudio Server even though the function exists.
+  # I think the fail is because X11 is not available.
+  # This ugly thing tries to open a TK window to find out if TK is
+  # really available.
+  tk_avail = function_exists('tcltk', 'tk_choose.files') &&
+    class(suppressMessages(try({
+      tt  <- tcltk::tktoplevel();
+      tcltk::tkdestroy(tt)
+    }, silent = TRUE))) != 'try-error'
+
+  if ((!multi || !tk_avail) &&
              function_exists('rstudioapi', 'isAvailable') &&
              rstudioapi::isAvailable() &&
              rstudioapi::getVersion() > '1.1.287') {
     rstudioapi::selectFile(caption = caption, path=default,
                            filter=filters[nrow(filters),1])
-  } else if (function_exists('tcltk', 'tk_choose.files')) {
+  } else if (tk_avail) {
     tcltk::tk_choose.files(caption = caption, default=default,
                          multi=multi, filters=filters)
   } else stop('No file chooser available.')

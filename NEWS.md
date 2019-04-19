@@ -1,6 +1,8 @@
 # phenoptrReports 0.1.7.9000
 
+Bug fixes:
 - Fix the way the analysis addin handles of special characters in Slide ID (#9).
+- Fix file chooser to work on RStudio Server.
 
 # phenoptrReports 0.1.7
 
