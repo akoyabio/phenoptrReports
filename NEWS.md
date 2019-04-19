@@ -1,3 +1,7 @@
+# phenoptrReports 0.1.7.9000
+
+- Fix the way the analysis addin handles of special characters in Slide ID (#9).
+
 # phenoptrReports 0.1.7
 
 Analysis addin

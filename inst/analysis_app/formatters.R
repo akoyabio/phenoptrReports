@@ -207,11 +207,13 @@ format_cleanup = function(slide_id_prefix, use_regex, has) {
   if (!has$phenotypes || is.null(slide_id_prefix) || slide_id_prefix == '')
     return('')
 
-  if (use_regex) {
-    # slide_id_prefix is a regex. We just have to double-escape \
-    # to put it into a string literal
-    slide_id_prefix = stringr::str_replace(slide_id_prefix, fixed('\\'), '\\\\')
-  } else slide_id_prefix = escapeRegex(slide_id_prefix)
+  # If not using regex, escape any special characters
+  if (!use_regex)
+    slide_id_prefix = escapeRegex(slide_id_prefix)
+
+  # Now slide_id_prefix is a valid regex. We still have to double-escape \
+  # to put it into a string literal.
+  slide_id_prefix = stringr::str_replace(slide_id_prefix, fixed('\\'), '\\\\')
 
   # Note: Don't use mutate() in cleanup(),
   # it removes attribute from h_score table
