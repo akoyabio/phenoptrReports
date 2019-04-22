@@ -207,7 +207,9 @@ format_cleanup = function(slide_id_prefix, use_regex, has) {
   if (!has$phenotypes || is.null(slide_id_prefix) || slide_id_prefix == '')
     return('')
 
-  # If not using regex, escape any special characters
+  # We are going to use a regex to remove the Slide ID prefix.
+  # If the user did not request regex, escape any special characters in
+  # the prefix they provided.
   if (!use_regex)
     slide_id_prefix = escapeRegex(slide_id_prefix)
 
