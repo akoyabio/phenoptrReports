@@ -5,7 +5,7 @@
 \title{Compute H-Score based on parameters in a score data file}
 \usage{
 compute_h_score_from_score_data(csd, score_path,
-  tissue_categories = NULL)
+  tissue_categories = NULL, .by = "Slide ID")
 }
 \arguments{
 \item{csd}{Cell seg data to use.}
@@ -14,6 +14,8 @@ compute_h_score_from_score_data(csd, score_path,
 
 \item{tissue_categories}{optionally specify tissue categories of interest.
 If not given, tissue categories are taken from the score file.}
+
+\item{.by}{Column to aggregate by}
 }
 \value{
 A data frame with one row per Slide ID, showing cell counts and

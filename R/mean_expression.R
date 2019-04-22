@@ -16,19 +16,16 @@ utils::globalVariables(c(
 #' `percentile=-.1` would give the expression of the lowest-expressing
 #' decile.
 #'
-#' By default, this function aggregates by `Slide ID` and `Tissue Category`.
-#' To compute mean expression by a different aggregate, pass a data frame nested by
-#' the desired columns. For example, to aggregate by field and tissue
-#' category, pass
-#' ``tidyr::nest(csd, -`Slide ID`, -`Sample Name`, -`Tissue Category`)``
-#' as the `csd` parameter.
+#' By default, this function aggregates by !!.by and `Tissue Category`.
+#' To compute mean expression by a different aggregate, pass a column name in
+#' the `.by` parameter.
 #'
 #' To aggregate over all cells, include `"Total Cells"=NA` as one of the
 #' phenotypes.
 #'
 #' @param csd Cell seg data to use. This should already have been filtered
 #'   for the slides or fields of interest. It may already be nested by
-#'   `Slide ID` and `Tissue Category`.
+#'   !!.by and `Tissue Category`.
 #' @param phenotypes A named list of phenotype selectors
 #'  (see [phenoptr::parse_phenotypes]).
 #' @param params A named list matching phenotype names to
@@ -42,24 +39,28 @@ utils::globalVariables(c(
 #'   `percentile` and `count` can be provided. If both are omitted,
 #'   all cells matching the phenotype are used and the result is the
 #'   overall mean expression.
+#' @param .by Column to aggregate by
 #' @return A data frame with a column for mean for each `param_pair`.
 #' @family aggregation functions
 #' @importFrom magrittr %>%
 #' @importFrom rlang !!!
 #' @export
 compute_mean_expression_many = function(
-  csd, phenotypes, params, tissue_categories=NULL, percentile=NULL, count=NULL)
+  csd, phenotypes, params,
+  tissue_categories=NULL, percentile=NULL, count=NULL, .by='Slide ID')
 {
   check_phenotypes(names(params), phenotypes)
+  .by = rlang::sym(.by)
 
-  csd = make_nested(csd, tissue_categories)
+  csd = make_nested(csd, tissue_categories, .by)
 
-  # If we are grouping by Slide ID and Tissue Category, and have more than
+
+  # If we are grouping by .by and Tissue Category, and have more than
   # one TC, we will add Total rows later. Figure out now whether we will
   # need to do that.
   add_tc_totals = (length(tissue_categories)>1
     && length(names(csd)) == 3
-    && 'Slide ID' %in% names(csd)
+    && rlang::as_string(.by) %in% names(csd)
     && 'Tissue Category' %in% names(csd))
 
   # Figure out what we will call the eventual expression columns.
@@ -117,9 +118,9 @@ compute_mean_expression_many = function(
     return(result[, c(cols, param_names)])
   }
 
-  # Add "All" rows by Slide ID, spread to columns, and fix column order
+  # Add "All" rows by .by, spread to columns, and fix column order
   # to match params
-  result %>% dplyr::group_by(`Slide ID`, name) %>%
+  result %>% dplyr::group_by(!!.by, name) %>%
     tidyr::nest() %>%
     dplyr::mutate(data=purrr::map(data, function(d) {
       total = dplyr::data_frame(count=sum(d$count),
@@ -130,8 +131,8 @@ compute_mean_expression_many = function(
     tidyr::unnest() %>%
     dplyr::select(-count) %>%
     tidyr::spread(name, mean) %>%
-    order_by_slide_and_tissue_category(tissue_categories) %>%
-    dplyr::select(`Slide ID`, `Tissue Category`, !!!param_names)
+    order_by_slide_and_tissue_category(tissue_categories, .by) %>%
+    dplyr::select(!!.by, `Tissue Category`, !!!param_names)
 }
 
 #' Compute mean expression of cells for a single phenotype and marker.

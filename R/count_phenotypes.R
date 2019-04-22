@@ -19,12 +19,17 @@ utils::globalVariables(c(
 #'   row total, `phenotypes` should contain a "Total" item.
 #' @param tissue_categories A character vector of tissue category names
 #'   of interest.
+#' @param .by Column to aggregate by
 #' @return A data frame with columns for Slide ID, Tissue Category, cell
 #'   counts for each requested phenotype, and total cells.
 #' @family aggregation functions
 #' @importFrom magrittr %>%
 #' @export
-count_phenotypes = function(csd, phenotypes, tissue_categories) {
+count_phenotypes = function(csd, phenotypes, tissue_categories, .by='Slide ID') {
+  if (!.by %in% names(csd))
+    stop('No ', .by, ' column in cell seg data.')
+  .by = rlang::sym(.by)
+
   # Remove rows with no phenotype information so they don't get counted as
   # negative phenotypes. (We don't know what they are, don't assume.)
   # Any phenotype column works for this.
@@ -37,7 +42,7 @@ count_phenotypes = function(csd, phenotypes, tissue_categories) {
                    function(pheno) phenoptr::select_rows(csd_good, pheno))
 
   selections = csd_good %>%
-    dplyr::select(`Slide ID`, `Tissue Category`) %>%
+    dplyr::select(!!.by, `Tissue Category`) %>%
     dplyr::bind_cols(selections)
 
   # Make the `fill` argument to `tidyr::complete`; we want 0 for missing values.
@@ -45,14 +50,14 @@ count_phenotypes = function(csd, phenotypes, tissue_categories) {
   fill=rep(0, length(pheno_names)) %>% as.list %>% rlang::set_names(pheno_names)
 
   # Count the positive selections and fill in
-  # missing Slide ID / Tissue Category pairs
-  selections = selections %>% dplyr::group_by(`Slide ID`, `Tissue Category`) %>%
+  # missing .by / Tissue Category pairs
+  selections = selections %>% dplyr::group_by(!!.by, `Tissue Category`) %>%
     dplyr::summarize_all(sum) %>%
     dplyr::ungroup() %>%
-    tidyr::complete(`Slide ID`, `Tissue Category`, fill=fill)
+    tidyr::complete(!!.by, `Tissue Category`, fill=fill)
 
   # Compute totals per tissue category if there are multiple categories
-  add_tissue_category_totals(selections, tissue_categories)
+  add_tissue_category_totals(selections, tissue_categories, .by=.by)
 }
 
 #' Convert a count table to fractional percents

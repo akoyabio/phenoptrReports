@@ -5,10 +5,11 @@
 \title{Compute cell densities from counts and tissue area}
 \usage{
 compute_density_from_cell_summary(counts, summary_path, tissue_categories,
-  pixels_per_micron = getOption("phenoptr.pixels.per.micron"))
+  pixels_per_micron = getOption("phenoptr.pixels.per.micron"),
+  .by = "Slide ID")
 }
 \arguments{
-\item{counts}{A data frame with columns for \code{Slide ID}, \code{Tissue Category},
+\item{counts}{A data frame with columns for \code{.by}, \code{Tissue Category},
 and counts, such as the output of \link{count_phenotypes}.}
 
 \item{summary_path}{Path(s) to cell seg data summary table(s) containing
@@ -18,6 +19,8 @@ sample names and tissue categories matching \code{counts}.}
 of interest.}
 
 \item{pixels_per_micron}{Conversion factor to microns.}
+
+\item{.by}{Column to aggregate by}
 }
 \value{
 A data table with counts converted to density in  \eqn{cells / mm^2}.
