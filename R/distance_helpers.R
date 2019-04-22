@@ -129,7 +129,7 @@ count_within_summary = function(csd, radii, phenotypes=NULL, categories=NA,
 
   # Compute and save the detail table if requested and available
   if (!is.null(details_path)) {
-    if (!requireNamespace('rtree'))
+    if (!requireNamespace('rtree', quietly=TRUE))
       warning('count_within details requires the akoyabio/rtree package.')
     else {
       # Just do the calculation again, it is fast enough.

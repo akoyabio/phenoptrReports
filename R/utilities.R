@@ -170,5 +170,6 @@ choose_files = function(caption='Select files', default='',
 #' @param fun Name of the function
 #' @return TRUE if the package is installed and contains the function.
 function_exists =function(package, fun) {
-  requireNamespace(package) && (fun %in% getNamespaceExports(package))
+  requireNamespace(package, quietly=TRUE) &&
+    (fun %in% getNamespaceExports(package))
 }

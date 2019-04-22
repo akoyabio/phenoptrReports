@@ -114,7 +114,7 @@ component_levels_report = function(export_path=NULL) {
 #' @return None
 #' @export
 write_session_info = function(path) {
-  if (requireNamespace('sessioninfo'))
+  if (requireNamespace('sessioninfo', quietly=TRUE))
     info = sessioninfo::session_info()
   else
     info = utils::sessionInfo()
