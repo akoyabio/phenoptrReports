@@ -124,19 +124,18 @@ write_density_sheet = function(wb, densities,
 #' @param exprs A data frame with columns for `Slide ID`, `Tissue Category`,
 #'   and mean expression, such as the output of
 #'   [compute_mean_expression_many]. Count columns are not reported.
-#' @param .by Column name that we aggregated on.
 #' @param sheet_name Optional name for the worksheet.
 #' @param sheet_title Optional title header for the table.
 #' @importFrom magrittr %>%
 #' @family output functions
 #' @export
-write_expression_sheet = function(wb, exprs, .by='Slide ID',
+write_expression_sheet = function(wb, exprs,
                                sheet_name='Mean Expression',
                                sheet_title='Mean Expression') {
 
   # Subset and re-order columns; remove "(Opal xx) Mean" from names
   exprs = exprs %>%
-    dplyr::select(!!rlang::sym(.by), `Tissue Category`, dplyr::everything()) %>%
+    dplyr::select(1, `Tissue Category`, dplyr::everything()) %>%
     dplyr::select(-dplyr::contains('Count')) %>%
     dplyr::rename_all(remove_marker_mean)
 

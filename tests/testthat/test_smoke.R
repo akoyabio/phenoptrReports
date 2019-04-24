@@ -13,7 +13,8 @@ test_that("file generation works", {
   dir.create(output_dir)
 
   # Data structure for format_all
-  all_data = list(use_regex = FALSE,
+  all_data = list(.by='Slide ID',
+                  use_regex = FALSE,
                   slide_id_prefix = "Set",
                   tissue_categories = c("Tumor", "Stroma"),
                   input_path = file.path(data_dir, "Consolidated_data.txt"),

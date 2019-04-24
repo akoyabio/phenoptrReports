@@ -15,6 +15,8 @@ format_all = function(all_data) {
   phenos = purrr::compact(phenotype_values, 'phenotype') %>%
     purrr::discard(~.x$phenotype %in% c(''))
 
+  .by = all_data$.by
+
   # Flags for various sections present
   has = list()
   has$phenotypes = length(phenos) > 0
@@ -38,7 +40,7 @@ format_all = function(all_data) {
     format_header(),
     format_path(all_data$input_path, all_data$field_col),
     format_tissue_categories(all_data$tissue_categories),
-    format_phenotypes(phenos),
+    format_phenotypes(phenos, .by),
     ifelse(has$density, format_density(all_data$summary_path), ''),
     format_expression(phenos),
     ifelse(has$h_score, format_h_score(all_data$score_path), ''),
@@ -89,7 +91,7 @@ format_tissue_categories = function(cats) {
 }
 
 # Format the phenotype definitions and counting
-format_phenotypes = function(vals) {
+format_phenotypes = function(vals, .by) {
   phenos = purrr::map_chr(vals, 'phenotype')
   if (length(phenos) == 0) return('')
 
@@ -110,8 +112,11 @@ format_phenotypes = function(vals) {
   stringr::str_glue('# Define phenotypes
 phenotypes = parse_phenotypes("{phenos_string}")
 
+# Column to aggregate by
+.by = "{.by}"
+
 # Count phenotypes per tissue category
-counts = count_phenotypes(csd, phenotypes, tissue_categories)
+counts = count_phenotypes(csd, phenotypes, tissue_categories, .by=.by)
 percents = counts_to_percents(counts)
 \n\n')
 }
@@ -126,7 +131,8 @@ summary_path = "{summary_path}"
 
 # Using the counts computed above and the tissue area from the summary,
 # compute cell densities for each phenotype
-densities = compute_density_from_cell_summary(counts, summary_path, tissue_categories)
+densities = compute_density_from_cell_summary(counts, summary_path,
+                                              tissue_categories, .by=.by)
 \n\n')
 }
 
@@ -152,7 +158,8 @@ expression_params = list(
 
 # Compute mean expression per phenotype
 expression_means = csd %>%
-  compute_mean_expression_many(phenotypes, expression_params, tissue_categories)
+  compute_mean_expression_many(phenotypes, expression_params,
+                               tissue_categories, .by=.by)
 \n\n')
 }
 
@@ -162,7 +169,8 @@ format_h_score = function(score_path) {
   stringr::str_glue(
 "# Compute H-Score
 score_path = '{score_path}'
-h_score = compute_h_score_from_score_data(csd, score_path, tissue_categories)
+h_score = compute_h_score_from_score_data(csd, score_path,
+                                          tissue_categories, .by=.by)
 \n\n")
 }
 
@@ -174,12 +182,13 @@ format_nearest_neighbors = function(output_dir, include_distance_details) {
     stringr::str_glue(
 '# Summarize nearest neighbor distances
 nearest_detail_path = file.path("{output_dir}", "nearest_neighbors.csv")
-nearest_neighbors = nearest_neighbor_summary(csd, phenotypes, nearest_detail_path)
+nearest_neighbors = nearest_neighbor_summary(csd, phenotypes,
+                                             nearest_detail_path, .by=.by)
 \n\n')
   else
     stringr::str_glue(
 "# Summarize nearest neighbor distances
-nearest_neighbors = nearest_neighbor_summary(csd, phenotypes)
+nearest_neighbors = nearest_neighbor_summary(csd, phenotypes, .by=.by)
 \n\n")
 }
 
@@ -193,13 +202,14 @@ format_count_within = function(output_dir, radii,
 radii = {deparse(radii)}
 count_detail_path = file.path("{output_dir}", "count_within.csv")
 count_within = count_within_summary(csd, radii, phenotypes,
-                                    tissue_categories, count_detail_path)
+                                    tissue_categories, count_detail_path, .by=.by)
 \n\n')
   else
     stringr::str_glue(
 "# Summary of cells within a specific distance
 radii = {deparse(radii)}
-count_within = count_within_summary(csd, radii, phenotypes, tissue_categories)
+count_within = count_within_summary(csd, radii, phenotypes,
+                                    tissue_categories, .by=.by)
 \n\n")
 }
 
@@ -220,10 +230,11 @@ format_cleanup = function(slide_id_prefix, use_regex, has) {
 
   # Note: Don't use mutate() in cleanup(),
   # it removes attribute from h_score table
-  start = stringr::str_glue("# Clean up the Slide IDs
+  start = stringr::str_glue("# Clean up the aggregation column
 # Do this at the end or it will break merges
 cleanup = function(d) {{
-  d$`Slide ID` = str_remove(d$`Slide ID`, '^{slide_id_prefix}')
+  by_col = ifelse(.by %in% names(d), .by, 'Slide ID')
+  d[[by_col]] = str_remove(d[[by_col]], '^Set')
   d
 }}
 \n\n")
@@ -256,7 +267,7 @@ saveWorkbook(wb, workbook_path, overwrite=TRUE)
 # Write summary charts
 charts_path = file.path("{output_dir}",
                         "Charts.docx")
-write_summary_charts(workbook_path, charts_path)
+write_summary_charts(workbook_path, charts_path, .by=.by)
 
 # Save session info
 info_path = file.path("{output_dir}", "session_info.txt")
