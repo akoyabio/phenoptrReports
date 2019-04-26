@@ -36,7 +36,8 @@ test_that("file generation works", {
                   ))
 
   # Get the formatter function from the app
-  source(system.file('analysis_app', 'formatters.R', package='phenoptrReports'))
+  source(system.file('analysis_app', 'formatters.R', package='phenoptrReports'),
+         local=TRUE)
   script = format_all(all_data)
   script_path = file.path(output_dir, 'Script.R')
   readr::write_lines(script, script_path)
