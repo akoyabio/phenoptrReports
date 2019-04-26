@@ -79,7 +79,7 @@ compute_positivity = function(csd, phenotype, positivity) {
 
   d = d[phenoptr::select_rows(d, positivity),]
   positive = nrow(d)
-  tibble::data_frame(count=count, positive=positive, fraction=positive/count)
+  tibble::tibble(count=count, positive=positive, fraction=positive/count)
 }
 
 #' Compute H-Score based on parameters in a score data file

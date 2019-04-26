@@ -251,11 +251,11 @@ density_fig_height = 0.5 * length(comp_files)
 
 ```{r fig.height=density_fig_height}
 # Make density plots using random sampled data
-all_primaries = data_frame(
+all_primaries = tibble(
   Source=factor(comp_names, levels=comp_names), 
   Fluor=factor(primary_fluors, levels=unique(primary_fluors)),
   data=purrr::map(all_data, 
-                  ~data_frame(primary=as.numeric(.x$primary)) %>%
+                  ~tibble(primary=as.numeric(.x$primary)) %>%
                     sample_frac(size=0.1))) %>% 
   unnest
 

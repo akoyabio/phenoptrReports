@@ -122,7 +122,7 @@ compute_mean_expression_many = function(
   result %>% dplyr::group_by(`Slide ID`, name) %>%
     tidyr::nest() %>%
     dplyr::mutate(data=purrr::map(data, function(d) {
-      total = dplyr::data_frame(count=sum(d$count),
+      total = tibble::tibble(count=sum(d$count),
                                 mean=sum(d$count*d$mean)/sum(d$count))
       total$`Tissue Category` = 'All'
       dplyr::bind_rows(d, total)
@@ -196,5 +196,5 @@ compute_mean_expression = function(
   # Report NA rather than NaN
   m[is.nan(m)] = NA
 
-  tibble::data_frame(count=length(d), mean=m)
+  tibble::tibble(count=length(d), mean=m)
 }
