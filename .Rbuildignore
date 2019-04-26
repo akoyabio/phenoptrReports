@@ -7,6 +7,6 @@
 ^docs$
 ^inst/analysis_app/sample_data$
 ^tools$
-^tests/testthat/results$
+^tests/testthat/results.*$
 ^_pkgdown\.yml$
 ^inst/rmd/Unmixing_error\.html$

@@ -2,10 +2,7 @@ context("smoke")
 library(testthat)
 library(readxl)
 
-test_that("file generation works", {
-  # Make a test directory
-  data_dir = normalizePath(test_path('test_data'), winslash='/', mustWork=FALSE)
-  output_dir = normalizePath(test_path('results'), winslash='/', mustWork=FALSE)
+test_file_generation = function(data_dir, output_dir, expected_path, .by) {
   if (dir.exists(output_dir)) {
     unlink(output_dir, recursive=TRUE)
     Sys.sleep(0.1) # Wait for it...
@@ -13,7 +10,7 @@ test_that("file generation works", {
   dir.create(output_dir)
 
   # Data structure for format_all
-  all_data = list(.by='Slide ID',
+  all_data = list(.by=.by,
                   use_regex = FALSE,
                   slide_id_prefix = "Set",
                   tissue_categories = c("Tumor", "Stroma"),
@@ -46,11 +43,10 @@ test_that("file generation works", {
   source(script_path, local=new.env())
 
   # Check that we created the correct files
-  actual_results = file.path(output_dir, 'Results.xlsx')
-  expected_results = file.path(data_dir, 'Results.xlsx')
+  actual_path = file.path(output_dir, 'Results.xlsx')
 
   expect_true(file.exists(file.path(output_dir, 'Script.R')))
-  expect_true(file.exists(actual_results))
+  expect_true(file.exists(actual_path))
   expect_true(file.exists(file.path(output_dir, 'Charts.docx')))
   expect_true(file.exists(file.path(output_dir, 'nearest_neighbors.csv')))
   expect_true(file.exists(file.path(output_dir, 'count_within.csv')))
@@ -58,13 +54,29 @@ test_that("file generation works", {
 
   # Check numbers against known good
 
-  sheets = excel_sheets(expected_results)
-  expect_equal(excel_sheets(actual_results), sheets)
+  sheets = excel_sheets(expected_path)
+  expect_equal(excel_sheets(actual_path), sheets)
 
   for (sheet in sheets) {
     skip = ifelse(sheet=='H-Score', 2, 1)
-    actual_sheet = read_excel(actual_results, sheet, skip=skip, .name_repair='minimal')
-    expected_sheet = read_excel(expected_results, sheet, skip=skip, .name_repair='minimal')
+    actual_sheet = read_excel(actual_path, sheet, skip=skip, .name_repair='minimal')
+    expected_sheet = read_excel(expected_path, sheet, skip=skip, .name_repair='minimal')
     expect_equal(actual_sheet, expected_sheet, info=paste('Sheet name:', sheet))
   }
+}
+
+test_that("file generation works", {
+  output_dir = normalizePath(test_path('results'), winslash='/', mustWork=FALSE)
+
+  data_dir = normalizePath(test_path('test_data'), winslash='/', mustWork=FALSE)
+  expected_path = file.path(data_dir, 'Results.xlsx')
+
+  # Aggregate by Slide ID
+  test_file_generation(data_dir, output_dir, expected_path, .by='Slide ID')
+
+  # And by Sample Name
+  output_dir = normalizePath(test_path('results_by_sample'),
+                             winslash='/', mustWork=FALSE)
+  expected_path = file.path(data_dir, 'Results_by_sample.xlsx')
+  test_file_generation(data_dir, output_dir, expected_path, .by='Sample Name')
 })
