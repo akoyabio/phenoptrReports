@@ -1,5 +1,10 @@
 # phenoptrReports 0.1.7.9000
 
+Analysis addin:
+- Recognize and correctly read inForm data 
+  which uses comma as the decimal separator. 
+  (Requires phenoptr >= 0.1.6.9000; related to akoyabio/phenoptr#8).
+
 Bug fixes:
 - Fix the way the analysis addin handles of special characters in Slide ID (#9).
 - Fix file chooser to work on RStudio Server.

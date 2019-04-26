@@ -101,7 +101,14 @@ compute_h_score_from_score_data = function(csd, score_path,
   if (!all(score_names %in% names(score_data)))
     stop('"', score_path, '" does not seem to be an H-Score data file.')
 
-  thresholds = score_data[,score_names] %>% purrr::flatten_dbl()
+  thresholds = score_data[,score_names] %>%
+    purrr::map(~{
+      # Fix for files using comma as decimal separator
+      ifelse(is.character(.x),
+             as.numeric(stringr::str_replace(.x, ',', '.')),
+                        .x)
+             }) %>%
+    purrr::flatten_dbl()
   if (is.null(tissue_categories))
     tissue_categories = unique(score_data$`Tissue Category`)
   measure = paste(score_data$`Cell Compartment`[1],
