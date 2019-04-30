@@ -10,7 +10,7 @@ test_file_generation = function(data_dir, output_dir, expected_path, .by) {
   dir.create(output_dir)
 
   # Data structure for format_all
-  all_data = list(.by=.by,
+  all_data = list(by=.by,
                   use_regex = FALSE,
                   slide_id_prefix = "Set",
                   tissue_categories = c("Tumor", "Stroma"),

@@ -4,8 +4,8 @@
 \alias{write_expression_sheet}
 \title{Write an expression table to an Excel workbook}
 \usage{
-write_expression_sheet(wb, exprs, .by = "Slide ID",
-  sheet_name = "Mean Expression", sheet_title = "Mean Expression")
+write_expression_sheet(wb, exprs, sheet_name = "Mean Expression",
+  sheet_title = "Mean Expression")
 }
 \arguments{
 \item{wb}{An openxlsx Workbook from \link[openxlsx:createWorkbook]{openxlsx::createWorkbook}}
@@ -13,8 +13,6 @@ write_expression_sheet(wb, exprs, .by = "Slide ID",
 \item{exprs}{A data frame with columns for \code{Slide ID}, \code{Tissue Category},
 and mean expression, such as the output of
 \link{compute_mean_expression_many}. Count columns are not reported.}
-
-\item{.by}{Column name that we aggregated on.}
 
 \item{sheet_name}{Optional name for the worksheet.}
 
