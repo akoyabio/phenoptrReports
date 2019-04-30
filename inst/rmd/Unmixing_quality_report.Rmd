@@ -5,7 +5,7 @@ output: rmarkdown::html_vignette
 params:
   export_path: 
     label: "Path to directory with component data"
-    value: F:\Opal\Export_test
+    value: C:\Research\phenoptrTestData\Export_test
     input: file
 ---
 
@@ -41,9 +41,8 @@ img {
 knitr::opts_chunk$set(echo=FALSE,fig.width=9, fig.height=6, 
                       comment=NA, warning=FALSE, message=FALSE)
 
-library(tidyverse)
-library(formattable)
-library(phenoptr)
+library(magrittr) # Need that pipe
+library(ggplot2)
 ```
 
 Unmixing quality report for singly-stained samples
@@ -84,7 +83,7 @@ crosstalk = all_data %>%
 
 to_display = crosstalk %>% 
   dplyr::select(-Primary, -dplyr::matches('Autofluorescence')) %>% 
-  dplyr::mutate_at(-1, percent, digits=1)
+  dplyr::mutate_at(-1, formattable::percent, digits=1)
 
 # Put columns in alpha order with DAPI first
 to_display = to_display[sort(names(to_display))] %>% 
@@ -117,7 +116,7 @@ my_color = function(x) {
   cutpt = 0.015
   green_ramp = my_gradient(c(green, yellow))
   yellow_ramp = my_gradient(c(yellow, red_orange))
-  ifelse(x==1, csscolor('white'), # Don't show 100%
+  ifelse(x==1, formattable::csscolor('white'), # Don't show 100%
          ifelse(x<=cutpt, green_ramp(x/cutpt),
                 yellow_ramp((x-cutpt)/(limit-cutpt))))
 }
@@ -167,14 +166,14 @@ signals = all_data %>%
 
 to_display = signals %>% 
   dplyr::select(-Primary, -dplyr::matches('Autofluorescence')) %>% 
-  dplyr::mutate_at(-1, ~percent(.x/max(.x), digits=1))
+  dplyr::mutate_at(-1, ~formattable::percent(.x/max(.x), digits=1))
 
 # Put columns in alpha order with DAPI first
 to_display = to_display[sort(names(to_display))] %>% 
   dplyr::select(Source, dplyr::matches('DAPI'), dplyr::everything())
 
 # We need to know the smallest relative value in own fluor
-min_own_value = to_display %>% mutate(Fluor=primary_fluors) %>% 
+min_own_value = to_display %>% dplyr::mutate(Fluor=primary_fluors) %>% 
   dplyr::select(-Source) %>% 
   tidyr::gather('Component', 'Value', -Fluor) %>% 
   dplyr::filter(stringr::str_detect(Component, Fluor)) %>% 
@@ -251,17 +250,17 @@ density_fig_height = 0.5 * length(comp_files)
 
 ```{r fig.height=density_fig_height}
 # Make density plots using random sampled data
-all_primaries = tibble(
+all_primaries = tibble::tibble(
   Source=factor(comp_names, levels=comp_names), 
   Fluor=factor(primary_fluors, levels=unique(primary_fluors)),
   data=purrr::map(all_data, 
-                  ~tibble(primary=as.numeric(.x$primary)) %>%
-                    sample_frac(size=0.1))) %>% 
-  unnest
+                  ~tibble::tibble(primary=as.numeric(.x$primary)) %>%
+                     dplyr::sample_frac(size=0.1))) %>% 
+  tidyr::unnest()
 
 if (require(ggridges)){
   all_primaries %>% 
-    filter(primary > 0) %>% 
+    dplyr::filter(primary > 0) %>% 
     ggplot(aes(log10(primary), forcats::fct_rev(Source), fill=Fluor)) +
     geom_density_ridges(color='gray50') +
     labs(x=expression(bold(log[10](Expression))), y='') +
