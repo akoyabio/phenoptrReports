@@ -15,7 +15,7 @@ format_all = function(all_data) {
   phenos = purrr::compact(phenotype_values, 'phenotype') %>%
     purrr::discard(~.x$phenotype %in% c(''))
 
-  .by = all_data$.by
+  .by = all_data$by
 
   # Flags for various sections present
   has = list()
