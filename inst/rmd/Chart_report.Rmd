@@ -13,6 +13,10 @@ params:
     input: integer
     label: Maximum number of slides to show on each plot
     value: 20
+  .by:
+    input: string
+    label: Name of the grouping parameter in the worksheets
+    value: 'Slide ID'
 ---
 
 ```{r setup, echo=FALSE,include=FALSE,message=FALSE}
@@ -27,6 +31,8 @@ knitr::opts_chunk$set(echo=FALSE,fig.width=10, fig.height=5.5,
 
 workbook_path = params$workbook_path
 max_slides_per_plot = params$max_slides_per_plot
+.by_str = params$.by
+.by = rlang::sym(.by_str)
 
 # Note: Using readxl rather than openxlsx for reading because
 # the check.names parameter of openxlsx::readWorkbook is kind of broken.
@@ -66,7 +72,7 @@ theme_phenoptr = theme_minimal() +
 # If d has more than max_slides_per_plot slides, 
 # split it into roughly equal pieces
 split_slides = function(d) {
-  slides = unique(d$`Slide ID`)
+  slides = unique(d[[.by_str]])
   n_slides = length(slides)
   if (n_slides <= max_slides_per_plot)
     return(list(d))
@@ -75,7 +81,7 @@ split_slides = function(d) {
   group_size = ceiling(n_slides/n_groups)
   groups = rep(1:n_groups, each=group_size)
   slide_groups = split(slides, groups[1:n_slides])
-  map(slide_groups, ~d %>% filter(`Slide ID` %in% .x))
+  map(slide_groups, ~d %>% filter(.by_str %in% .x))
 }
 
 # Create a tissue category factor which has Tumor first and Total / All last
@@ -97,7 +103,7 @@ order_tissue_categories = function(cats) {
 if ('Cell Counts' %in% sheet_names) {
   counts = read_xlsx(workbook_path, 'Cell Counts', skip=1)
   tall = counts %>%
-    gather('Phenotype', 'Cell Count', -`Slide ID`, -`Tissue Category`) %>%
+    gather('Phenotype', 'Cell Count', -(!!.by), -`Tissue Category`) %>%
     filter(!Phenotype %in% c('Other', 'Total Cells')) %>% 
     mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`))
   
@@ -110,18 +116,16 @@ if ('Cell Counts' %in% sheet_names) {
     walk2(seq_along(tall), tall, function(i, d) {
       limit_text = if(is.na(plot_limit)) '' else ' (limited range)'
       if (length(tall) > 1) {
-        cat(stringr::str_glue('## Phenotype cell counts per tissue category and slide{limit_text} ({i} of {length(tall)})\n\n'))
+        cat(stringr::str_glue('## Phenotype cell counts per tissue category and {.by_str}{limit_text} ({i} of {length(tall)})\n\n'))
       } else {
-        cat('## Phenotype cell counts per tissue category and slide',
-            limit_text, '\n\n')
+        cat(stringr::str_glue('## Phenotype cell counts per tissue category and {.by_str}{limit_text}\n\n'))
       }
-      p = ggplot(d,
-                     aes(Phenotype, `Cell Count`, fill=Phenotype)) +
+      p = ggplot(d, aes(Phenotype, `Cell Count`, fill=Phenotype)) +
         base_line +
         geom_col() +
-        facet_grid(`Tissue Category` ~ `Slide ID`, switch='x') +
+        facet_grid(vars(`Tissue Category`), vars(!!.by), switch='x') +
         scale_fill_phenoptr + scale_x_expand +
-        labs(x='Slide ID', y='Cell Count') +
+        labs(x=.by_str, y='Cell Count') +
         theme_phenoptr
       
       if (!is.na(plot_limit))
@@ -142,7 +146,7 @@ if ('Cell Densities' %in% sheet_names) {
   
   # Reshape for plotting
   tall = density %>% gather('Phenotype', 'Density',
-                                    -`Slide ID`, -`Tissue Category`) %>%
+                                    -(!!.by), -`Tissue Category`) %>%
     filter(!Phenotype %in% c('Tissue Area (mm2)', 'Other', 'Total Cells')) %>% 
     mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`)) 
   
@@ -155,18 +159,17 @@ if ('Cell Densities' %in% sheet_names) {
     walk2(seq_along(tall), tall, function(i, d) {
         limit_text = if(is.na(plot_limit)) '' else ' (limited range)'
       if (length(tall) > 1) {
-        cat(stringr::str_glue('## Phenotype cell density per tissue category and slide{limit_text} ({i} of {length(tall)})\n\n'))
+        cat(stringr::str_glue('## Phenotype cell density per tissue category and {.by_str}{limit_text} ({i} of {length(tall)})\n\n'))
       } else {
-        cat('## Phenotype cell density per tissue category and slide',
-        limit_text, '\n\n')
+        cat(stringr::str_glue('## Phenotype cell density per tissue category and {.by_str}{limit_text}\n\n'))
       }
       p = ggplot(d,
                  aes(Phenotype, Density, fill=Phenotype)) +
         base_line +
         geom_col() +
-        facet_grid(`Tissue Category` ~ `Slide ID`, switch='x') +
+        facet_grid(vars(`Tissue Category`), vars(!!.by), switch='x') +
         scale_fill_phenoptr + scale_x_expand +
-        labs(x='Slide ID', y=expression(bold(paste('Cell Density (', cells/mm^2, ')')))) +
+        labs(x=.by_str, y=expression(bold(paste('Cell Density (', cells/mm^2, ')')))) +
         theme_phenoptr
       
       if (!is.na(plot_limit))
@@ -186,7 +189,7 @@ if ('Mean Expression' %in% sheet_names) {
   
   # Reshape for plotting
   tall = expression %>% gather('Measure', 'Mean',
-                                    -`Slide ID`, -`Tissue Category`) %>%
+                                    -(!!.by), -`Tissue Category`) %>%
     mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`)) %>%
     separate(Measure, into=c('Phenotype', 'Measure'), sep=' ', extra='merge') %>% 
     mutate(Measure = stringr::str_replace(Measure, '([^(]*) (\\(.*\\) )?Mean', 'Mean \\1 Expression'))
@@ -207,9 +210,9 @@ if ('Mean Expression' %in% sheet_names) {
       p = ggplot(d, aes(Phenotype, Mean, fill=Phenotype)) +
         base_line +
         geom_col() +
-        facet_grid(`Tissue Category` ~ `Slide ID`, switch='x') +
+        facet_grid(vars(`Tissue Category`), vars(!!.by), switch='x') +
         scale_fill_phenoptr + scale_x_expand +
-        labs(x='Slide ID', y=d$Measure[1]) +
+        labs(x=.by_str, y=d$Measure[1]) +
         theme_phenoptr
      
       print(p)
@@ -247,14 +250,14 @@ if ('H-Score' %in% sheet_names) {
   # Clean up duplicate names and reshape for plotting
   tall = h_score %>%
     select(-`H-Score`) %>% 
-    gather('Bin', 'Percent',  -`Slide ID`, -`Tissue Category`)
+    gather('Bin', 'Percent',  -(!!.by), -`Tissue Category`)
   
   # Cumulative percent plots as one bar per slide so we don't have to split_slides
   cat('##', title, '\n\n')
   p = ggplot(tall,
-         aes(`Slide ID`, Percent, fill=Bin)) +
+         aes(!!.by, Percent, fill=Bin)) +
     geom_col(position=position_stack(reverse=TRUE)) +
-    facet_grid(`Tissue Category` ~ ., switch='x') +
+    facet_grid(vars(`Tissue Category`), switch='x') +
     scale_fill_manual(values=phenoptr_colors[c(1, 2, 4, 3)]) + 
     scale_y_continuous(labels=scales::percent) +
     labs(x='', y='Percent Total Cells per Bin') +
@@ -266,9 +269,9 @@ if ('H-Score' %in% sheet_names) {
 
   # H-Score is also one plot
   cat('##', h_score_title, '\n\n')
-  p = ggplot(h_score, aes(`Slide ID`, `H-Score`)) +
+  p = ggplot(h_score, aes(!!.by, `H-Score`)) +
     geom_col(fill=phenoptr_colors[1]) +
-    facet_grid(`Tissue Category` ~ ., switch='x') +
+    facet_grid(vars(`Tissue Category`), switch='x') +
     labs(x='', y='H-Score') +
     theme_phenoptr +
     theme(axis.text.x=element_text(face='bold', angle=90))
@@ -295,13 +298,13 @@ if ('Nearest Neighbors' %in% sheet_names) {
   neighbors = split_slides(neighbors)
   iwalk(neighbors, function(d, i) {
     if (length(neighbors) > 1) {
-      cat(str_glue('## Median Distance to Nearest Neighbor ({i} of {length(neighbors)})\n\n'))
+      cat(stringr::str_glue('## Median Distance to Nearest Neighbor ({i} of {length(neighbors)})\n\n'))
     } else {
       cat('## Median Distance to Nearest Neighbor\n\n')
     }
     p = ggplot(d, aes(To, From, fill=Median)) +
       geom_raster(na.rm=TRUE) +
-      facet_wrap(~ `Slide ID`) +
+      facet_wrap(vars(!!.by)) +
       scale_fill_gradientn('Median\nDistance', na.value='grey90', 
                            limits=c(0, max_median),
                            colors=RColorBrewer::brewer.pal(9, 'RdYlBu')) +
@@ -349,9 +352,9 @@ if ('Count Within' %in% sheet_names) {
         d = d %>% filter(`Tissue Category`==category, radius==Radius)
 
         if (length(split_counts) > 1) {
-          cat(str_glue('## Count of "From" cells in {category} with a "To" cell within {radius} microns ({i} of {length(split_counts)})\n\n'))
+          cat(stringr::str_glue('## Count of "From" cells in {category} with a "To" cell within {radius} microns ({i} of {length(split_counts)})\n\n'))
         } else {
-          cat(str_glue('## Count of "From" cells in {category} with a "To" cell within {radius} microns\n\n'))
+          cat(stringr::str_glue('## Count of "From" cells in {category} with a "To" cell within {radius} microns\n\n'))
         }
         
         # Find the max count for this group
@@ -360,7 +363,7 @@ if ('Count Within' %in% sheet_names) {
         
         p = ggplot(d, aes(To, From, fill=`From with`)) +
           geom_raster(na.rm=TRUE) +
-          facet_wrap(~ `Slide ID`) +
+          facet_wrap(vars(!!.by)) +
           scale_fill_gradientn('Cell\nCount', na.value='grey90', 
                                limits=c(0, max_count),
                                colors=rev(RColorBrewer::brewer.pal(9, 'RdYlBu'))) +

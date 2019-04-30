@@ -4,7 +4,8 @@
 \alias{nearest_neighbor_summary}
 \title{Summarize nearest neighbor distances}
 \usage{
-nearest_neighbor_summary(csd, phenotypes = NULL, details_path = NULL)
+nearest_neighbor_summary(csd, phenotypes = NULL, details_path = NULL,
+  .by = "Slide ID")
 }
 \arguments{
 \item{csd}{Cell seg data with \code{Cell X Position},
@@ -15,6 +16,8 @@ will use \code{unique_phenotypes(csd)}.}
 
 \item{details_path}{If present, path to save a table with
 nearest-neighbor data for each cell.}
+
+\item{.by}{Column to aggregate by}
 }
 \value{
 A data frame with summary statistics for each phenotype pair
@@ -22,5 +25,5 @@ in each Slide ID.
 }
 \description{
 Computes summary nearest neighbor statistics (mean, median, etc)
-for each Slide ID in \code{csd} and each pair of phenotypes in \code{phenotypes}.
+for each \code{.by} in \code{csd} and each pair of phenotypes in \code{phenotypes}.
 }

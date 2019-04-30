@@ -6,12 +6,15 @@
 categories in the given order and the
 "Total" category in the proper place.}
 \usage{
-order_by_slide_and_tissue_category(d, tissue_categories)
+order_by_slide_and_tissue_category(d, tissue_categories,
+  .by = "Slide ID")
 }
 \arguments{
-\item{d}{A data frame with Slide ID and Tissue Category columns}
+\item{d}{A data frame with \code{.by} and Tissue Category columns}
 
 \item{tissue_categories}{A vector of category names in the desired order}
+
+\item{.by}{First column to sort by}
 }
 \value{
 The input, sorted

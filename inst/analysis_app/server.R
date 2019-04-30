@@ -2,6 +2,7 @@
 shinyServer(function(input, output, server) {
 
   # Data container. Will contain
+  # by - Field to aggregate by
   # available_phenotypes - Base names (no +/-) of all available phenotypes
   # expression_columns - Names of mean expression columns
   # field_col - Name of the column that distinguishes fields
@@ -52,8 +53,18 @@ shinyServer(function(input, output, server) {
       stringr::str_subset('Phenotype ') %>%
       stringr::str_remove('Phenotype ')
 
-    the_data$slide_id_prefix = slide_id_prefix =
-      find_common_prefix(unique(d$`Slide ID`))
+    # Slide ID prefix and aggregation choices
+    if ('Slide ID' %in% names(d)) {
+      the_data$slide_id_prefix = slide_id_prefix =
+        find_common_prefix(unique(d$`Slide ID`))
+      by_choices = c('Slide ID', phenoptr::field_column(d))
+    } else {
+      # No Slide ID column
+      the_data$slide_id_prefix = slide_id_prefix = ''
+      by_choices = phenoptr::field_column(d)
+    }
+
+    the_data$by = by_choices[1] # Default
 
     shiny::removeModal()
 
@@ -61,8 +72,14 @@ shinyServer(function(input, output, server) {
     new_ui = shiny::tagList(
       # First well panel has miscellaneous inputs
       shiny::div(id='well1', shiny::wellPanel(
-        shiny::checkboxGroupInput('tissue_categories', 'Select tissue categories:',
-                                  choices=tissue_categories, inline=TRUE),
+        shiny::fluidRow(
+          shiny::column(6,
+            shiny::checkboxGroupInput('tissue_categories', 'Select tissue categories:',
+                                  choices=tissue_categories, inline=TRUE)),
+          shiny::column(6,
+            shiny::selectInput('by', 'Summarize by',
+                               by_choices, selected=by_choices[1]))
+        ),
         shiny::fluidRow(
           shiny::column(6, shiny::textInput('slide_id_prefix',
                            'Slide ID prefix (will be removed)',
@@ -104,6 +121,12 @@ shinyServer(function(input, output, server) {
       list(shiny::callModule(phenotype_module, 'pheno0',
                              available_phenotypes))
 
+  })
+
+  # Handle by
+  shiny::observe({
+    shiny::req(input$by)
+    the_data$by = input$by
   })
 
   # Handle changes to Slide ID prefix by saving values

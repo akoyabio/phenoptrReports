@@ -1,4 +1,5 @@
 tests/testthat/results
+tests/testthat/results_by_sample
 .Rproj.user
 .Rhistory
 .RData

@@ -5,7 +5,7 @@
 \title{Summarize "count within" distances}
 \usage{
 count_within_summary(csd, radii, phenotypes = NULL, categories = NA,
-  details_path = NULL)
+  details_path = NULL, .by = "Slide ID")
 }
 \arguments{
 \item{csd}{Cell seg data with \code{Cell X Position},
@@ -21,6 +21,8 @@ pairs of phenotypes.}
 
 \item{details_path}{If present, path to save a table with
 nearest-neighbor data for each cell.}
+
+\item{.by}{Column to aggregate by}
 }
 \value{
 A data frame with summary statistics for each phenotype pair

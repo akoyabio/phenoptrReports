@@ -4,17 +4,21 @@
 #' categories in the given order and the
 #' "Total" category in the proper place.
 #'
-#' @param d A data frame with Slide ID and Tissue Category columns
+#' @param d A data frame with `.by` and Tissue Category columns
 #' @param tissue_categories A vector of category names in the desired order
+#' @param .by First column to sort by
 #' @return The input, sorted
 #' @export
-order_by_slide_and_tissue_category = function(d, tissue_categories) {
+order_by_slide_and_tissue_category =
+    function(d, tissue_categories, .by='Slide ID') {
+  .by = rlang::sym(.by)
+
   # Lookup table for ordering tissue categories
   tissue_order = 1:(length(tissue_categories)+2) %>%
     rlang::set_names(c(tissue_categories, 'Total', 'All'))
 
   d %>%
-    dplyr::arrange(`Slide ID`, tissue_order[`Tissue Category`])
+    dplyr::arrange(!!.by, tissue_order[`Tissue Category`])
 }
 
 #' Make a nested data frame with one row per Slide ID and
@@ -25,21 +29,24 @@ order_by_slide_and_tissue_category = function(d, tissue_categories) {
 #' @param csd Cell seg data to use, possibly nested already.
 #' @param tissue_categories If provided, the result will be filtered
 #'   and nested by the provided categories.
+#' @param .by Column to aggregate by
 #' @return A nested data frame.
-make_nested = function(csd, tissue_categories=NULL) {
+make_nested = function(csd, tissue_categories=NULL, .by='Slide ID') {
   # If it is already nested, just return it
   if ('data' %in% names(csd) && inherits(csd$data[[1]], 'data.frame'))
     return (csd)
 
-  if (!'Slide ID' %in% names(csd))
+  if (!rlang::as_string(.by) %in% names(csd))
     stop('Data frame must have "Slide ID" column.')
 
-  # If no tissue categories, just nest by Slide ID
+  .by = rlang::sym(.by)
+
+  # If no tissue categories, just nest by .by
   if (is.null(tissue_categories))
-    return(tidyr::nest(csd, -`Slide ID`))
+    return(tidyr::nest(csd, -!!.by))
 
   csd = csd %>% dplyr::filter(`Tissue Category` %in% tissue_categories)
-  tidyr::nest(csd, -`Slide ID`, -`Tissue Category`)
+  tidyr::nest(csd, -!!.by, -`Tissue Category`)
 }
 
 #' Add total rows to a data frame if there are multiple tissue categories.
@@ -47,18 +54,20 @@ make_nested = function(csd, tissue_categories=NULL) {
 #' @param d A data frame with columns for Slide ID, Tissue Category and
 #'   columns to summarize
 #' @param tissue_categories The tissue categories of interest, ordered.
+#' @param .by Column to aggregate by
 #' @return A data frame with tissue category totals and rows in order.
-add_tissue_category_totals = function(d, tissue_categories) {
+add_tissue_category_totals = function(d, tissue_categories, .by='Slide ID') {
   if (length(tissue_categories) < 2)
     return(d)
 
+  .by = rlang::sym(.by)
   totals = d %>% dplyr::select(-`Tissue Category`) %>%
-    dplyr::group_by(`Slide ID`) %>%
+    dplyr::group_by(!!.by) %>%
     dplyr::summarize_all(sum) %>%
     dplyr::mutate(`Tissue Category` = 'Total')
   result = dplyr::bind_rows(d, totals)
 
-  result %>% order_by_slide_and_tissue_category(tissue_categories)
+  result %>% order_by_slide_and_tissue_category(tissue_categories, .by)
 }
 
 #' Check that all requested phenotypes are defined

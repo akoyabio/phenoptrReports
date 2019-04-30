@@ -10,25 +10,28 @@ if (getRversion() >= "2.15.1")
 #' Summarize nearest neighbor distances
 #'
 #' Computes summary nearest neighbor statistics (mean, median, etc)
-#' for each Slide ID in `csd` and each pair of phenotypes in `phenotypes`.
+#' for each `.by` in `csd` and each pair of phenotypes in `phenotypes`.
 #' @param csd Cell seg data with `Cell X Position`,
 #'        `Cell Y Position`, field name and `Phenotype` columns.
 #' @param phenotypes Optional list of phenotypes to include. If omitted,
 #' will use `unique_phenotypes(csd)`.
 #' @param details_path If present, path to save a table with
 #' nearest-neighbor data for each cell.
+#' @param .by Column to aggregate by
 #' @return A data frame with summary statistics for each phenotype pair
 #' in each Slide ID.
 #' @export
 #' @importFrom magrittr %>%
-nearest_neighbor_summary = function(csd, phenotypes=NULL, details_path=NULL) {
+nearest_neighbor_summary = function(csd, phenotypes=NULL, details_path=NULL,
+                                    .by='Slide ID') {
   phenotypes = phenoptr::validate_phenotypes(phenotypes, csd)
 
   field_col = rlang::sym(phenoptr::field_column(csd))
+  .by = rlang::sym(.by)
 
   # Compute nearest neighbor distances for all cells, one field at a time.
   distances <- csd %>%
-    dplyr::group_by(`Slide ID`, !!field_col) %>%
+    dplyr::group_by(!!.by, !!field_col) %>%
     tidyr::nest() %>%
     dplyr::mutate(distance=purrr::map(data,
                            phenoptr::find_nearest_distance, phenotypes)) %>%
@@ -37,7 +40,7 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL, details_path=NULL) {
   # Optionally save details with a subset of columns
   if (!is.null(details_path)) {
     distances_subset = distances %>%
-      dplyr::select(`Slide ID`, `Cell ID`, `Cell X Position`, `Cell Y Position`,
+      dplyr::select(!!.by, `Cell ID`, `Cell X Position`, `Cell Y Position`,
                     !!field_col,
                     dplyr::contains('Tissue Category'),
                     dplyr::starts_with('Phenotype'),
@@ -77,8 +80,8 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL, details_path=NULL) {
   }
 
   # Now we can do the work, computing summary stats for all pairs,
-  # grouping by slides
-  distances %>% tidyr::nest(-`Slide ID`) %>%
+  # grouping by .by
+  distances %>% tidyr::nest(-(!!.by)) %>%
     dplyr::mutate(stats=purrr::map(data, summarize_all_pairs)) %>%
     dplyr::select(-data) %>%
     tidyr::unnest()
@@ -106,16 +109,18 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL, details_path=NULL) {
 #' @param categories Optional list of tissue categories to compute within.
 #' @param details_path If present, path to save a table with
 #' nearest-neighbor data for each cell.
+#' @param .by Column to aggregate by
 #' @return A data frame with summary statistics for each phenotype pair
 #' in each Slide ID.
 #' @export
 #' @importFrom magrittr %>%
 count_within_summary = function(csd, radii, phenotypes=NULL, categories=NA,
-                                details_path=NULL) {
+                                details_path=NULL, .by='Slide ID') {
   phenotypes = phenoptr::validate_phenotypes(phenotypes, csd)
 
   # The column name that defines fields
   field_col = rlang::sym(phenoptr::field_column(csd))
+  .by = rlang::sym(.by)
 
   # All pairs of phenotypes as a list of vectors.
   # Order matters so this will include both (a, b) and (b, a).
@@ -124,7 +129,7 @@ count_within_summary = function(csd, radii, phenotypes=NULL, categories=NA,
 
   # Nest by field
   nested = csd %>%
-    dplyr::group_by(`Slide ID`, !!field_col) %>%
+    dplyr::group_by(!!.by, !!field_col) %>%
     tidyr::nest()
 
   # Compute and save the detail table if requested and available
@@ -139,7 +144,7 @@ count_within_summary = function(csd, radii, phenotypes=NULL, categories=NA,
         dplyr::mutate(within=purrr::map(data,
                       phenoptr::count_within_detail, phenotypes, radii)) %>%
         tidyr::unnest() %>%
-        dplyr::select(`Slide ID`, `Cell ID`, `Cell X Position`, `Cell Y Position`,
+        dplyr::select(!!.by, `Cell ID`, `Cell X Position`, `Cell Y Position`,
                       !!field_col,
                       dplyr::contains('Tissue Category'),
                       dplyr::starts_with('Phenotype'),
@@ -159,8 +164,8 @@ count_within_summary = function(csd, radii, phenotypes=NULL, categories=NA,
     tidyr::unnest() %>%
     dplyr::select(-source) # Chaff from count_within_many
 
-  # Aggregate per slide. See ?phenoptr::count_within for explanation
-  distances %>% dplyr::group_by(`Slide ID`, category, from, to, radius) %>%
+  # Aggregate per .by. See ?phenoptr::count_within for explanation
+  distances %>% dplyr::group_by(!!.by, category, from, to, radius) %>%
     dplyr::summarize(within=sum(from_count*within_mean, na.rm=TRUE),
               from_count=sum(from_count),
               to_count=sum(to_count),

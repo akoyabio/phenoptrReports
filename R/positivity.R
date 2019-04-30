@@ -88,13 +88,15 @@ compute_positivity = function(csd, phenotype, positivity) {
 #' @param score_path Path to to a score_data file (may be merged or not).
 #' @param tissue_categories optionally specify tissue categories of interest.
 #'   If not given, tissue categories are taken from the score file.
+#' @param .by Column to aggregate by
 #' @return A data frame with one row per Slide ID, showing cell counts and
 #'   percents in each bin and the H-Score. See [compute_h_score].
 #' @family aggregation functions
 #' @importFrom magrittr %>%
 #' @export
 compute_h_score_from_score_data = function(csd, score_path,
-                                           tissue_categories=NULL) {
+                                           tissue_categories=NULL,
+                                           .by='Slide ID') {
   # Read the score data to get the required parameters
   score_data = readr::read_tsv(score_path, n_max=1, col_types=readr::cols())
   score_names = c('Threshold 0/1+', 'Threshold 1+/2+', 'Threshold 2+/3+')
@@ -115,10 +117,10 @@ compute_h_score_from_score_data = function(csd, score_path,
                   score_data$`Stain Component`[1],
                   'Mean', sep=' ')
 
-  compute_h_score(csd, measure, tissue_categories, thresholds)
+  compute_h_score(csd, measure, tissue_categories, thresholds, .by)
 }
 
-#' Compute H-Score for a single marker aggregated by Slide  ID
+#' Compute H-Score for a single marker aggregated by `.by`
 #'
 #' Parameters are directly provided.
 #'
@@ -127,13 +129,15 @@ compute_h_score_from_score_data = function(csd, score_path,
 #' @param tissue_categories A character vector of tissue category names
 #'   of interest.
 #' @param thresholds Optional three element vector with the threshold values.
+#' @param .by Column to aggregate by
 #' @return A data frame with one row per Slide ID, showing cell counts and
 #'   percents in each bin and the H-Score. The data frame has attributes
 #'   measure and thresholds.
 #' @family aggregation functions
 #' @importFrom magrittr %>%
 #' @export
-compute_h_score = function(csd, measure, tissue_categories, thresholds) {
+compute_h_score = function(csd, measure, tissue_categories, thresholds,
+                           .by='Slide ID') {
   if (!measure %in% names(csd))
     stop("Column not found: ", measure)
 
@@ -144,10 +148,11 @@ compute_h_score = function(csd, measure, tissue_categories, thresholds) {
   if (length(thresholds) != 3)
     stop('Please provide three threshold values.')
 
+  .by = rlang::sym(.by)
   measure = rlang::sym(measure)
 
   # We only need three columns
-  d = csd %>% dplyr::select(`Slide ID`, `Tissue Category`, !!measure) %>%
+  d = csd %>% dplyr::select(!!.by, `Tissue Category`, !!measure) %>%
     dplyr::filter(`Tissue Category` %in% tissue_categories)
 
   d = d %>% dplyr::mutate(score = dplyr::case_when(
@@ -155,7 +160,7 @@ compute_h_score = function(csd, measure, tissue_categories, thresholds) {
     !!measure < thresholds[2] ~ 1,
     !!measure < thresholds[3] ~ 2,
     TRUE ~ 3)) %>%
-    dplyr::group_by(`Slide ID`, `Tissue Category`) %>%
+    dplyr::group_by(!!.by, `Tissue Category`) %>%
     dplyr::summarize(
       `Count of 0+` = sum(score==0),
       `Count of 1+` = sum(score==1),
@@ -164,7 +169,7 @@ compute_h_score = function(csd, measure, tissue_categories, thresholds) {
       Total = dplyr::n()
     ) %>% dplyr::ungroup()
 
-  d = add_tissue_category_totals(d, tissue_categories) %>%
+  d = add_tissue_category_totals(d, tissue_categories, .by) %>%
     dplyr::mutate(
       `0+` = round(`Count of 0+`/Total, 3),
       `1+` = round(`Count of 1+`/Total, 3),

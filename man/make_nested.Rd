@@ -5,13 +5,15 @@
 \title{Make a nested data frame with one row per Slide ID and
 optionally Tissue Category.}
 \usage{
-make_nested(csd, tissue_categories = NULL)
+make_nested(csd, tissue_categories = NULL, .by = "Slide ID")
 }
 \arguments{
 \item{csd}{Cell seg data to use, possibly nested already.}
 
 \item{tissue_categories}{If provided, the result will be filtered
 and nested by the provided categories.}
+
+\item{.by}{Column to aggregate by}
 }
 \value{
 A nested data frame.

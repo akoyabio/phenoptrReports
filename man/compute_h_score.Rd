@@ -2,9 +2,10 @@
 % Please edit documentation in R/positivity.R
 \name{compute_h_score}
 \alias{compute_h_score}
-\title{Compute H-Score for a single marker aggregated by Slide  ID}
+\title{Compute H-Score for a single marker aggregated by \code{.by}}
 \usage{
-compute_h_score(csd, measure, tissue_categories, thresholds)
+compute_h_score(csd, measure, tissue_categories, thresholds,
+  .by = "Slide ID")
 }
 \arguments{
 \item{csd}{Cell seg data to use.}
@@ -15,6 +16,8 @@ compute_h_score(csd, measure, tissue_categories, thresholds)
 of interest.}
 
 \item{thresholds}{Optional three element vector with the threshold values.}
+
+\item{.by}{Column to aggregate by}
 }
 \value{
 A data frame with one row per Slide ID, showing cell counts and

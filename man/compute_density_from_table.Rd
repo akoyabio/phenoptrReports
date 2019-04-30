@@ -4,10 +4,11 @@
 \alias{compute_density_from_table}
 \title{Compute cell densities from counts and tissue area}
 \usage{
-compute_density_from_table(counts, areas, tissue_categories)
+compute_density_from_table(counts, areas, tissue_categories,
+  .by = "Slide ID")
 }
 \arguments{
-\item{counts}{A data frame with columns for \code{Slide ID}, \code{Tissue Category},
+\item{counts}{A data frame with columns for .by, \code{Tissue Category},
 and counts, such as the output of \link{count_phenotypes}.}
 
 \item{areas}{A data frame containing tissue areas in \eqn{cells / micron^2} with
@@ -15,6 +16,8 @@ sample names and tissue categories matching \code{counts}.}
 
 \item{tissue_categories}{A character vector of tissue category names
 of interest.}
+
+\item{.by}{Column to aggregate by}
 }
 \value{
 A data table with counts converted to density in \eqn{cells / mm^2}.

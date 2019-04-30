@@ -135,7 +135,7 @@ write_expression_sheet = function(wb, exprs,
 
   # Subset and re-order columns; remove "(Opal xx) Mean" from names
   exprs = exprs %>%
-    dplyr::select(`Slide ID`, `Tissue Category`, dplyr::everything()) %>%
+    dplyr::select(1, `Tissue Category`, dplyr::everything()) %>%
     dplyr::select(-dplyr::contains('Count')) %>%
     dplyr::rename_all(remove_marker_mean)
 
