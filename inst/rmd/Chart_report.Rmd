@@ -17,6 +17,8 @@ params:
     input: string
     label: Name of the grouping parameter in the worksheets
     value: 'Slide ID'
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, echo=FALSE,include=FALSE,message=FALSE}
@@ -81,7 +83,7 @@ split_slides = function(d) {
   group_size = ceiling(n_slides/n_groups)
   groups = rep(1:n_groups, each=group_size)
   slide_groups = split(slides, groups[1:n_slides])
-  map(slide_groups, ~d %>% filter(.by_str %in% .x))
+  map(slide_groups, ~(d %>% filter(!!.by %in% .x)))
 }
 
 # Create a tissue category factor which has Tumor first and Total / All last
