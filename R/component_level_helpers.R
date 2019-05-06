@@ -37,7 +37,7 @@ component_ridge_plot = function(path, quantiles=NULL) {
   quants = comps %>%
     tidyr::nest(-Fluor, -Source) %>%
     dplyr::mutate(q=purrr::map(data, ~quantile(.$value, quantiles)
-           %>% as.list() %>% tibble::tibble())) %>%
+           %>% as.list() %>% tibble::as_tibble())) %>%
     dplyr::select(-data) %>% tidyr::unnest()
 
   # For plotting a long data frame is better

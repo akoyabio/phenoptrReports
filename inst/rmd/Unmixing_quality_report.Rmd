@@ -5,7 +5,7 @@ output: rmarkdown::html_vignette
 params:
   export_path: 
     label: "Path to directory with component data"
-    value: C:\Research\phenoptrTestData\Export_test
+    value: C:\Research\phenoptrTestData\unmixing_quality_report_test
     input: file
 ---
 

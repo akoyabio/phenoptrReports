@@ -39,8 +39,11 @@ write_summary_report = function(csd_path=NULL, csd=NULL,
 #'   by [write_counts_sheet], etc.
 #' @param output_path Path to write the resulting file.
 #' @param .by Name of the grouping parameter in the worksheets
+#' @param  max_slides_per_plot Maximum number of slides or samples
+#'  to show on each plot
 #' @export
-write_summary_charts = function(workbook_path, output_path, .by='Slide ID') {
+write_summary_charts = function(workbook_path, output_path,
+                                .by='Slide ID', max_slides_per_plot=20) {
   stopifnot(file.exists(workbook_path))
 
   if (is.null(output_path))
@@ -59,7 +62,8 @@ write_summary_charts = function(workbook_path, output_path, .by='Slide ID') {
   rmarkdown::render(rmd_path, output_file=output_path, quiet=TRUE,
                     intermediates_dir=temp_dir_by(output_path),
                     output_format=output_format,
-                    params=list(workbook_path=workbook_path, .by=.by))
+                    params=list(workbook_path=workbook_path, .by=.by,
+                                max_slides_per_plot=max_slides_per_plot))
 }
 
 #' Create an unmixing quality report for simplex samples

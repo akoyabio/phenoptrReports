@@ -4,7 +4,8 @@
 \alias{write_summary_charts}
 \title{Create summary charts from the results of an analysis}
 \usage{
-write_summary_charts(workbook_path, output_path, .by = "Slide ID")
+write_summary_charts(workbook_path, output_path, .by = "Slide ID",
+  max_slides_per_plot = 20)
 }
 \arguments{
 \item{workbook_path}{Path to an Excel file containing sheets written
@@ -13,6 +14,9 @@ by \link{write_counts_sheet}, etc.}
 \item{output_path}{Path to write the resulting file.}
 
 \item{.by}{Name of the grouping parameter in the worksheets}
+
+\item{max_slides_per_plot}{Maximum number of slides or samples
+to show on each plot}
 }
 \description{
 Creates a Microsoft Word file or HTML report containing summary charts

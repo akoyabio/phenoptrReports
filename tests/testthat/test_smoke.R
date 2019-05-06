@@ -80,3 +80,43 @@ test_that("file generation works", {
   expected_path = file.path(data_dir, 'Results_by_sample.xlsx')
   test_file_generation(data_dir, output_dir, expected_path, .by='Sample Name')
 })
+
+# Test writing charts with multiple pages per chart
+test_that("Chart segmentation works", {
+  workbook_path = normalizePath(test_path('test_data/Results_by_sample.xlsx'),
+                                winslash='/', mustWork=FALSE)
+  charts_path = normalizePath(
+    test_path('results_by_sample/Charts_segmented.docx'),
+    winslash='/', mustWork=FALSE)
+
+  if (!dir.exists(dirname(charts_path))) dir.create(dirname(charts_path))
+  if (file.exists(charts_path)) file.remove(charts_path)
+  write_summary_charts(workbook_path, charts_path, .by='Sample Name',
+                       max_slides_per_plot=5)
+  expect(file.exists(charts_path))
+})
+
+# Some really basic smoke tests - just make sure the reports run
+# These work on dev machine only for now :-/
+
+test_that("Unmixing quality report runs", {
+  export_path = 'C:/Research/phenoptrTestData/unmixing_quality_report_test'
+  skip_if_not(dir.exists(export_path))
+
+  report_path = file.path(export_path, 'Unmixing_quality_report.html')
+  if (file.exists(report_path)) file.remove(report_path)
+
+  unmixing_quality_report(export_path)
+  expect(file.exists(report_path))
+})
+
+test_that("Component levels report runs", {
+  export_path = 'C:/Research/phenoptrTestData/component_levels_report_test'
+  skip_if_not(dir.exists(export_path))
+
+  report_path = file.path(export_path, 'Component_levels_report.html')
+  if (file.exists(report_path)) file.remove(report_path)
+
+  component_levels_report(export_path)
+  expect(file.exists(report_path))
+})
