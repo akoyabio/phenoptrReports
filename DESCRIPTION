@@ -14,7 +14,7 @@ License: Zlib | file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:
-    dplyr (>= 0.7.5),
+    dplyr (>= 0.8.0),
     formattable (>= 0.2),
     forcats,
     ggplot2 (>= 3.0.0),
@@ -25,13 +25,13 @@ Imports:
     phenoptr (>= 0.1.6.9000),
     purrr,
     readr,
-    readxl,
+    readxl (>= 1.2.0),
     rlang,
     rmarkdown,
     scales,
     shiny (>= 0.13),
     stringr,
-    tibble,
+    tibble (>= 2.0.0),
     tidyr,
     tidyverse,
     UpSetR (>= 1.4.0),
