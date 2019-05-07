@@ -16,7 +16,7 @@ utils::globalVariables(c(
 #' `percentile=-.1` would give the expression of the lowest-expressing
 #' decile.
 #'
-#' By default, this function aggregates by !!.by and `Tissue Category`.
+#' By default, this function aggregates by `Slide ID` and `Tissue Category`.
 #' To compute mean expression by a different aggregate, pass a column name in
 #' the `.by` parameter.
 #'
