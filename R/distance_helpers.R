@@ -44,7 +44,8 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL, details_path=NULL,
                     !!field_col,
                     dplyr::contains('Tissue Category'),
                     dplyr::starts_with('Phenotype'),
-                    dplyr::starts_with('Distance to'))
+                    # This preserves order of Distance and Cell ID columns
+                    dplyr::matches('Distance to |Cell ID '))
     readr::write_csv(distances_subset, details_path, na='#N/A')
   }
 
