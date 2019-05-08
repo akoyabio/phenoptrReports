@@ -32,6 +32,10 @@ table {
   border: 1px solid;
 }
 
+.warning h3 {
+  color: #ff6707;
+}
+
 img {
   border: none;
 }
@@ -68,6 +72,33 @@ all_data = purrr::map2(comp_files, primary_fluors,
     purrr::set_names(comp_names)
 
 ```
+
+```{r check_components, results='asis'}
+# If the images do not all have the same components, give a warning
+# Get all component names (and a few extra names)
+image_components = purrr::map(all_data, 'signals') %>% 
+  purrr::map(names)
+all_component_names = unlist(image_components) %>% unique()
+
+# Check for any missing
+missing = purrr::map_lgl(image_components, 
+                         ~length(setdiff(all_component_names, .x))>0)
+if (any(missing)) {
+  cat('\n\n### Notice - missing components! {.warning}\n\n')
+  cat('Not all supplied component files have the same components.
+      Missing components cause NA values in the tables below.\n\n')
+  
+  purrr::walk2(names(image_components), image_components,
+    function(name, components) {
+      # Remove the extra names
+      components = head(components, -3)
+      components = paste(components, collapse=', ')
+      cat(stringr::str_glue('- <strong>{name}</strong>: {components}\n\n'))
+    })
+  
+}
+```
+
 ### Crosstalk by image
 
 This table shows crosstalk from each primary fluor to the other components
@@ -239,13 +270,14 @@ This table suggests guidelines to help interpret the *Crosstalk by Component* ta
 Components used to assess expression levels have stricter requirements than
 components used for phenotyping.
 
-### Pixel intensity
+### Pixel intensity in primary component
 
-This plot shows the relative number of pixels at each intensity.
+This plot shows the intensity distribution of pixels of the primary fluor
+in each image.
 Intensity is shown on a log scale.
 
 ```{r}
-density_fig_height = 0.5 * length(comp_files)
+density_fig_height = 0.5 + 0.5 * length(comp_files)
 ```
 
 ```{r fig.height=density_fig_height}
