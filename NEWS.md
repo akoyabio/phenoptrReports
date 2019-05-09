@@ -3,6 +3,8 @@
 Analysis addin:
 - Add support for aggregation by a selectable column (#3). This allows
   reporting by Sample Name or Annotation ID as well as by Slide ID.
+- Detailed output of nearest neighbors includes the Cell IDs of 
+  nearest neighbors as provided by `phenoptr::find_nearest_neighbors`.
 - Recognize and correctly read inForm data 
   which uses comma as the decimal separator. 
   (Requires phenoptr >= 0.1.6.9000; related to akoyabio/phenoptr#8).
