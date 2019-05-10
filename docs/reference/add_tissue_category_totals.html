@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -136,7 +136,7 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>add_tissue_category_totals</span>(<span class='no'>d</span>, <span class='no'>tissue_categories</span>)</pre>
+    <pre class="usage"><span class='fu'>add_tissue_category_totals</span>(<span class='no'>d</span>, <span class='no'>tissue_categories</span>, <span class='kw'>.by</span> <span class='kw'>=</span> <span class='st'>"Slide ID"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -149,6 +149,10 @@ columns to summarize</p></td>
     <tr>
       <th>tissue_categories</th>
       <td><p>The tissue categories of interest, ordered.</p></td>
+    </tr>
+    <tr>
+      <th>.by</th>
+      <td><p>Column to aggregate by</p></td>
     </tr>
     </table>
     

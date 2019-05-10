@@ -69,7 +69,7 @@ categories in the given order and the
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -146,18 +146,23 @@ categories in the given order and the
     
     </div>
 
-    <pre class="usage"><span class='fu'>order_by_slide_and_tissue_category</span>(<span class='no'>d</span>, <span class='no'>tissue_categories</span>)</pre>
+    <pre class="usage"><span class='fu'>order_by_slide_and_tissue_category</span>(<span class='no'>d</span>, <span class='no'>tissue_categories</span>,
+  <span class='kw'>.by</span> <span class='kw'>=</span> <span class='st'>"Slide ID"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>d</th>
-      <td><p>A data frame with Slide ID and Tissue Category columns</p></td>
+      <td><p>A data frame with <code>.by</code> and Tissue Category columns</p></td>
     </tr>
     <tr>
       <th>tissue_categories</th>
       <td><p>A vector of category names in the desired order</p></td>
+    </tr>
+    <tr>
+      <th>.by</th>
+      <td><p>First column to sort by</p></td>
     </tr>
     </table>
     

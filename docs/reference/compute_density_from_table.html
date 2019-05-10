@@ -64,7 +64,7 @@ a table of tissue areas." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -138,14 +138,15 @@ a table of tissue areas.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>compute_density_from_table</span>(<span class='no'>counts</span>, <span class='no'>areas</span>, <span class='no'>tissue_categories</span>)</pre>
+    <pre class="usage"><span class='fu'>compute_density_from_table</span>(<span class='no'>counts</span>, <span class='no'>areas</span>, <span class='no'>tissue_categories</span>,
+  <span class='kw'>.by</span> <span class='kw'>=</span> <span class='st'>"Slide ID"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>counts</th>
-      <td><p>A data frame with columns for <code>Slide ID</code>, <code>Tissue Category</code>,
+      <td><p>A data frame with columns for .by, <code>Tissue Category</code>,
 and counts, such as the output of <a href='count_phenotypes.html'>count_phenotypes</a>.</p></td>
     </tr>
     <tr>
@@ -157,6 +158,10 @@ sample names and tissue categories matching <code>counts</code>.</p></td>
       <th>tissue_categories</th>
       <td><p>A character vector of tissue category names
 of interest.</p></td>
+    </tr>
+    <tr>
+      <th>.by</th>
+      <td><p>Column to aggregate by</p></td>
     </tr>
     </table>
     

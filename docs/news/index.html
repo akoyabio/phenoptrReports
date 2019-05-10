@@ -60,7 +60,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -126,6 +126,23 @@
       <small>Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="phenoptrreports-020" class="section level1">
+<h1 class="page-header">
+<a href="#phenoptrreports-020" class="anchor"></a>phenoptrReports 0.2.0</h1>
+<p><strong>2019-05-10</strong></p>
+<p>Analysis addin:</p>
+<ul>
+<li>Add support for aggregation by a selectable column (<a href='https://github.com/akoyabio/phenoptrReports/issues/3'>#3</a>). This allows reporting by Sample Name or Annotation ID as well as by Slide ID.</li>
+<li>Detailed output of nearest neighbors includes the Cell IDs of nearest neighbors as provided by <code>phenoptr::find_nearest_neighbors</code>.</li>
+<li>Recognize and correctly read inForm data which uses comma as the decimal separator. (Requires phenoptr &gt;= 0.1.6.9000; related to akoyabio/phenoptr<a href='https://github.com/akoyabio/phenoptrReports/issues/8'>#8</a>).</li>
+<li>More robust <code>find_common_prefix</code> function works with empty and numeric Slide IDs.</li>
+</ul>
+<p>Bug fixes:</p>
+<ul>
+<li>Fix the way the analysis addin handles special characters in Slide ID (<a href='https://github.com/akoyabio/phenoptrReports/issues/9'>#9</a>).</li>
+<li>Fix file chooser to work on RStudio Server.</li>
+</ul>
+</div>
     <div id="phenoptrreports-017" class="section level1">
 <h1 class="page-header">
 <a href="#phenoptrreports-017" class="anchor"></a>phenoptrReports 0.1.7</h1>
@@ -293,6 +310,7 @@
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
+        <li><a href="#phenoptrreports-020">0.2.0</a></li>
         <li><a href="#phenoptrreports-017">0.1.7</a></li>
         <li><a href="#phenoptrreports-016">0.1.6</a></li>
         <li><a href="#phenoptrreports-015">0.1.5</a></li>

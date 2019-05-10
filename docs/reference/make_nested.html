@@ -66,7 +66,7 @@ is complex." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -141,7 +141,7 @@ is complex.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>make_nested</span>(<span class='no'>csd</span>, <span class='kw'>tissue_categories</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>make_nested</span>(<span class='no'>csd</span>, <span class='kw'>tissue_categories</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>.by</span> <span class='kw'>=</span> <span class='st'>"Slide ID"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -154,6 +154,10 @@ is complex.</p>
       <th>tissue_categories</th>
       <td><p>If provided, the result will be filtered
 and nested by the provided categories.</p></td>
+    </tr>
+    <tr>
+      <th>.by</th>
+      <td><p>Column to aggregate by</p></td>
     </tr>
     </table>
     

@@ -1,4 +1,5 @@
-# phenoptrReports 0.1.7.9000
+# phenoptrReports 0.2.0
+**2019-05-10**
 
 Analysis addin:
 - Add support for aggregation by a selectable column (#3). This allows
@@ -12,7 +13,7 @@ Analysis addin:
   numeric Slide IDs.
 
 Bug fixes:
-- Fix the way the analysis addin handles of special characters in Slide ID (#9).
+- Fix the way the analysis addin handles special characters in Slide ID (#9).
 - Fix file chooser to work on RStudio Server.
 
 # phenoptrReports 0.1.7

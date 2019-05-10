@@ -33,7 +33,7 @@
 <meta property="og:title" content="Summarize nearest neighbor distances — nearest_neighbor_summary" />
 
 <meta property="og:description" content="Computes summary nearest neighbor statistics (mean, median, etc)
-for each Slide ID in csd and each pair of phenotypes in phenotypes." />
+for each .by in csd and each pair of phenotypes in phenotypes." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -64,7 +64,7 @@ for each Slide ID in csd and each pair of phenotypes in phenotypes." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -134,11 +134,12 @@ for each Slide ID in csd and each pair of phenotypes in phenotypes." />
     <div class="ref-description">
     
     <p>Computes summary nearest neighbor statistics (mean, median, etc)
-for each Slide ID in <code>csd</code> and each pair of phenotypes in <code>phenotypes</code>.</p>
+for each <code>.by</code> in <code>csd</code> and each pair of phenotypes in <code>phenotypes</code>.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>nearest_neighbor_summary</span>(<span class='no'>csd</span>, <span class='kw'>phenotypes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>details_path</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>nearest_neighbor_summary</span>(<span class='no'>csd</span>, <span class='kw'>phenotypes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>details_path</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>.by</span> <span class='kw'>=</span> <span class='st'>"Slide ID"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -157,6 +158,10 @@ will use <code>unique_phenotypes(csd)</code>.</p></td>
       <th>details_path</th>
       <td><p>If present, path to save a table with
 nearest-neighbor data for each cell.</p></td>
+    </tr>
+    <tr>
+      <th>.by</th>
+      <td><p>Column to aggregate by</p></td>
     </tr>
     </table>
     

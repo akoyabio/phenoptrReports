@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Compute H-Score for a single marker aggregated by Slide  ID — compute_h_score • phenoptrReports</title>
+<title>Compute H-Score for a single marker aggregated by <code>.by</code> — compute_h_score • phenoptrReports</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,7 +30,7 @@
 
 
 
-<meta property="og:title" content="Compute H-Score for a single marker aggregated by Slide  ID — compute_h_score" />
+<meta property="og:title" content="Compute H-Score for a single marker aggregated by <code>.by</code> — compute_h_score" />
 
 <meta property="og:description" content="Parameters are directly provided." />
 <meta name="twitter:card" content="summary" />
@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -125,7 +125,7 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Compute H-Score for a single marker aggregated by Slide  ID</h1>
+    <h1>Compute H-Score for a single marker aggregated by <code>.by</code></h1>
     <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/positivity.R'><code>R/positivity.R</code></a></small>
     <div class="hidden name"><code>compute_h_score.Rd</code></div>
     </div>
@@ -136,7 +136,8 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>compute_h_score</span>(<span class='no'>csd</span>, <span class='no'>measure</span>, <span class='no'>tissue_categories</span>, <span class='no'>thresholds</span>)</pre>
+    <pre class="usage"><span class='fu'>compute_h_score</span>(<span class='no'>csd</span>, <span class='no'>measure</span>, <span class='no'>tissue_categories</span>, <span class='no'>thresholds</span>,
+  <span class='kw'>.by</span> <span class='kw'>=</span> <span class='st'>"Slide ID"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -157,6 +158,10 @@ of interest.</p></td>
     <tr>
       <th>thresholds</th>
       <td><p>Optional three element vector with the threshold values.</p></td>
+    </tr>
+    <tr>
+      <th>.by</th>
+      <td><p>Column to aggregate by</p></td>
     </tr>
     </table>
     

@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -137,7 +137,7 @@
     </div>
 
     <pre class="usage"><span class='fu'>compute_h_score_from_score_data</span>(<span class='no'>csd</span>, <span class='no'>score_path</span>,
-  <span class='kw'>tissue_categories</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+  <span class='kw'>tissue_categories</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>.by</span> <span class='kw'>=</span> <span class='st'>"Slide ID"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -154,6 +154,10 @@
       <th>tissue_categories</th>
       <td><p>optionally specify tissue categories of interest.
 If not given, tissue categories are taken from the score file.</p></td>
+    </tr>
+    <tr>
+      <th>.by</th>
+      <td><p>Column to aggregate by</p></td>
     </tr>
     </table>
     
