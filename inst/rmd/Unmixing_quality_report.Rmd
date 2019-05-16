@@ -91,7 +91,7 @@ if (any(missing)) {
   purrr::walk2(names(image_components), image_components,
     function(name, components) {
       # Remove the extra names
-      components = head(components, -3)
+      components = head(components, -2)
       components = paste(components, collapse=', ')
       cat(stringr::str_glue('- <strong>{name}</strong>: {components}\n\n'))
     })
