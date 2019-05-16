@@ -148,7 +148,7 @@ format_expression = function(vals) {
                     list(c('expression_means', 'write_expression_sheet')))
 
   pairs = purrr::map_chr(phenos,
-                         ~stringr::str_glue('"{.x$phenotype}" = "{.x$expression}"'))
+                  ~stringr::str_glue('"{.x$phenotype}" = "{.x$expression}"'))
   phenos_string = paste(pairs, collapse=',\n  ')
   stringr::str_glue(
 '# Associate phenotype names with expression columns to measure.
@@ -262,11 +262,13 @@ end = stringr::str_glue(
 
 workbook_path = file.path("{output_dir}",
                           "Results.xlsx")
-saveWorkbook(wb, workbook_path, overwrite=TRUE)
+if (file.exists(workbook_path)) file.remove(workbook_path)
+saveWorkbook(wb, workbook_path)
 
 # Write summary charts
 charts_path = file.path("{output_dir}",
                         "Charts.docx")
+if (file.exists(charts_path)) file.remove(charts_path)
 write_summary_charts(workbook_path, charts_path, .by=.by)
 
 # Save session info
