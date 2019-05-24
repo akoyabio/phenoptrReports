@@ -1,4 +1,4 @@
-# phenoptrReports 0.2.0.issue13
+# phenoptrReports 0.2.0.9000
 
 Bug fixes:
 - Fix calculation of N/A and Total cell count in cell seg summary report (#13)
