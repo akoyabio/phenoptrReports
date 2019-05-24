@@ -133,3 +133,12 @@ write_session_info = function(path) {
 temp_dir_by = function(output_path) {
   file.path(dirname(output_path), 'temp')
 }
+
+# A pleasing palette with lots of entries
+phenoptr_colors = c(
+  "#26A2ED", "#41C572", "#F05050", "#F4D646", "#B2A1E2", "#F99B15", "#98C7DC",
+  "#84D9A3", "#72C3F3", "#F58D8D", "#F8E487", "#CDC2EC", "#FBBE67", "#BCDBE8",
+  "#1F5F37", "#124E72", "#732626", "#756722", "#554D6C", "#784A0A", "#49606A",
+  "#C6EED5", "#BEE3FA", "#FBCBCB", "#FCF3C8", "#E8E3F6", "#FDE1B9", "#E0EEF5",
+  "#319456", "#1D7AB2", "#B43C3C", "#B7A135", "#8679AA", "#BB7410", "#7295A5"
+)

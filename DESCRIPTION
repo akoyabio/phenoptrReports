@@ -18,11 +18,12 @@ Imports:
     formattable (>= 0.2),
     forcats,
     ggplot2 (>= 3.0.0),
+    jpeg,
     knitr,
     magrittr,
     miniUI (>= 0.1.1),
     openxlsx,
-    phenoptr (>= 0.2.0),
+    phenoptr (> 0.2.1),
     purrr,
     readr,
     readxl (>= 1.2.0),
@@ -34,11 +35,13 @@ Imports:
     tibble (>= 2.0.0),
     tidyr,
     tidyverse,
+    tiff,
     UpSetR (>= 1.4.0),
     utils
 Remotes:
     akoyabio/phenoptr,
     akoyabio/rtree,
+    akoyabio/tiff,
     hms-dbmi/UpSetR
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
