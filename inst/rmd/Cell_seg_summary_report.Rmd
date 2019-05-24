@@ -108,10 +108,11 @@ if ('Phenotype' %in% names(csd)) {
     mutate(Phenotype=ifelse(Phenotype=='', 'N/A', Phenotype))
 } else {
   # count total and N/A rows
-  total = count(csd)
+  total = count(csd) %>% rename(`Total Cells`='n')
   count_NA = csd %>% 
     filter_at(vars(starts_with('Phenotype')), any_vars((. == ''))) %>% 
-    count()
+    count() %>% 
+    rename('N/A'='n')
   # Phenotype per marker
   counts = csd %>% select(starts_with('Phenotype')) %>% 
     gather() %>% 
@@ -121,8 +122,7 @@ if ('Phenotype' %in% names(csd)) {
     filter(Phenotype != '')
 }
 
-counts %>% spread(Phenotype, Count) %>% 
-  mutate(`N/A`=count_NA$n, `Total Cells`=total$n)
+counts %>% spread(Phenotype, Count) %>% bind_cols(count_NA, total)
 ```
 
 ### Phenotype counts per slide
