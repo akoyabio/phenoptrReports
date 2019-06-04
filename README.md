@@ -100,7 +100,7 @@ inForm project. This creates a data file in the format that the analysis
 step uses.
 
 For detailed instructions and requirements, see the 
-[Consolidating inForm data](articles/consolidation.html) tutorial.
+[Consolidating inForm data](https://akoyabio.github.io/phenoptrReports/articles/consolidation.html) tutorial.
 
 ### Data analysis
 
@@ -122,10 +122,10 @@ The script computes the aggregated statistics, writes them to an Excel
 workbook, and creates visualizations of the results in a Word document.
 
 For detailed instructions and requirements, see the 
-[Analyzing inForm data](articles/analysis.html) tutorial.
+[Analyzing inForm data](https://akoyabio.github.io/phenoptrReports/articles/analysis.html) tutorial.
 
 
 ### Unmixing quality report
 
 For more information about the unmixing quality report, see the 
-[Unmixing quality report](articles/unmixing_quality_report.html) tutorial.
+[Unmixing quality report](https://akoyabio.github.io/phenoptrReports/articles/unmixing_quality_report.html) tutorial.
