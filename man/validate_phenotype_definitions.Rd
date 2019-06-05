@@ -5,13 +5,16 @@
 \title{Check that a user-specified phenotype definition
 can be formed from available phenotypes.}
 \usage{
-validate_phenotype_definitions(pheno, available)
+validate_phenotype_definitions(pheno, available, csd = NULL)
 }
 \arguments{
 \item{pheno}{Text description of a phenotype,
 for \code{phenoptr::parse_phenotypes}.}
 
 \item{available}{A character vector of available phenotypes}
+
+\item{csd}{If supplied, any formula arguments will be checked for
+validity against \code{csd}.}
 }
 \value{
 An error message or empty string

@@ -88,9 +88,11 @@ check_phenotypes = function(params, phenotypes) {
 #' @param pheno Text description of a phenotype,
 #' for `phenoptr::parse_phenotypes`.
 #' @param available A character vector of available phenotypes
+#' @param csd If supplied, any formula arguments will be checked for
+#' validity against `csd`.
 #' @return An error message or empty string
 #' @export
-validate_phenotype_definitions = function(pheno, available) {
+validate_phenotype_definitions = function(pheno, available, csd=NULL) {
   if (is.null(pheno) || pheno==''
       || stringr::str_detect(pheno, 'Total|All'))
     return('')
@@ -98,14 +100,35 @@ validate_phenotype_definitions = function(pheno, available) {
   phenos = stringr::str_split(pheno, '[,/]')[[1]] %>%
     stringr::str_trim()
 
-  if (!all(stringr::str_detect(phenos, '[+-]$')))
-    return('Phenotype definitions must end with + or -.')
+  if (!all(stringr::str_detect(phenos, '^~|[+-]$')))
+    return('Phenotype definitions must start with ~ or end with + or -.')
 
-  phenos = stringr::str_remove(phenos, '[+-]$')
-  missing = !phenos %in% available
+  # Check non-formula phenotypes
+  pheno_strings = purrr::discard(phenos, ~startsWith(.x, '~'))
+
+  pheno_strings = stringr::str_remove(pheno_strings, '[+-]$')
+  missing = !pheno_strings %in% available
   if (any(missing))
     return(paste0('Unknown phenotype(s): ', paste(phenos[missing], sep=', ')))
 
+  # Check formala expressions
+  pheno_formulae = purrr::keep(phenos, ~startsWith(.x, '~'))
+  if (length(pheno_formulae) > 0 && stringr::str_detect(pheno, ','))
+    return("Formula expressions are not allowed in phenotypes combined with ','.")
+
+  for (fmla_str in pheno_formulae) {
+    fmla = try(stats::as.formula(fmla_str, globalenv()), silent=TRUE)
+    if (class(fmla) == 'try-error')
+      return(paste0(fmla_str, ' is not a valid expression.'))
+
+    if (!is.null(csd)) {
+      attempt = try(lazyeval::f_eval(fmla, csd), silent=TRUE)
+      if (class(attempt) == 'try-error') {
+        msg = stringr::str_split(attempt, ' : ')[[1]][[2]]
+        return(paste0('Invalid expression: ', stringr::str_trim(msg), '.'))
+      }
+    }
+  }
   return('')
 }
 
