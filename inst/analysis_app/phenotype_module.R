@@ -32,7 +32,7 @@ phenotype_module = function(input, output, session, phenotypes) {
   observe({
     req(input$phenotype)
     output$error = renderText(
-      validate_phenotype_definitions(input$phenotype, phenotypes))
+      phenoptr::validate_phenotype_definitions(input$phenotype, phenotypes))
   })
 
   # Show help

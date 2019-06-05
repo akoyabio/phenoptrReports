@@ -19,27 +19,3 @@ test_that("file_to_fluor works", {
   purrr::walk(test_values,
     ~expect_equal(phenoptrReports:::file_to_fluor(.x[1]), .x[2]), .info=.x[1])
 })
-
-test_that('validate_phenotype_definitions works', {
-  # These are all valid regardless of the second argument
-  expect_equal(validate_phenotype_definitions(NULL, ''), '')
-  expect_equal(validate_phenotype_definitions('', ''), '')
-  expect_equal(validate_phenotype_definitions('Total', ''), '')
-  expect_equal(validate_phenotype_definitions('All', ''), '')
-  expect_equal(validate_phenotype_definitions('~`Mean x`>3', ''), '')
-
-  expect_equal(validate_phenotype_definitions('CD3+', 'CD3'), '')
-  expect_equal(validate_phenotype_definitions('CD3+/~`Mean x`>3', 'CD3'), '')
-
-  expect_match(validate_phenotype_definitions('CD3', 'CD3'), 'must start')
-  expect_match(validate_phenotype_definitions('CD3+', 'CD8'), 'Unknown')
-  expect_match(validate_phenotype_definitions('CD3+,~`Mean x`>3', 'CD3'),
-               'not allowed')
-
-  df = tibble::tibble(x=1:2)
-  expect_equal(validate_phenotype_definitions('~x==1', '', df), '')
-  expect_match(validate_phenotype_definitions('~x==', ''),
-               'not a valid expression')
-  expect_match(validate_phenotype_definitions('~y==1', '', df),
-               'not found')
-})
