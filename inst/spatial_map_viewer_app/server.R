@@ -55,7 +55,8 @@ server <- function(input, output, session) {
 
     p = nearest_neighbor_map(csd, field, .export_path,
                          pheno1, pheno2, color1, color2, show_as, dot_size)
-    output$plot = renderPlot(p)
+    if (!is.null(p))
+      output$plot = renderPlot(p)
   })
 
   output$save_plot = downloadHandler(
