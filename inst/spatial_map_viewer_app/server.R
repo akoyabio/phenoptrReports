@@ -74,6 +74,12 @@ server <- function(input, output, session) {
     },
     contentType='image/png'
   )
+
+  # Stop the server when the user closes the app window
+  session$onSessionEnded(function() {
+    stopApp()
+  })
+
 }
 
 server

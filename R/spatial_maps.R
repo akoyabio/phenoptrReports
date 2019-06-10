@@ -1,22 +1,4 @@
-#' Run the spatial map viewer with the given nearest neighbor
-#' file and export directory.
-#' @param nn_path Path to a nearest_neighbors.csv file created by the
-#' analysis app.
-#' @param export_path Path to a directory containing composite and
-#' component images for the fields in the nearest neighbors file.
-#' @return None; starts the viewer app
-#' @export
-spatial_map_viewer = function(nn_path, export_path) {
-  # Apparently the best way to pass parameters to a shiny app is
-  # to modify the global environment :-(
-  # Use . names to avoid collisions with existing variables
-  .GlobalEnv$.nn_path=nn_path
-  .GlobalEnv$.export_path = export_path
-  on.exit(rm(.nn_path, .export_path, envir=.GlobalEnv))
-
-  shiny::runApp(system.file('spatial_map_viewer_app',
-                            package='phenoptrReports'))
-}
+# Helpers for the spatial map viewer app
 
 #' Make a nearest neighbor map for a single field
 #'
