@@ -20,6 +20,9 @@ spatial_map_viewer = function(nn_path, export_path) {
 
 #' Make a nearest neighbor map for a single field
 #'
+#' The phenotype definitions may be NA, in which case the base field
+#' will be shown with any available phenotype.
+#'
 #' Note: Only single phenotypes are supported.
 #' @param csd Cell seg data with distance columns
 #' @param field Sample Name or Annotation ID to map
@@ -56,12 +59,6 @@ nearest_neighbor_map =
 
   background = read_background(field, export_path)
 
-  # Filter to just relevant phenotypes
-  pheno1_cells = field_data %>%
-    dplyr::filter(phenoptr::select_rows(field_data, pheno1))
-  pheno2_cells = field_data %>%
-    dplyr::filter(phenoptr::select_rows(field_data, pheno2))
-
   # Make a base plot
   xlim=c(field_info$location[1],
          field_info$location[1]+field_info$field_size[1])
@@ -78,56 +75,72 @@ nearest_neighbor_map =
     labs(x='Cell X Position', y='Cell Y Position') +
     scale_color_manual('Phenotype', values=colors)
 
-  if (show_as=='from_to') {
-    # For each pheno1 cell, join with the data for the nearest pheno2 cell
-    pheno1_to_pheno2 = match_cells(pheno1_cells, pheno2_cells, pheno2)
 
-    # Add lines
-    p = base_plot + geom_segment(data=pheno1_to_pheno2,
-                                 aes(xend=`Cell X Position.to`,
-                                     yend=`Cell Y Position.to`),
-                                 color='white') +
-      labs(title=paste0(field, ' - Nearest ', pheno2, ' to each ', pheno1))
-  }
-  else if (show_as=='to_from') {
-    # for each pheno2 cell, find the nearest pheno1 cell
-    pheno2_to_pheno1 = match_cells(pheno2_cells, pheno1_cells, pheno1)
+  # Filter to just relevant phenotypes
+  pheno1_cells = if (is.na(pheno1)) NULL else field_data %>%
+    dplyr::filter(phenoptr::select_rows(field_data, pheno1))
 
-    p = base_plot +
-      geom_segment(data=pheno2_to_pheno1,
-                   aes(xend=`Cell X Position.to`,
-                       yend=`Cell Y Position.to`),
-                   color='white') +
-      labs(title=paste0(field, ' - Nearest ', pheno1, ' to each ', pheno2))
-  }
-  else if (show_as=='mutual') {
-    # Mutual nearest neighbors
-    # Mutual nearest neighbors are cells which have each other as nearest
-    # neighbors; i.e. cells where the nearest neighbor of the nearest neighbor
-    # is the starting cell.
+  pheno2_cells = if (is.na(pheno2)) NULL else field_data %>%
+    dplyr::filter(phenoptr::select_rows(field_data, pheno2))
 
-    pheno1_to_pheno2 = match_cells(pheno1_cells, pheno2_cells, pheno2)
-    match_col = paste0('Cell ID ', pheno1, '.to') %>% rlang::sym()
-    mutual = pheno1_to_pheno2 %>%
-      filter(`Cell ID`==!!match_col)
+  # Showing nearest neighbors requires two phenotypes
+  if (!is.na(pheno1) && !is.na(pheno2)) {
+    if (show_as=='from_to') {
+      # For each pheno1 cell, join with the data for the nearest pheno2 cell
+      pheno1_to_pheno2 = match_cells(pheno1_cells, pheno2_cells, pheno2)
 
-    p = base_plot +
-      geom_segment(data=mutual,
-                   aes(xend=`Cell X Position.to`, yend=`Cell Y Position.to`),
-                   size=1, color='white') +
-      labs(title=paste0(field, ' - Mutual nearest neighbors - ',
-                        pheno1, ' and ', pheno2))
+      # Add lines
+      p = base_plot + geom_segment(data=pheno1_to_pheno2,
+                                   aes(xend=`Cell X Position.to`,
+                                       yend=`Cell Y Position.to`),
+                                   color='white') +
+        labs(title=paste0(field, ' - Nearest ', pheno2, ' to each ', pheno1))
+    }
+    else if (show_as=='to_from') {
+      # for each pheno2 cell, find the nearest pheno1 cell
+      pheno2_to_pheno1 = match_cells(pheno2_cells, pheno1_cells, pheno1)
+
+      p = base_plot +
+        geom_segment(data=pheno2_to_pheno1,
+                     aes(xend=`Cell X Position.to`,
+                         yend=`Cell Y Position.to`),
+                     color='white') +
+        labs(title=paste0(field, ' - Nearest ', pheno1, ' to each ', pheno2))
+    }
+    else if (show_as=='mutual') {
+      # Mutual nearest neighbors
+      # Mutual nearest neighbors are cells which have each other as nearest
+      # neighbors; i.e. cells where the nearest neighbor of the nearest neighbor
+      # is the starting cell.
+
+      pheno1_to_pheno2 = match_cells(pheno1_cells, pheno2_cells, pheno2)
+      match_col = paste0('Cell ID ', pheno1, '.to') %>% rlang::sym()
+      mutual = pheno1_to_pheno2 %>%
+        filter(`Cell ID`==!!match_col)
+
+      p = base_plot +
+        geom_segment(data=mutual,
+                     aes(xend=`Cell X Position.to`, yend=`Cell Y Position.to`),
+                     size=1, color='white') +
+        labs(title=paste0(field, ' - Mutual nearest neighbors - ',
+                          pheno1, ' and ', pheno2))
+    } else {
+      # Don't show nearest neighbors, just cells
+      p = base_plot +
+        labs(title=paste0(field, ' - ', pheno1, ' and ', pheno2))
+    }
   } else {
-    # Don't show nearest neighbors, just cells
-    p = base_plot +
-      labs(title=paste0(pheno1, ' and ', pheno2))
+    # One or both phenotypes are missing, just show the field name as title
+    p = base_plot + labs(title=field)
   }
 
   # We want the points on top of the lines, so add them last
-  p = p +
-    geom_point(data=pheno1_cells, aes(color=pheno1), size=dot_size) +
-    geom_point(data=pheno2_cells, aes(color=pheno2), size=dot_size)
+  if (!is.na(pheno1))
+    p = p + geom_point(data=pheno1_cells, aes(color=pheno1), size=dot_size)
+  if (!is.na(pheno2))
+    p = p + geom_point(data=pheno2_cells, aes(color=pheno2), size=dot_size)
 
+  # A little theming
   p + theme(legend.key = element_rect(fill = "white"),
             legend.position='bottom') +
     guides(color = guide_legend(override.aes = list(size = 5)))
