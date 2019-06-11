@@ -1,6 +1,10 @@
 # This is an RStudio Addin that provides a field-based viewer of
 # nearest neighbor relationships
 
+# Suppress CMD CHECK notes for things that look like global vars
+utils::globalVariables(
+  c('.nn_path', '.export_path'))
+
 #' Spatial map viewer addin
 #'
 #' This function starts a GUI which allows you to select a nearest neighbors
@@ -122,7 +126,7 @@ spatial_map_viewer_front_end = function() {
         # Add to data_file and update the list of files in the UI
         data_file(files)
         output$selected_file = shiny::renderUI({
-          p(paste0(basename(dirname(files)), '/', basename(files)))
+          shiny::p(paste0(basename(dirname(files)), '/', basename(files)))
         })
       }
 

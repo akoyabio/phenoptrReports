@@ -1,5 +1,9 @@
 # Helpers for the spatial map viewer app
 
+# Suppress CMD CHECK notes for things that look like global vars
+utils::globalVariables(
+  c('Cell X Position.to', 'Cell Y Position.to'))
+
 #' Make a nearest neighbor map for a single field
 #'
 #' The phenotype definitions may be NA, in which case the base field
@@ -50,12 +54,12 @@ nearest_neighbor_map =
   colors = c(color1, color2) %>%
     rlang::set_names(c(pheno1, pheno2))
 
-  base_plot = ggplot(mapping=aes(x=`Cell X Position`,
+  base_plot = ggplot2::ggplot(mapping=ggplot2::aes(x=`Cell X Position`,
                                  y=`Cell Y Position`)) %>%
     phenoptr:::add_scales_and_background(background, xlim, ylim,
                                          scale_color='white') +
-    labs(x='Cell X Position', y='Cell Y Position') +
-    scale_color_manual('Phenotype', values=colors)
+    ggplot2::labs(x='Cell X Position', y='Cell Y Position') +
+    ggplot2::scale_color_manual('Phenotype', values=colors)
 
 
   # Filter to just relevant phenotypes
@@ -72,22 +76,24 @@ nearest_neighbor_map =
       pheno1_to_pheno2 = match_cells(pheno1_cells, pheno2_cells, pheno2)
 
       # Add lines
-      p = base_plot + geom_segment(data=pheno1_to_pheno2,
-                                   aes(xend=`Cell X Position.to`,
+      p = base_plot + ggplot2::geom_segment(data=pheno1_to_pheno2,
+                          ggplot2::aes(xend=`Cell X Position.to`,
                                        yend=`Cell Y Position.to`),
-                                   color='white') +
-        labs(title=paste0(field, ' - Nearest ', pheno2, ' to each ', pheno1))
+                                       color='white') +
+        ggplot2::labs(
+          title=paste0(field, ' - Nearest ', pheno2, ' to each ', pheno1))
     }
     else if (show_as=='to_from') {
       # for each pheno2 cell, find the nearest pheno1 cell
       pheno2_to_pheno1 = match_cells(pheno2_cells, pheno1_cells, pheno1)
 
       p = base_plot +
-        geom_segment(data=pheno2_to_pheno1,
-                     aes(xend=`Cell X Position.to`,
+        ggplot2::geom_segment(data=pheno2_to_pheno1,
+            ggplot2::aes(xend=`Cell X Position.to`,
                          yend=`Cell Y Position.to`),
-                     color='white') +
-        labs(title=paste0(field, ' - Nearest ', pheno1, ' to each ', pheno2))
+                         color='white') +
+        ggplot2::labs(
+          title=paste0(field, ' - Nearest ', pheno1, ' to each ', pheno2))
     }
     else if (show_as=='mutual') {
       # Mutual nearest neighbors
@@ -98,34 +104,37 @@ nearest_neighbor_map =
       pheno1_to_pheno2 = match_cells(pheno1_cells, pheno2_cells, pheno2)
       match_col = paste0('Cell ID ', pheno1, '.to') %>% rlang::sym()
       mutual = pheno1_to_pheno2 %>%
-        filter(`Cell ID`==!!match_col)
+        dplyr::filter(`Cell ID`==!!match_col)
 
       p = base_plot +
-        geom_segment(data=mutual,
-                     aes(xend=`Cell X Position.to`, yend=`Cell Y Position.to`),
-                     size=1, color='white') +
-        labs(title=paste0(field, ' - Mutual nearest neighbors - ',
+        ggplot2::geom_segment(data=mutual,
+            ggplot2::aes(xend=`Cell X Position.to`, yend=`Cell Y Position.to`),
+                         size=1, color='white') +
+        ggplot2::labs(title=paste0(field, ' - Mutual nearest neighbors - ',
                           pheno1, ' and ', pheno2))
     } else {
       # Don't show nearest neighbors, just cells
       p = base_plot +
-        labs(title=paste0(field, ' - ', pheno1, ' and ', pheno2))
+        ggplot2::labs(title=paste0(field, ' - ', pheno1, ' and ', pheno2))
     }
   } else {
     # One or both phenotypes are missing, just show the field name as title
-    p = base_plot + labs(title=field)
+    p = base_plot + ggplot2::labs(title=field)
   }
 
   # We want the points on top of the lines, so add them last
   if (!is.na(pheno1))
-    p = p + geom_point(data=pheno1_cells, aes(color=pheno1), size=dot_size)
+    p = p + ggplot2::geom_point(data=pheno1_cells,
+                                ggplot2::aes(color=pheno1), size=dot_size)
   if (!is.na(pheno2))
-    p = p + geom_point(data=pheno2_cells, aes(color=pheno2), size=dot_size)
+    p = p + ggplot2::geom_point(data=pheno2_cells,
+                                ggplot2::aes(color=pheno2), size=dot_size)
 
   # A little theming
-  p + theme(legend.key = element_rect(fill = "white"),
+  p + ggplot2::theme(legend.key = ggplot2::element_rect(fill = "white"),
             legend.position='bottom') +
-    guides(color = guide_legend(override.aes = list(size = 5)))
+    ggplot2::guides(
+      color = ggplot2::guide_legend(override.aes = list(size = 5)))
 }
 
 # Join from_cells and to_cells by nearest neighbor cell ID
@@ -159,7 +168,7 @@ read_background = function(field, export_path) {
       background = jpeg::readJPEG(background_path)
     else background = tiff::readTIFF(background_path)
 
-    background = as.raster(background)
+    background = grDevices::as.raster(background)
   } else {
     background = NULL
   }
