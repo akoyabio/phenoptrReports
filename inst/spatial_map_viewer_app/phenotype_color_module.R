@@ -43,6 +43,7 @@ phenotype_color_module_ui = function(id, label='Phenotype:', value='white') {
 phenotype_color_module = function(input, output, session, phenotypes,
                                   csd=NULL, allow_multiple=TRUE) {
   # Check for valid phenotype definitions
+  valid = shiny::reactiveVal(FALSE)
   shiny::observe({
     shiny::req(input$phenotype)
     if (!allow_multiple && stringr::str_detect(input$phenotype, '[,/]'))
@@ -50,11 +51,13 @@ phenotype_color_module = function(input, output, session, phenotypes,
     else
       msg = phenoptr::validate_phenotype_definitions(
         input$phenotype, phenotypes, csd)
+    valid(msg == '')
     output$error = renderText(msg)
   })
 
     return(shiny::reactive({
-    list(phenotype=input$phenotype, color=input$color)
+    list(phenotype=ifelse(valid(), input$phenotype, NA),
+         color=input$color)
   }))
 }
 
