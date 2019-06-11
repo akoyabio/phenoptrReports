@@ -16,7 +16,29 @@ server <- function(input, output, session) {
   last_show_as = TRUE
   last_dot_size = 3
 
-  observe({
+  # Handle previous and next buttons
+  shiny::observeEvent(input$previous, {
+    shiny::req(input$previous)
+    current_field = shiny::isolate(input$field)
+    current_ix = which(available_fields==current_field)
+    prev_ix = current_ix-1
+    if (prev_ix <= 0) prev_ix = length(available_fields)
+    shiny::updateSelectInput(session, 'field',
+                             selected=available_fields[prev_ix])
+  })
+
+  shiny::observeEvent(input$nxt, {
+    shiny::req(input$nxt) # Note 'next' is a reserved word
+    current_field = shiny::isolate(input$field)
+    current_ix = which(available_fields==current_field)
+    next_ix = current_ix+1
+    if (next_ix > length(available_fields)) next_ix = 1
+    shiny::updateSelectInput(session, 'field',
+                             selected=available_fields[next_ix])
+  })
+
+  # Update the plot when any of the parameters changes
+  shiny::observe({
     # Allow for invalid phenotypes; they will not be drawn
     validate_candidate = function(candidate) {
       if (shiny::isTruthy(candidate) &&

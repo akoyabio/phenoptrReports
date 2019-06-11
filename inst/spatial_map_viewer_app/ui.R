@@ -27,12 +27,20 @@ ui <- shinydashboard::dashboardPage(
           color: #444;
           margin-left: 15px;
         }",
+        # Align the prev_next buttons with the field dropdown
+        ".prev-next {
+          margin-top: 25px;
+        }",
         phenotype_color_module_css))
     ),
 
     shiny::fluidRow(
-      shiny::column(10, shiny::selectInput('field', 'Field:',
-                                           choices=available_fields))
+      shiny::column(2, shiny::actionButton('previous', 'Previous',
+                                           class='prev-next')),
+      shiny::column(5, shiny::selectInput('field', 'Field:',
+                                           choices=available_fields)),
+      shiny::column(2, shiny::actionButton('nxt', 'Next',
+                                           class='prev-next'))
     ),
     shiny::fluidRow(
       shiny::plotOutput('plot', height='800')
