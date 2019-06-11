@@ -37,16 +37,16 @@ server <- function(input, output, session) {
                              selected=available_fields[next_ix])
   })
 
+  # Validate candidate phenotypes
+  validate_candidate = function(candidate) {
+    if (shiny::isTruthy(candidate) &&
+        phenoptr::validate_phenotype_definitions(
+          candidate, available_phenotypes, csd)=='')
+      candidate else NA
+  }
+
   # Update the plot when any of the parameters changes
   shiny::observe({
-    # Allow for invalid phenotypes; they will not be drawn
-    validate_candidate = function(candidate) {
-      if (shiny::isTruthy(candidate) &&
-          phenoptr::validate_phenotype_definitions(
-            candidate, available_phenotypes, csd)=='')
-        candidate else NA
-    }
-
     # Get the parameters as non-reactive values
     field = input$field
     pheno1 = validate_candidate(phenotype_output()$phenotype)
@@ -81,23 +81,76 @@ server <- function(input, output, session) {
       output$plot = renderPlot(p)
   })
 
+  make_filename = function(field, pheno1, pheno2, show_as) {
+    name = stringr::str_remove(field, '.im3')
+    if (!is.na(pheno1)) name = paste0(name, '_', pheno1)
+    if (!is.na(pheno2)) name = paste0(name, '_', pheno2)
+    if (!is.na(pheno1) && !is.na(pheno2))
+      name = paste0(name, '_', show_as)
+    name = paste0(name, '.png')
+    name
+  }
+
+  save_plot = function(p, file) {
+    ggsave(file, plot=p, device = "png", width=11, height=11)
+  }
   output$save_plot = downloadHandler(
     filename = function() {
-      paste0(stringr::str_remove(input$field, '.im3'),
-             '_',
+      make_filename(input$field,
              phenotype_output()$phenotype,
-             '_',
              phenotype2_output()$phenotype,
-             '_',
-             input$show_as,
-             '.png')
+             input$show_as)
     },
     content = function(file) {
-      ggsave(file, device = "png", width=11, height=11)
+      save_plot(last_plot(), file)
     },
     contentType='image/png'
   )
 
+  # To save all, we have to save in a temp directory and then make a zip
+  output$save_all <- downloadHandler(
+    filename = function() {
+      paste0(basename(.export_path), '_',
+             phenotype_output()$phenotype, '_',
+             phenotype2_output()$phenotype,".zip")
+
+    },
+
+    content = function(file) {
+      # Write to a temp dir to avoid permission issues
+      owd <- setwd(tempdir())
+      on.exit(setwd(owd))
+      files <- NULL;
+
+      pheno1 = validate_candidate(phenotype_output()$phenotype)
+      pheno2 = validate_candidate(phenotype2_output()$phenotype)
+      color1 = phenotype_output()$color
+      color2 = phenotype2_output()$color
+      show_as = input$show_as
+      dot_size = input$dot_size
+
+      shiny::withProgress(message='Creating image files', value=0, {
+        # Number of progress messages
+        n_progress = length(available_fields) + 1
+
+        # Loop through the fields
+        for (field in available_fields) {
+          shiny::incProgress(1/n_progress, detail=field)
+
+          # Write each plot to a file, save the name
+          p = nearest_neighbor_map(csd, field, .export_path,
+                            pheno1, pheno2, color1, color2, show_as, dot_size)
+          filename = make_filename(field, pheno1, pheno2, show_as)
+          save_plot(p, filename)
+          files <- c(filename,files)
+        }
+
+        # Create the zip file
+        shiny::setProgress(1, detail='Writing zip file')
+        zip::zipr(file,files)
+      })
+    }
+  )
   # Stop the server when the user closes the app window
   session$onSessionEnded(function() {
     stopApp()
