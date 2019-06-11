@@ -43,6 +43,7 @@ reference:
       - addin_10_merge
       - addin_20_consolidate
       - addin_30_analysis_app
+      - addin_35_spatial_map_viewer
       - addin_40_unmixing_quality
       - addin_50_component_levels
   - title: Merging and Consolidation
@@ -94,7 +95,9 @@ reference:
       - choose_file
       - make_nested
       - make_unique_names
+      - nearest_neighbor_map
       - order_by_slide_and_tissue_category
+      - spatial_map_viewer
       - split_phenotypes
       - unmixing_quality_report
       - upset_data

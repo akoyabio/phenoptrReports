@@ -152,7 +152,6 @@ spatial_map_viewer_front_end = function() {
         data_file = stringr::str_replace_all(data_file(), '\\\\', '/')
         export_dir = stringr::str_replace_all(export_dir(), '\\\\', '/')
         command <- stringr::str_glue("spatial_map_viewer('{data_file}', '{export_dir}')")
-        cat('Command: ', command, '\n')
         rstudioapi::sendToConsole(command)
         shiny::stopApp()
       } else {

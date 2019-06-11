@@ -1,3 +1,8 @@
+# phenoptrReports 0.2.1.9000
+
+Spatial map viewer addin
+- New addin provides a field-based viewer of nearest neighbor relationships.
+
 # phenoptrReports 0.2.1
 **2019-05-31**
 
