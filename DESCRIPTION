@@ -5,6 +5,7 @@ Date: 2019-05-31
 Authors@R: c(
     person("Kent S", "Johnson", role = c("aut", "cre"),
            email = "kjohnson@akoyabio.com"),
+    person("Carla", "Coltharp", role="ctb"),
     person("Akoya Biosciences", role="cph"))
 Copyright: Akoya Biosciences
 Description: Creates diagnostic and summary reports from inForm data.
