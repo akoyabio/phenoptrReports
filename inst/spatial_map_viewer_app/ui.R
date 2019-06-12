@@ -1,6 +1,8 @@
 
 ui <- shinydashboard::dashboardPage(
-  shinydashboard::dashboardHeader(title = "Nearest neighbor explorer"),
+  shinydashboard::dashboardHeader(
+    title = "Nearest neighbor explorer",
+    titleWidth=360-42), # Magic number aligns the hamburger with the sidebar
   shinydashboard::dashboardSidebar(
     width = 360,
     # Selector for phenotype
