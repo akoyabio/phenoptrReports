@@ -135,6 +135,31 @@ as the phenotype.
 
 ![](figures/Phenotypes.png)
 
+### Select options for spatial analysis
+
+In this section, select the types of spatial analysis to include.
+
+- **Include nearest neighbor summary** If this is selected, the generated
+report will include a tab summarizing nearest neighbor distances between
+every pair of phenotypes and heatmap visualizations of the mean distances.
+
+- **Include "count within radius" summary** If this is selected, the generated
+report will include a tab summarizing, for each pair of phenotypes,
+the number of cells of a phenotype having a cell of a second phenotype
+within a specified radius. Enter the radius or radii of interest in the text
+field.
+
+- **Save nearest neighbor details** If this is selected, the analysis will
+write a `nearest_neighbors.csv` file containing, for each cell, the
+distance to the nearest cell of each phenotype and the cell ID of the cell.
+This file is needed by the "Spatial map viewer" 
+to visualize nearest neighbor distances and may be useful
+for more detailed statistical analysis of 
+nearest neighbor distances. *Select this option if you want
+to use the Spatial map viewer later!*
+
+![](figures/Spatial_options.png)
+
 ### Create reports
 
 The final tab in the analysis app is the Run tab. Click "Create Report"
