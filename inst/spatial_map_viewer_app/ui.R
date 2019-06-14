@@ -18,8 +18,11 @@ ui <- shinydashboard::dashboardPage(
                                  None='none')),
     shiny::hr(),
     shiny::sliderInput('dot_size', 'Dot size', min=1, max=5, value=3, step=1),
-    shiny::fluidRow(shiny::downloadButton('save_plot', 'Save image'),
-                    shiny::downloadButton('save_all', 'Save all'))
+    shiny::fluidRow(shiny::column(4, shiny::downloadButton('save_plot', 'Save image')),
+                    shiny::column(4, shiny::downloadButton('save_all', 'Save all')),
+                    shiny::column(4, id='add-logo',
+                                  shiny::checkboxInput('add_logo', 'Show logo', value=TRUE))
+    )
   ),
 
   shinydashboard::dashboardBody(
@@ -37,6 +40,10 @@ ui <- shinydashboard::dashboardPage(
           margin-top: 25px;
         }",
 
+        # Make the Show logo checkbox line up vertically with the buttons
+        "#add-logo .shiny-input-container {
+          padding: 0px;
+        }",
         # Wider notification box for "Save all"
         "#shiny-notification-panel {
           width: 350px;

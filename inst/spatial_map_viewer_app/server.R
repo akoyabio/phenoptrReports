@@ -15,6 +15,7 @@ server <- function(input, output, session) {
   last_pheno1 = last_pheno2 = NA
   last_show_as = TRUE
   last_dot_size = 3
+  last_add_logo = TRUE
 
   # Handle previous and next buttons
   shiny::observeEvent(input$previous, {
@@ -55,6 +56,7 @@ server <- function(input, output, session) {
     color2 = phenotype2_output()$color
     show_as = input$show_as
     dot_size = input$dot_size
+    add_logo = input$add_logo
 
     # Quit if no change, else save current state
     # This prevents redrawing as the user is typing a phenotype name
@@ -65,7 +67,8 @@ server <- function(input, output, session) {
           color1 != last_color1 ||
           color2 != last_color2 ||
           show_as != last_show_as ||
-          dot_size != last_dot_size)
+          dot_size != last_dot_size ||
+          add_logo != last_add_logo)
 
     last_field <<- field
     last_pheno1 <<- pheno1
@@ -74,9 +77,11 @@ server <- function(input, output, session) {
     last_color2 <<- color2
     last_show_as <<- show_as
     last_dot_size <<- dot_size
+    last_add_logo <<- add_logo
 
     p = nearest_neighbor_map(csd, field, .export_path,
-                         pheno1, pheno2, color1, color2, show_as, dot_size)
+                         pheno1, pheno2, color1, color2,
+                         show_as, dot_size, add_logo)
     if (!is.null(p))
       output$plot = renderPlot(p)
   })
@@ -128,6 +133,7 @@ server <- function(input, output, session) {
       color2 = phenotype2_output()$color
       show_as = input$show_as
       dot_size = input$dot_size
+      add_logo = input$add_logo
 
       shiny::withProgress(message='Creating image files', value=0, {
         # Number of progress messages
@@ -139,7 +145,8 @@ server <- function(input, output, session) {
 
           # Write each plot to a file, save the name
           p = nearest_neighbor_map(csd, field, .export_path,
-                            pheno1, pheno2, color1, color2, show_as, dot_size)
+                            pheno1, pheno2, color1, color2,
+                            show_as, dot_size, add_logo)
           filename = make_filename(field, pheno1, pheno2, show_as)
           save_plot(p, filename)
           files <- c(filename,files)

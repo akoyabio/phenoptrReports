@@ -6,7 +6,7 @@
 \usage{
 nearest_neighbor_map(csd, field, export_path, pheno1, pheno2, color1,
   color2, show_as = c("from_to", "to_from", "mutual", "none"),
-  dot_size = 3)
+  dot_size = 3, add_logo = TRUE)
 }
 \arguments{
 \item{csd}{Cell seg data with distance columns}
@@ -23,6 +23,8 @@ image files from inForm}
 \item{show_as}{Which nearest neighbors should be shown?}
 
 \item{dot_size}{Size of the dots used to show phenotypes}
+
+\item{add_logo}{Show the Akoya logo in the image?}
 }
 \value{
 A ggplot object

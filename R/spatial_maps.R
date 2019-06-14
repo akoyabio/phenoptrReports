@@ -18,13 +18,14 @@ utils::globalVariables(
 #' @param color1,color2 Colors to draw the phenotype dots
 #' @param show_as Which nearest neighbors should be shown?
 #' @param dot_size Size of the dots used to show phenotypes
+#' @param add_logo Show the Akoya logo in the image?
 #' @return A ggplot object
 #' @export
 nearest_neighbor_map =
   function(csd, field, export_path,
            pheno1, pheno2, color1, color2,
            show_as=c('from_to', 'to_from', 'mutual', 'none'),
-           dot_size=3) {
+           dot_size=3, add_logo=TRUE) {
   field_data = csd[csd[[phenoptr::field_column(csd)]]==field,]
   field_info = read_field_info(field, export_path)
   if (is.null(field_info)) {
@@ -62,6 +63,29 @@ nearest_neighbor_map =
     ggplot2::scale_color_manual('Phenotype', values=colors)
 
 
+  p = base_plot
+
+  if (add_logo) {
+    # Add the Akoya logo beneath the scale bar
+    # We will do this twice. The first time is solid white, drawn over
+    # the background and under the dots. The second time will be
+    # over the dots and partly transparent.
+    logo_path = system.file('etc',
+                            'AKOYA-Bio-R-Logo-Standard-White.png',
+                            package='phenoptrReports')
+    logo = png::readPNG(logo_path)
+
+    add_logo_to_plot = function(p, logo) {
+      # The logo aspect ratio is very close to 4:1. This puts it below
+      # the scale bar with a size of 160 X 40.
+      p +
+        ggplot2::annotation_raster(grDevices::as.raster(logo),
+                                   xlim[2]-50-160, xlim[2]-50,
+                                   -(ylim[2]-65), -(ylim[2]-25))
+    }
+    p = add_logo_to_plot(p, logo)
+  }
+
   # Filter to just relevant phenotypes
   pheno1_cells = if (is.na(pheno1)) NULL else field_data %>%
     dplyr::filter(phenoptr::select_rows(field_data, pheno1))
@@ -76,7 +100,7 @@ nearest_neighbor_map =
       pheno1_to_pheno2 = match_cells(pheno1_cells, pheno2_cells, pheno2)
 
       # Add lines
-      p = base_plot + ggplot2::geom_segment(data=pheno1_to_pheno2,
+      p = p + ggplot2::geom_segment(data=pheno1_to_pheno2,
                           ggplot2::aes(xend=`Cell X Position.to`,
                                        yend=`Cell Y Position.to`),
                                        color='white') +
@@ -87,7 +111,7 @@ nearest_neighbor_map =
       # for each pheno2 cell, find the nearest pheno1 cell
       pheno2_to_pheno1 = match_cells(pheno2_cells, pheno1_cells, pheno1)
 
-      p = base_plot +
+      p = p +
         ggplot2::geom_segment(data=pheno2_to_pheno1,
             ggplot2::aes(xend=`Cell X Position.to`,
                          yend=`Cell Y Position.to`),
@@ -106,7 +130,7 @@ nearest_neighbor_map =
       mutual = pheno1_to_pheno2 %>%
         dplyr::filter(`Cell ID`==!!match_col)
 
-      p = base_plot +
+      p = p +
         ggplot2::geom_segment(data=mutual,
             ggplot2::aes(xend=`Cell X Position.to`, yend=`Cell Y Position.to`),
                          size=1, color='white') +
@@ -114,12 +138,12 @@ nearest_neighbor_map =
                           pheno1, ' and ', pheno2))
     } else {
       # Don't show nearest neighbors, just cells
-      p = base_plot +
+      p = p +
         ggplot2::labs(title=paste0(field, ' - ', pheno1, ' and ', pheno2))
     }
   } else {
     # One or both phenotypes are missing, just show the field name as title
-    p = base_plot + ggplot2::labs(title=field)
+    p = p + ggplot2::labs(title=field)
   }
 
   # We want the points on top of the lines, so add them last
@@ -130,11 +154,30 @@ nearest_neighbor_map =
     p = p + ggplot2::geom_point(data=pheno2_cells,
                                 ggplot2::aes(color=pheno2), size=dot_size)
 
+  # Add the scale again with alpha so the dots show through
+  # This is from phenoptr::add_scale_and_background
+  overlay_alpha = 0.7
+  p = p + ggplot2::geom_segment(ggplot2::aes(x=xlim[2]-50-200, xend=xlim[2]-50,
+                                             y=ylim[2]-100, yend=ylim[2]-100),
+                                color='white', size=1, alpha=overlay_alpha)
+  p = p + ggplot2::geom_text(ggplot2::aes(x=xlim[2]-50-200/2, y=ylim[2]-90,
+                                          label=paste(200, '~mu*m')),
+                             size=3, hjust=0.5, vjust=1, color='white',
+                             alpha=overlay_alpha, parse=TRUE)
+
   # A little theming
-  p + ggplot2::theme(legend.key = ggplot2::element_rect(fill = "white"),
+  p = p + ggplot2::theme(legend.key = ggplot2::element_rect(fill = "white"),
             legend.position='bottom') +
     ggplot2::guides(
       color = ggplot2::guide_legend(override.aes = list(size = 5)))
+
+  if (add_logo) {
+    # This is the second impression of the logo. It is slightly transparent
+    # so the dots show through.
+    logo[,,4] = logo[,,4] * overlay_alpha
+    p = add_logo_to_plot(p, logo)
+  }
+  p
 }
 
 # Join from_cells and to_cells by nearest neighbor cell ID
@@ -178,7 +221,8 @@ read_background = function(field, export_path) {
 # Get field metadata from the component data file
 read_field_info = function(field, export_path) {
   field_base = stringr::str_remove(field, '\\.im3')
-  component_path = file.path(export_path, paste0(field_base, '_component_data.tif'))
+  component_path = file.path(export_path, paste0(field_base,
+                                                 '_component_data.tif'))
   if(!file.exists(component_path))
     return(NULL)
 

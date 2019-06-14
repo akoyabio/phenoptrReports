@@ -25,6 +25,7 @@ Imports:
     miniUI (>= 0.1.1),
     openxlsx,
     phenoptr (> 0.2.1),
+    png,
     purrr,
     readr,
     readxl (>= 1.2.0),
