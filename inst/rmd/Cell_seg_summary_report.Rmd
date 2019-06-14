@@ -105,14 +105,8 @@ if ('Phenotype' %in% names(csd)) {
   # Old-style phenotypes (single column)
   counts = csd %>% count(Phenotype) %>% 
     rename(Count='n') %>% 
-    mutate(Phenotype=ifelse(Phenotype=='', 'N/A', Phenotype))
+    filter(Phenotype != '')
 } else {
-  # count total and N/A rows
-  total = count(csd) %>% rename(`Total Cells`='n')
-  count_NA = csd %>% 
-    filter_at(vars(starts_with('Phenotype')), any_vars((. == ''))) %>% 
-    count() %>% 
-    rename('N/A'='n')
   # Phenotype per marker
   counts = csd %>% select(starts_with('Phenotype')) %>% 
     gather() %>% 
@@ -121,6 +115,13 @@ if ('Phenotype' %in% names(csd)) {
     rename(Phenotype='value', Count='n') %>% 
     filter(Phenotype != '')
 }
+
+# count total and N/A rows
+total = count(csd) %>% rename(`Total Cells`='n')
+count_NA = csd %>% 
+  filter_at(vars(starts_with('Phenotype')), any_vars((. == ''))) %>% 
+  count() %>% 
+  rename('N/A'='n')
 
 counts %>% spread(Phenotype, Count) %>% bind_cols(count_NA, total)
 ```
@@ -131,17 +132,9 @@ counts %>% spread(Phenotype, Count) %>% bind_cols(count_NA, total)
 if ('Phenotype' %in% names(csd)) {
   # Old-style phenotypes (single column)
   counts = csd %>% count(`Slide ID`, `Phenotype`) %>% 
-    mutate(Phenotype=ifelse(Phenotype=='', 'N/A', Phenotype)) %>% 
-    rename(Count='n')
+    rename(Count='n') %>% 
+    filter(Phenotype != '')
 } else {
-  # count total and N/A rows
-  totals = csd %>% group_by(`Slide ID`) %>% 
-    count() %>% 
-    rename(`Total Cells`='n')
-  counts_NA = csd %>% group_by(`Slide ID`) %>% 
-    filter_at(vars(starts_with('Phenotype')), any_vars((. == ''))) %>% 
-    count() %>% 
-    rename('N/A'='n')
   # Phenotype per marker
   counts = csd %>% select(`Slide ID`, starts_with('Phenotype')) %>% 
     gather('key', 'value', -`Slide ID`) %>% 
@@ -152,7 +145,16 @@ if ('Phenotype' %in% names(csd)) {
     filter(Phenotype != '')
 }
 
-  counts %>% spread(Phenotype, Count, fill=0) %>% left_join(counts_NA) %>% 
+# count total and N/A rows
+totals = csd %>% group_by(`Slide ID`) %>% 
+  count() %>% 
+  rename(`Total Cells`='n')
+counts_NA = csd %>% group_by(`Slide ID`) %>% 
+  filter_at(vars(starts_with('Phenotype')), any_vars((. == ''))) %>% 
+  count() %>% 
+  rename('N/A'='n')
+
+ counts %>% spread(Phenotype, Count, fill=0) %>% left_join(counts_NA) %>% 
     left_join(totals)
 
 ```
