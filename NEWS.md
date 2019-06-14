@@ -3,6 +3,9 @@
 Spatial map viewer addin
 - New addin provides a field-based viewer of nearest neighbor relationships.
 
+Bug fixes:
+- Fix error during calculation of N/A and Total cell in cell seg summary report
+
 # phenoptrReports 0.2.1
 **2019-05-31**
 
