@@ -1,7 +1,12 @@
 # phenoptrReports 0.2.1.9000
 
+Analysis addin
+- Phenotype definitions may include valid expressions such as
+  `` ~`Membrane PDL1 (Opal 520) Mean`>5 ``.
+ 
 Spatial map viewer addin
 - New addin provides a field-based viewer of nearest neighbor relationships.
+  See the "Viewing nearest neighbors" tutorial for details.
 
 Bug fixes:
 - Fix error during calculation of N/A and Total cell in cell seg summary report

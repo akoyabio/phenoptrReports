@@ -27,12 +27,12 @@ phenotype_module_ui = function(id, values, show_help=TRUE) {
   )
 }
 
-phenotype_module = function(input, output, session, phenotypes) {
+phenotype_module = function(input, output, session, phenotypes, csd) {
   # Check for valid phenotype definitions
   observe({
     req(input$phenotype)
     output$error = renderText(
-      phenoptr::validate_phenotype_definitions(input$phenotype, phenotypes))
+      phenoptr::validate_phenotype_definitions(input$phenotype, phenotypes, csd))
   })
 
   # Show help
@@ -40,12 +40,20 @@ phenotype_module = function(input, output, session, phenotypes) {
     req(input$help)
     shiny::showModal(
       shiny::modalDialog(
-        shiny::p('Phenotype definitions are composed from the names of phenotypes. Definitions must end in + or -, for example CD3+ or CD8-.'),
+        shiny::p('Phenotype definitions are composed from the names of phenotypes. ',
+                 'Definitions must end in + or -, for example CD3+ or CD8-.'),
         shiny::p('Individual phenotypes can be combined with slash (/) or comma (,).'),
-        shiny::p('Combine with a slash to define double positive phenotypes, for example CD3+/CD8+.'),
-        shiny::p('Combine with a comma to allow either phenotype, for example CD68+,CD163+.'),
+        shiny::p('Combine with a slash to define double positive phenotypes, ',
+                 'for example CD3+/CD8+.'),
+        shiny::p('Combine with a comma to allow either phenotype, ',
+                 'for example CD68+,CD163+.'),
+        shiny::p('Phenotype definitions may also include valid expressions ',
+                 'such as ',
+                 shiny::code("~`Membrane PDL1 (Opal 520) Mean`>5",
+                             style='color: black; background: #f5f5f5'),
+                 '.'),
         shiny::p(shiny::a('Online Help',
-                          href="https://akoyabio.github.io/phenoptrReports/articles/analysis.html")),
+                 href="https://akoyabio.github.io/phenoptrReports/articles/analysis.html")),
         title = 'Defining phenotypes',
         footer=NULL, easyClose = TRUE, fade = FALSE))
   })

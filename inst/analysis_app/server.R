@@ -1,7 +1,7 @@
 # Server (and dynamic UI) for analysis_app
 shinyServer(function(input, output, server) {
 
-  # Data container. Will contain
+  # Data container for all fields needed by the formatters. Will contain
   # by - Field to aggregate by
   # available_phenotypes - Base names (no +/-) of all available phenotypes
   # expression_columns - Names of mean expression columns
@@ -15,6 +15,9 @@ shinyServer(function(input, output, server) {
   # include_distance_details - Write a detail table for distance metrics?
   # radii - For count_within, if selected
   the_data = reactiveValues()
+
+  # Cell seg data
+  csd = reactiveVal()
 
   # File selection
   # file_data may contain input_path, summary_path, score_path, output_dir
@@ -65,6 +68,7 @@ shinyServer(function(input, output, server) {
     }
 
     the_data$by = by_choices[1] # Default
+    csd(d)
 
     shiny::removeModal()
 
@@ -119,7 +123,7 @@ shinyServer(function(input, output, server) {
     # Remember the phenotype selector
     the_data$phenotype_modules =
       list(shiny::callModule(phenotype_module, 'pheno0',
-                             available_phenotypes))
+                             available_phenotypes, d))
 
   })
 
@@ -144,7 +148,8 @@ shinyServer(function(input, output, server) {
     # Remember the result
     the_data$phenotype_modules = c(the_data$phenotype_modules,
                             list(callModule(phenotype_module, id,
-                                            the_data$available_phenotypes)))
+                                            the_data$available_phenotypes,
+                                            csd())))
   })
 
   # Handle the nearest neighbor checkbox
