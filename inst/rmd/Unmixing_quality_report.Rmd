@@ -280,7 +280,7 @@ Intensity is shown on a log scale.
 density_fig_height = 0.5 + 0.5 * length(comp_files)
 ```
 
-```{r fig.height=density_fig_height}
+```{r density_plots,fig.height=density_fig_height}
 # Make density plots using random sampled data
 all_primaries = tibble::tibble(
   Source=factor(comp_names, levels=comp_names), 

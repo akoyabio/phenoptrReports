@@ -30,7 +30,7 @@ table {
 }
 </style>
 
-```{r}
+```{r data}
 if (is.null(params$csd_path) == is.null(params$csd))
   stop('csd_path or csd must be provided but not both.')
 
@@ -39,12 +39,13 @@ field_col = phenoptr::field_column(csd)
 
 # If csd_path was provided, look for a companion 'rejected' file
 rejected = NULL
-if (!is.null(csd_path) && str_detect(csd_path, 'cell_seg_data.txt')) {
+if (!is.null(params$csd_path) && 
+    str_detect(params$csd_path, 'cell_seg_data.txt')) {
   # Try summary first
-  rejected_path = str_replace(csd_path, 'cell_seg_data',
+  rejected_path = str_replace(params$csd_path, 'cell_seg_data',
                               'rejected_cell_seg_data_summary')
   if (!file.exists(rejected_path))
-    rejected_path = str_replace(csd_path, 'cell_seg_data',
+    rejected_path = str_replace(params$csd_path, 'cell_seg_data',
                               'rejected_cell_seg_data')
   if(file.exists(rejected_path)) {
     rejected = read_cell_seg_data(rejected_path)
@@ -56,7 +57,7 @@ if (!is.null(csd_path) && str_detect(csd_path, 'cell_seg_data.txt')) {
 }
 ```
 
-```{r results='asis'}
+```{r show_param,results='asis'}
 if (!is.null(params$dataset_name)) {
   cat('Summary of cell seg data for **', params$dataset_name, '**.\n\n', sep='')
 } else if (!is.null(params$csd_path)) {
@@ -70,12 +71,12 @@ if (!is.null(params$dataset_name)) {
 This file contains data on `r n_distinct(csd[[field_col]])` fields 
 taken from `r n_distinct(csd[['Slide ID']])` slides:
 
-```{r}
+```{r field_summary}
 csd %>% group_by(`Slide ID`) %>% 
   summarize(`Number of fields`=n_distinct(!!rlang::sym(field_col)))
 ```
 
-```{r results='asis'}
+```{r rejected_summary,results='asis'}
 if (!is.null(rejected)) {
   cat('\n\n### Rejected fields\n\n')
   cat(n_distinct(rejected[[field_col]]), 
@@ -91,7 +92,7 @@ if (!is.null(rejected)) {
 
 The tissue categories present are
 
-```{r results='asis'}
+```{r tissue_categories,results='asis'}
 cats = unique(csd$`Tissue Category`)
 cat('\n- ', paste(cats, collapse='\n- '), '\n\n', sep='')
 ```
@@ -100,7 +101,7 @@ cat('\n- ', paste(cats, collapse='\n- '), '\n\n', sep='')
 
 The phenotypes present, and their total counts, are
 
-```{r}
+```{r phenotypes}
 if ('Phenotype' %in% names(csd)) {
   # Old-style phenotypes (single column)
   counts = csd %>% count(Phenotype) %>% 
@@ -128,7 +129,7 @@ counts %>% spread(Phenotype, Count) %>% bind_cols(count_NA, total)
 
 ### Phenotype counts per slide
 
-```{r}
+```{r phenotypes_per_slide}
 if ('Phenotype' %in% names(csd)) {
   # Old-style phenotypes (single column)
   counts = csd %>% count(`Slide ID`, `Phenotype`) %>% 
@@ -159,7 +160,7 @@ counts_NA = csd %>% group_by(`Slide ID`) %>%
 
 ```
 
-```{r results='asis'}
+```{r upset_plots,results='asis'}
 # For phenotype per marker we can show UpSet plots. For classic phenotyping
 # they don't add much to the tabular summaries.
 if (!'Phenotype' %in% names(csd) && require(UpSetR)) {
