@@ -1,3 +1,10 @@
+# phenoptrReports 0.2.2.9000
+
+Component levels report
+- Allow the user to enter the quantile(s) to display on the histograms.
+  If two or more quantiles are entered, include a signal-to-noise table
+  in the report, showing the ratio of the highest quantile to the lowest.
+  
 # phenoptrReports 0.2.2
 **2019-06-18**
  

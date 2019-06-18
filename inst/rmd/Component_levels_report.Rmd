@@ -10,6 +10,9 @@ params:
     label: "Path to directory with component data"
     value: C:/Research/phenoptrTestData/component_levels_report_test
     input: file
+  quantiles:
+    label: "Quantiles to show in histograms"
+    value: [0.1, 0.99, 0.999]
 editor_options: 
   chunk_output_type: console
 ---
@@ -53,14 +56,14 @@ library(phenoptr)
 export_path = params$export_path
 
 # Quantiles to show on the plots
-quantiles = 0.999
+quantiles = sort(params$quantiles)
 
 ```
 
 This report shows component levels for samples
 from <pre><strong>`r export_path`</strong></pre>.
 
-```{r data}
+```{r files}
 comp_files = list.files(export_path, pattern='component_data.tif', full.names=TRUE) %>% 
   purrr::set_names(., basename(.))
 if (length(comp_files) == 0)
@@ -74,7 +77,7 @@ These plots show the number of pixels at each intensity for each
 component of each image.
 Intensity is shown on a log scale.
 
-```{r}
+```{r data}
 # Initial data acquisition and creation of the first round of plots
 # all_data is a list of lists of plot, data, quants, clipping
 all_data = purrr::map(comp_files, phenoptrReports:::component_ridge_plot, quantiles=quantiles)
@@ -90,7 +93,7 @@ all_components = purrr::map_dfr(all_data, 'data')
 density_fig_height =  1 + 0.5 * n_distinct(all_components$Fluor)
 ```
 
-```{r fig.height=density_fig_height,results='asis'}
+```{r histogram_by_file,fig.height=density_fig_height,results='asis'}
 # Output density plots by file
 message('Creating histograms by source')
 purrr::iwalk(all_data, function(d, n) {
@@ -105,7 +108,7 @@ component_fig_height = 1 + 0.5 * n_distinct(all_components$Source)
 
 ### Pixel intensity by component
 
-```{r fig.height=component_fig_height,results='asis'}
+```{r histogram_by_component,fig.height=component_fig_height,results='asis'}
 message('Creating histograms by component')
 fluors = sort(unique(all_components$Fluor))
 palette = RColorBrewer::brewer.pal(length(fluors), 'Spectral')
@@ -127,7 +130,7 @@ purrr::walk2(fluors, palette,
 Pair plots show the expression of each marker against each other marker.
 They may help identify crosstalk between markers.
 
-```{r fig.width=8,fig.height=8.5,results='asis'}
+```{r pairs,fig.width=8,fig.height=8.5,results='asis'}
 message('Creating pair plots')
 purrr::iwalk(all_data, function(d, n) {
   # Unstack and subsample
@@ -142,6 +145,27 @@ purrr::iwalk(all_data, function(d, n) {
   cat('\n\n  \n----\n  \n')
 })
 ```
+
+```{r s2n,results='asis'}
+# If there are at least two quantiles, show a signal-to-noise table
+# with the top and bottom quantiles.
+if (length(quantiles) >= 2) {
+  cat('\n\n### Signal to noise\n\n')
+  cat(stringr::str_glue(
+  'This table shows the ratio of the ',
+  '{scales::percent(quantiles[length(quantiles)])}ile signal ',
+  'level to the {scales::percent(quantiles[1])}ile signal level.\n\n'))
+  
+  # What columns of all_quants do we want?
+  qlow_col = 3
+  qhi_col = qlow_col + length(quantiles) - 1
+  all_quants %>% dplyr::mutate(SN=round(.[[qhi_col]]/.[[qlow_col]], 1)) %>% 
+    dplyr::select(Fluor, Source, SN) %>% 
+    tidyr::spread(Fluor, SN) %>% 
+    knitr::kable()
+}
+```
+
 
 ### Guidance 
 

@@ -174,10 +174,7 @@ shinyServer(function(input, output, server) {
     shiny::req(input$radii)
 
     # Parse out comma/space delimited numbers
-    radii = input$radii %>%
-      stringr::str_trim() %>%
-      stringr::str_split('[, ] *') %>% purrr::pluck(1) %>%
-      purrr::map_dbl(~suppressWarnings(as.numeric(.x)))
+    radii = parse_comma_space_values(input$radii)
     if (length(radii) > 0 && !anyNA(radii)) {
       the_data$radii = radii
     } else {

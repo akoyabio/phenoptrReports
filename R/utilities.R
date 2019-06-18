@@ -156,3 +156,15 @@ function_exists =function(package, fun) {
   requireNamespace(package, quietly=TRUE) &&
     (fun %in% getNamespaceExports(package))
 }
+
+#' Parse a list of numeric values separated by comma and/or space
+#' @param s A string containing comma/space separated values.
+#' @return A (possibly empty) numeric vector with NA values for
+#' any parsing failures.
+parse_comma_space_values = function(s) {
+  s %>% stringr::str_trim() %>%
+    stringr::str_split('[, ] *') %>%
+    purrr::pluck(1) %>%
+    purrr::discard(~.x=='') %>%
+    purrr::map_dbl(~suppressWarnings(as.numeric(.x)))
+}

@@ -97,9 +97,15 @@ unmixing_quality_report = function(export_path=NULL) {
 #' an export folder containing component data files for multiplex samples.
 #' A component levels report is created for the samples and saved in
 #' the source directory.
+#'
+#' If two or more quantiles are provided, the report will include an
+#' signal-to-noise table showing the ratio of the highest quantile
+#' to the lowest.
 #' @param export_path Path to a directory containing component_data files.
+#' @param quantiles Quantiles to show in the histograms and use for
+#' signal-to-noise calculations.
 #' @export
-component_levels_report = function(export_path=NULL) {
+component_levels_report = function(export_path=NULL, quantiles=0.999) {
   stopifnot(dir.exists(export_path))
 
   rmd_path = system.file("rmd", "Component_levels_report.Rmd",
@@ -108,7 +114,8 @@ component_levels_report = function(export_path=NULL) {
   output_path = file.path(export_path, 'Component_levels_report.html')
   rmarkdown::render(rmd_path, output_file=output_path, quiet=TRUE,
                     intermediates_dir=temp_dir_by(output_path),
-                    params=list(export_path = export_path))
+                    params=list(export_path = export_path,
+                                quantiles=quantiles))
 }
 
 #' Write session info to a file

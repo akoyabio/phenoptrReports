@@ -17,5 +17,20 @@ test_that("file_to_fluor works", {
   )
 
   purrr::walk(test_values,
-    ~expect_equal(phenoptrReports:::file_to_fluor(.x[1]), .x[2]), .info=.x[1])
+    ~expect_equal(phenoptrReports:::file_to_fluor(.x[1]), .x[2], info=.x[1]))
+})
+
+test_that('parse_comma_space_values works', {
+  test_values = list(
+    list('', numeric(0)),
+    list('a', NA_real_),
+    list('1', c(1)),
+    list('1,2 3', c(1, 2, 3)),
+    list('1,a 3', c(1, NA_real_, 3))
+  )
+
+  purrr::walk(test_values,
+        ~expect_equal(phenoptrReports:::parse_comma_space_values(.x[[1]]),
+                      .x[[2]],
+                      info=.x[[1]]))
 })

@@ -15,6 +15,8 @@ addin_50_component_levels = function() {
     'for bright and dark pixels in each sample.'
   ))
 
+  default_quantiles = 0.999
+
   ui <- miniUI::miniPage(
     shiny::tags$head(
       shiny::tags$style(shiny::HTML("
@@ -31,14 +33,20 @@ addin_50_component_levels = function() {
       intro,
 
       shiny::wellPanel(
-      shiny::h3('Select Export directory'),
-      'Click the "Browse" button to select a directory',
-      'containing component data files for multiplex samples.',
-      shiny::br(), shiny::br(),
+        shiny::h3('Select Export directory'),
+        'Click the "Browse" button to select a directory',
+        'containing component data files for multiplex samples.',
+        shiny::br(), shiny::br(),
 
-      shiny::actionButton('browse', 'Browse...'),
-      shiny::br(), shiny::br(),
-      shiny::textOutput('export_dir')
+        shiny::actionButton('browse', 'Browse...'),
+        shiny::br(), shiny::br(),
+        shiny::textOutput('export_dir')
+      ),
+
+      shiny::wellPanel(
+        shiny::h3('Select quantiles'),
+        'Enter the quantiles to show, separated by comma or space.',
+        shiny::textInput('quantiles', '', value=default_quantiles)
       ),
 
       shiny::h4(shiny::textOutput('error'), style='color: maroon')
@@ -48,6 +56,7 @@ addin_50_component_levels = function() {
   server <- function(input, output, session) {
     file_list = shiny::reactiveVal()
     export_dir = shiny::reactiveVal()
+    quantiles = shiny::reactiveVal(default_quantiles)
 
     # Handle the browse button by selecting a folder
     shiny::observeEvent(input$browse, {
@@ -60,6 +69,19 @@ addin_50_component_levels = function() {
       set_error_text()
     })
 
+    # Handle the quantiles text box
+    shiny::observeEvent(input$quantiles, {
+      shiny::req(input$quantiles)
+
+      # Parse out comma/space delimited numbers
+      quants = parse_comma_space_values(input$quantiles)
+      if (length(quants) > 0 && !anyNA(quants)) {
+        quantiles(quants)
+      } else {
+        quantiles(NULL)
+      }
+    })
+
     # Handle the done button by processing files or showing an error
     shiny::observeEvent(input$done, {
       error_text = get_error_text()
@@ -67,7 +89,7 @@ addin_50_component_levels = function() {
       if (error_text == '') {
         shiny::showNotification('Processing, please wait!', duration=NULL,
                                 closeButton=FALSE, type='message')
-        phenoptrReports::component_levels_report(export_dir())
+        phenoptrReports::component_levels_report(export_dir(), quantiles())
         shiny::stopApp()
       } else {
         shiny::showNotification(error_text, type='message')
@@ -91,6 +113,8 @@ addin_50_component_levels = function() {
         'Please select an output directory.'
       } else if (length(list.files(export_dir(), pattern='component_data.tif'))==0) {
         'Please select an export directory containing component data files.'
+      } else if (!shiny::isTruthy(quantiles())) {
+        'Quantiles must be numeric and separated by space or comma.'
       } else ''
     }
 
