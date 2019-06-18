@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Add total rows to a data frame if there are multiple tissue categories. — add_tissue_category_totals • phenoptrReports</title>
+<title>Request input file and directory for the viewer, then launch the viewer — spatial_map_viewer_front_end • phenoptrReports</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Add total rows to a data frame if there are multiple tissue categories. — add_tissue_category_totals" />
+<meta property="og:title" content="Request input file and directory for the viewer, then launch the viewer — spatial_map_viewer_front_end" />
 
-<meta property="og:description" content="Add total rows to a data frame if there are multiple tissue categories." />
+<meta property="og:description" content="Request input file and directory for the viewer, then launch the viewer" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -128,50 +128,25 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Add total rows to a data frame if there are multiple tissue categories.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/utilities.R'><code>R/utilities.R</code></a></small>
-    <div class="hidden name"><code>add_tissue_category_totals.Rd</code></div>
+    <h1>Request input file and directory for the viewer, then launch the viewer</h1>
+    <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/spatial_map_viewer_addin.R'><code>R/spatial_map_viewer_addin.R</code></a></small>
+    <div class="hidden name"><code>spatial_map_viewer_front_end.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Add total rows to a data frame if there are multiple tissue categories.</p>
+    <p>Request input file and directory for the viewer, then launch the viewer</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>add_tissue_category_totals</span>(<span class='no'>d</span>, <span class='no'>tissue_categories</span>, <span class='kw'>.by</span> <span class='kw'>=</span> <span class='st'>"Slide ID"</span>)</pre>
-    
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>d</th>
-      <td><p>A data frame with columns for Slide ID, Tissue Category and
-columns to summarize</p></td>
-    </tr>
-    <tr>
-      <th>tissue_categories</th>
-      <td><p>The tissue categories of interest, ordered.</p></td>
-    </tr>
-    <tr>
-      <th>.by</th>
-      <td><p>Column to aggregate by</p></td>
-    </tr>
-    </table>
-    
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>A data frame with tissue category totals and rows in order.</p>
-    
+    <pre class="usage"><span class='fu'>spatial_map_viewer_front_end</span>()</pre>
+        
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#value">Value</a></li>
-          </ul>
+                </ul>
 
   </div>
 </div>

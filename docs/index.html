@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.2</span>
       </span>
     </div>
 
@@ -54,6 +54,9 @@
     </li>
     <li>
       <a href="articles/analysis.html">Analyzing inForm data</a>
+    </li>
+    <li>
+      <a href="articles/spatial_map_viewer.html">Visualizing spatial relationships</a>
     </li>
     <li>
       <a href="articles/unmixing_quality_report.html">Unmixing quality report</a>
@@ -92,96 +95,80 @@
   <div class="contents col-md-9">
 <div id="phenoptrreports-" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#phenoptrreports-" class="anchor"></a>phenoptrReports <img src="reference/figures/Akoya.png" align="right" height="50px">
+<a href="#phenoptrreports-" class="anchor"></a>phenoptrReports <img src="reference/figures/Akoya.png" align="right" width="175">
 </h1></div>
-<div id="introduction" class="section level2">
+<div id="reports-and-visualizations-from-inform-data" class="section level2">
 <h2 class="hasAnchor">
-<a href="#introduction" class="anchor"></a>Introduction</h2>
-<p><code>phenoptrReports</code> generates reports based on data created by Akoya Biosciences’ inForm<sup>®</sup> software.</p>
-<div id="merging-data-from-individual-fields" class="section level3">
-<h3 class="hasAnchor">
-<a href="#merging-data-from-individual-fields" class="anchor"></a>Merging data from individual fields</h3>
-<p>The “Merge cell seg files” application merges inForm data files from individual fields to create “Merge” data files. This is similar to the inForm Merge tab but does not include the ability to review and reject individual fields.</p>
-</div>
-<div id="data-aggregation-and-reporting" class="section level3">
-<h3 class="hasAnchor">
-<a href="#data-aggregation-and-reporting" class="anchor"></a>Data aggregation and reporting</h3>
-<p>The consolidation and analysis applications in <code>phenoptrReports</code> use merged data files to analyze cell phenotype and expression data created by inForm. They use data from multiple inForm projects to aggregate phenoype counts, density, mean expression and H-Score for each slide and tissue category in an experiment.</p>
-<p>For each analysis, the applications create</p>
-<ul>
-<li>a consolidated data file</li>
-<li>an Excel workbook with aggregation results</li>
-<li>a Word document with visualizations of the results</li>
-<li>an R script which provides an audit trail and can be used to reproduce or modify the analysis.</li>
-</ul>
-</div>
-<div id="unmixing-quality-report" class="section level3">
-<h3 class="hasAnchor">
-<a href="#unmixing-quality-report" class="anchor"></a>Unmixing quality report</h3>
-<p>The unmixing quality report analyzes unmixed, singleplex images to help evaluate staining and unmixing quality. This report shows crosstalk between components and highlights potential problem areas in assay development.</p>
-</div>
-<div id="component-levels-report" class="section level3">
-<h3 class="hasAnchor">
-<a href="#component-levels-report" class="anchor"></a>Component levels report</h3>
-<p>The component levels report analyzes unmixed, multiplex images to help evaluate staining levels for an entire experiment. This report shows the distribution of signal and dark pixels for all components.</p>
+<a href="#reports-and-visualizations-from-inform-data" class="anchor"></a>Reports and visualizations from inForm data</h2>
+<p><code>phenoptrReports</code> generates reports and visualizations based on data created by Akoya Biosciences’ inForm<sup>®</sup> software.</p>
+<p><code>phenoptrReports</code> is part of the Akoya Biosciences Phenoptics™ family of Quantitative Pathology Research Solutions. For more information visit the <a href="https://www.akoyabio.com/phenopticstm/technology/quantitative-pathology-research">Phenoptics™ home page</a>.</p>
 <hr>
-<p><code>phenoptrReports</code> is part of the Akoya Biosciences Phenoptics™ family of Quantitative Pathology Research Solutions. For more information visit the Phenoptics™ <a href="http://www.perkinelmer.com/category/quantitative-pathology-research">home page</a>.</p>
-<hr>
-</div>
 </div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<p><code>phenoptrReports</code> requires the <a href="https://www.r-project.org/">R environment</a> for statistical computing, version 3.5.0 or higher. To install R, visit the <a href="https://cloud.r-project.org/">R download</a> page.</p>
 <p>The analysis apps in <code>phenoptrReports</code> run as “Addins” to the <a href="https://www.rstudio.com/products/rstudio/">RStudio IDE</a>, which must also be installed.</p>
-<ol>
-<li>Install R. Download the most recent version from <a href="https://cloud.r-project.org/" class="uri">https://cloud.r-project.org/</a>.</li>
-<li>Install RStudio. Download the desktop version from <a href="https://www.rstudio.com/products/rstudio/" class="uri">https://www.rstudio.com/products/rstudio/</a>.</li>
-<li>Start RStudio.</li>
-<li>Install <code>phenoptrReports</code> from GitHub. In the RStudio console, copy and paste or type these commands (press Enter after each line):</li>
-</ol>
-<pre><code>install.packages("devtools")
-devtools::install_github("akoyabio/phenoptrReports")</code></pre>
-<ol>
-<li>If requested, enter <code>1</code> (Yes) to install BiocInstaller.</li>
-<li>Restart RStudio.</li>
-</ol>
+<p><code>phenoptrReports</code> uses the Akoya Biosciences <code>phenoptr</code> package for much of its functionality. Please follow the <a href="https://akoyabio.github.io/phenoptr/#installation"><code>phenoptr</code> installation instructions</a>, including the optional installations, before installing <code>phenoptrReports</code>.</p>
+<p>Next, install <code>phenoptrReports</code> from GitHub. In the RStudio console, copy and paste or type this command:</p>
+<pre><code><a href="https://www.rdocumentation.org/packages/devtools/topics/reexports">devtools::install_github("akoyabio/phenoptrReports")</a></code></pre>
 <hr>
 </div>
 <div id="getting-started" class="section level2">
 <h2 class="hasAnchor">
 <a href="#getting-started" class="anchor"></a>Getting Started</h2>
-<div id="merging-data-from-individual-fields-1" class="section level3">
+<p><code>phenoptrReports</code> functionality is provided via RStudio Addins. These are small applications accessed via the “Addins” menu in the RStudio IDE.</p>
+<div id="merge-data-from-individual-fields" class="section level3">
 <h3 class="hasAnchor">
-<a href="#merging-data-from-individual-fields-1" class="anchor"></a>Merging data from individual fields</h3>
-<p>Use the “Merge cell seg files” addin to merge inForm data from individual fields into “Merge” data files. This is similar to the function of the inForm Merge tab and should be used only when the inForm Merge is not available.</p>
+<a href="#merge-data-from-individual-fields" class="anchor"></a>Merge data from individual fields</h3>
+<p>The <strong>Merge cell seg files</strong> addin merges inForm data files from individual fields to create “Merge” data files. This is similar to the inForm Merge tab but does not include the ability to review and reject individual fields. Use this addin if you are not able to merge in inForm for any reason.</p>
+<p>This addin allows you to select an inForm export directory containing data files for individual fields. It creates merge data files combining data for all fields.</p>
 </div>
-<div id="data-consolidation" class="section level3">
+<div id="consolidate-merged-data-to-a-single-file" class="section level3">
 <h3 class="hasAnchor">
-<a href="#data-consolidation" class="anchor"></a>Data consolidation</h3>
-<p>A <code>phenoptrReports</code> data analysis has two major steps - data consolidation and data aggregation. Start the consolidation step by selecting <strong>Consolidate and summarize</strong> from the RStudio Addins menu.</p>
-<p>The consolidation step combines the output from multiple inForm projects into a single consolidated data file, creating columns for each individual phenotype. The inputs to this step are merged cell seg data files created by inForm. The output is a consolidated data file and a summary report for each file.</p>
-<p>Run the consolidation step even if your data comes from a single inForm project. This creates a data file in the format that the analysis step uses.</p>
-<p>For detailed instructions and requirements, see the <a href="articles/consolidation.html">Consolidating inForm data</a> tutorial.</p>
+<a href="#consolidate-merged-data-to-a-single-file" class="anchor"></a>Consolidate merged data to a single file</h3>
+<p>The <strong>Consolidate and summarize</strong> addin combines the output from multiple inForm projects into a single consolidated data file, creating columns for each individual phenotype. The inputs to this addin are merged cell seg data files created by inForm. The output is a consolidated data file and a summary report for each file.</p>
+<p>Run the consolidation addin even if your data comes from a single inForm project. This creates a data file in the format that the analysis addin uses.</p>
+<p>For detailed instructions and requirements, see the <a href="https://akoyabio.github.io/phenoptrReports/articles/consolidation.html">Consolidating inForm data tutorial</a>.</p>
 </div>
 <div id="data-analysis" class="section level3">
 <h3 class="hasAnchor">
 <a href="#data-analysis" class="anchor"></a>Data analysis</h3>
-<p>The analysis step has three parts:</p>
+<p>The <strong>Analyze consolidated data</strong> addin reads data produced by the consolidation addin. It aggregates phenoype counts, density, mean expression and H-Score for each slide and tissue category in an experiment and can also report on nearest neighbors and count cells within a radius.</p>
+<p>This addin creates</p>
+<ul>
+<li>an Excel workbook with aggregation results</li>
+<li>a Word document with visualizations of the results</li>
+<li>CSV files containing spatial metrics</li>
+<li>an R script which provides an audit trail and can be used to reproduce or modify the analysis.</li>
+</ul>
+<p>The analysis addin has three parts:</p>
 <ul>
 <li>select the input files</li>
 <li>define the desired analysis</li>
 <li>create the final reports</li>
 </ul>
-<p>The most important input file is the consolidated data file from the consolidation step. Selecting a summary cell seg data file enables density calculations; selecting a score data file enables H-Score calculation.</p>
+<p>The most important input file is the consolidated data file from the consolidation addin. Selecting a summary cell seg data file enables density calculations; selecting a score data file enables H-Score calculation.</p>
 <p>To define the analysis, you select tissue categories, phenotypes, and markers of interest.</p>
 <p>To create the final reports, the analysis app writes and runs an R script. The script computes the aggregated statistics, writes them to an Excel workbook, and creates visualizations of the results in a Word document.</p>
-<p>For detailed instructions and requirements, see the <a href="articles/analysis.html">Analyzing inForm data</a> tutorial.</p>
+<p>For detailed instructions and requirements, see the <a href="https://akoyabio.github.io/phenoptrReports/articles/analysis.html">Analyzing inForm data tutorial</a>.</p>
 </div>
-<div id="unmixing-quality-report-1" class="section level3">
+<div id="visualization-of-spatial-relationships" class="section level3">
 <h3 class="hasAnchor">
-<a href="#unmixing-quality-report-1" class="anchor"></a>Unmixing quality report</h3>
-<p>For more information about the unmixing quality report, see the <a href="articles/unmixing_quality_report.html">Unmixing quality report</a> tutorial.</p>
+<a href="#visualization-of-spatial-relationships" class="anchor"></a>Visualization of spatial relationships</h3>
+<p>The <strong>Spatial map viewer</strong> addin creates visualizations of nearest neighbors of selected phenotypes within individual fields. The visualizations can be saved for use in other applications.</p>
+<p>The spatial map viewer requires a <code>nearest_neighbors.csv</code> file created by the analysis addin and in inForm export folder containing composite and component images.</p>
+<p>For detailed instructions and requirements, see the <a href="https://akoyabio.github.io/phenoptrReports/articles/spatial_map_viewer.html">Visualizing spatial relationships tutorial</a>.</p>
+</div>
+<div id="unmixing-quality-report" class="section level3">
+<h3 class="hasAnchor">
+<a href="#unmixing-quality-report" class="anchor"></a>Unmixing quality report</h3>
+<p>The <strong>Unmixing quality report</strong> addin analyzes unmixed, singleplex images to help evaluate staining and unmixing quality. This report shows crosstalk between components and highlights potential problem areas in assay development.</p>
+<p>For more information about the unmixing quality report, see the <a href="https://akoyabio.github.io/phenoptrReports/articles/unmixing_quality_report.html">Unmixing quality report tutorial</a>.</p>
+</div>
+<div id="component-levels-report" class="section level3">
+<h3 class="hasAnchor">
+<a href="#component-levels-report" class="anchor"></a>Component levels report</h3>
+<p>The <strong>Component levels report</strong> addin analyzes unmixed, multiplex images to help evaluate staining levels for an entire experiment. This report shows the distribution of signal and dark pixels for all components.</p>
 </div>
 </div>
 </div>

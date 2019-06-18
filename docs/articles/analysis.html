@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.2</span>
       </span>
     </div>
 
@@ -54,6 +54,9 @@
     </li>
     <li>
       <a href="../articles/analysis.html">Analyzing inForm data</a>
+    </li>
+    <li>
+      <a href="../articles/spatial_map_viewer.html">Visualizing spatial relationships</a>
     </li>
     <li>
       <a href="../articles/unmixing_quality_report.html">Unmixing quality report</a>
@@ -94,7 +97,7 @@
       <h1>Analyzing inForm data</h1>
                         <h4 class="author">Kent Johnson</h4>
             
-            <h4 class="date">2019-05-10</h4>
+            <h4 class="date">2019-06-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/akoyabio/phenoptrReports/blob/master/vignettes/analysis.Rmd"><code>vignettes/analysis.Rmd</code></a></small>
       <div class="hidden name"><code>analysis.Rmd</code></div>
@@ -181,6 +184,17 @@
 <p><img src="figures/Phenotypes.png"></p>
 </div>
 </div>
+<div id="select-options-for-spatial-analysis" class="section level3">
+<h3 class="hasAnchor">
+<a href="#select-options-for-spatial-analysis" class="anchor"></a>Select options for spatial analysis</h3>
+<p>In this section, select the types of spatial analysis to include.</p>
+<ul>
+<li><p><strong>Include nearest neighbor summary</strong> If this is selected, the generated report will include a tab summarizing nearest neighbor distances between every pair of phenotypes and heatmap visualizations of the mean distances.</p></li>
+<li><p><strong>Include “count within radius” summary</strong> If this is selected, the generated report will include a tab summarizing, for each pair of phenotypes, the number of cells of a phenotype having a cell of a second phenotype within a specified radius. Enter the radius or radii of interest in the text field.</p></li>
+<li><p><strong>Save nearest neighbor details</strong> If this is selected, the analysis will write a <code>nearest_neighbors.csv</code> file containing, for each cell, the distance to the nearest cell of each phenotype and the cell ID of the cell. This file is needed by the “Spatial map viewer” to visualize nearest neighbor distances and may be useful for more detailed statistical analysis of nearest neighbor distances. <em>Select this option if you want to use the Spatial map viewer later!</em></p></li>
+</ul>
+<p><img src="figures/Spatial_options.png"></p>
+</div>
 <div id="create-reports" class="section level3">
 <h3 class="hasAnchor">
 <a href="#create-reports" class="anchor"></a>Create reports</h3>
@@ -217,6 +231,7 @@
       <li><a href="#define-phenotypes-and-markers">Define phenotypes and markers</a></li>
       </ul>
 </li>
+      <li><a href="#select-options-for-spatial-analysis">Select options for spatial analysis</a></li>
       <li><a href="#create-reports">Create reports</a></li>
       </ul>
 </li>

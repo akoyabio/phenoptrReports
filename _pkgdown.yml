@@ -16,6 +16,8 @@ navbar:
           href: articles/consolidation.html
         - text: "Analyzing inForm data"
           href: articles/analysis.html
+        - text: "Visualizing spatial relationships"
+          href: articles/spatial_map_viewer.html
         - text: "Unmixing quality report"
           href: articles/unmixing_quality_report.html
     - text: "Reference"

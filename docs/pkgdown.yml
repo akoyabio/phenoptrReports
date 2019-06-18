@@ -4,6 +4,7 @@ pkgdown_sha: ~
 articles:
   analysis: analysis.html
   consolidation: consolidation.html
+  spatial_map_viewer: spatial_map_viewer.html
   unmixing_quality_report: unmixing_quality_report.html
 urls:
   reference: http://akoyabio.github.io/phenoptrReports/reference

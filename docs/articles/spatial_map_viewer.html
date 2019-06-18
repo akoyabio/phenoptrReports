@@ -5,11 +5,11 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Unmixing quality report • phenoptrReports</title>
+<title>Viewing nearest neighbors • phenoptrReports</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Unmixing quality report">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Viewing nearest neighbors">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -94,52 +94,70 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>Unmixing quality report</h1>
+      <h1>Viewing nearest neighbors</h1>
                         <h4 class="author">Kent Johnson</h4>
             
             <h4 class="date">2019-06-18</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/akoyabio/phenoptrReports/blob/master/vignettes/unmixing_quality_report.Rmd"><code>vignettes/unmixing_quality_report.Rmd</code></a></small>
-      <div class="hidden name"><code>unmixing_quality_report.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/akoyabio/phenoptrReports/blob/master/vignettes/spatial_map_viewer.Rmd"><code>vignettes/spatial_map_viewer.Rmd</code></a></small>
+      <div class="hidden name"><code>spatial_map_viewer.Rmd</code></div>
 
     </div>
 
     
     
-<p>The unmixing quality report analyzes unmixed, singleplex images to help evaluate staining and unmixing quality. This report shows crosstalk between components and highlights potential problem areas in assay development.</p>
+<div id="overview" class="section level2">
+<h2 class="hasAnchor">
+<a href="#overview" class="anchor"></a>Overview</h2>
+<p>The “Spatial map viewer” addin allows viewing of nearest neighbor relationships between cells of selected phenotypes in a single field. Views can be saved for later use.</p>
+</div>
 <div id="data-requirements" class="section level2">
 <h2 class="hasAnchor">
 <a href="#data-requirements" class="anchor"></a>Data requirements</h2>
-<p>The input to this report is an inForm export directory containing singleplex images which have been unmixed by inForm using a candidate spectral library.</p>
-<p>Singleplex images are taken from slides stained with a single fluorophore and no counterstain (except on the DAPI singleplex). The export directory should contain component data files from one or more images for each fluor in the experiment.</p>
-<p>The report generator must identify the Opal fluor for each source file by looking at the file name. It recognizes names containing “DAPI”, “AF”, “Opalnnn” and “Opal_nnn”. It also recognizes three leading digits as the number of an Opal fluor.</p>
+<div id="nearest-neighbors-data-file" class="section level3">
+<h3 class="hasAnchor">
+<a href="#nearest-neighbors-data-file" class="anchor"></a>Nearest neighbors data file</h3>
+<p>Nearest neighbor relationships are read from a <code>nearest_neighbors.csv</code> file. This file is created by the “Analyze consolidated data” addin when “Save nearest neighbor details” is selected.</p>
+</div>
+<div id="composite-and-component-image-files" class="section level3">
+<h3 class="hasAnchor">
+<a href="#composite-and-component-image-files" class="anchor"></a>Composite and component image files</h3>
+<p>The viewer uses both composite and component image files for the fields of interest. These files are written by the inForm export step.</p>
+<p>The composite images are shown as the background of the nearest neighbor visualizations. The colors and components shown are determined by the inForm export settings.</p>
+<p>The component images are the source of metadata about fields that is needed to properly places cells in the visualizations.</p>
+</div>
 </div>
 <div id="detailed-steps" class="section level2">
 <h2 class="hasAnchor">
 <a href="#detailed-steps" class="anchor"></a>Detailed steps</h2>
-<div id="choose-unmixing-quality-report-from-the-rstudio-addins-menu" class="section level4">
-<h4 class="hasAnchor">
-<a href="#choose-unmixing-quality-report-from-the-rstudio-addins-menu" class="anchor"></a>Choose “Unmixing quality report” from the RStudio Addins menu</h4>
-<p>Thus will open the quality reporting app.</p>
-<p><img src="figures/Unmixing_quality_addin.png"></p>
+<div id="start-the-spatial-map-viewer" class="section level3">
+<h3 class="hasAnchor">
+<a href="#start-the-spatial-map-viewer" class="anchor"></a>Start the spatial map viewer</h3>
+<p>Choose “Spatial map viewer” from the RStudio Addins menu to start the viewer.</p>
 </div>
-<div id="select-input-files" class="section level4">
-<h4 class="hasAnchor">
-<a href="#select-input-files" class="anchor"></a>Select input files</h4>
-<p>Click the “Browse” button in the “Select Export directory” section of the GUI. Use the directory selection dialog to select the directory containing exported component data files.</p>
-<p><img src="figures/Select_export_directory.png"></p>
+<div id="select-input-files" class="section level3">
+<h3 class="hasAnchor">
+<a href="#select-input-files" class="anchor"></a>Select input files</h3>
+<p>The viewer’s initial screen allows you to select the nearest neighbor file and inForm export directory containing the fields of interest.</p>
+<ol style="list-style-type: decimal">
+<li><p>First, click the “Browse input” button and select the <code>nearest_neighbors.csv</code> file created by the analysis addin.</p></li>
+<li><p>Next, click the second “Browse” button and select the inForm output directory corresponding with the nearest neighbors file.</p></li>
+<li><p>Finally, click “Open Viewer” to start the viewer.</p></li>
+</ol>
+<p><img src="figures/Spatial_map_viewer_startup.png"></p>
 </div>
-<div id="create-report" class="section level4">
-<h4 class="hasAnchor">
-<a href="#create-report" class="anchor"></a>Create report</h4>
-<p>Click the “Create Report” button to start processing of the selected directory.</p>
-<p><img src="figures/Create_unmixing_quality_report.png"></p>
-<p>When the report is complete, the app window will close. Any errors will be reported in the RStudio Console pane.</p>
-</div>
-<div id="view-the-report" class="section level4">
-<h4 class="hasAnchor">
-<a href="#view-the-report" class="anchor"></a>View the report</h4>
-<p>When processing completes, the export directory will contain a file <code>Unmixing_quality_report.html</code> which may be viewed in any web browser.</p>
+<div id="nearest-neighbor-viewer" class="section level3">
+<h3 class="hasAnchor">
+<a href="#nearest-neighbor-viewer" class="anchor"></a>Nearest neighbor viewer</h3>
+<p>The nearest neighbor viewer allows you to</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Select and color phenotypes</strong> In this section, select the two phenotypes of interest and the colors to use to display the phenotypes. <strong>Important!</strong> Only single phenotypes are supported. Double-positive phenotypes may not be used here.</p></li>
+<li><p><strong>Select a field to view</strong> Use the dropdown to select a particular field, or use the Previous and Next buttons to browse through all the fields.</p></li>
+<li><p><strong>Select the type of nearest neighbor relationship</strong> “Nearest neighbor” is not a symmetric relationship—cell A may have a nearest neighbor B, whose nearest neighbor is not A. Try the different settings to find the one you want.</p></li>
+<li><p><strong>Control the dot size</strong> This slider controls the size of the dots displaying the cells. You may want to make the dots smaller before saving images.</p></li>
+<li><p><strong>Save a single view or views for all fields</strong> The “Save image” button will save the currently displayed image in your browser’s Download folder. The “Save all” button will use the current settings to save a zip file containing images of all fields in the experiment.</p></li>
+</ol>
+<p><img src="figures/Nearest_neighbor_viewer_main.png"></p>
 </div>
 </div>
   </div>
@@ -149,13 +167,18 @@
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#data-requirements">Data requirements</a></li>
+<li><a href="#overview">Overview</a></li>
+      <li>
+<a href="#data-requirements">Data requirements</a><ul class="nav nav-pills nav-stacked">
+<li><a href="#nearest-neighbors-data-file">Nearest neighbors data file</a></li>
+      <li><a href="#composite-and-component-image-files">Composite and component image files</a></li>
+      </ul>
+</li>
       <li>
 <a href="#detailed-steps">Detailed steps</a><ul class="nav nav-pills nav-stacked">
-<li><a href="#choose-unmixing-quality-report-from-the-rstudio-addins-menu">Choose “Unmixing quality report” from the RStudio Addins menu</a></li>
+<li><a href="#start-the-spatial-map-viewer">Start the spatial map viewer</a></li>
       <li><a href="#select-input-files">Select input files</a></li>
-      <li><a href="#create-report">Create report</a></li>
-      <li><a href="#view-the-report">View the report</a></li>
+      <li><a href="#nearest-neighbor-viewer">Nearest neighbor viewer</a></li>
       </ul>
 </li>
       </ul>

@@ -108,7 +108,7 @@ the analysis addin and in inForm export folder containing composite and
 component images.
 
 For detailed instructions and requirements, see the 
-[Spatial map viewer tutorial](https://akoyabio.github.io/phenoptrReports/articles/spatial_map_viewer.html).
+[Visualizing spatial relationships tutorial](https://akoyabio.github.io/phenoptrReports/articles/spatial_map_viewer.html).
 
 ### Unmixing quality report
 

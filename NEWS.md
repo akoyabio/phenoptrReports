@@ -1,12 +1,15 @@
-# phenoptrReports 0.2.1.9000
+# phenoptrReports 0.2.2
+**2019-06-18**
+ 
+Spatial map viewer addin:
+- New addin provides a field-based viewer of nearest neighbor relationships.
+  See the 
+  [Visualizing spatial relationships tutorial](https://akoyabio.github.io/phenoptrReports/articles/spatial_map_viewer.html) 
+  for details.
 
-Analysis addin
+Analysis addin:
 - Phenotype definitions may include valid expressions such as
   `` ~`Membrane PDL1 (Opal 520) Mean`>5 ``.
- 
-Spatial map viewer addin
-- New addin provides a field-based viewer of nearest neighbor relationships.
-  See the "Viewing nearest neighbors" tutorial for details.
 
 Bug fixes:
 - Fix error during calculation of N/A and Total cell in cell seg summary report

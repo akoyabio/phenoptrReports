@@ -13,6 +13,9 @@
     <loc>http://akoyabio.github.io/phenoptrReports/reference/addin_30_analysis_app.html</loc>
   </url>
   <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/addin_35_spatial_map_viewer.html</loc>
+  </url>
+  <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/addin_40_unmixing_quality.html</loc>
   </url>
   <url>
@@ -88,6 +91,9 @@
     <loc>http://akoyabio.github.io/phenoptrReports/reference/merge_cell_seg_files.html</loc>
   </url>
   <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/nearest_neighbor_map.html</loc>
+  </url>
+  <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/nearest_neighbor_summary.html</loc>
   </url>
   <url>
@@ -95,6 +101,12 @@
   </url>
   <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/process_singleplex_image.html</loc>
+  </url>
+  <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/spatial_map_viewer.html</loc>
+  </url>
+  <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/spatial_map_viewer_front_end.html</loc>
   </url>
   <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/split_phenotypes.html</loc>
@@ -107,9 +119,6 @@
   </url>
   <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/upset_plot.html</loc>
-  </url>
-  <url>
-    <loc>http://akoyabio.github.io/phenoptrReports/reference/validate_phenotype_definitions.html</loc>
   </url>
   <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/write_counts_sheet.html</loc>
@@ -155,6 +164,9 @@
   </url>
   <url>
     <loc>http://akoyabio.github.io/phenoptrReports/articles/consolidation.html</loc>
+  </url>
+  <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/articles/spatial_map_viewer.html</loc>
   </url>
   <url>
     <loc>http://akoyabio.github.io/phenoptrReports/articles/unmixing_quality_report.html</loc>
