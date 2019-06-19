@@ -45,7 +45,6 @@ phenotype_color_module = function(input, output, session, phenotypes,
   # Check for valid phenotype definitions
   valid = shiny::reactiveVal(FALSE)
   shiny::observe({
-    shiny::req(input$phenotype)
     if (!allow_multiple && stringr::str_detect(input$phenotype, '[,/]'))
       msg = 'Multiple phenotypes are not supported.'
     else

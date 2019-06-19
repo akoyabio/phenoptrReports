@@ -5,10 +5,10 @@ server <- function(input, output, session) {
   # Instantiate the server part of the phenotype inputs
   phenotype_output  =
     shiny::callModule(phenotype_color_module, 'phenotype',
-                      available_phenotypes, csd, allow_multiple=FALSE)
+                      available_phenotypes, csd)
   phenotype2_output =
     shiny::callModule(phenotype_color_module, 'phenotype2',
-                      available_phenotypes, csd, allow_multiple=FALSE)
+                      available_phenotypes, csd)
 
   # Remember last values to avoid redrawing
   last_field = last_color1 = last_color2 = ''
@@ -63,7 +63,9 @@ server <- function(input, output, session) {
     # This is really ugly
     req(field != last_field ||
           is.na(pheno1) != is.na(last_pheno1) ||
+          (!is.na(pheno1) && pheno1 != last_pheno1) ||
           is.na(pheno2) != is.na(last_pheno2) ||
+          (!is.na(pheno2) && pheno2 != last_pheno2) ||
           color1 != last_color1 ||
           color2 != last_color2 ||
           show_as != last_show_as ||
@@ -79,8 +81,9 @@ server <- function(input, output, session) {
     last_dot_size <<- dot_size
     last_add_logo <<- add_logo
 
+    phenos = parse_phenotypes_with_na(pheno1, pheno2)
     p = nearest_neighbor_map(csd, field, .export_path,
-                         pheno1, pheno2, color1, color2,
+                         phenos, color1, color2,
                          show_as, dot_size, add_logo)
     if (!is.null(p))
       output$plot = renderPlot(p)
@@ -135,6 +138,8 @@ server <- function(input, output, session) {
       dot_size = input$dot_size
       add_logo = input$add_logo
 
+      phenos = parse_phenotypes_with_na(pheno1, pheno2)
+
       shiny::withProgress(message='Creating image files', value=0, {
         # Number of progress messages
         n_progress = length(available_fields) + 1
@@ -145,7 +150,7 @@ server <- function(input, output, session) {
 
           # Write each plot to a file, save the name
           p = nearest_neighbor_map(csd, field, .export_path,
-                            pheno1, pheno2, color1, color2,
+                            phenos, color1, color2,
                             show_as, dot_size, add_logo)
           filename = make_filename(field, pheno1, pheno2, show_as)
           save_plot(p, filename)

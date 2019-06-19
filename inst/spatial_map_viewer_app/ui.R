@@ -48,7 +48,9 @@ ui <- shinydashboard::dashboardPage(
         "#shiny-notification-panel {
           width: 350px;
         }",
-        phenotype_color_module_css))
+        phenotype_color_module_css)),
+
+      favicon()
     ),
 
     shiny::fluidRow(

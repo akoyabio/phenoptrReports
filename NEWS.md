@@ -1,4 +1,8 @@
 # phenoptrReports 0.2.2.9000
+Spatial map viewer improvements:
+- Calculates nearest neighbors on the fly
+- Works with data from `Consolidated_data.txt` (doesn't need `nearest_neighbors.csv`)
+- Supports multiple positivity and expressions in phenotype selectors!
 
 Component levels report
 - Allow the user to enter the quantile(s) to display on the histograms.

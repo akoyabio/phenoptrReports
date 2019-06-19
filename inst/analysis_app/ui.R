@@ -2,11 +2,13 @@
 # The files tab is defined in files_module
 # The analysis tab is generated dynamically by the server
 shiny::shinyUI(shiny::tagList(
-  # Add some space below the phenotype error messages
-  shiny::tags$head(shiny::tags$style(HTML("#well2 div[id$='error'] {
-               color:maroon;
-               padding-bottom: 5px;
-             }"))),
+  shiny::tags$head(
+    # Add some space below the phenotype error messages
+    shiny::tags$style(HTML("#well2 div[id$='error'] {
+                 color:maroon;
+                 padding-bottom: 5px;
+               }")),
+    favicon()),
 
   shiny::navbarPage("Analyze inForm data",
 

@@ -168,3 +168,18 @@ parse_comma_space_values = function(s) {
     purrr::discard(~.x=='') %>%
     purrr::map_dbl(~suppressWarnings(as.numeric(.x)))
 }
+
+#' Parse phenotypes allowing for NA
+parse_phenotypes_with_na = function(...) {
+  phenos = list(...)
+  purrr::map(phenos, ~(if(is.na(.x)) NA else
+                             phenoptr::parse_phenotypes(.x))) %>%
+    purrr::flatten()
+}
+
+#' Function to insert an Akoya favicon link.
+#' Call from within `tags$head`.
+favicon = function() {
+  shiny::tags$link(rel="shortcut icon",
+   href="https://www.akoyabio.com/application/files/7715/5959/5805/Asset-1.png")
+}

@@ -23,19 +23,19 @@ addin_35_spatial_map_viewer = function() {
 #'
 #' See [addin_35_spatial_map_viewer()]
 #' for a GUI front-end to this function.
-#' @param nn_path Path to a nearest_neighbors.csv file created by the
-#' analysis app.
+#' @param csd_path Path to a Consolidated_data.txt file from the consolidation
+#' app or nearest_neighbors.csv file created by the analysis app.
 #' @param export_path Path to a directory containing composite and
 #' component images for the fields in the nearest neighbors file.
 #' @return None; starts the viewer app
 #' @export
-spatial_map_viewer = function(nn_path, export_path) {
+spatial_map_viewer = function(csd_path, export_path) {
   # Apparently the best way to pass parameters to a shiny app is
   # to modify the global environment :-(
   # Use . names to avoid collisions with existing variables
-  .GlobalEnv$.nn_path=nn_path
+  .GlobalEnv$.csd_path=csd_path
   .GlobalEnv$.export_path = export_path
-  on.exit(rm(.nn_path, .export_path, envir=.GlobalEnv))
+  on.exit(rm(.csd_path, .export_path, envir=.GlobalEnv))
 
   cat('Starting app\n')
   shiny::runApp(system.file('spatial_map_viewer_app',
@@ -71,7 +71,7 @@ spatial_map_viewer_front_end = function() {
       shiny::wellPanel(
         shiny::h3('Select a nearest neighbor data file'),
         'Click the "Browse Input" button to select a ',
-        'nearest_neighbors.csv file.',
+        'Consolidated_data.txt or nearest_neighbors.csv file.',
         shiny::br(), shiny::br(),
 
         shiny::actionButton('browse_source', 'Browse Input...'),
@@ -109,7 +109,8 @@ spatial_map_viewer_front_end = function() {
       files = phenoptrReports::choose_files(
         default=default, multi=FALSE,
         caption='Select a nearest neighbor file',
-        filters = c("CSV files (*.csv)", "*.csv"))
+        filters = c("CSV files (*.csv)", "*.csv",
+                    "Text files (*.txt)", "*.txt"))
 
       if (length(files) == 0)
         return()
@@ -118,10 +119,11 @@ spatial_map_viewer_front_end = function() {
       default_dir <<- dirname(files[1])
 
       # Only allow nearest_neighbors.csv files!
-      is_nn = stringr::str_detect(files, 'nearest_neighbors.csv$')
+      is_nn = stringr::str_detect(files, '(_data.txt|nearest_neighbors.csv)$')
       if (!all(is_nn)) {
-        shiny::showNotification('Please select a nearest_neighbors.csv file!',
-                                type='message')
+        shiny::showNotification(
+          'Please select a Consolidated_data.txt or nearest_neighbors.csv file!',
+          type='message')
       } else {
         # Add to data_file and update the list of files in the UI
         data_file(files)
