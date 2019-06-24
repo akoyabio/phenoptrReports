@@ -81,7 +81,7 @@ server <- function(input, output, session) {
     last_dot_size <<- dot_size
     last_add_logo <<- add_logo
 
-    phenos = parse_phenotypes_with_na(pheno1, pheno2)
+    phenos = phenoptrReports:::parse_phenotypes_with_na(pheno1, pheno2)
     p = nearest_neighbor_map(csd, field, .export_path,
                          phenos, color1, color2,
                          show_as, dot_size, add_logo)
@@ -138,7 +138,7 @@ server <- function(input, output, session) {
       dot_size = input$dot_size
       add_logo = input$add_logo
 
-      phenos = parse_phenotypes_with_na(pheno1, pheno2)
+      phenos = phenoptrReports:::parse_phenotypes_with_na(pheno1, pheno2)
 
       shiny::withProgress(message='Creating image files', value=0, {
         # Number of progress messages

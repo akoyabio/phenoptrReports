@@ -50,7 +50,7 @@ ui <- shinydashboard::dashboardPage(
         }",
         phenotype_color_module_css)),
 
-      favicon()
+      phenoptrReports:::favicon()
     ),
 
     shiny::fluidRow(
