@@ -8,7 +8,7 @@ shiny::shinyUI(shiny::tagList(
                  color:maroon;
                  padding-bottom: 5px;
                }")),
-    favicon()),
+    phenoptrReports:::favicon()),
 
   shiny::navbarPage("Analyze inForm data",
 
