@@ -49,7 +49,7 @@ img {
 knitr::opts_chunk$set(echo=FALSE,fig.width=9, fig.height=6, 
                       comment=NA, warning=FALSE, message=FALSE)
 
-library(dplyr)
+suppressPackageStartupMessages(library(dplyr))
 library(formattable)
 library(phenoptr)
 

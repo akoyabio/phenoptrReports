@@ -17,7 +17,7 @@ params:
 knitr::opts_chunk$set(echo=FALSE,fig.width=9, fig.height=6, 
                       comment=NA, warning=FALSE, message=FALSE)
 
-library(tidyverse)
+suppressPackageStartupMessages(library(tidyverse))
 library(phenoptr)
 ```
 

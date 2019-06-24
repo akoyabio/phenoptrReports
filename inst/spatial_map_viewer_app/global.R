@@ -1,5 +1,5 @@
 # Globals for spatial viewer app
-library(dplyr)
+suppressPackageStartupMessages(library(dplyr))
 library(ggplot2)
 
 base_dir = system.file('spatial_map_viewer_app', package='phenoptrReports')

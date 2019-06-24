@@ -22,7 +22,7 @@ editor_options:
 ---
 
 ```{r setup, echo=FALSE,include=FALSE,message=FALSE}
-library(dplyr)
+suppressPackageStartupMessages(library(dplyr))
 library(ggplot2)
 library(purrr)
 library(readxl)

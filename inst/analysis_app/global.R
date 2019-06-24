@@ -1,5 +1,5 @@
 # Globals for analysis_app
-library(tidyverse)
+suppressPackageStartupMessages(library(tidyverse))
 library(phenoptr)
 library(phenoptrReports)
 library(shiny)
