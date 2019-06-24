@@ -6,6 +6,15 @@
 \usage{
 parse_phenotypes_with_na(...)
 }
+\arguments{
+\item{...}{Phenotypes to be decoded, or a list of same,
+optionally with names.}
+}
+\value{
+A named list of phenotype selectors for use with
+\code{phenoptr::select_rows()}. \code{NA} values in the input will be
+passed through as \code{NA} values in the result.
+}
 \description{
 Parse phenotypes allowing for NA
 }

@@ -3,7 +3,7 @@
 
 # Suppress CMD CHECK notes for things that look like global vars
 utils::globalVariables(
-  c('.nn_path', '.export_path'))
+  c('.csd_path', '.export_path'))
 
 #' Spatial map viewer addin
 #'

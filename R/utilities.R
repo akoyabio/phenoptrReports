@@ -170,6 +170,11 @@ parse_comma_space_values = function(s) {
 }
 
 #' Parse phenotypes allowing for NA
+#' @param ... Phenotypes to be decoded, or a list of same,
+#' optionally with names.
+#' @return A named list of phenotype selectors for use with
+#' `phenoptr::select_rows()`. `NA` values in the input will be
+#' passed through as `NA` values in the result.
 parse_phenotypes_with_na = function(...) {
   phenos = list(...)
   purrr::map(phenos, ~(if(is.na(.x)) NA else
