@@ -46,6 +46,26 @@ server <- function(input, output, session) {
       candidate else NA
   }
 
+  # Update the from-to popup with friendly labels if phenotypes are defined;
+  # otherwise, make it a prompt.
+  update_from_to = function(pheno1, pheno2, selected) {
+    if (is.na(pheno1) || is.na(pheno2)) {
+      names = rep('Please define two phenotypes', 4)
+    } else {
+      names = c(
+        stringr::str_glue('Nearest {pheno2} to each {pheno1}'),
+        stringr::str_glue('Nearest {pheno1} to each {pheno2}'),
+        'Mutual nearest neighbors', 'None'
+      )
+    }
+
+    choices = list('from_to', 'to_from', 'mutual', 'none') %>%
+      rlang::set_names(names)
+
+    shiny::updateSelectInput(session, 'show_as',
+                             choices=choices, selected=selected)
+  }
+
   # Update the plot when any of the parameters changes
   shiny::observe({
     # Get the parameters as non-reactive values
@@ -81,6 +101,8 @@ server <- function(input, output, session) {
     last_dot_size <<- dot_size
     last_add_logo <<- add_logo
 
+    shiny::isolate(update_from_to(pheno1, pheno2, input$show_as))
+
     phenos = phenoptrReports:::parse_phenotypes_with_na(pheno1, pheno2)
     p = nearest_neighbor_map(csd, field, .export_path,
                          phenos, color1, color2,
@@ -91,10 +113,20 @@ server <- function(input, output, session) {
 
   make_filename = function(field, pheno1, pheno2, show_as) {
     name = stringr::str_remove(field, '.im3')
-    if (!is.na(pheno1)) name = paste0(name, '_', pheno1)
-    if (!is.na(pheno2)) name = paste0(name, '_', pheno2)
-    if (!is.na(pheno1) && !is.na(pheno2))
-      name = paste0(name, '_', show_as)
+    if (is.na(pheno1) || is.na(pheno2)) {
+      # No nearest neighbors shown, just append phenotype names
+      if (!is.na(pheno1)) name = paste0(name, '_', pheno1)
+      if (!is.na(pheno2)) name = paste0(name, '_', pheno2)
+    } else {
+      suffix = switch(show_as,
+        from_to = stringr::str_glue('_{pheno2}_near_{pheno1}'),
+        to_from = stringr::str_glue('_{pheno1}_near_{pheno2}'),
+        mutual = stringr::str_glue('_{pheno1}_{pheno2}_mutual_nn'),
+        none = stringr::str_glue('_{pheno2}_{pheno1}')
+      )
+      name = paste0(name, suffix)
+    }
+
     name = paste0(name, '.png')
     name
   }

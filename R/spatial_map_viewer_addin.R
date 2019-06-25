@@ -39,7 +39,8 @@ spatial_map_viewer = function(csd_path, export_path) {
 
   cat('Starting app\n')
   shiny::runApp(system.file('spatial_map_viewer_app',
-                            package='phenoptrReports'))
+                            package='phenoptrReports'),
+                launch.browser=TRUE)
 }
 
 
@@ -48,7 +49,8 @@ spatial_map_viewer_front_end = function() {
   intro <- shiny::tagList(shiny::p(
       'This app provides a field-based viewer',
       'of nearest neighbor relationships. ',
-      'It requires a nearest neighbor file created by the analysis app ',
+      'It requires a Consolidated_data.txt file from the consolidation ',
+      ' app or a nearest_neighbors.csv file created by the analysis app, ',
       'and an inForm export directory containing composite and component ',
       'image files.'
     ))
@@ -69,7 +71,7 @@ spatial_map_viewer_front_end = function() {
       intro,
 
       shiny::wellPanel(
-        shiny::h3('Select a nearest neighbor data file'),
+        shiny::h3('Select a data file'),
         'Click the "Browse Input" button to select a ',
         'Consolidated_data.txt or nearest_neighbors.csv file.',
         shiny::br(), shiny::br(),
@@ -80,7 +82,7 @@ spatial_map_viewer_front_end = function() {
       ),
 
       shiny::wellPanel(
-      shiny::h3('Select an export directory'),
+      shiny::h3('Select an inForm image directory'),
       'Click the "Browse" button to select an inForm export directory ',
       'containing composite and component image files for the fields in ',
       'the nearest neighbors file.',
@@ -108,7 +110,7 @@ spatial_map_viewer_front_end = function() {
       default = dplyr::if_else(default_dir=='', '', paste0(default_dir, '/*.txt'))
       files = phenoptrReports::choose_files(
         default=default, multi=FALSE,
-        caption='Select a nearest neighbor file',
+        caption='Select a data file',
         filters = c("CSV files (*.csv)", "*.csv",
                     "Text files (*.txt)", "*.txt"))
 
@@ -118,7 +120,7 @@ spatial_map_viewer_front_end = function() {
       # Set the default directory even if nothing valid is selected
       default_dir <<- dirname(files[1])
 
-      # Only allow nearest_neighbors.csv files!
+      # Only allow _data.txt or nearest_neighbors.csv files!
       is_nn = stringr::str_detect(files, '(_data.txt|nearest_neighbors.csv)$')
       if (!all(is_nn)) {
         shiny::showNotification(
@@ -140,7 +142,7 @@ spatial_map_viewer_front_end = function() {
       shiny::req(input$browse_export)
       export_dir(phenoptrReports::choose_directory(
         default=default_dir,
-        caption='Select an inForm export folder'
+        caption='Select an inForm image directory'
       ))
 
       output$export_dir = shiny::renderText(export_dir())
@@ -157,7 +159,8 @@ spatial_map_viewer_front_end = function() {
         # https://stackoverflow.com/questions/44891544/how-to-open-a-shiny-app-from-within-an-rstudio-gadget
         data_file = stringr::str_replace_all(data_file(), '\\\\', '/')
         export_dir = stringr::str_replace_all(export_dir(), '\\\\', '/')
-        command <- stringr::str_glue("spatial_map_viewer('{data_file}', '{export_dir}')")
+        command <- stringr::str_glue(
+          "spatial_map_viewer('{data_file}', '{export_dir}')")
         rstudioapi::sendToConsole(command)
         shiny::stopApp()
       } else {
@@ -179,15 +182,15 @@ spatial_map_viewer_front_end = function() {
 
     get_error_text = function() {
       if (is.null(data_file())) {
-        'Please select a file to process.'
+        'Please select a data file to process.'
       } else if (is.null(export_dir())) {
-        'Please select an export directory.'
+        'Please select an inForm image directory.'
       } else
         ''
     }
 
     # Initialize
-    output$error = shiny::renderText('Please a file to process.')
+    output$error = shiny::renderText('Please select a data file to process.')
   }
 
   # Run the gadget in a dialog

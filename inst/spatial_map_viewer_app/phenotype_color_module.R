@@ -50,7 +50,7 @@ phenotype_color_module = function(input, output, session, phenotypes,
     else
       msg = phenoptr::validate_phenotype_definitions(
         input$phenotype, phenotypes, csd)
-    valid(msg == '')
+    valid(msg == '' && input$phenotype != '')
     output$error = renderText(msg)
   })
 
