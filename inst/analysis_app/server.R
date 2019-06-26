@@ -174,7 +174,7 @@ shinyServer(function(input, output, server) {
     shiny::req(input$radii)
 
     # Parse out comma/space delimited numbers
-    radii = parse_comma_space_values(input$radii)
+    radii = phenoptrReports:::parse_comma_space_values(input$radii)
     if (length(radii) > 0 && !anyNA(radii)) {
       the_data$radii = radii
     } else {

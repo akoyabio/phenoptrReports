@@ -74,7 +74,7 @@ addin_50_component_levels = function() {
       shiny::req(input$quantiles)
 
       # Parse out comma/space delimited numbers
-      quants = parse_comma_space_values(input$quantiles)
+      quants = phenoptrReports:::parse_comma_space_values(input$quantiles)
       if (length(quants) > 0 && !anyNA(quants)) {
         quantiles(quants)
       } else {
