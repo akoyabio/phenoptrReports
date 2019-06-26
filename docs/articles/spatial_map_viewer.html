@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.2.9000</span>
       </span>
     </div>
 
@@ -97,7 +97,7 @@
       <h1>Viewing nearest neighbors</h1>
                         <h4 class="author">Kent Johnson</h4>
             
-            <h4 class="date">2019-06-18</h4>
+            <h4 class="date">2019-06-25</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/akoyabio/phenoptrReports/blob/master/vignettes/spatial_map_viewer.Rmd"><code>vignettes/spatial_map_viewer.Rmd</code></a></small>
       <div class="hidden name"><code>spatial_map_viewer.Rmd</code></div>
@@ -114,10 +114,10 @@
 <div id="data-requirements" class="section level2">
 <h2 class="hasAnchor">
 <a href="#data-requirements" class="anchor"></a>Data requirements</h2>
-<div id="nearest-neighbors-data-file" class="section level3">
+<div id="consolidated-data-file" class="section level3">
 <h3 class="hasAnchor">
-<a href="#nearest-neighbors-data-file" class="anchor"></a>Nearest neighbors data file</h3>
-<p>Nearest neighbor relationships are read from a <code>nearest_neighbors.csv</code> file. This file is created by the “Analyze consolidated data” addin when “Save nearest neighbor details” is selected.</p>
+<a href="#consolidated-data-file" class="anchor"></a>Consolidated data file</h3>
+<p>This addin requires reads data from the <code>Consolidated_data.txt</code> file created by the “Consolidate and summarize” addin. It can also use the <code>nearest_neighbors.csv</code> file created by the “Analyze consolidated data” addin when “Save nearest neighbor details” is selected.</p>
 </div>
 <div id="composite-and-component-image-files" class="section level3">
 <h3 class="hasAnchor">
@@ -151,7 +151,7 @@
 <a href="#nearest-neighbor-viewer" class="anchor"></a>Nearest neighbor viewer</h3>
 <p>The nearest neighbor viewer allows you to</p>
 <ol style="list-style-type: decimal">
-<li><p><strong>Select and color phenotypes</strong> In this section, select the two phenotypes of interest and the colors to use to display the phenotypes. <strong>Important!</strong> Only single phenotypes are supported. Double-positive phenotypes may not be used here.</p></li>
+<li><p><strong>Select and color phenotypes</strong> In this section, select the two phenotypes of interest and the colors to use to display the phenotypes. Both single phenotypes such as <code>CD8+</code> and multiple phenotypes such as <code>CD8+/PDL1+</code> are supported.</p></li>
 <li><p><strong>Select a field to view</strong> Use the dropdown to select a particular field, or use the Previous and Next buttons to browse through all the fields.</p></li>
 <li><p><strong>Select the type of nearest neighbor relationship</strong> “Nearest neighbor” is not a symmetric relationship—cell A may have a nearest neighbor B, whose nearest neighbor is not A. Try the different settings to find the one you want.</p></li>
 <li><p><strong>Control the dot size</strong> This slider controls the size of the dots displaying the cells. You may want to make the dots smaller before saving images.</p></li>
@@ -170,7 +170,7 @@
 <li><a href="#overview">Overview</a></li>
       <li>
 <a href="#data-requirements">Data requirements</a><ul class="nav nav-pills nav-stacked">
-<li><a href="#nearest-neighbors-data-file">Nearest neighbors data file</a></li>
+<li><a href="#consolidated-data-file">Consolidated data file</a></li>
       <li><a href="#composite-and-component-image-files">Composite and component image files</a></li>
       </ul>
 </li>

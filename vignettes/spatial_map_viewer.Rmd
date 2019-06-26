@@ -24,10 +24,12 @@ for later use.
 
 ## Data requirements
 
-### Nearest neighbors data file
+### Consolidated data file
 
-Nearest neighbor relationships are read from a `nearest_neighbors.csv` file.
-This file is created by the "Analyze consolidated data" addin when 
+This addin requires reads data from the `Consolidated_data.txt` file created
+by the "Consolidate and summarize" addin. 
+It can also use the `nearest_neighbors.csv` file
+created by the "Analyze consolidated data" addin when 
 "Save nearest neighbor details" is selected.
 
 ### Composite and component image files
@@ -70,8 +72,8 @@ The nearest neighbor viewer allows you to
 
 1. **Select and color phenotypes**
 In this section, select the two phenotypes of interest and the colors
-to use to display the phenotypes. **Important!** Only single phenotypes
-are supported. Double-positive phenotypes may not be used here.
+to use to display the phenotypes. Both single phenotypes such as `CD8+`
+and multiple phenotypes such as `CD8+/PDL1+` are supported.
 
 2. **Select a field to view**
 Use the dropdown to select a particular field, or use the Previous

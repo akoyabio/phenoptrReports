@@ -103,8 +103,9 @@ The **Spatial map viewer** addin creates visualizations of nearest neighbors of
 selected phenotypes within individual fields. The visualizations can be saved 
 for use in other applications.
 
-The spatial map viewer requires a `nearest_neighbors.csv` file created by
-the analysis addin and in inForm export folder containing composite and
+The spatial map viewer requires a `Consolidated_data.txt` file from the
+consolidation app or the `nearest_neighbors.csv` file created by
+the analysis addin, and an inForm image directory containing composite and
 component images.
 
 For detailed instructions and requirements, see the 

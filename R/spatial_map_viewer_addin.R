@@ -7,9 +7,9 @@ utils::globalVariables(
 
 #' Spatial map viewer addin
 #'
-#' This function starts a GUI which allows you to select a nearest neighbors
-#' file and an inForm export directory. Once selected, you can view fields
-#' in the export directory superimposed with a map of nearest neighbor
+#' This function starts a GUI which allows you to select a `Consolidated_data.txt`
+#' file and an inForm image directory. Once selected, you can view fields
+#' from the image directory with a superimposed map of nearest neighbor
 #' relationships.
 #' @export
 addin_35_spatial_map_viewer = function() {
