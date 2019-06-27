@@ -18,7 +18,7 @@ addin_35_spatial_map_viewer = function() {
 }
 
 
-#' Run the spatial map viewer with the given nearest neighbor
+#' Run the spatial map viewer with the given data
 #' file and export directory.
 #'
 #' See [addin_35_spatial_map_viewer()]
@@ -26,7 +26,7 @@ addin_35_spatial_map_viewer = function() {
 #' @param csd_path Path to a Consolidated_data.txt file from the consolidation
 #' app or nearest_neighbors.csv file created by the analysis app.
 #' @param export_path Path to a directory containing composite and
-#' component images for the fields in the nearest neighbors file.
+#' component images for the fields in the data file.
 #' @return None; starts the viewer app
 #' @export
 spatial_map_viewer = function(csd_path, export_path) {
@@ -85,7 +85,7 @@ spatial_map_viewer_front_end = function() {
       shiny::h3('Select an inForm image directory'),
       'Click the "Browse" button to select an inForm export directory ',
       'containing composite and component image files for the fields in ',
-      'the nearest neighbors file.',
+      'the data file.',
       shiny::br(), shiny::br(),
 
       shiny::actionButton('browse_export', 'Browse...'),
@@ -160,7 +160,7 @@ spatial_map_viewer_front_end = function() {
         data_file = stringr::str_replace_all(data_file(), '\\\\', '/')
         export_dir = stringr::str_replace_all(export_dir(), '\\\\', '/')
         command <- stringr::str_glue(
-          "spatial_map_viewer('{data_file}', '{export_dir}')")
+          "phenoptrReports::spatial_map_viewer('{data_file}', '{export_dir}')")
         rstudioapi::sendToConsole(command)
         shiny::stopApp()
       } else {

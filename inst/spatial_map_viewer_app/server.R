@@ -104,7 +104,7 @@ server <- function(input, output, session) {
     shiny::isolate(update_from_to(pheno1, pheno2, input$show_as))
 
     phenos = phenoptrReports:::parse_phenotypes_with_na(pheno1, pheno2)
-    p = nearest_neighbor_map(csd, field, .export_path,
+    p = phenoptrReports::nearest_neighbor_map(csd, field, .export_path,
                          phenos, color1, color2,
                          show_as, dot_size, add_logo)
     if (!is.null(p))
@@ -128,6 +128,10 @@ server <- function(input, output, session) {
     }
 
     name = paste0(name, '.png')
+
+    # Remove unallowed characters
+    illegal = "[/\\?<>\\:*|\":]" # From fs::path_sanitize
+    name = stringr::str_replace_all(name, illegal, '_')
     name
   }
 
@@ -181,7 +185,7 @@ server <- function(input, output, session) {
           shiny::incProgress(1/n_progress, detail=field)
 
           # Write each plot to a file, save the name
-          p = nearest_neighbor_map(csd, field, .export_path,
+          p = phenoptrReports::nearest_neighbor_map(csd, field, .export_path,
                             phenos, color1, color2,
                             show_as, dot_size, add_logo)
           filename = make_filename(field, pheno1, pheno2, show_as)

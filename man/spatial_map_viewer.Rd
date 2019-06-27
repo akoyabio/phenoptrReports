@@ -2,7 +2,7 @@
 % Please edit documentation in R/spatial_map_viewer_addin.R
 \name{spatial_map_viewer}
 \alias{spatial_map_viewer}
-\title{Run the spatial map viewer with the given nearest neighbor
+\title{Run the spatial map viewer with the given data
 file and export directory.}
 \usage{
 spatial_map_viewer(csd_path, export_path)
@@ -12,7 +12,7 @@ spatial_map_viewer(csd_path, export_path)
 app or nearest_neighbors.csv file created by the analysis app.}
 
 \item{export_path}{Path to a directory containing composite and
-component images for the fields in the nearest neighbors file.}
+component images for the fields in the data file.}
 }
 \value{
 None; starts the viewer app
