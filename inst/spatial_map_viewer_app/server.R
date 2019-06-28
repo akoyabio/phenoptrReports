@@ -67,7 +67,7 @@ server <- function(input, output, session) {
   }
 
   # Update the plot when any of the parameters changes
-  shiny::observe({
+  the_plot = reactive({
     # Get the parameters as non-reactive values
     field = input$field
     pheno1 = validate_candidate(phenotype_output()$phenotype)
@@ -107,6 +107,10 @@ server <- function(input, output, session) {
     p = phenoptrReports::nearest_neighbor_map(csd, field, .export_path,
                          phenos, color1, color2,
                          show_as, dot_size, add_logo)
+  })
+
+  shiny::observe({
+    p = the_plot()
     if (!is.null(p))
       output$plot = renderPlot(p)
   })
@@ -138,6 +142,7 @@ server <- function(input, output, session) {
   save_plot = function(p, file) {
     ggsave(file, plot=p, device = "png", width=11, height=11)
   }
+
   output$save_plot = downloadHandler(
     filename = function() {
       make_filename(input$field,
@@ -146,7 +151,7 @@ server <- function(input, output, session) {
              input$show_as)
     },
     content = function(file) {
-      save_plot(last_plot(), file)
+      save_plot(the_plot(), file)
     },
     contentType='image/png'
   )
