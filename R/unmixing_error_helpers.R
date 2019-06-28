@@ -1,11 +1,11 @@
 # Helpers for unmixing quality report
 
-#' Guess a fluor name from the name of a singleplex image.
-#'
-#' This only works for DAPI, AF and Opal fluors
-#'
-#' @param path A file path
-#' @return A fluor name
+# Guess a fluor name from the name of a singleplex image.
+#
+# This only works for DAPI, AF and Opal fluors
+#
+# @param path A file path
+# @return A fluor name
 file_to_fluor = function(path) {
   name = basename(path)
 
@@ -30,18 +30,18 @@ file_to_fluor = function(path) {
   return(stringr::str_glue('Opal {opal_match}'))
 }
 
-#' Read a singleplex image and extract signal information
-#'
-#' @param path Path to a component_data.tif file
-#' @param primary_fluor Component name of the signal fluor
-#' @param percentile Percentile for high-expressing pixels. If omitted,
-#'   the brightest n_bright pixels will be used after discarding `skip_percent`.
-#' @param n_bright The number of bright pixels to select for analysis.
-#' @param skip_fraction The fraction of brightest pixels that will be ignored.
-#' @return A list containing
-#'   - signals - The mean expression of each fluor in the selected bright pixels
-#'   - sn - The expression of non-primary fluors as a fraction of the primary
-#'   - primary - Component plane for the primary fluor (a large matrix)
+# Read a singleplex image and extract signal information
+#
+# @param path Path to a component_data.tif file
+# @param primary_fluor Component name of the signal fluor
+# @param percentile Percentile for high-expressing pixels. If omitted,
+#   the brightest n_bright pixels will be used after discarding `skip_percent`.
+# @param n_bright The number of bright pixels to select for analysis.
+# @param skip_fraction The fraction of brightest pixels that will be ignored.
+# @return A list containing
+#   - signals - The mean expression of each fluor in the selected bright pixels
+#   - sn - The expression of non-primary fluors as a fraction of the primary
+#   - primary - Component plane for the primary fluor (a large matrix)
 process_singleplex_image = function(path, primary_fluor,
                         percentile=NULL,
                         n_bright=NULL, skip_fraction=0.0001) {

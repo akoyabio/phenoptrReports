@@ -21,16 +21,16 @@ order_by_slide_and_tissue_category =
     dplyr::arrange(!!.by, tissue_order[`Tissue Category`])
 }
 
-#' Make a nested data frame with one row per Slide ID and
-#' optionally Tissue Category.
-#'
-#' Nested data is easier to work with than grouped data when the processing
-#' is complex.
-#' @param csd Cell seg data to use, possibly nested already.
-#' @param tissue_categories If provided, the result will be filtered
-#'   and nested by the provided categories.
-#' @param .by Column to aggregate by
-#' @return A nested data frame.
+# Make a nested data frame with one row per Slide ID and
+# optionally Tissue Category.
+#
+# Nested data is easier to work with than grouped data when the processing
+# is complex.
+# @param csd Cell seg data to use, possibly nested already.
+# @param tissue_categories If provided, the result will be filtered
+#   and nested by the provided categories.
+# @param .by Column to aggregate by
+# @return A nested data frame.
 make_nested = function(csd, tissue_categories=NULL, .by='Slide ID') {
   # If it is already nested, just return it
   if ('data' %in% names(csd) && inherits(csd$data[[1]], 'data.frame'))
@@ -49,13 +49,13 @@ make_nested = function(csd, tissue_categories=NULL, .by='Slide ID') {
   tidyr::nest(csd, -!!.by, -`Tissue Category`)
 }
 
-#' Add total rows to a data frame if there are multiple tissue categories.
-#'
-#' @param d A data frame with columns for Slide ID, Tissue Category and
-#'   columns to summarize
-#' @param tissue_categories The tissue categories of interest, ordered.
-#' @param .by Column to aggregate by
-#' @return A data frame with tissue category totals and rows in order.
+# Add total rows to a data frame if there are multiple tissue categories.
+#
+# @param d A data frame with columns for Slide ID, Tissue Category and
+#   columns to summarize
+# @param tissue_categories The tissue categories of interest, ordered.
+# @param .by Column to aggregate by
+# @return A data frame with tissue category totals and rows in order.
 add_tissue_category_totals = function(d, tissue_categories, .by='Slide ID') {
   if (length(tissue_categories) < 2)
     return(d)
@@ -70,9 +70,9 @@ add_tissue_category_totals = function(d, tissue_categories, .by='Slide ID') {
   result %>% order_by_slide_and_tissue_category(tissue_categories, .by)
 }
 
-#' Check that all requested phenotypes are defined
-#' @param params Phenotype names.
-#' @param phenotypes A named list of phenotype definitions.
+# Check that all requested phenotypes are defined
+# @param params Phenotype names.
+# @param phenotypes A named list of phenotype definitions.
 check_phenotypes = function(params, phenotypes) {
   if (is.null(params))
       stop('Parameter list must be named.')
@@ -148,19 +148,19 @@ choose_files = function(caption='Select files', default='',
   } else stop('No file chooser available.')
 }
 
-#' Check if a function is available in a package
-#' @param package Name of the package
-#' @param fun Name of the function
-#' @return TRUE if the package is installed and contains the function.
+# Check if a function is available in a package
+# @param package Name of the package
+# @param fun Name of the function
+# @return TRUE if the package is installed and contains the function.
 function_exists =function(package, fun) {
   requireNamespace(package, quietly=TRUE) &&
     (fun %in% getNamespaceExports(package))
 }
 
-#' Parse a list of numeric values separated by comma and/or space
-#' @param s A string containing comma/space separated values.
-#' @return A (possibly empty) numeric vector with NA values for
-#' any parsing failures.
+# Parse a list of numeric values separated by comma and/or space
+# @param s A string containing comma/space separated values.
+# @return A (possibly empty) numeric vector with NA values for
+# any parsing failures.
 parse_comma_space_values = function(s) {
   s %>% stringr::str_trim() %>%
     stringr::str_split('[, ] *') %>%
@@ -169,12 +169,12 @@ parse_comma_space_values = function(s) {
     purrr::map_dbl(~suppressWarnings(as.numeric(.x)))
 }
 
-#' Parse phenotypes allowing for NA
-#' @param ... Phenotypes to be decoded, or a list of same,
-#' optionally with names.
-#' @return A named list of phenotype selectors for use with
-#' `phenoptr::select_rows()`. `NA` values in the input will be
-#' passed through as `NA` values in the result.
+# Parse phenotypes allowing for NA
+# @param ... Phenotypes to be decoded, or a list of same,
+# optionally with names.
+# @return A named list of phenotype selectors for use with
+# `phenoptr::select_rows()`. `NA` values in the input will be
+# passed through as `NA` values in the result.
 parse_phenotypes_with_na = function(...) {
   phenos = list(...)
   purrr::map(phenos, ~(if(is.na(.x)) NA else
@@ -182,8 +182,8 @@ parse_phenotypes_with_na = function(...) {
     purrr::flatten()
 }
 
-#' Function to insert an Akoya favicon link.
-#' Call from within `tags$head`.
+# Function to insert an Akoya favicon link.
+# Call from within `tags$head`.
 favicon = function() {
   shiny::tags$link(rel="shortcut icon",
    href="https://www.akoyabio.com/application/files/7715/5959/5805/Asset-1.png")

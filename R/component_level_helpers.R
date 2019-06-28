@@ -138,9 +138,9 @@ fluor_ridge_plot = function(d, quants, clipping, name, fill) {
           panel.grid.minor=ggplot2::element_blank())
 }
 
-#' Concatenate with comma and "and"
-#' @param s String vector
-#' @return A string
+# Concatenate with comma and "and"
+# @param s String vector
+# @return A string
 cc_and = function(s) {
   ret = paste(s[-length(s)], collapse=', ')
   if (length(s) > 1)

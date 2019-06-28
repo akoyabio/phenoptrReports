@@ -165,14 +165,14 @@ split_phenotypes = function(csd) {
     dplyr::bind_cols(new_columns)
 }
 
-#' Make unique names from a list of paths to cell seg data files
-#'
-#' If the files have unique names, returns the base names without extension.
-#' If the files do not have unique names, returns the directory name
-#' plus the file name without extension.
-#' If those are not unique, appends a sequence number to each name.
-#' @param csd_files A list or vector of paths to cell seg data files.
-#' @return A vector of names.
+# Make unique names from a list of paths to cell seg data files
+#
+# If the files have unique names, returns the base names without extension.
+# If the files do not have unique names, returns the directory name
+# plus the file name without extension.
+# If those are not unique, appends a sequence number to each name.
+# @param csd_files A list or vector of paths to cell seg data files.
+# @return A vector of names.
 make_unique_names = function(csd_files) {
   # Get the base names sans extension
   names = csd_files %>% purrr::map_chr(basename) %>%

@@ -203,11 +203,11 @@ nearest_neighbor_map =
   p
 }
 
-#' Make sure field_data has distance columns for both phenotypes
-#' @param field_data Cell seg data for a (subset of) a single field
-#' @param phenos Named list of (two) phenotypes
-#' @return field_data with `Distance to <pheno>` and `Cell ID <pheno>`
-#' columns.
+# Make sure field_data has distance columns for both phenotypes
+# @param field_data Cell seg data for a (subset of) a single field
+# @param phenos Named list of (two) phenotypes
+# @return field_data with `Distance to <pheno>` and `Cell ID <pheno>`
+# columns.
 ensure_distance_columns = function(field_data, phenos) {
   pheno_names = unique(names(phenos))
   required_columns = c(paste('Distance to', pheno_names),

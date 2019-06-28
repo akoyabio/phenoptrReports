@@ -1,11 +1,11 @@
 # Create UpSet plots of phenotype overlaps
 
-#' Make a data set for use with UpSetR
-#'
-#' [UpSetR::upset] wants sequential columns and 0/1 data.
-#' This function selects the phenotype columns and converts them to 0/1
-#' @param d A cell seg table with multiple `Phenotype` columns
-#' @return A data frame with just the `Phenotype` columns, coded as 0/1.
+# Make a data set for use with UpSetR
+#
+# [UpSetR::upset] wants sequential columns and 0/1 data.
+# This function selects the phenotype columns and converts them to 0/1
+# @param d A cell seg table with multiple `Phenotype` columns
+# @return A data frame with just the `Phenotype` columns, coded as 0/1.
 upset_data = function(d) {
   d = d %>% dplyr::select(dplyr::starts_with('Phenotype')) %>%
     dplyr::mutate_all( ~(dplyr::case_when(

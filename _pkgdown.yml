@@ -91,18 +91,13 @@ reference:
       - write_summary_sheet
   - title: Helper functions
     contents:
-      - add_tissue_category_totals
-      - check_phenotypes
       - choose_directory
       - choose_file
-      - make_nested
-      - make_unique_names
       - nearest_neighbor_map
       - order_by_slide_and_tissue_category
       - spatial_map_viewer
       - split_phenotypes
       - unmixing_quality_report
-      - upset_data
       - upset_plot
       - write_session_info
 
