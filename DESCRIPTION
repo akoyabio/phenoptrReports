@@ -42,7 +42,8 @@ Imports:
     tidyverse,
     tiff,
     UpSetR (>= 1.4.0),
-    utils
+    utils,
+    zip (>= 2.0.0)
 Remotes:
     akoyabio/phenoptr,
     akoyabio/rtree,
