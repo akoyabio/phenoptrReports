@@ -22,15 +22,6 @@
     <loc>http://akoyabio.github.io/phenoptrReports/reference/addin_50_component_levels.html</loc>
   </url>
   <url>
-    <loc>http://akoyabio.github.io/phenoptrReports/reference/add_tissue_category_totals.html</loc>
-  </url>
-  <url>
-    <loc>http://akoyabio.github.io/phenoptrReports/reference/cc_and.html</loc>
-  </url>
-  <url>
-    <loc>http://akoyabio.github.io/phenoptrReports/reference/check_phenotypes.html</loc>
-  </url>
-  <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/choose_directory.html</loc>
   </url>
   <url>
@@ -76,18 +67,6 @@
     <loc>http://akoyabio.github.io/phenoptrReports/reference/count_within_summary.html</loc>
   </url>
   <url>
-    <loc>http://akoyabio.github.io/phenoptrReports/reference/file_to_fluor.html</loc>
-  </url>
-  <url>
-    <loc>http://akoyabio.github.io/phenoptrReports/reference/function_exists.html</loc>
-  </url>
-  <url>
-    <loc>http://akoyabio.github.io/phenoptrReports/reference/make_nested.html</loc>
-  </url>
-  <url>
-    <loc>http://akoyabio.github.io/phenoptrReports/reference/make_unique_names.html</loc>
-  </url>
-  <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/merge_cell_seg_files.html</loc>
   </url>
   <url>
@@ -100,9 +79,6 @@
     <loc>http://akoyabio.github.io/phenoptrReports/reference/order_by_slide_and_tissue_category.html</loc>
   </url>
   <url>
-    <loc>http://akoyabio.github.io/phenoptrReports/reference/process_singleplex_image.html</loc>
-  </url>
-  <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/spatial_map_viewer.html</loc>
   </url>
   <url>
@@ -113,9 +89,6 @@
   </url>
   <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/unmixing_quality_report.html</loc>
-  </url>
-  <url>
-    <loc>http://akoyabio.github.io/phenoptrReports/reference/upset_data.html</loc>
   </url>
   <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/upset_plot.html</loc>

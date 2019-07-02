@@ -66,7 +66,7 @@ the source directory." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.3</span>
       </span>
     </div>
 
@@ -145,7 +145,7 @@ the source directory.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>component_levels_report</span>(<span class='kw'>export_path</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>component_levels_report</span>(<span class='kw'>export_path</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>quantiles</span> <span class='kw'>=</span> <span class='fl'>0.999</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -154,7 +154,18 @@ the source directory.</p>
       <th>export_path</th>
       <td><p>Path to a directory containing component_data files.</p></td>
     </tr>
+    <tr>
+      <th>quantiles</th>
+      <td><p>Quantiles to show in the histograms and use for
+signal-to-noise calculations.</p></td>
+    </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>If two or more quantiles are provided, the report will include an
+signal-to-noise table showing the ratio of the highest quantile
+to the lowest.</p>
     
 
   </div>
@@ -162,7 +173,9 @@ the source directory.</p>
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#details">Details</a></li>
+          </ul>
 
   </div>
 </div>

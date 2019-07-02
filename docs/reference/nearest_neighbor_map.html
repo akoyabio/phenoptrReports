@@ -64,7 +64,7 @@ will be shown with any available phenotype." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.3</span>
       </span>
     </div>
 
@@ -141,9 +141,9 @@ will be shown with any available phenotype.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>nearest_neighbor_map</span>(<span class='no'>csd</span>, <span class='no'>field</span>, <span class='no'>export_path</span>, <span class='no'>pheno1</span>, <span class='no'>pheno2</span>, <span class='no'>color1</span>,
-  <span class='no'>color2</span>, <span class='kw'>show_as</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"from_to"</span>, <span class='st'>"to_from"</span>, <span class='st'>"mutual"</span>, <span class='st'>"none"</span>),
-  <span class='kw'>dot_size</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>add_logo</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>nearest_neighbor_map</span>(<span class='no'>csd</span>, <span class='no'>field_name</span>, <span class='no'>export_path</span>, <span class='no'>phenos</span>, <span class='no'>color1</span>, <span class='no'>color2</span>,
+  <span class='kw'>show_as</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"from_to"</span>, <span class='st'>"to_from"</span>, <span class='st'>"mutual"</span>, <span class='st'>"none"</span>), <span class='kw'>dot_size</span> <span class='kw'>=</span> <span class='fl'>3</span>,
+  <span class='kw'>add_logo</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -153,7 +153,7 @@ will be shown with any available phenotype.</p>
       <td><p>Cell seg data with distance columns</p></td>
     </tr>
     <tr>
-      <th>field</th>
+      <th>field_name</th>
       <td><p>Sample Name or Annotation ID to map</p></td>
     </tr>
     <tr>
@@ -162,8 +162,8 @@ will be shown with any available phenotype.</p>
 image files from inForm</p></td>
     </tr>
     <tr>
-      <th>pheno1, pheno2</th>
-      <td><p>Phenotype definitions</p></td>
+      <th>phenos</th>
+      <td><p>Named list of phenotype definitions. Must have length 2.</p></td>
     </tr>
     <tr>
       <th>color1, color2</th>

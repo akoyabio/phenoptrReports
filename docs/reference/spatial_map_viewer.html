@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Run the spatial map viewer with the given nearest neighbor
+<title>Run the spatial map viewer with the given data
 file and export directory. — spatial_map_viewer • phenoptrReports</title>
 
 <!-- jquery -->
@@ -31,7 +31,7 @@ file and export directory. — spatial_map_viewer • phenoptrReports</title>
 
 
 
-<meta property="og:title" content="Run the spatial map viewer with the given nearest neighbor
+<meta property="og:title" content="Run the spatial map viewer with the given data
 file and export directory. — spatial_map_viewer" />
 
 <meta property="og:description" content="See addin_35_spatial_map_viewer()
@@ -66,7 +66,7 @@ for a GUI front-end to this function." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.3</span>
       </span>
     </div>
 
@@ -131,7 +131,7 @@ for a GUI front-end to this function." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Run the spatial map viewer with the given nearest neighbor
+    <h1>Run the spatial map viewer with the given data
 file and export directory.</h1>
     <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/spatial_map_viewer_addin.R'><code>R/spatial_map_viewer_addin.R</code></a></small>
     <div class="hidden name"><code>spatial_map_viewer.Rd</code></div>
@@ -144,20 +144,20 @@ for a GUI front-end to this function.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>spatial_map_viewer</span>(<span class='no'>nn_path</span>, <span class='no'>export_path</span>)</pre>
+    <pre class="usage"><span class='fu'>spatial_map_viewer</span>(<span class='no'>csd_path</span>, <span class='no'>export_path</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>nn_path</th>
-      <td><p>Path to a nearest_neighbors.csv file created by the
-analysis app.</p></td>
+      <th>csd_path</th>
+      <td><p>Path to a Consolidated_data.txt file from the consolidation
+app or nearest_neighbors.csv file created by the analysis app.</p></td>
     </tr>
     <tr>
       <th>export_path</th>
       <td><p>Path to a directory containing composite and
-component images for the fields in the nearest neighbors file.</p></td>
+component images for the fields in the data file.</p></td>
     </tr>
     </table>
     

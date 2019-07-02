@@ -1,4 +1,6 @@
-# phenoptrReports 0.2.2.9000
+# phenoptrReports 0.2.3
+**2019-07-02**
+
 Spatial map viewer improvements:
 - Calculates nearest neighbors on the fly
 - Works with data from `Consolidated_data.txt` (doesn't need `nearest_neighbors.csv`)
