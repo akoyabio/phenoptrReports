@@ -4,10 +4,14 @@ Spatial map viewer improvements:
 - Works with data from `Consolidated_data.txt` (doesn't need `nearest_neighbors.csv`)
 - Supports multiple positivity and expressions in phenotype selectors!
 
-Component levels report
+Component levels report:
 - Allow the user to enter the quantile(s) to display on the histograms.
   If two or more quantiles are entered, include a signal-to-noise table
   in the report, showing the ratio of the highest quantile to the lowest.
+
+Bug fixes:
+- Fixed a problem that caused the analysis addin to incorrectly report 
+  zero cells in a phenotype (#15).
   
 # phenoptrReports 0.2.2
 **2019-06-18**
