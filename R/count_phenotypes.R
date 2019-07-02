@@ -52,7 +52,7 @@ count_phenotypes = function(csd, phenotypes, tissue_categories, .by='Slide ID') 
   # Count the positive selections and fill in
   # missing .by / Tissue Category pairs
   selections = selections %>% dplyr::group_by(!!.by, `Tissue Category`) %>%
-    dplyr::summarize_all(sum) %>%
+    dplyr::summarize_all(sum, na.rm=TRUE) %>%
     dplyr::ungroup() %>%
     tidyr::complete(!!.by, `Tissue Category`, fill=fill)
 
