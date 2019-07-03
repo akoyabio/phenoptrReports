@@ -230,7 +230,7 @@ match_cells = function(from_cells, to_cells, to_name) {
     dplyr::left_join(to_cells, by=by, suffix=c('', '.to'))
 }
 
-# Try to read a composite image for a field
+# Try to read a composite image for a field as a nativeRaster
 read_background = function(field, export_path) {
   # Field can be an Annotation ID or Sample Name
   # If it is a sample name, remove the .im3 suffix
@@ -246,14 +246,12 @@ read_background = function(field, export_path) {
     if (file.exists(background_path)) break
   }
 
-  # Read the image and convert to raster
+  # Read the image as a nativeRaster
   if (file.exists(background_path))
   {
     if (grepl('jpg$', background_path))
-      background = jpeg::readJPEG(background_path)
-    else background = tiff::readTIFF(background_path)
-
-    background = grDevices::as.raster(background)
+      background = jpeg::readJPEG(background_path, native=TRUE)
+    else background = tiff::readTIFF(background_path, native=TRUE)
   } else {
     background = NULL
   }
