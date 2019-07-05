@@ -276,7 +276,7 @@ This plot shows the intensity distribution of pixels of the primary fluor
 in each image.
 Intensity is shown on a log scale.
 
-```{r}
+```{r compute_density_fig_height}
 density_fig_height = 0.5 + 0.5 * length(comp_files)
 ```
 
