@@ -48,8 +48,8 @@ test_file_generation = function(data_dir, output_dir, expected_path, .by) {
   expect_true(file.exists(file.path(output_dir, 'Script.R')))
   expect_true(file.exists(actual_path))
   expect_true(file.exists(file.path(output_dir, 'Charts.docx')))
-  expect_true(file.exists(file.path(output_dir, 'nearest_neighbors.csv')))
-  expect_true(file.exists(file.path(output_dir, 'count_within.csv')))
+  expect_true(file.exists(file.path(output_dir, 'nearest_neighbors.txt')))
+  expect_true(file.exists(file.path(output_dir, 'count_within.txt')))
   expect_true(file.exists(file.path(output_dir, 'session_info.txt')))
 
   # Check numbers against known good
@@ -93,7 +93,7 @@ test_that("Chart segmentation works", {
   if (file.exists(charts_path)) file.remove(charts_path)
   write_summary_charts(workbook_path, charts_path, .by='Sample Name',
                        max_slides_per_plot=5)
-  expect(file.exists(charts_path))
+  expect(file.exists(charts_path), 'Failed to create segmented charts document')
 })
 
 # Some really basic smoke tests - just make sure the reports run
@@ -107,7 +107,7 @@ test_that("Unmixing quality report runs", {
   if (file.exists(report_path)) file.remove(report_path)
 
   unmixing_quality_report(export_path)
-  expect(file.exists(report_path))
+  expect(file.exists(report_path), 'Failed to create unmixing quality report')
 })
 
 test_that("Component levels report runs", {
@@ -118,5 +118,5 @@ test_that("Component levels report runs", {
   if (file.exists(report_path)) file.remove(report_path)
 
   component_levels_report(export_path)
-  expect(file.exists(report_path))
+  expect(file.exists(report_path), 'Failed to create component levels report')
 })

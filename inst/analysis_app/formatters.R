@@ -181,7 +181,7 @@ format_nearest_neighbors = function(output_dir, include_distance_details) {
   if (include_distance_details)
     stringr::str_glue(
 '# Summarize nearest neighbor distances
-nearest_detail_path = file.path("{output_dir}", "nearest_neighbors.csv")
+nearest_detail_path = file.path("{output_dir}", "nearest_neighbors.txt")
 nearest_neighbors = nearest_neighbor_summary(csd, phenotypes,
                                              nearest_detail_path, .by=.by)
 \n\n')
@@ -200,7 +200,7 @@ format_count_within = function(output_dir, radii,
     stringr::str_glue(
 '# Summary of cells within a specific distance
 radii = {deparse(radii)}
-count_detail_path = file.path("{output_dir}", "count_within.csv")
+count_detail_path = file.path("{output_dir}", "count_within.txt")
 count_within = count_within_summary(csd, radii, phenotypes,
                                     tissue_categories, count_detail_path, .by=.by)
 \n\n')

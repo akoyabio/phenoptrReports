@@ -15,7 +15,7 @@ if (getRversion() >= "2.15.1")
 #'        `Cell Y Position`, field name and `Phenotype` columns.
 #' @param phenotypes Optional list of phenotypes to include. If omitted,
 #' will use `unique_phenotypes(csd)`.
-#' @param details_path If present, path to save a table with
+#' @param details_path If present, path to save a tab-separated table with
 #' nearest-neighbor data for each cell.
 #' @param .by Column to aggregate by
 #' @return A data frame with summary statistics for each phenotype pair
@@ -46,7 +46,7 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL, details_path=NULL,
                     dplyr::starts_with('Phenotype'),
                     # This preserves order of Distance and Cell ID columns
                     dplyr::matches('Distance to |Cell ID '))
-    readr::write_csv(distances_subset, details_path, na='#N/A')
+    readr::write_tsv(distances_subset, details_path, na='#N/A')
   }
 
   # All pairs of phenotypes. Order matters so this will include both
@@ -108,7 +108,7 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL, details_path=NULL,
 #' will use `unique_phenotypes(csd)`. Counts are computed for all
 #' pairs of phenotypes.
 #' @param categories Optional list of tissue categories to compute within.
-#' @param details_path If present, path to save a table with
+#' @param details_path If present, path to save a tab-separated table with
 #' nearest-neighbor data for each cell.
 #' @param .by Column to aggregate by
 #' @return A data frame with summary statistics for each phenotype pair
@@ -150,7 +150,7 @@ count_within_summary = function(csd, radii, phenotypes=NULL, categories=NA,
                       dplyr::contains('Tissue Category'),
                       dplyr::starts_with('Phenotype'),
                       dplyr::contains('within'))
-      readr::write_csv(detail, details_path, na='#N/A')
+      readr::write_tsv(detail, details_path, na='#N/A')
     }
   }
 

@@ -1,3 +1,13 @@
+# phenoptrReports 0.2.3.9000
+
+Spatial map viewer improvements:
+- Dramatic improvement in time to render the charts, especially with 2x2 fields.
+
+Analysis addin:
+- Save nearest neighbor and count within detail as tab-separated text files
+  instead of CSV files. This allows the detail files to be used as input
+  to a second run of the analysis addin.
+  
 # phenoptrReports 0.2.3
 **2019-07-02**
 
