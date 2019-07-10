@@ -28,9 +28,9 @@ for later use.
 
 This addin requires reads data from the `Consolidated_data.txt` file created
 by the "Consolidate and summarize" addin. 
-It can also use the `nearest_neighbors.csv` file
+It can also use the `nearest_neighbors.txt` or `count_within.txt` file
 created by the "Analyze consolidated data" addin when 
-"Save nearest neighbor details" is selected.
+"Save nearest neighbor / count within details" is selected.
 
 ### Composite and component image files
 
@@ -56,7 +56,9 @@ viewer.
 The viewer's initial screen allows you to select the nearest neighbor 
 file and inForm export directory containing the fields of interest.
 
-1. First, click the "Browse input" button and select the `nearest_neighbors.csv`
+1. First, click the "Browse input" button and select a
+`Consolidated_data.txt` file from the Consolidate addin or a
+`nearest_neighbors.txt` or `count_within.txt`
 file created by the analysis addin.
 
 2. Next, click the second "Browse" button and select the inForm output directory

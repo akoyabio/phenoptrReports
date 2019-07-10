@@ -19,7 +19,7 @@ pairs of phenotypes.}
 
 \item{categories}{Optional list of tissue categories to compute within.}
 
-\item{details_path}{If present, path to save a table with
+\item{details_path}{If present, path to save a tab-separated table with
 nearest-neighbor data for each cell.}
 
 \item{.by}{Column to aggregate by}

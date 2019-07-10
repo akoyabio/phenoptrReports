@@ -24,7 +24,8 @@ addin_35_spatial_map_viewer = function() {
 #' See [addin_35_spatial_map_viewer()]
 #' for a GUI front-end to this function.
 #' @param csd_path Path to a Consolidated_data.txt file from the consolidation
-#' app or nearest_neighbors.csv file created by the analysis app.
+#' app or nearest_neighbors.txt or count_within.txt
+#' file created by the analysis app.
 #' @param export_path Path to a directory containing composite and
 #' component images for the fields in the data file.
 #' @return None; starts the viewer app
@@ -50,7 +51,8 @@ spatial_map_viewer_front_end = function() {
       'This app provides a field-based viewer',
       'of nearest neighbor relationships. ',
       'It requires a Consolidated_data.txt file from the consolidation ',
-      ' app or a nearest_neighbors.csv file created by the analysis app, ',
+      ' app or a nearest_neighbors.txt or count_within.txt ',
+      'file created by the analysis app, ',
       'and an inForm export directory containing composite and component ',
       'image files.'
     ))
@@ -73,7 +75,7 @@ spatial_map_viewer_front_end = function() {
       shiny::wellPanel(
         shiny::h3('Select a data file'),
         'Click the "Browse Input" button to select a ',
-        'Consolidated_data.txt or nearest_neighbors.csv file.',
+        'Consolidated_data.txt or nearest_neighbors.txt file.',
         shiny::br(), shiny::br(),
 
         shiny::actionButton('browse_source', 'Browse Input...'),
@@ -120,11 +122,12 @@ spatial_map_viewer_front_end = function() {
       # Set the default directory even if nothing valid is selected
       default_dir <<- dirname(files[1])
 
-      # Only allow _data.txt or nearest_neighbors.csv files!
-      is_nn = stringr::str_detect(files, '(_data.txt|nearest_neighbors.csv)$')
+      # Only allow _data.txt, count_within.txt or nearest_neighbors.txt files!
+      is_nn = stringr::str_detect(files,
+                '(_data.txt|nearest_neighbors.txt|count_within.txt)$')
       if (!all(is_nn)) {
         shiny::showNotification(
-          'Please select a Consolidated_data.txt or nearest_neighbors.csv file!',
+          'Please select a Consolidated_data.txt, nearest_neighbors.txt or count_within.txt file!',
           type='message')
       } else {
         # Add to data_file and update the list of files in the UI

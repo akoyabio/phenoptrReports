@@ -14,7 +14,7 @@ nearest_neighbor_summary(csd, phenotypes = NULL, details_path = NULL,
 \item{phenotypes}{Optional list of phenotypes to include. If omitted,
 will use \code{unique_phenotypes(csd)}.}
 
-\item{details_path}{If present, path to save a table with
+\item{details_path}{If present, path to save a tab-separated table with
 nearest-neighbor data for each cell.}
 
 \item{.by}{Column to aggregate by}

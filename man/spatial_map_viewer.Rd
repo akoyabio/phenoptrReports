@@ -9,7 +9,8 @@ spatial_map_viewer(csd_path, export_path)
 }
 \arguments{
 \item{csd_path}{Path to a Consolidated_data.txt file from the consolidation
-app or nearest_neighbors.csv file created by the analysis app.}
+app or nearest_neighbors.txt or count_within.txt
+file created by the analysis app.}
 
 \item{export_path}{Path to a directory containing composite and
 component images for the fields in the data file.}

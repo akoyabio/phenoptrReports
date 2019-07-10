@@ -149,14 +149,16 @@ the number of cells of a phenotype having a cell of a second phenotype
 within a specified radius. Enter the radius or radii of interest in the text
 field.
 
-- **Save nearest neighbor details** If this is selected, the analysis will
-write a `nearest_neighbors.csv` file containing, for each cell, the
+- **Save nearest neighbor / count within details**
+  - If this is selected with "Include nearest neighbor summary", the analysis will
+write a `nearest_neighbors.txt` file containing, for each cell, the
 distance to the nearest cell of each phenotype and the cell ID of the cell.
-This file is needed by the "Spatial map viewer" 
-to visualize nearest neighbor distances and may be useful
-for more detailed statistical analysis of 
-nearest neighbor distances. *Select this option if you want
-to use the Spatial map viewer later!*
+  - If this is selected with "Include 'count within radius' summary", 
+the analysis will
+write a `count_within.txt` file containing, for each cell, the
+count of cells within the specified radii.
+  - These files may be useful
+for more detailed statistical analysis of spatial relationships.
 
 ![](figures/Spatial_options.png)
 

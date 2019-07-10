@@ -109,9 +109,9 @@ shinyServer(function(input, output, server) {
           shiny::column(4, shiny::checkboxInput('include_nearest',
                              label='Include nearest neighbor summary')),
           shiny::column(4, shiny::checkboxInput('include_count_within',
-                                                label='Include "count within radius" summary')),
+                             label='Include "count within radius" summary')),
           shiny::column(4, shiny::checkboxInput('include_distance_details',
-                                                label='Save nearest neighbor details'))
+                         label='Save nearest neighbor / count within details'))
         ),
           shiny::textInput('radii', value='15',
             label='Radius or radii for "count within" (in microns, separate with comma or space)')
