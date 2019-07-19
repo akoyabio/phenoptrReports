@@ -185,3 +185,6 @@ if (!'Phenotype' %in% names(csd) && require(UpSetR)) {
 }
 ```
 
+
+<br><br><br>
+<p align='center'>![](Akoya.png){height=50px style='border:none;'}</p>
