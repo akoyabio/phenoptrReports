@@ -6,7 +6,7 @@ output:
   rmarkdown::html_vignette:
     toc_depth: 4
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Unmixing quality report}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
