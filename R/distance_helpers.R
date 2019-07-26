@@ -71,13 +71,25 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL, details_path=NULL,
       dplyr::select(From, To, dplyr::everything()) # Re-order columns
   }
 
-  # Create a summary data frame from a single vector
+  # Create a summary data frame from a single vector.
+  # If the vector is empty (because there are no examples of a phenotype),
+  # min and max are noisy and return Inf and -Inf; mean returns NaN.
+  # Check for this and quietly return all NA instead.
   dist_summary = function(v) {
-    tibble::tibble(Min=min(v, na.rm=TRUE),
-                   Mean=mean(v, na.rm=TRUE),
-                   Median=stats::median(v, na.rm=TRUE),
-                   Max=max(v, na.rm=TRUE),
-                   SD=stats::sd(v, na.rm=TRUE))
+    v = v[!is.na(v)]
+    if (length(v) == 0) {
+      tibble::tibble(Min=NA,
+                     Mean=NA,
+                     Median=NA,
+                     Max=NA,
+                     SD=NA)
+    } else {
+      tibble::tibble(Min=min(v, na.rm=TRUE),
+                     Mean=mean(v, na.rm=TRUE),
+                     Median=stats::median(v, na.rm=TRUE),
+                     Max=max(v, na.rm=TRUE),
+                     SD=stats::sd(v, na.rm=TRUE))
+    }
   }
 
   # Now we can do the work, computing summary stats for all pairs,

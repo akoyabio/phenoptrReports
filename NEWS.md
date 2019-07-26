@@ -7,6 +7,9 @@ Analysis addin:
 - Save nearest neighbor and count within detail as tab-separated text files
   instead of CSV files. This allows the detail files to be used as input
   to a second run of the analysis addin.
+- Better `nearest_neighbor_summary` 
+  - Avoid warnings from `min` and `max`
+  - Return `NA` for all values when there are no examples of a phenotype.
   
 # phenoptrReports 0.2.3
 **2019-07-02**
