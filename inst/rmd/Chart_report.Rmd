@@ -10,13 +10,24 @@ params:
     label: 'Path to Excel file:'
     value: ''
   max_slides_per_plot:
-    input: integer
+    input: numeric
     label: Maximum number of slides to show on each plot
     value: 20
+    min: 1
+    max: 30
+    step: 1
+  max_heatmaps_per_plot:
+    input: numeric
+    label: Maximum number of heatmaps to show on each plot
+    value: 8
+    min: 1
+    max: 30
+    step: 1
   .by:
-    input: string
+    input: select
     label: Name of the grouping parameter in the worksheets
     value: 'Slide ID'
+    choices: [Slide ID, Annotation ID]
 editor_options: 
   chunk_output_type: console
 ---
@@ -33,6 +44,7 @@ knitr::opts_chunk$set(echo=FALSE,fig.width=10, fig.height=5.5,
 
 workbook_path = params$workbook_path
 max_slides_per_plot = params$max_slides_per_plot
+max_heatmaps_per_plot = params$max_heatmaps_per_plot
 .by_str = params$.by
 .by = rlang::sym(.by_str)
 
@@ -64,15 +76,18 @@ theme_phenoptr = theme_minimal() +
   )
 
 # If d has more than max_slides_per_plot slides, 
-# split it into roughly equal pieces
-split_slides = function(d) {
+# split it into pieces no bigger than max_per_plot.
+# If `pack` is FALSE, try to make the pieces the same size.
+# If `pack` is TRUE, make all pieces except the last contain `max_per_plot`
+# items.
+split_slides = function(d, max_per_plot=max_slides_per_plot, pack=FALSE) {
   slides = unique(d[[.by_str]])
   n_slides = length(slides)
-  if (n_slides <= max_slides_per_plot)
+  if (n_slides <= max_per_plot)
     return(list(d))
   
-  n_groups = ceiling(n_slides/max_slides_per_plot)
-  group_size = ceiling(n_slides/n_groups)
+  n_groups = ceiling(n_slides/max_per_plot)
+  group_size = ifelse(pack, max_per_plot, ceiling(n_slides/n_groups))
   groups = rep(1:n_groups, each=group_size)
   slide_groups = split(slides, groups[1:n_slides])
   map(slide_groups, ~(d %>% filter(!!.by %in% .x)))
@@ -277,6 +292,13 @@ if ('H-Score' %in% sheet_names) {
 
 ```{r neigbors,results='asis'}
 
+# This makes labels for heatmaps that split the names into two rows
+# so they are readable. The regex splits between _ and [ while 
+# preserving both.
+heatmap_labeller = function(d) {
+  stringr::str_split(d[[1]], '(?<=_)(?=\\[)') %>% purrr::transpose()
+}
+
 if ('Nearest Neighbors' %in% sheet_names) {
   # Make heat maps of the median distance between phenotypes,
   # one heat map per slide.
@@ -289,7 +311,7 @@ if ('Nearest Neighbors' %in% sheet_names) {
   max_median = max(neighbors$Median, na.rm=TRUE)
   
   # Split to multiple pages
-  neighbors = split_slides(neighbors)
+  neighbors = split_slides(neighbors, max_heatmaps_per_plot, pack=TRUE)
   iwalk(neighbors, function(d, i) {
     if (length(neighbors) > 1) {
       cat(stringr::str_glue('## Median Distance to Nearest Neighbor ({i} of {length(neighbors)})\n\n'))
@@ -298,13 +320,14 @@ if ('Nearest Neighbors' %in% sheet_names) {
     }
     p = ggplot(d, aes(To, From, fill=Median)) +
       geom_raster(na.rm=TRUE) +
-      facet_wrap(vars(!!.by)) +
+      facet_wrap(vars(!!.by), nrow=2, labeller=heatmap_labeller) +
       scale_fill_gradientn('Median\nDistance', na.value='grey90', 
                            limits=c(0, max_median),
                            colors=RColorBrewer::brewer.pal(9, 'RdYlBu')) +
       theme_phenoptr +
       # Overrides for theme_phenoptr elements
-      theme(strip.text.x=element_text(face='bold', angle=0),
+      theme(strip.text.x=element_text(face='plain', angle=0,
+                                      margin=margin(b=1)),
             axis.text.x=element_text(size=8, angle=90, hjust=1)) +
       coord_equal()
   
@@ -338,7 +361,7 @@ if ('Count Within' %in% sheet_names) {
     summarize(max=max(`From with`))
   
   # Split to multiple pages
-  split_counts = split_slides(counts)
+  split_counts = split_slides(counts, max_heatmaps_per_plot, pack=TRUE)
   
   walk(radii, function(radius) {
     walk(categories, function(category) {
@@ -357,13 +380,14 @@ if ('Count Within' %in% sheet_names) {
         
         p = ggplot(d, aes(To, From, fill=`From with`)) +
           geom_raster(na.rm=TRUE) +
-          facet_wrap(vars(!!.by)) +
+          facet_wrap(vars(!!.by), nrow=2, labeller=heatmap_labeller) +
           scale_fill_gradientn('Cell\nCount', na.value='grey90', 
                                limits=c(0, max_count),
                                colors=rev(RColorBrewer::brewer.pal(9, 'RdYlBu'))) +
           theme_phenoptr +
           # Overrides for theme_phenoptr elements that don't apply here
-          theme(strip.text.x=element_text(face='bold', angle=0),
+          theme(strip.text.x=element_text(face='plain', angle=0,
+                                      margin=margin(b=1)),
                 axis.text.x=element_text(size=8, angle=90, hjust=1)) +
           coord_equal()
 
