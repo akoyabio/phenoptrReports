@@ -116,8 +116,8 @@ to_display = crosstalk %>%
   dplyr::select(-Primary, -dplyr::matches('Autofluorescence')) %>% 
   dplyr::mutate_at(-1, formattable::percent, digits=1)
 
-# Put columns in alpha order with DAPI first
-to_display = to_display[sort(names(to_display))] %>% 
+# Put DAPI first
+to_display = to_display %>% 
   dplyr::select(Source, dplyr::matches('DAPI'), dplyr::everything())
 
 my_gradient = function(colors) {
@@ -199,8 +199,8 @@ to_display = signals %>%
   dplyr::select(-Primary, -dplyr::matches('Autofluorescence')) %>% 
   dplyr::mutate_at(-1, ~formattable::percent(.x/max(.x), digits=1))
 
-# Put columns in alpha order with DAPI first
-to_display = to_display[sort(names(to_display))] %>% 
+# Put DAPI first
+to_display = to_display %>% 
   dplyr::select(Source, dplyr::matches('DAPI'), dplyr::everything())
 
 # We need to know the smallest relative value in own fluor
@@ -293,22 +293,22 @@ all_primaries = tibble::tibble(
 if (require(ggridges)){
   all_primaries %>% 
     dplyr::filter(primary > 0) %>% 
-    ggplot(aes(log10(primary), forcats::fct_rev(Source), fill=Fluor)) +
+    ggplot(aes(primary, forcats::fct_rev(Source), fill=Fluor)) +
     geom_density_ridges(color='gray50') +
-    labs(x=expression(bold(log[10](Expression))), y='') +
+    labs(x='Pixel intensity', y='') +
     scale_fill_brewer(palette='Spectral') +
     guides(color='none', fill='none') +
     theme_minimal() +
     theme(axis.text.y=element_text(face='bold', hjust=0, vjust=0)) +
-    scale_x_continuous(expand = c(0.01, 0), limits=c(-1, NA)) +
+    scale_x_log10(expand = c(0.01, 0), limits=c(0.1, NA)) +
     scale_y_discrete(expand = c(0.01, 0))
 } else {
   # ggplot version
-  ggplot(all_primaries, aes(log10(primary), color=Fluor, fill=Fluor)) +
+  ggplot(all_primaries, aes(primary, color=Fluor, fill=Fluor)) +
            geom_density() +
     facet_wrap(~Source, ncol=1, strip.position='left', scales='free_y') +
-    xlim(-1, NA) +
-    labs(x=expression(bold(log[10](Expression))), y='') +
+    labs(x='Pixel intensity', y='') +
+    scale_x_log10(limits=c(0.1, NA)) +
     scale_color_brewer(palette='Spectral') +
     scale_fill_brewer(palette='Spectral') +
     guides(color='none', fill='none') +
@@ -333,8 +333,8 @@ to_display = signals %>%
   dplyr::select(-Primary, -dplyr::matches('Autofluorescence')) %>% 
   dplyr::mutate_at(-1, round, digits=2)
 
-# Put columns in alpha order with DAPI first
-to_display = to_display[sort(names(to_display))] %>% 
+# Put DAPI first
+to_display = to_display %>% 
   dplyr::select(Source, dplyr::matches('DAPI'), dplyr::everything())
 
 knitr::kable(to_display)

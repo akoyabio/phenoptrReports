@@ -11,9 +11,18 @@ Analysis addin:
   - Maximum of eight heatmaps per page
   - Split the facet titles so the full Slide or Annotation ID is visible
 - Better `nearest_neighbor_summary` 
-  - Avoid warnings from `min` and `max`
-  - Return `NA` for all values when there are no examples of a phenotype.
-  
+  - Avoid warnings from `min` and `max` and return `NA` for all values 
+  when there are no examples of a phenotype (#20).
+
+Unmixing quality report:
+- Tables show components as ordered in the data, not in alphabetical order.
+- Pixel intensity chart uses actual pixel intensity as labels on the x-axis, 
+  rather than log10 values.
+
+Component levels report:
+- Charts use actual pixel intensity as labels on the x-axis,
+  rather than log10 values.
+
 # phenoptrReports 0.2.3
 **2019-07-02**
 

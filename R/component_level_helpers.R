@@ -4,8 +4,7 @@
 utils::globalVariables(c('Fluor', 'level', 'value', 'Source', 'clip_frac',
                          'x', 'y', 'pct'))
 
-log_offset = 0.01
-xlim_lower = -2
+xlim_lower = 0.01
 
 # Create a ridge plot for a single component data file
 # @param path Full path to a component data file
@@ -43,16 +42,18 @@ component_ridge_plot = function(path, quantiles=NULL) {
   # For plotting a long data frame is better
   quants_to_plot = quants %>%
     dplyr::select(-Source) %>%
-    tidyr::gather(level, value, -Fluor)
+    tidyr::gather(level, value, -Fluor) %>%
+    dplyr::mutate(value = pmax(value, xlim_lower))
 
   # How much data are we clipping (because it is 0)
   clipping = comps %>%
     dplyr::group_by(Fluor, Source) %>%
     dplyr::summarize(clip_frac=sum(value==0)/dplyr::n())
 
+  # Format clipping data as percent and add a plot location near the left margin
   clipping_to_plot = clipping %>%
     dplyr::mutate(
-      pct=scales::percent(clip_frac, accuracy=1), x=xlim_lower+0.1, y=Inf)
+      pct=scales::percent(clip_frac, accuracy=1), x=xlim_lower*10^0.1, y=Inf)
 
   clipping_to_plot$pct[1] = paste0('Clipping: ', clipping_to_plot$pct[1])
 
@@ -66,15 +67,15 @@ component_ridge_plot = function(path, quantiles=NULL) {
   # A histogram with lots of bins works pretty well with few or many values.
   p = ggplot2::ggplot(comps %>% dplyr::filter(value>0)) +
     ggplot2::geom_histogram(bins=1000,
-                            ggplot2::aes(log10(value), color=Fluor, fill=Fluor)) +
+                            ggplot2::aes(value, color=Fluor, fill=Fluor)) +
     ggplot2::geom_vline(data=quants_to_plot,
-                        ggplot2::aes(xintercept=log10(value+log_offset))) +
+                        ggplot2::aes(xintercept=value)) +
     ggplot2::geom_text(data=clipping_to_plot,
                        ggplot2::aes(x, y, label=pct),
               hjust=0, vjust= 1.2, size=3, fontface='bold') +
     ggplot2::facet_wrap(~Fluor, ncol=1, strip.position='left', scales='free_y') +
-    ggplot2::xlim(xlim_lower, NA) +
-    ggplot2::labs(x=expression(bold(log[10](Expression))), y='',
+    ggplot2::scale_x_log10(limits=c(xlim_lower, NA)) +
+    ggplot2::labs(x='Pixel intensity', y='',
          title=name, subtitle=subtitle) +
     ggplot2::scale_color_brewer(palette='Spectral') +
     ggplot2::scale_fill_brewer(palette='Spectral') +
@@ -102,7 +103,7 @@ fluor_ridge_plot = function(d, quants, clipping, name, fill) {
 
   clipping_to_plot = clipping %>%
     dplyr::mutate(
-      pct=scales::percent(clip_frac, accuracy=1), x=xlim_lower+0.1, y=Inf)
+      pct=scales::percent(clip_frac, accuracy=1), x=xlim_lower*10^0.1, y=Inf)
   clipping_to_plot$pct[1] = paste0('Clipping: ', clipping_to_plot$pct[1])
 
   subtitle = 'Values of 0 are clipped.'
@@ -113,19 +114,20 @@ fluor_ridge_plot = function(d, quants, clipping, name, fill) {
   # For plotting a long data frame is better
   quants_to_plot = quants %>%
     dplyr::select(-Fluor) %>%
-    tidyr::gather(level, value, -Source)
+    tidyr::gather(level, value, -Source) %>%
+    dplyr::mutate(value = pmax(value, xlim_lower))
 
   ggplot2::ggplot(d %>% dplyr::filter(value>0)) +
     ggplot2::geom_histogram(bins=1000,
-                            ggplot2::aes(log10(value)), color=fill, fill=fill) +
+                            ggplot2::aes(value), color=fill, fill=fill) +
     ggplot2::geom_vline(data=quants_to_plot,
-                        ggplot2::aes(xintercept=log10(value+log_offset))) +
+                        ggplot2::aes(xintercept=value)) +
     ggplot2::geom_text(data=clipping_to_plot,
                        ggplot2::aes(x, y, label=pct),
               hjust=0, vjust= 1.2, size=3, fontface='bold') +
     ggplot2::facet_wrap(~Source, ncol=1, strip.position='left', scales='free_y') +
-    ggplot2::xlim(xlim_lower, NA) +
-    ggplot2::labs(x=expression(bold(log[10](Expression))), y='',
+    ggplot2::scale_x_log10(limits=c(xlim_lower, NA)) +
+    ggplot2::labs(x='Pixel intensity', y='',
          title=name, subtitle=subtitle) +
     ggplot2::guides(color='none', fill='none') +
     ggplot2::theme_minimal() +
