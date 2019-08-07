@@ -70,6 +70,23 @@ compute_density_from_table = function(counts, areas, tissue_categories, .by='Sli
   .by = rlang::sym(.by)
   .by_str = rlang::as_string(.by)
 
+  # Check that the files match
+  missing_ids = setdiff(unique(counts[[.by_str]]),
+                        unique(areas[[.by_str]]))
+
+  if (length(missing_ids) > 0)
+    stop(length(missing_ids),
+         ' ', .by_str, 's missing from summary file (',
+         paste(missing_ids, collapse=', '), ').')
+
+  missing_categories = setdiff(tissue_categories,
+                        unique(areas$`Tissue Category`))
+
+  if (length(missing_categories) > 0)
+    stop(length(missing_categories),
+         ' tissue categories missing from summary file (',
+         paste(missing_categories, collapse=', '), ').')
+
   # Normalize the name of the area column
   # Two different column names and two spellings of 'square'. Just brute force.
   if ("Region Area (sq microns)" %in% names(areas))
@@ -89,15 +106,6 @@ compute_density_from_table = function(counts, areas, tissue_categories, .by='Sli
     add_tissue_category_totals(tissue_categories, .by) %>%
     dplyr::mutate(`Tissue Category` =
                     dplyr::recode(`Tissue Category`, 'All'='Total'))
-
-  # Check that the files match
-  missing_ids = setdiff(unique(counts[[.by_str]]),
-                        unique(areas[[.by_str]]))
-
-  if (length(missing_ids) > 1)
-    stop(length(missing_ids),
-         ' ', .by_str, 's are missing from summary file (',
-         paste(missing_ids, collapse=', '), ').')
 
   # Join with the counts table and divide counts by area to get density
   densities = dplyr::left_join(counts, areas) %>%
