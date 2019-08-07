@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.4</span>
       </span>
     </div>
 
@@ -97,7 +97,7 @@
       <h1>Analyzing inForm data</h1>
                         <h4 class="author">Kent Johnson</h4>
             
-            <h4 class="date">2019-07-02</h4>
+            <h4 class="date">2019-08-07</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/akoyabio/phenoptrReports/blob/master/vignettes/analysis.Rmd"><code>vignettes/analysis.Rmd</code></a></small>
       <div class="hidden name"><code>analysis.Rmd</code></div>
@@ -191,7 +191,14 @@
 <ul>
 <li><p><strong>Include nearest neighbor summary</strong> If this is selected, the generated report will include a tab summarizing nearest neighbor distances between every pair of phenotypes and heatmap visualizations of the mean distances.</p></li>
 <li><p><strong>Include “count within radius” summary</strong> If this is selected, the generated report will include a tab summarizing, for each pair of phenotypes, the number of cells of a phenotype having a cell of a second phenotype within a specified radius. Enter the radius or radii of interest in the text field.</p></li>
-<li><p><strong>Save nearest neighbor details</strong> If this is selected, the analysis will write a <code>nearest_neighbors.csv</code> file containing, for each cell, the distance to the nearest cell of each phenotype and the cell ID of the cell. This file is needed by the “Spatial map viewer” to visualize nearest neighbor distances and may be useful for more detailed statistical analysis of nearest neighbor distances. <em>Select this option if you want to use the Spatial map viewer later!</em></p></li>
+<li>
+<p><strong>Save nearest neighbor / count within details</strong></p>
+<ul>
+<li>If this is selected with “Include nearest neighbor summary”, the analysis will write a <code>nearest_neighbors.txt</code> file containing, for each cell, the distance to the nearest cell of each phenotype and the cell ID of the cell.</li>
+<li>If this is selected with “Include ‘count within radius’ summary”, the analysis will write a <code>count_within.txt</code> file containing, for each cell, the count of cells within the specified radii.</li>
+<li>These files may be useful for more detailed statistical analysis of spatial relationships.</li>
+</ul>
+</li>
 </ul>
 <p><img src="figures/Spatial_options.png"></p>
 </div>

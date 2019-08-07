@@ -1,4 +1,5 @@
-# phenoptrReports 0.2.3.9000
+# phenoptrReports 0.2.4
+**2019-08-07**
 
 Spatial map viewer improvements:
 - Dramatic improvement in time to render the charts, especially with 2x2 fields.

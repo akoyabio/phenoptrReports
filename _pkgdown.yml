@@ -35,6 +35,7 @@ articles:
     contents:
     - consolidation
     - analysis
+    - spatial_map_viewer
     - unmixing_quality_report
 
 reference:
@@ -92,7 +93,7 @@ reference:
   - title: Helper functions
     contents:
       - choose_directory
-      - choose_file
+      - choose_files
       - nearest_neighbor_map
       - order_by_slide_and_tissue_category
       - spatial_map_viewer

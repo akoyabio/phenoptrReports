@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.4</span>
       </span>
     </div>
 
@@ -97,7 +97,7 @@
       <h1>Viewing nearest neighbors</h1>
                         <h4 class="author">Kent Johnson</h4>
             
-            <h4 class="date">2019-07-02</h4>
+            <h4 class="date">2019-08-07</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/akoyabio/phenoptrReports/blob/master/vignettes/spatial_map_viewer.Rmd"><code>vignettes/spatial_map_viewer.Rmd</code></a></small>
       <div class="hidden name"><code>spatial_map_viewer.Rmd</code></div>
@@ -117,7 +117,7 @@
 <div id="consolidated-data-file" class="section level3">
 <h3 class="hasAnchor">
 <a href="#consolidated-data-file" class="anchor"></a>Consolidated data file</h3>
-<p>This addin requires reads data from the <code>Consolidated_data.txt</code> file created by the “Consolidate and summarize” addin. It can also use the <code>nearest_neighbors.csv</code> file created by the “Analyze consolidated data” addin when “Save nearest neighbor details” is selected.</p>
+<p>This addin requires reads data from the <code>Consolidated_data.txt</code> file created by the “Consolidate and summarize” addin. It can also use the <code>nearest_neighbors.txt</code> or <code>count_within.txt</code> file created by the “Analyze consolidated data” addin when “Save nearest neighbor / count within details” is selected.</p>
 </div>
 <div id="composite-and-component-image-files" class="section level3">
 <h3 class="hasAnchor">
@@ -140,7 +140,7 @@
 <a href="#select-input-files" class="anchor"></a>Select input files</h3>
 <p>The viewer’s initial screen allows you to select the nearest neighbor file and inForm export directory containing the fields of interest.</p>
 <ol style="list-style-type: decimal">
-<li><p>First, click the “Browse input” button and select the <code>nearest_neighbors.csv</code> file created by the analysis addin.</p></li>
+<li><p>First, click the “Browse input” button and select a <code>Consolidated_data.txt</code> file from the Consolidate addin or a <code>nearest_neighbors.txt</code> or <code>count_within.txt</code> file created by the analysis addin.</p></li>
 <li><p>Next, click the second “Browse” button and select the inForm output directory corresponding with the nearest neighbors file.</p></li>
 <li><p>Finally, click “Open Viewer” to start the viewer.</p></li>
 </ol>

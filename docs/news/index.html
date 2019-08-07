@@ -60,7 +60,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.4</span>
       </span>
     </div>
 
@@ -129,6 +129,39 @@
       <small>Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="phenoptrreports-024" class="section level1">
+<h1 class="page-header">
+<a href="#phenoptrreports-024" class="anchor"></a>phenoptrReports 0.2.4</h1>
+<p><strong>2019-08-07</strong></p>
+<p>Spatial map viewer improvements:</p>
+<ul>
+<li>Dramatic improvement in time to render the charts, especially with 2x2 fields.</li>
+</ul>
+<p>Analysis addin:</p>
+<ul>
+<li>Save nearest neighbor and count within detail as tab-separated text files instead of CSV files. This allows the detail files to be used as input to a second run of the analysis addin.</li>
+<li>Improved heatmaps in Charts output:
+<ul>
+<li>Maximum of eight heatmaps per page</li>
+<li>Split the facet titles so the full Slide or Annotation ID is visible</li>
+</ul>
+</li>
+<li>Better <code>nearest_neighbor_summary</code>
+<ul>
+<li>Avoid warnings from <code>min</code> and <code>max</code> and return <code>NA</code> for all values when there are no examples of a phenotype (<a href='https://github.com/akoyabio/phenoptrReports/issues/20'>#20</a>).</li>
+</ul>
+</li>
+</ul>
+<p>Unmixing quality report:</p>
+<ul>
+<li>Tables show components as ordered in the data, not in alphabetical order.</li>
+<li>Pixel intensity chart uses actual pixel intensity as labels on the x-axis, rather than log10 values.</li>
+</ul>
+<p>Component levels report:</p>
+<ul>
+<li>Charts use actual pixel intensity as labels on the x-axis, rather than log10 values.</li>
+</ul>
+</div>
     <div id="phenoptrreports-023" class="section level1">
 <h1 class="page-header">
 <a href="#phenoptrreports-023" class="anchor"></a>phenoptrReports 0.2.3</h1>
@@ -358,6 +391,7 @@
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
+        <li><a href="#phenoptrreports-024">0.2.4</a></li>
         <li><a href="#phenoptrreports-023">0.2.3</a></li>
         <li><a href="#phenoptrreports-022">0.2.2</a></li>
         <li><a href="#phenoptrreports-021">0.2.1</a></li>

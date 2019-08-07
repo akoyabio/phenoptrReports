@@ -45,7 +45,7 @@ spatial_map_viewer = function(csd_path, export_path) {
 }
 
 
-#' Request input file and directory for the viewer, then launch the viewer
+# Request input file and directory for the viewer, then launch the viewer
 spatial_map_viewer_front_end = function() {
   intro <- shiny::tagList(shiny::p(
       'This app provides a field-based viewer',
