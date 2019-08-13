@@ -57,11 +57,15 @@ nearest_neighbor_map =
   # Workaround for inForm data that was originally pixels. In that case
   # field_data will have the origin at top left; convert to slide origin
   # to match the field_info.
-  if (max(field_data$`Cell X Position`) < field_info$field_size[1]
-      || max(field_data$`Cell Y Position`) < field_info$field_size[2]) {
+  # Assume that the data was converted with the default 2 pixels per micron.
+  # Test for all cells in a field fitting within the field size after
+  # correcting the location.
+  correction = 2 / field_info$pixels_per_micron
+  if (max(field_data$`Cell X Position`)*correction < field_info$field_size[1]
+      && max(field_data$`Cell Y Position`)*correction < field_info$field_size[2]) {
     field_data = field_data %>% dplyr::mutate(
-      `Cell Y Position` = `Cell Y Position`+field_info$location[2],
-      `Cell X Position` = `Cell X Position`+field_info$location[1]
+      `Cell Y Position` = `Cell Y Position`*correction+field_info$location[2],
+      `Cell X Position` = `Cell X Position`*correction+field_info$location[1]
     )
   }
 

@@ -1,3 +1,9 @@
+# phenoptrReports 0.2.4.9000
+
+Spatial map viewer improvements:
+- Spatial map viewer works correctly with inForm data containing 
+  field coordinates (vs slide coordinates) (#16).
+  
 # phenoptrReports 0.2.4
 **2019-08-07**
 
