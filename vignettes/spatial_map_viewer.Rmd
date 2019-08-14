@@ -26,7 +26,7 @@ for later use.
 
 ### Consolidated data file
 
-This addin requires reads data from the `Consolidated_data.txt` file created
+This addin reads data from the `Consolidated_data.txt` file created
 by the "Consolidate and summarize" addin. 
 It can also use the `nearest_neighbors.txt` or `count_within.txt` file
 created by the "Analyze consolidated data" addin when 
@@ -57,12 +57,12 @@ The viewer's initial screen allows you to select the nearest neighbor
 file and inForm export directory containing the fields of interest.
 
 1. First, click the "Browse input" button and select a
-`Consolidated_data.txt` file from the Consolidate addin or a
+`Consolidated_data.txt` file from the "Consolidate and summarize" addin or a
 `nearest_neighbors.txt` or `count_within.txt`
 file created by the analysis addin.
 
 2. Next, click the second "Browse" button and select the inForm output directory
-corresponding with the nearest neighbors file.
+corresponding with the data file.
 
 3. Finally, click "Open Viewer" to start the viewer.
 

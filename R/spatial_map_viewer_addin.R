@@ -75,7 +75,7 @@ spatial_map_viewer_front_end = function() {
       shiny::wellPanel(
         shiny::h3('Select a data file'),
         'Click the "Browse Input" button to select a ',
-        'Consolidated_data.txt or nearest_neighbors.txt file.',
+        'Consolidated_data.txt, nearest_neighbors.txt or count_within.txt file.',
         shiny::br(), shiny::br(),
 
         shiny::actionButton('browse_source', 'Browse Input...'),
