@@ -318,6 +318,7 @@ if ('Nearest Neighbors' %in% sheet_names) {
     } else {
       cat('## Median Distance to Nearest Neighbor\n\n')
     }
+    d = d %>% mutate(From=factor(From, levels=rev(sort(unique(From)))))
     p = ggplot(d, aes(To, From, fill=Median)) +
       geom_raster(na.rm=TRUE) +
       facet_wrap(vars(!!.by), nrow=2, labeller=heatmap_labeller) +
@@ -366,7 +367,8 @@ if ('Count Within' %in% sheet_names) {
   walk(radii, function(radius) {
     walk(categories, function(category) {
       iwalk(split_counts, function(d, i) {
-        d = d %>% filter(`Tissue Category`==category, radius==Radius)
+        d = d %>% filter(`Tissue Category`==category, radius==Radius) %>% 
+              mutate(From=factor(From, levels=rev(sort(unique(From)))))
 
         if (length(split_counts) > 1) {
           cat(stringr::str_glue('## Count of "From" cells in {category} with a "To" cell within {radius} microns ({i} of {length(split_counts)})\n\n'))
