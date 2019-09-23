@@ -4,13 +4,17 @@
 \alias{component_levels_report}
 \title{Create a component levels report for multiplex samples}
 \usage{
-component_levels_report(export_path = NULL, quantiles = 0.999)
+component_levels_report(export_path = NULL, quantiles = 0.999,
+  export_data = FALSE)
 }
 \arguments{
 \item{export_path}{Path to a directory containing component_data files.}
 
 \item{quantiles}{Quantiles to show in the histograms and use for
 signal-to-noise calculations.}
+
+\item{export_data}{If true, save a data file for each pairs plot with
+the data for the plot.}
 }
 \description{
 \code{export_path} should be the path to

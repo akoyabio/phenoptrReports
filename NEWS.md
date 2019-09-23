@@ -3,10 +3,14 @@
 Analysis addin:
 - Reverse the y-axis of heatmaps so that the identity runs 
   from the top left to bottom right. 
+  
 Spatial map viewer improvements:
 - Spatial map viewer works correctly with inForm data containing 
   field coordinates (vs slide coordinates) (#16).
   
+Component levels report:
+- Optionally export data from pairs plots as TSV files.
+
 # phenoptrReports 0.2.4
 **2019-08-07**
 

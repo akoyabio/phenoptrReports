@@ -110,8 +110,11 @@ unmixing_quality_report = function(export_path=NULL) {
 #' @param export_path Path to a directory containing component_data files.
 #' @param quantiles Quantiles to show in the histograms and use for
 #' signal-to-noise calculations.
+#' @param export_data If true, save a data file for each pairs plot with
+#' the data for the plot.
 #' @export
-component_levels_report = function(export_path=NULL, quantiles=0.999) {
+component_levels_report = function(export_path=NULL, quantiles=0.999,
+                                   export_data=FALSE) {
   stopifnot(dir.exists(export_path))
 
   rmd_path = system.file("rmd", "Component_levels_report.Rmd",
@@ -121,7 +124,8 @@ component_levels_report = function(export_path=NULL, quantiles=0.999) {
   rmarkdown::render(rmd_path, output_file=output_path, quiet=TRUE,
                     intermediates_dir=temp_dir_by(output_path),
                     params=list(export_path = export_path,
-                                quantiles=quantiles))
+                                quantiles=quantiles,
+                                export_data = export_data))
 }
 
 #' Write session info to a file

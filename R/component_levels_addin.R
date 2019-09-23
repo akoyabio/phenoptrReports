@@ -44,9 +44,10 @@ addin_50_component_levels = function() {
       ),
 
       shiny::wellPanel(
-        shiny::h3('Select quantiles'),
+        shiny::h3('Report options'),
         'Enter the quantiles to show, separated by comma or space.',
-        shiny::textInput('quantiles', '', value=default_quantiles)
+        shiny::textInput('quantiles', '', value=default_quantiles),
+        shiny::checkboxInput('export_data', 'Export data from pairs plots')
       ),
 
       shiny::h4(shiny::textOutput('error'), style='color: maroon')
@@ -89,7 +90,8 @@ addin_50_component_levels = function() {
       if (error_text == '') {
         shiny::showNotification('Processing, please wait!', duration=NULL,
                                 closeButton=FALSE, type='message')
-        phenoptrReports::component_levels_report(export_dir(), quantiles())
+        phenoptrReports::component_levels_report(export_dir(), quantiles(),
+                                                 input$export_data)
         shiny::stopApp()
       } else {
         shiny::showNotification(error_text, type='message')
