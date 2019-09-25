@@ -66,7 +66,7 @@ component_ridge_plot = function(path, quantiles=NULL) {
   # plots look really weird, with peaks at each distinct value.
   # A histogram with lots of bins works pretty well with few or many values.
   p = ggplot2::ggplot(comps %>% dplyr::filter(value>0)) +
-    ggplot2::geom_histogram(bins=1000,
+    ggplot2::geom_histogram(bins=1000, na.rm=TRUE,
                             ggplot2::aes(value, color=Fluor, fill=Fluor)) +
     ggplot2::geom_vline(data=quants_to_plot,
                         ggplot2::aes(xintercept=value)) +
@@ -118,7 +118,7 @@ fluor_ridge_plot = function(d, quants, clipping, name, fill) {
     dplyr::mutate(value = pmax(value, xlim_lower))
 
   ggplot2::ggplot(d %>% dplyr::filter(value>0)) +
-    ggplot2::geom_histogram(bins=1000,
+    ggplot2::geom_histogram(bins=1000, na.rm=TRUE,
                             ggplot2::aes(value), color=fill, fill=fill) +
     ggplot2::geom_vline(data=quants_to_plot,
                         ggplot2::aes(xintercept=value)) +

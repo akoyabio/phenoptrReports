@@ -265,7 +265,7 @@ if ('H-Score' %in% sheet_names) {
   cat('##', title, '\n\n')
   p = ggplot(tall,
          aes(!!.by, Percent, fill=Bin)) +
-    geom_col(position=position_stack(reverse=TRUE)) +
+    geom_col(position=position_stack(reverse=TRUE), na.rm=TRUE) +
     facet_grid(vars(`Tissue Category`), switch='x') +
     scale_fill_manual(values=phenoptr_colors[c(1, 2, 4, 3)]) + 
     scale_y_continuous(labels=scales::percent) +
