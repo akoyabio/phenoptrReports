@@ -288,7 +288,7 @@ all_primaries = tibble::tibble(
   data=purrr::map(all_data, 
                   ~tibble::tibble(primary=as.numeric(.x$primary)) %>%
                      dplyr::sample_frac(size=0.1))) %>% 
-  tidyr::unnest()
+  tidyr::unnest(cols=c(data))
 
 if (require(ggridges)){
   all_primaries %>% 

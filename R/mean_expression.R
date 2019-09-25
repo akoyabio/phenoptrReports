@@ -1,6 +1,6 @@
 # Suppress CMD CHECK notes for things that look like global vars
 utils::globalVariables(c(
-  "data", "name"
+  "data", "name", "means"
 ))
 
 #' Compute mean expression of cells for multiple phenotypes and markers.
@@ -107,7 +107,7 @@ compute_mean_expression_many = function(
   # Actually do the computation for each nested data frame
   result = csd %>% dplyr::mutate(means = purrr::map(data, compute_means)) %>%
     dplyr::select(-data) %>%
-    tidyr::unnest()
+    tidyr::unnest(means)
 
   if (!add_tc_totals) {
     # Names of the non-expression columns
@@ -128,7 +128,7 @@ compute_mean_expression_many = function(
       total$`Tissue Category` = 'All'
       dplyr::bind_rows(d, total)
     })) %>%
-    tidyr::unnest() %>%
+    tidyr::unnest(data) %>%
     dplyr::select(-count) %>%
     tidyr::spread(name, mean) %>%
     order_by_slide_and_tissue_category(tissue_categories, .by) %>%

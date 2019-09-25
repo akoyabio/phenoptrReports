@@ -5,7 +5,7 @@ if (getRversion() >= "2.15.1")
   utils::globalVariables(
     c('Cell X Position', 'Cell Y Position', 'From', 'To',
       'category', 'from', 'to', 'radius', 'from_count', 'within_mean',
-      'to_count', 'from_with'))
+      'to_count', 'from_with', 'data', 'distance', 'stats'))
 
 #' Summarize nearest neighbor distances
 #'
@@ -35,7 +35,7 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL, details_path=NULL,
     tidyr::nest() %>%
     dplyr::mutate(distance=purrr::map(data,
                            phenoptr::find_nearest_distance, phenotypes)) %>%
-    tidyr::unnest()
+    tidyr::unnest(cols=c(data, distance))
 
   # Optionally save details with a subset of columns
   if (!is.null(details_path)) {
@@ -94,10 +94,10 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL, details_path=NULL,
 
   # Now we can do the work, computing summary stats for all pairs,
   # grouping by .by
-  distances %>% tidyr::nest(-(!!.by)) %>%
+  distances %>% tidyr::nest(data = c(-(!!.by))) %>%
     dplyr::mutate(stats=purrr::map(data, summarize_all_pairs)) %>%
     dplyr::select(-data) %>%
-    tidyr::unnest()
+    tidyr::unnest(stats)
 }
 
 #' Summarize "count within" distances
@@ -156,7 +156,7 @@ count_within_summary = function(csd, radii, phenotypes=NULL, categories=NA,
       detail = nested %>%
         dplyr::mutate(within=purrr::map(data,
                       phenoptr::count_within_detail, phenotypes, radii)) %>%
-        tidyr::unnest() %>%
+        tidyr::unnest(cols=c(data, within)) %>%
         dplyr::select(!!.by, `Cell ID`, `Cell X Position`, `Cell Y Position`,
                       !!field_col,
                       dplyr::contains('Tissue Category'),
@@ -174,7 +174,7 @@ count_within_summary = function(csd, radii, phenotypes=NULL, categories=NA,
                 pheno_pairs, radii, categories, phenotypes, verbose=FALSE)) %>%
     # Unnest and cleanup
     dplyr::select(-data) %>%
-    tidyr::unnest() %>%
+    tidyr::unnest(cols=c(within)) %>%
     dplyr::select(-source) # Chaff from count_within_many
 
   # Aggregate per .by. See ?phenoptr::count_within for explanation

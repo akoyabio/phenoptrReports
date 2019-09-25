@@ -43,10 +43,10 @@ make_nested = function(csd, tissue_categories=NULL, .by='Slide ID') {
 
   # If no tissue categories, just nest by .by
   if (is.null(tissue_categories))
-    return(tidyr::nest(csd, -!!.by))
+    return(tidyr::nest(csd, data=c(-!!.by)))
 
   csd = csd %>% dplyr::filter(`Tissue Category` %in% tissue_categories)
-  tidyr::nest(csd, -!!.by, -`Tissue Category`)
+  tidyr::nest(csd, data=c(-!!.by, -`Tissue Category`))
 }
 
 # Add total rows to a data frame if there are multiple tissue categories.

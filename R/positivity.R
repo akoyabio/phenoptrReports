@@ -2,7 +2,7 @@
 utils::globalVariables(c(
   '1+', '2+', '3+',
   'Count of 0+', 'Count of 1+', 'Count of 2+', 'Count of 3+',
-  'Total', 'score'
+  'Total', 'score', 'positivity'
 ))
 
 #' Compute positivity of multiple phenotypes
@@ -52,7 +52,7 @@ compute_positivity_many = function(csd, phenotypes, positivity_pairs,
   # Actually do the computation for each nested data frame
   csd %>% dplyr::mutate(positivity = purrr::map(data, compute_data_frame)) %>%
     dplyr::select(-data) %>%
-    tidyr::unnest()
+    tidyr::unnest(positivity)
 }
 
 #' Compute positivity of a single phenotype

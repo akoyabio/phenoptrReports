@@ -38,7 +38,7 @@ Imports:
     shinydashboard,
     stringr,
     tibble (>= 2.0.0),
-    tidyr,
+    tidyr (>= 1.0.0),
     tidyverse,
     tiff,
     UpSetR (>= 1.4.0),

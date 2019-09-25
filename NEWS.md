@@ -11,6 +11,9 @@ Spatial map viewer improvements:
 Component levels report:
 - Optionally export data from pairs plots as TSV files.
 
+Misc:
+- Now requires tidyr >= 1.0.0.
+
 # phenoptrReports 0.2.4
 **2019-08-07**
 

@@ -113,7 +113,7 @@ test_that('mean expression per field works', {
   # If we nest csd ourselves, compute_mean_expression_many will use
   # the nesting we give it. This allows calculation by `Sample Name`
   # rather than the default `Slide ID`.
-  nested = tidyr::nest(csd, -`Slide ID`, -`Sample Name`)
+  nested = tidyr::nest(csd, data=c(-`Slide ID`, -`Sample Name`))
   ex = compute_mean_expression_many(nested, phenotypes, params, count=20)
 
   expect_equal(ex$`CD8+ Top 20 Membrane PDL1 (Opal 520) Mean`,
