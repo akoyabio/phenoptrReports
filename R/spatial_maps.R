@@ -50,7 +50,7 @@ nearest_neighbor_map =
   # Get spatial info
   field_info = read_field_info(field_name, export_path)
   if (is.null(field_info)) {
-    warning('No component image available for ', field_name, ', skipping')
+    warning('No component image available for ', field_name, ', skipping.')
     return()
   }
 
@@ -267,8 +267,10 @@ read_field_info = function(field, export_path) {
   field_base = stringr::str_remove(field, '\\.im3')
   component_path = file.path(export_path, paste0(field_base,
                                                  '_component_data.tif'))
-  if(!file.exists(component_path))
+  if(!file.exists(component_path)) {
+    warning('File not found: "', component_path, '"')
     return(NULL)
+  }
 
   field_info = phenoptr::get_field_info(component_path)
   field_info$pixels_per_micron = 1/field_info$microns_per_pixel
