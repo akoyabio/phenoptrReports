@@ -3,6 +3,8 @@ ui <- shinydashboard::dashboardPage(
   shinydashboard::dashboardHeader(
     title = "Nearest neighbor explorer",
     titleWidth=360-42), # Magic number aligns the hamburger with the sidebar
+
+  #### Sidebar ####
   shinydashboard::dashboardSidebar(
     width = 360,
     # Selector for phenotype
@@ -25,6 +27,7 @@ ui <- shinydashboard::dashboardPage(
     )
   ),
 
+  #### Body ####
   shinydashboard::dashboardBody(
     shiny::tags$head(
       # CSS
@@ -48,6 +51,8 @@ ui <- shinydashboard::dashboardPage(
         "#shiny-notification-panel {
           width: 350px;
         }",
+
+        # CSS for the phenotype module
         phenotype_color_module_css)),
 
       phenoptrReports:::favicon()

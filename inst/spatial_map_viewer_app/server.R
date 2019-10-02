@@ -2,7 +2,7 @@
 
 server <- function(input, output, session) {
 
-  # Instantiate the server part of the phenotype inputs
+  #### Instantiate phenotype inputs ####
   phenotype_output  =
     shiny::callModule(phenotype_color_module, 'phenotype',
                       available_phenotypes, csd)
@@ -10,15 +10,15 @@ server <- function(input, output, session) {
     shiny::callModule(phenotype_color_module, 'phenotype2',
                       available_phenotypes, csd)
 
-  # Remember last values to avoid redrawing
+  #### Cache for last values ####
   last_field = last_color1 = last_color2 = ''
   last_pheno1 = last_pheno2 = NA
   last_show_as = TRUE
   last_dot_size = 3
   last_add_logo = TRUE
 
-  # Handle previous and next buttons
-  shiny::observeEvent(input$previous, {
+  #### Handle previous and next buttons ####
+  shiny::observeEvent(input$previous, label='previous', {
     shiny::req(input$previous)
     current_field = shiny::isolate(input$field)
     current_ix = which(available_fields==current_field)
@@ -28,7 +28,7 @@ server <- function(input, output, session) {
                              selected=available_fields[prev_ix])
   })
 
-  shiny::observeEvent(input$nxt, {
+  shiny::observeEvent(input$nxt, label='next', {
     shiny::req(input$nxt) # Note 'next' is a reserved word
     current_field = shiny::isolate(input$field)
     current_ix = which(available_fields==current_field)
@@ -38,36 +38,8 @@ server <- function(input, output, session) {
                              selected=available_fields[next_ix])
   })
 
-  # Validate candidate phenotypes
-  validate_candidate = function(candidate) {
-    if (shiny::isTruthy(candidate) &&
-        phenoptr::validate_phenotype_definitions(
-          candidate, available_phenotypes, csd)=='')
-      candidate else NA
-  }
-
-  # Update the from-to popup with friendly labels if phenotypes are defined;
-  # otherwise, make it a prompt.
-  update_from_to = function(pheno1, pheno2, selected) {
-    if (is.na(pheno1) || is.na(pheno2)) {
-      names = rep('Please define two phenotypes', 4)
-    } else {
-      names = c(
-        stringr::str_glue('Nearest {pheno2} to each {pheno1}'),
-        stringr::str_glue('Nearest {pheno1} to each {pheno2}'),
-        'Mutual nearest neighbors', 'None'
-      )
-    }
-
-    choices = list('from_to', 'to_from', 'mutual', 'none') %>%
-      rlang::set_names(names)
-
-    shiny::updateSelectInput(session, 'show_as',
-                             choices=choices, selected=selected)
-  }
-
-  # Update the plot when any of the parameters changes
-  the_plot = reactive({
+  #### Update the plot when any of the parameters changes ####
+  the_plot = reactive(label='the_plot', {
     # Get the parameters as non-reactive values
     field = input$field
     pheno1 = validate_candidate(phenotype_output()$phenotype)
@@ -109,40 +81,34 @@ server <- function(input, output, session) {
                          show_as, dot_size, add_logo)
   })
 
-  shiny::observe({
+  # Update the from-to popup with friendly labels if phenotypes are defined;
+  # otherwise, make it a prompt.
+  update_from_to = function(pheno1, pheno2, selected) {
+    if (is.na(pheno1) || is.na(pheno2)) {
+      names = rep('Please define two phenotypes', 4)
+    } else {
+      names = c(
+        stringr::str_glue('Nearest {pheno2} to each {pheno1}'),
+        stringr::str_glue('Nearest {pheno1} to each {pheno2}'),
+        'Mutual nearest neighbors', 'None'
+      )
+    }
+
+    choices = list('from_to', 'to_from', 'mutual', 'none') %>%
+      rlang::set_names(names)
+
+    shiny::updateSelectInput(session, 'show_as',
+                             choices=choices, selected=selected)
+  }
+
+  #### Plot output ####
+  shiny::observe(label='plot_output', {
     p = the_plot()
     if (!is.null(p))
       output$plot = renderPlot(p)
   })
 
-  make_filename = function(field, pheno1, pheno2, show_as) {
-    name = stringr::str_remove(field, '.im3')
-    if (is.na(pheno1) || is.na(pheno2)) {
-      # No nearest neighbors shown, just append phenotype names
-      if (!is.na(pheno1)) name = paste0(name, '_', pheno1)
-      if (!is.na(pheno2)) name = paste0(name, '_', pheno2)
-    } else {
-      suffix = switch(show_as,
-        from_to = stringr::str_glue('_{pheno2}_near_{pheno1}'),
-        to_from = stringr::str_glue('_{pheno1}_near_{pheno2}'),
-        mutual = stringr::str_glue('_{pheno1}_{pheno2}_mutual_nn'),
-        none = stringr::str_glue('_{pheno2}_{pheno1}')
-      )
-      name = paste0(name, suffix)
-    }
-
-    name = paste0(name, '.png')
-
-    # Remove unallowed characters
-    illegal = "[/\\?<>\\:*|\":]" # From fs::path_sanitize
-    name = stringr::str_replace_all(name, illegal, '_')
-    name
-  }
-
-  save_plot = function(p, file) {
-    ggsave(file, plot=p, device = "png", width=11, height=11)
-  }
-
+  #### Handle Save ####
   output$save_plot = downloadHandler(
     filename = function() {
       make_filename(input$field,
@@ -156,6 +122,7 @@ server <- function(input, output, session) {
     contentType='image/png'
   )
 
+  #### Handle Save All ####
   # To save all, we have to save in a temp directory and then make a zip
   output$save_all <- downloadHandler(
     filename = function() {
@@ -204,10 +171,46 @@ server <- function(input, output, session) {
       })
     }
   )
+
+  #### Helper functions ####
+  # Validate candidate phenotypes
+  validate_candidate = function(candidate) {
+    if (shiny::isTruthy(candidate) &&
+        phenoptr::validate_phenotype_definitions(
+          candidate, available_phenotypes, csd)=='')
+      candidate else NA
+  }
+
+  make_filename = function(field, pheno1, pheno2, show_as) {
+    name = stringr::str_remove(field, '.im3')
+    if (is.na(pheno1) || is.na(pheno2)) {
+      # No nearest neighbors shown, just append phenotype names
+      if (!is.na(pheno1)) name = paste0(name, '_', pheno1)
+      if (!is.na(pheno2)) name = paste0(name, '_', pheno2)
+    } else {
+      suffix = switch(show_as,
+                      from_to = stringr::str_glue('_{pheno2}_near_{pheno1}'),
+                      to_from = stringr::str_glue('_{pheno1}_near_{pheno2}'),
+                      mutual = stringr::str_glue('_{pheno1}_{pheno2}_mutual_nn'),
+                      none = stringr::str_glue('_{pheno2}_{pheno1}')
+      )
+      name = paste0(name, suffix)
+    }
+
+    name = paste0(name, '.png')
+
+    # Remove unallowed characters
+    illegal = "[/\\?<>\\:*|\":]" # From fs::path_sanitize
+    name = stringr::str_replace_all(name, illegal, '_')
+    name
+  }
+
+  save_plot = function(p, file) {
+    ggsave(file, plot=p, device = "png", width=11, height=11)
+  }
+
   # Stop the server when the user closes the app window
-  session$onSessionEnded(function() {
-    stopApp()
-  })
+  session$onSessionEnded(stopApp)
 
 }
 
