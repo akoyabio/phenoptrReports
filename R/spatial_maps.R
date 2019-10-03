@@ -6,20 +6,23 @@ utils::globalVariables(
 
 #' Make a nearest neighbor map for a single field
 #'
-#' The phenotype definitions may be NA, in which case the base field
-#' will be shown with any available phenotype.
+#' The phenotype definitions may be NA, in which case the base field will be
+#' shown with any available phenotype.
 #'
-#' Note: Only single phenotypes are supported.
 #' @param csd Cell seg data with distance columns
 #' @param field_name Sample Name or Annotation ID to map
 #' @param export_path Path to a directory containing composite and component
-#' image files from inForm
+#'   image files from inForm
 #' @param phenos Named list of phenotype definitions. Must have length 2.
 #' @param color1,color2 Colors to draw the phenotype dots
 #' @param show_as Which nearest neighbors should be shown?
 #' @param dot_size Size of the dots used to show phenotypes
 #' @param add_logo Show the Akoya logo in the image?
-#' @return A ggplot object
+#' @return Returns a `list` containing two items: \describe{ \item{`plot`}{The
+#'   plot, a \code{\link[ggplot2]{ggplot}} object.} \item{`data`}{A
+#'   \code{\link[tibble]{tibble}} containing the data used to create the line
+#'   segments in the plot, or `NULL` if `show_as` is `"none"`.
+#'   Columns with the suffix `.to` contain data for the "to" cells.} }
 #' @export
 nearest_neighbor_map =
   function(csd, field_name, export_path,
@@ -28,6 +31,7 @@ nearest_neighbor_map =
            dot_size=3, add_logo=TRUE) {
   stopifnot(is.list(phenos) &&length(phenos) == 2)
 
+  # Get the phenotype definitions
   phenos = phenoptr::validate_phenotypes(phenos, csd)
   pheno1 = phenos[[1]]
   have_pheno1 = !any(is.na(pheno1))
@@ -47,7 +51,7 @@ nearest_neighbor_map =
   if (show_as != 'none' && have_pheno1 && have_pheno2)
     field_data = ensure_distance_columns(field_data, phenos)
 
-  # Get spatial info
+  # Get spatial reference info from the component image
   field_info = read_field_info(field_name, export_path)
   if (is.null(field_info)) {
     warning('No component image available for ', field_name, ', skipping.')
@@ -110,7 +114,7 @@ nearest_neighbor_map =
     p = add_logo_to_plot(p, logo)
   }
 
-  # Filter to just relevant phenotypes
+  # Filter to just relevant from & to phenotypes
   pheno1_cells = if (!have_pheno1) NULL else field_data %>%
     dplyr::filter(phenoptr::select_rows(field_data, pheno1))
 
@@ -121,10 +125,10 @@ nearest_neighbor_map =
   if (have_pheno1 && have_pheno2) {
     if (show_as=='from_to') {
       # For each pheno1 cell, join with the data for the nearest pheno2 cell
-      pheno1_to_pheno2 = match_cells(pheno1_cells, pheno2_cells, pheno_name2)
+      matching_cells = match_cells(pheno1_cells, pheno2_cells, pheno_name2)
 
       # Add lines
-      p = p + ggplot2::geom_segment(data=pheno1_to_pheno2,
+      p = p + ggplot2::geom_segment(data=matching_cells,
                           ggplot2::aes(xend=`Cell X Position.to`,
                                        yend=`Cell Y Position.to`),
                                        color='white') +
@@ -134,10 +138,10 @@ nearest_neighbor_map =
     }
     else if (show_as=='to_from') {
       # for each pheno2 cell, find the nearest pheno1 cell
-      pheno2_to_pheno1 = match_cells(pheno2_cells, pheno1_cells, pheno_name1)
+      matching_cells = match_cells(pheno2_cells, pheno1_cells, pheno_name1)
 
       p = p +
-        ggplot2::geom_segment(data=pheno2_to_pheno1,
+        ggplot2::geom_segment(data=matching_cells,
             ggplot2::aes(xend=`Cell X Position.to`,
                          yend=`Cell Y Position.to`),
                          color='white') +
@@ -151,25 +155,28 @@ nearest_neighbor_map =
       # neighbors; i.e. cells where the nearest neighbor of the nearest neighbor
       # is the starting cell.
 
-      pheno1_to_pheno2 = match_cells(pheno1_cells, pheno2_cells, pheno_name2)
-      match_col = paste0('Cell ID ', pheno_name1, '.to') %>% rlang::sym()
-      mutual = pheno1_to_pheno2 %>%
+      matching_cells = match_cells(pheno1_cells, pheno2_cells,
+                                   pheno_name2, pheno_name1)
+      match_col = id_column_name(pheno_name1) %>% rlang::sym()
+      matching_cells = matching_cells %>%
         dplyr::filter(`Cell ID`==!!match_col)
 
       p = p +
-        ggplot2::geom_segment(data=mutual,
+        ggplot2::geom_segment(data=matching_cells,
             ggplot2::aes(xend=`Cell X Position.to`, yend=`Cell Y Position.to`),
                          size=1, color='white') +
         ggplot2::labs(title=paste0(field_name, ' - Mutual nearest neighbors - ',
                           pheno_name1, ' and ', pheno_name2))
     } else {
       # Don't show nearest neighbors, just cells
+      matching_cells = NULL
       p = p +
         ggplot2::labs(title=paste0(field_name, ' - ',
                                    pheno_name1, ' and ', pheno_name2))
     }
   } else {
     # One or both phenotypes are missing, just show the field name as title
+    matching_cells = NULL
     p = p + ggplot2::labs(title=field_name)
   }
 
@@ -198,7 +205,8 @@ nearest_neighbor_map =
     logo[,,4] = logo[,,4] * overlay_alpha
     p = add_logo_to_plot(p, logo)
   }
-  p
+
+  list(plot=p, data=matching_cells)
 }
 
 # Make sure field_data has distance columns for both phenotypes
@@ -208,8 +216,8 @@ nearest_neighbor_map =
 # columns.
 ensure_distance_columns = function(field_data, phenos) {
   pheno_names = unique(names(phenos))
-  required_columns = c(paste('Distance to', pheno_names),
-                       paste('Cell ID', pheno_names))
+  required_columns = c(distance_column_name(pheno_names),
+                       id_column_name(pheno_names))
 
   if (!all(required_columns %in% names(field_data))) {
     # Remove any required fields that are already there so we don't duplicate
@@ -221,11 +229,43 @@ ensure_distance_columns = function(field_data, phenos) {
 }
 
 # Join from_cells and to_cells by nearest neighbor cell ID
-match_cells = function(from_cells, to_cells, to_name) {
-  to_id_col = paste0('Cell ID ', to_name) # Column with to_name IDs
+# and subset to the columns we want to export
+# `from_name`, if provided, allows keeping the column needed for mutual matching
+match_cells = function(from_cells, to_cells, to_name, from_name='.none.') {
+  to_distance_col = distance_column_name(to_name)
+  to_id_col = id_column_name(to_name) # Column with to_name IDs
+  from_id_col = id_column_name(from_name)
+  # Subset to interesting & necessary columns
+  from_cells = from_cells %>%
+    dplyr::select(
+      !!phenoptr::field_column(from_cells),
+      `Cell ID`,
+      dplyr::matches('Cell . Position'),
+      dplyr::starts_with('Phenotype '),
+      dplyr::contains('Tissue Category'),
+      !!to_id_col,
+      !!to_distance_col)
+
+  to_cells = to_cells %>%
+    dplyr::select(
+      `Cell ID`,
+      dplyr::matches('Cell . Position'),
+      dplyr::starts_with('Phenotype '),
+      dplyr::contains('Tissue Category'),
+      dplyr::contains(from_id_col))
+
   by = rlang::set_names('Cell ID', to_id_col)
-  from_cells %>%
+  matched = from_cells %>%
     dplyr::left_join(to_cells, by=by, suffix=c('', '.to'))
+  matched
+}
+
+distance_column_name = function(pheno_names) {
+  paste('Distance to', pheno_names)
+}
+
+id_column_name = function(pheno_names) {
+  paste('Cell ID', pheno_names)
 }
 
 # Try to read a composite image for a field as a nativeRaster

@@ -78,7 +78,7 @@ server <- function(input, output, session) {
     phenos = phenoptrReports:::parse_phenotypes_with_na(pheno1, pheno2)
     p = phenoptrReports::nearest_neighbor_map(csd, field, .export_path,
                          phenos, color1, color2,
-                         show_as, dot_size, add_logo)
+                         show_as, dot_size, add_logo)$plot
   })
 
   # Update the from-to popup with friendly labels if phenotypes are defined;
@@ -159,7 +159,7 @@ server <- function(input, output, session) {
           # Write each plot to a file, save the name
           p = phenoptrReports::nearest_neighbor_map(csd, field, .export_path,
                             phenos, color1, color2,
-                            show_as, dot_size, add_logo)
+                            show_as, dot_size, add_logo)$plot
           filename = make_filename(field, pheno1, pheno2, show_as)
           save_plot(p, filename)
           files <- c(filename,files)

@@ -27,12 +27,12 @@ image files from inForm}
 \item{add_logo}{Show the Akoya logo in the image?}
 }
 \value{
-A ggplot object
+Returns a \code{list} containing two items: \describe{ \item{\code{plot}}{The
+plot, a \code{\link[ggplot2]{ggplot}} object.} \item{\code{data}}{A
+\code{\link[tibble]{tibble}} containing the data used to create the line
+segments in the plot, or \code{NULL} if \code{show_as} is \code{"none"}.} }
 }
 \description{
-The phenotype definitions may be NA, in which case the base field
-will be shown with any available phenotype.
-}
-\details{
-Note: Only single phenotypes are supported.
+The phenotype definitions may be NA, in which case the base field will be
+shown with any available phenotype.
 }

@@ -10,24 +10,29 @@ test_that("nearest_neighbor_map works", {
   field_name = "Melanoma_2_Scan1_[11940,51021]"
   phenos = phenoptr::parse_phenotypes('CD8+', 'Tumor+')
 
-  p = nearest_neighbor_map(csd, field_name, export_path, phenos,
+  nn = nearest_neighbor_map(csd, field_name, export_path, phenos,
                            'red', 'blue', 'from_to')
-  vdiffr::expect_doppelganger('from_to plot matches', p, expected_path)
+  vdiffr::expect_doppelganger('from_to plot matches', nn$plot, expected_path)
+  expect_equal(nrow(nn$data), 225)
 
-  p = nearest_neighbor_map(csd, field_name, export_path, phenos,
+  nn = nearest_neighbor_map(csd, field_name, export_path, phenos,
                            'red', 'blue', 'from_to', dot_size=1, add_logo=FALSE)
-  vdiffr::expect_doppelganger('from_to dot-1 no logo plot matches', p,
+  vdiffr::expect_doppelganger('from_to dot-1 no logo plot matches', nn$plot,
                               expected_path)
+  expect_equal(nrow(nn$data), 225)
 
-  p = nearest_neighbor_map(csd, field_name, export_path, phenos,
+  nn = nearest_neighbor_map(csd, field_name, export_path, phenos,
                            'red', 'blue', 'to_from')
-  vdiffr::expect_doppelganger('to_from plot matches', p, expected_path)
+  vdiffr::expect_doppelganger('to_from plot matches', nn$plot, expected_path)
+  expect_equal(nrow(nn$data), 347)
 
-  p = nearest_neighbor_map(csd, field_name, export_path, phenos,
+  nn = nearest_neighbor_map(csd, field_name, export_path, phenos,
                            'red', 'blue', 'mutual')
-  vdiffr::expect_doppelganger('mutual plot matches', p, expected_path)
+  vdiffr::expect_doppelganger('mutual plot matches', nn$plot, expected_path)
+  expect_equal(nrow(nn$data), 86)
 
-  p = nearest_neighbor_map(csd, field_name, export_path, phenos,
+  nn = nearest_neighbor_map(csd, field_name, export_path, phenos,
                            'red', 'blue', 'none')
-  vdiffr::expect_doppelganger('none plot matches', p, expected_path)
+  vdiffr::expect_doppelganger('none plot matches', nn$plot, expected_path)
+  expect_equal(nn$data, NULL)
 })
