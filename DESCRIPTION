@@ -25,7 +25,7 @@ Imports:
     magrittr,
     miniUI (>= 0.1.1),
     openxlsx,
-    phenoptr (>= 0.2.3),
+    phenoptr (> 0.2.3),
     png,
     purrr,
     RColorBrewer,

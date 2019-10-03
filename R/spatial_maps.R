@@ -182,15 +182,9 @@ nearest_neighbor_map =
                                 ggplot2::aes(color=pheno_name2), size=dot_size)
 
   # Add the scale again with alpha so the dots show through
-  # This is from phenoptr::add_scale_and_background
   overlay_alpha = 0.7
-  p = p + ggplot2::geom_segment(ggplot2::aes(x=xlim[2]-50-200, xend=xlim[2]-50,
-                                             y=ylim[2]-100, yend=ylim[2]-100),
-                                color='white', size=1, alpha=overlay_alpha)
-  p = p + ggplot2::geom_text(ggplot2::aes(x=xlim[2]-50-200/2, y=ylim[2]-90,
-                                          label=paste(200, '~mu*m')),
-                             size=3, hjust=0.5, vjust=1, color='white',
-                             alpha=overlay_alpha, parse=TRUE)
+  p = phenoptr:::add_scale_line(p, xlim, ylim,
+                               scale_color='white', scale_alpha=overlay_alpha)
 
   # A little theming
   p = p + ggplot2::theme(legend.key = ggplot2::element_rect(fill = "white"),
