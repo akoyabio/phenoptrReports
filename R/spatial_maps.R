@@ -240,6 +240,7 @@ match_cells = function(from_cells, to_cells, to_name, from_name='.none.') {
   # Subset to interesting & necessary columns
   from_cells = from_cells %>%
     dplyr::select(
+      dplyr::contains('Slide ID'),
       !!phenoptr::field_column(from_cells),
       `Cell ID`,
       dplyr::matches('Cell . Position'),
