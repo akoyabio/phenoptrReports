@@ -73,6 +73,14 @@ nearest_neighbor_map =
     )
   }
 
+  # Filter to just relevant from & to phenotypes
+  pheno1_cells = if (!have_pheno1) NULL else field_data %>%
+    dplyr::filter(phenoptr::select_rows(field_data, pheno1))
+
+  pheno2_cells = if (!have_pheno2) NULL else field_data %>%
+    dplyr::filter(phenoptr::select_rows(field_data, pheno2))
+
+  # Start making the plot
   background = read_background(field_name, export_path)
 
   # Make a base plot
@@ -114,13 +122,7 @@ nearest_neighbor_map =
     p = add_logo_to_plot(p, logo)
   }
 
-  # Filter to just relevant from & to phenotypes
-  pheno1_cells = if (!have_pheno1) NULL else field_data %>%
-    dplyr::filter(phenoptr::select_rows(field_data, pheno1))
-
-  pheno2_cells = if (!have_pheno2) NULL else field_data %>%
-    dplyr::filter(phenoptr::select_rows(field_data, pheno2))
-
+  # Get matching cells and add line segments to the plot as requested
   # Showing nearest neighbors requires two phenotypes
   if (have_pheno1 && have_pheno2) {
     if (show_as=='from_to') {
@@ -180,7 +182,8 @@ nearest_neighbor_map =
     p = p + ggplot2::labs(title=field_name)
   }
 
-  # We want the points on top of the lines, so add them last
+  # Add circles for the cells
+  # We want the circles on top of the lines, so add them last
   if (have_pheno1 && nrow(pheno1_cells) > 0)
     p = p + ggplot2::geom_point(data=pheno1_cells,
                                 ggplot2::aes(color=pheno_name1), size=dot_size)
@@ -188,23 +191,22 @@ nearest_neighbor_map =
     p = p + ggplot2::geom_point(data=pheno2_cells,
                                 ggplot2::aes(color=pheno_name2), size=dot_size)
 
-  # Add the scale again with alpha so the dots show through
+  # Add the scale and logo again with transparency so the dots show through
   overlay_alpha = 0.7
   p = phenoptr:::add_scale_line(p, xlim, ylim,
                                scale_color='white', scale_alpha=overlay_alpha)
 
-  # A little theming
-  p = p + ggplot2::theme(legend.key = ggplot2::element_rect(fill = "white"),
-            legend.position='bottom') +
-    ggplot2::guides(
-      color = ggplot2::guide_legend(override.aes = list(size = 5)))
-
   if (add_logo) {
-    # This is the second impression of the logo. It is slightly transparent
-    # so the dots show through.
     logo[,,4] = logo[,,4] * overlay_alpha
     p = add_logo_to_plot(p, logo)
   }
+
+  # A little theming
+  p = p + ggplot2::theme(
+            legend.key = ggplot2::element_rect(fill = "white"),
+            legend.position='bottom') +
+    ggplot2::guides(
+      color = ggplot2::guide_legend(override.aes = list(size = 5)))
 
   list(plot=p, data=matching_cells)
 }
