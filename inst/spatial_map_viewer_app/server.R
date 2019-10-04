@@ -39,7 +39,7 @@ server <- function(input, output, session) {
   })
 
   #### Update the plot when any of the parameters changes ####
-  the_plot = reactive(label='the_plot', {
+  plot_and_data = reactive(label='plot_and_data', {
     # Get the parameters as non-reactive values
     field = input$field
     pheno1 = validate_candidate(phenotype_output()$phenotype)
@@ -76,9 +76,9 @@ server <- function(input, output, session) {
     shiny::isolate(update_from_to(pheno1, pheno2, input$show_as))
 
     phenos = phenoptrReports:::parse_phenotypes_with_na(pheno1, pheno2)
-    p = phenoptrReports::nearest_neighbor_map(csd, field, .export_path,
+    phenoptrReports::nearest_neighbor_map(csd, field, .export_path,
                          phenos, color1, color2,
-                         show_as, dot_size, add_logo)$plot
+                         show_as, dot_size, add_logo)
   })
 
   # Update the from-to popup with friendly labels if phenotypes are defined;
@@ -103,24 +103,51 @@ server <- function(input, output, session) {
 
   #### Plot output ####
   shiny::observe(label='plot_output', {
-    p = the_plot()
-    if (!is.null(p))
-      output$plot = renderPlot(p)
+    nn = plot_and_data()
+    if (!is.null(nn$plot))
+      output$plot = renderPlot(nn$plot)
   })
 
   #### Handle Save ####
   output$save_plot = shiny::downloadHandler(
     filename = function() {
+      extn = ifelse(save_plot_data(), '.zip', '.png')
       make_filename(input$field,
              phenotype_output()$phenotype,
              phenotype2_output()$phenotype,
-             input$show_as, '.png')
+             input$show_as, extn)
     },
     content = function(file) {
-      save_plot(the_plot(), file)
-    },
-    contentType='image/png'
+      nn = plot_and_data()
+      if (save_plot_data()) {
+        # Save both plot and data to a temp directory and make a zip file
+        owd <- setwd(tempdir())
+        on.exit(setwd(owd))
+
+        pheno1 = phenotype_output()$phenotype
+        pheno2 = phenotype2_output()$phenotype
+        image_filename = make_filename(input$field, pheno1, pheno2,
+                                       input$show_as, '.png')
+        save_plot(nn$plot, image_filename)
+        to_zip = image_filename
+
+        data_filename = make_filename(input$field, pheno1, pheno2,
+                                      input$show_as, '.txt')
+        vroom::vroom_write(nn$data, data_filename, na='#N/A')
+
+        # Create the zip file
+        zip::zipr(file, c(image_filename, data_filename))
+      } else {
+        # Just the plot
+        save_plot(nn$plot, file)
+      }
+    }
   )
+
+  # Do we have plot data and have we been asked to save it?
+  save_plot_data = function() {
+    input$save_data && !is.null(plot_and_data()$data)
+  }
 
   #### Handle Save All ####
   # To save all, we have to save in a temp directory and then make a zip

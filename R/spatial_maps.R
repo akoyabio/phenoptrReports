@@ -260,6 +260,11 @@ match_cells = function(from_cells, to_cells, to_name, from_name='.none.') {
   by = rlang::set_names('Cell ID', to_id_col)
   matched = from_cells %>%
     dplyr::left_join(to_cells, by=by, suffix=c('', '.to'))
+
+  # We don't really need 11 decimal places in the location & distance columns
+  matched = matched %>%
+    dplyr::mutate_at(.vars=dplyr::vars(dplyr::matches('Cell . Position|Distance to')),
+                     ~round(., 2))
   matched
 }
 
