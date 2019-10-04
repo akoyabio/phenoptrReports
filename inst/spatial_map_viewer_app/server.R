@@ -109,12 +109,12 @@ server <- function(input, output, session) {
   })
 
   #### Handle Save ####
-  output$save_plot = downloadHandler(
+  output$save_plot = shiny::downloadHandler(
     filename = function() {
       make_filename(input$field,
              phenotype_output()$phenotype,
              phenotype2_output()$phenotype,
-             input$show_as)
+             input$show_as, '.png')
     },
     content = function(file) {
       save_plot(the_plot(), file)
@@ -124,11 +124,12 @@ server <- function(input, output, session) {
 
   #### Handle Save All ####
   # To save all, we have to save in a temp directory and then make a zip
-  output$save_all <- downloadHandler(
+  output$save_all <- shiny::downloadHandler(
     filename = function() {
-      paste0(basename(.export_path), '_',
-             phenotype_output()$phenotype, '_',
-             phenotype2_output()$phenotype,".zip")
+      make_filename(basename(.export_path),
+             phenotype_output()$phenotype,
+             phenotype2_output()$phenotype,
+             input$show_as, ".zip")
 
     },
 
@@ -152,16 +153,31 @@ server <- function(input, output, session) {
         # Number of progress messages
         n_progress = length(available_fields) + 1
 
+        # Combine all data to a single table
+        field_data = tibble::tibble()
+
         # Loop through the fields
         for (field in available_fields) {
           shiny::incProgress(1/n_progress, detail=field)
 
-          # Write each plot to a file, save the name
-          p = phenoptrReports::nearest_neighbor_map(csd, field, .export_path,
+          nn = phenoptrReports::nearest_neighbor_map(csd, field, .export_path,
                             phenos, color1, color2,
-                            show_as, dot_size, add_logo)$plot
-          filename = make_filename(field, pheno1, pheno2, show_as)
-          save_plot(p, filename)
+                            show_as, dot_size, add_logo)
+
+          # Write the plot to a file, save the name
+          filename = make_filename(field, pheno1, pheno2, show_as, '.png')
+          save_plot(nn$plot, filename)
+          files <- c(filename,files)
+
+          # Remember the data
+          field_data = dplyr::bind_rows(field_data, nn$data)
+        }
+
+        # Optionally save the data
+        if (input$save_data) {
+          filename = make_filename(basename(.export_path),
+                                   pheno1, pheno2, show_as, '.txt')
+          vroom::vroom_write(field_data, filename, na='#N/A')
           files <- c(filename,files)
         }
 
@@ -181,7 +197,8 @@ server <- function(input, output, session) {
       candidate else NA
   }
 
-  make_filename = function(field, pheno1, pheno2, show_as) {
+  # Make a descriptive file name for the download
+  make_filename = function(field, pheno1, pheno2, show_as, extn) {
     name = stringr::str_remove(field, '.im3')
     if (is.na(pheno1) || is.na(pheno2)) {
       # No nearest neighbors shown, just append phenotype names
@@ -197,7 +214,8 @@ server <- function(input, output, session) {
       name = paste0(name, suffix)
     }
 
-    name = paste0(name, '.png')
+
+    name = paste0(name, extn)
 
     # Remove unallowed characters
     illegal = "[/\\?<>\\:*|\":]" # From fs::path_sanitize

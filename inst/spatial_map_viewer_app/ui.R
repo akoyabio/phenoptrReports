@@ -21,9 +21,11 @@ ui <- shinydashboard::dashboardPage(
     shiny::hr(),
     shiny::sliderInput('dot_size', 'Dot size', min=1, max=5, value=3, step=1),
     shiny::fluidRow(shiny::column(4, shiny::downloadButton('save_plot', 'Save image')),
-                    shiny::column(4, shiny::downloadButton('save_all', 'Save all')),
-                    shiny::column(4, id='add-logo',
-                                  shiny::checkboxInput('add_logo', 'Show logo', value=TRUE))
+                    shiny::column(4, shiny::downloadButton('save_all', 'Save all'))
+    ),
+    shiny::fluidRow(id='save-controls',
+      shiny::column(6, shiny::checkboxInput('save_data', 'Save data with image')),
+      shiny::column(6, shiny::checkboxInput('add_logo', 'Show logo', value=TRUE))
     )
   ),
 
@@ -43,15 +45,21 @@ ui <- shinydashboard::dashboardPage(
           margin-top: 25px;
         }",
 
-        # Make the Show logo checkbox line up vertically with the buttons
-        "#add-logo .shiny-input-container {
-          padding: 0px;
-        }",
         # Wider notification box for "Save all"
         "#shiny-notification-panel {
           width: 350px;
         }",
 
+        # Alignment for checkboxes
+        "#save-controls {
+          margin-left: 0px;
+        }
+        #save-controls .shiny-input-container {
+          padding-right: 0px;
+        }
+        #save-controls .col-sm-6 {
+          padding-right: 0px;
+        }",
         # CSS for the phenotype module
         phenotype_color_module_css)),
 
