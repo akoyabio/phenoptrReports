@@ -2,7 +2,7 @@
 
 # Suppress CMD CHECK notes for things that look like global vars
 utils::globalVariables(
-  c('Cell X Position.to', 'Cell Y Position.to'))
+  c('Cell X Position.nearest', 'Cell Y Position.nearest'))
 
 #' Make a nearest neighbor map for a single field
 #'
@@ -18,11 +18,14 @@ utils::globalVariables(
 #' @param show_as Which nearest neighbors should be shown?
 #' @param dot_size Size of the dots used to show phenotypes
 #' @param add_logo Show the Akoya logo in the image?
-#' @return Returns a `list` containing two items: \describe{ \item{`plot`}{The
-#'   plot, a \code{\link[ggplot2]{ggplot}} object.} \item{`data`}{A
-#'   \code{\link[tibble]{tibble}} containing the data used to create the line
+#' @return Returns a `list` containing two items:
+#' \describe{
+#'   \item{`plot`}{The plot, a \code{\link[ggplot2]{ggplot}} object.}
+#'   \item{`data`}{A \code{\link[tibble]{tibble}} containing the data
+#'   used to create the line
 #'   segments in the plot, or `NULL` if `show_as` is `"none"`.
-#'   Columns with the suffix `.to` contain data for the "to" cells.} }
+#'   Columns with the suffix `.nearest` contain data for the "near" cells.}
+#' }
 #' @export
 nearest_neighbor_map =
   function(csd, field_name, export_path,
@@ -131,8 +134,8 @@ nearest_neighbor_map =
 
       # Add lines
       p = p + ggplot2::geom_segment(data=matching_cells,
-                          ggplot2::aes(xend=`Cell X Position.to`,
-                                       yend=`Cell Y Position.to`),
+                          ggplot2::aes(xend=`Cell X Position.nearest`,
+                                       yend=`Cell Y Position.nearest`),
                                        color='white') +
         ggplot2::labs(
           title=paste0(field_name, ' - Nearest ',
@@ -144,8 +147,8 @@ nearest_neighbor_map =
 
       p = p +
         ggplot2::geom_segment(data=matching_cells,
-            ggplot2::aes(xend=`Cell X Position.to`,
-                         yend=`Cell Y Position.to`),
+            ggplot2::aes(xend=`Cell X Position.nearest`,
+                         yend=`Cell Y Position.nearest`),
                          color='white') +
         ggplot2::labs(
           title=paste0(field_name, ' - Nearest ',
@@ -165,7 +168,8 @@ nearest_neighbor_map =
 
       p = p +
         ggplot2::geom_segment(data=matching_cells,
-            ggplot2::aes(xend=`Cell X Position.to`, yend=`Cell Y Position.to`),
+            ggplot2::aes(xend=`Cell X Position.nearest`,
+                         yend=`Cell Y Position.nearest`),
                          size=1, color='white') +
         ggplot2::labs(title=paste0(field_name, ' - Mutual nearest neighbors - ',
                           pheno_name1, ' and ', pheno_name2))
@@ -259,7 +263,7 @@ match_cells = function(from_cells, to_cells, to_name, from_name='.none.') {
 
   by = rlang::set_names('Cell ID', to_id_col)
   matched = from_cells %>%
-    dplyr::left_join(to_cells, by=by, suffix=c('', '.to'))
+    dplyr::left_join(to_cells, by=by, suffix=c('', '.nearest'))
 
   # We don't really need 11 decimal places in the location & distance columns
   matched = matched %>%

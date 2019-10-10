@@ -27,10 +27,14 @@ image files from inForm}
 \item{add_logo}{Show the Akoya logo in the image?}
 }
 \value{
-Returns a \code{list} containing two items: \describe{ \item{\code{plot}}{The
-plot, a \code{\link[ggplot2]{ggplot}} object.} \item{\code{data}}{A
-\code{\link[tibble]{tibble}} containing the data used to create the line
-segments in the plot, or \code{NULL} if \code{show_as} is \code{"none"}.} }
+Returns a \code{list} containing two items:
+\describe{
+\item{\code{plot}}{The plot, a \code{\link[ggplot2]{ggplot}} object.}
+\item{\code{data}}{A \code{\link[tibble]{tibble}} containing the data
+used to create the line
+segments in the plot, or \code{NULL} if \code{show_as} is \code{"none"}.
+Columns with the suffix \code{.nearest} contain data for the "near" cells.}
+}
 }
 \description{
 The phenotype definitions may be NA, in which case the base field will be

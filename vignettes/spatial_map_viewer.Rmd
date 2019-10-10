@@ -94,5 +94,27 @@ want to make the dots smaller before saving images.
 The "Save image" button will save the currently displayed image in your 
 browser's Download folder. The "Save all" button will use the current settings
 to save a zip file containing images of all fields in the experiment.
+    - Select "Save data with image" to save a tab-separated data file 
+    with the image(s).
+    - Select "Show logo" to include the Akoya Biosciences logo in 
+    the image(s). De-select to show or save images without the logo.
 
 ![](figures/Nearest_neighbor_viewer_main.png)
+
+### Format of saved data files
+
+If "Save data with image" is selected, a tab-separated data file is saved
+with the image(s). The data file contains one row for each pair of connected cells, i.e. the
+cells that are connected with a white line segment in the images.
+
+- If "Save image" is clicked, the file will include data for
+the single image. 
+- If "Save all" is clicked, a single data file will be created
+with data for all images.
+
+In either case, the columns in the file will be
+
+- Slide and field identifiers
+- Location and phenotype columns for the "from" and "nearest" cells
+- Distance to the "nearest" cell
+
