@@ -7,7 +7,8 @@ Analysis addin:
 Spatial map viewer improvements:
 - Spatial map viewer works correctly with inForm data containing 
   field coordinates (vs slide coordinates) (#16).
-  
+- When saving plots, the viewer optionally saves the associated data (#22)
+
 Component levels report:
 - Optionally export data from pairs plots as TSV files.
 
