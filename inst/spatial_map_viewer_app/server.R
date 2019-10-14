@@ -1,6 +1,6 @@
 # Server side of Shiny app
 
-server <- function(input, output, session) {
+server = function(input, output, session) {
 
   #### Instantiate phenotype inputs ####
   phenotype_output  =
@@ -40,6 +40,212 @@ server <- function(input, output, session) {
 
   #### Update the plot when any of the parameters changes ####
   plot_and_data = reactive(label='plot_and_data', {
+    check_for_changes()
+    if (input$show_as=='touching')
+      return (list(plot=NULL, data=NULL))
+
+    pheno1 = phenotype_output()$phenotype
+    pheno2 = phenotype2_output()$phenotype
+    shiny::isolate(update_from_to(pheno1, pheno2, input$show_as))
+
+    phenos = phenoptrReports:::parse_phenotypes_with_na(pheno1, pheno2)
+    phenoptrReports::nearest_neighbor_map(csd, input$field, .export_path,
+                                          phenos,
+                                          phenotype_output()$color,
+                                          phenotype2_output()$color,
+                                          input$show_as, input$dot_size,
+                                          input$add_logo)
+  })
+
+  #### Update the from-to popup ####
+  # Give it friendly labels if phenotypes are defined;
+  # otherwise, make it a prompt.
+  update_from_to = function(pheno1, pheno2, selected) {
+    if (is.na(pheno1) || is.na(pheno2)) {
+      names = rep('Please define two phenotypes', 5)
+    } else {
+      names = c(
+        stringr::str_glue('Nearest {pheno2} to each {pheno1}'),
+        stringr::str_glue('Nearest {pheno1} to each {pheno2}'),
+        'Mutual nearest neighbors', 'None', 'Touching cells'
+      )
+    }
+
+    choices = list('from_to', 'to_from', 'mutual', 'none', 'touching') %>%
+      rlang::set_names(names)
+
+    shiny::updateSelectInput(session, 'show_as',
+                             choices=choices, selected=selected)
+  }
+
+  #### Plot output ####
+  shiny::observe(label='plot_output', {
+    nn = plot_and_data()
+    if (is.null(nn$plot)) {
+      output$plot = NULL
+    } else {
+      output$plot = renderPlot(nn$plot)
+    }
+  })
+
+  #### Update the touching image when any of the parameters changes ####
+  image_and_data = reactive(label='image_and_data', {
+    check_for_changes()
+    if (input$show_as != 'touching')
+      return (list(image=NULL, data=NULL))
+
+    pheno1 = phenotype_output()$phenotype
+    pheno2 = phenotype2_output()$phenotype
+    shiny::isolate(update_from_to(pheno1, pheno2, input$show_as))
+
+    phenos = phenoptrReports:::parse_phenotypes_with_na(pheno1, pheno2)
+    req(!any(is.na(phenos)))
+    result = phenoptr::count_touching_cells_fast(csd, input$field, .export_path,
+                                          phenos,
+                                          phenotype_output()$color,
+                                          phenotype2_output()$color)
+    result
+  })
+
+  #### Image output ####
+  shiny::observe(label='image_output', {
+    im = image_and_data()
+    if (is.null(im$image)) {
+      output$touching = NULL
+    } else {
+      image = im$image
+      output$touching = renderImage({
+        # Save the image as a temporary png file
+        # Note image is transposed; EBImage::writeImage will flip it
+        width  = dim(image)[1]
+        height = dim(image)[2]
+
+        # A temp file to save the output.
+        outfile = tempfile(fileext='.png')
+        EBImage::writeImage(image, outfile)
+
+        # Return a list containing the filename
+        list(src = outfile,
+             width = width,
+             height = height,
+             alt = "Image of touching cells")
+      }, deleteFile = TRUE)
+    }
+  })
+
+  #### Handle Save ####
+  output$save_plot = shiny::downloadHandler(
+    filename = function() {
+      extn = ifelse(save_plot_data(), '.zip', '.png')
+      make_filename(input$field,
+             phenotype_output()$phenotype,
+             phenotype2_output()$phenotype,
+             input$show_as, extn)
+    },
+    content = function(file) {
+      nn = plot_and_data()
+      if (save_plot_data()) {
+        # Save both plot and data to a temp directory and make a zip file
+        owd = setwd(tempdir())
+        on.exit(setwd(owd))
+
+        pheno1 = phenotype_output()$phenotype
+        pheno2 = phenotype2_output()$phenotype
+        image_filename = make_filename(input$field, pheno1, pheno2,
+                                       input$show_as, '.png')
+        save_plot(nn$plot, image_filename)
+        to_zip = image_filename
+
+        data_filename = make_filename(input$field, pheno1, pheno2,
+                                      input$show_as, '.txt')
+        vroom::vroom_write(nn$data, data_filename, na='#N/A')
+
+        # Create the zip file
+        zip::zipr(file, c(image_filename, data_filename))
+      } else {
+        # Just the plot
+        save_plot(nn$plot, file)
+      }
+    }
+  )
+
+  # Do we have plot data and have we been asked to save it?
+  save_plot_data = function() {
+    input$save_data && !is.null(plot_and_data()$data)
+  }
+
+  #### Handle Save All ####
+  # To save all, we have to save in a temp directory and then make a zip
+  output$save_all = shiny::downloadHandler(
+    filename = function() {
+      make_filename(basename(.export_path),
+             phenotype_output()$phenotype,
+             phenotype2_output()$phenotype,
+             input$show_as, ".zip")
+
+    },
+
+    content = function(file) {
+      # Write to a temp dir to avoid permission issues
+      owd = setwd(tempdir())
+      on.exit(setwd(owd))
+      files = NULL;
+
+      pheno1 = validate_candidate(phenotype_output()$phenotype)
+      pheno2 = validate_candidate(phenotype2_output()$phenotype)
+      color1 = phenotype_output()$color
+      color2 = phenotype2_output()$color
+      show_as = input$show_as
+      dot_size = input$dot_size
+      add_logo = input$add_logo
+
+      phenos = phenoptrReports:::parse_phenotypes_with_na(pheno1, pheno2)
+
+      shiny::withProgress(message='Creating image files', value=0, {
+        # Number of progress messages
+        n_progress = length(available_fields) + 1
+
+        # Combine all data to a single table
+        field_data = tibble::tibble()
+
+        # Loop through the fields
+        for (field in available_fields) {
+          shiny::incProgress(1/n_progress, detail=field)
+
+          nn = phenoptrReports::nearest_neighbor_map(csd, field, .export_path,
+                            phenos, color1, color2,
+                            show_as, dot_size, add_logo)
+
+          # Write the plot to a file, save the name
+          filename = make_filename(field, pheno1, pheno2, show_as, '.png')
+          save_plot(nn$plot, filename)
+          files = c(filename,files)
+
+          # Remember the data
+          field_data = dplyr::bind_rows(field_data, nn$data)
+        }
+
+        # Optionally save the data
+        if (input$save_data) {
+          filename = make_filename(basename(.export_path),
+                                   pheno1, pheno2, show_as, '.txt')
+          vroom::vroom_write(field_data, filename, na='#N/A')
+          files = c(filename,files)
+        }
+
+        # Create the zip file
+        shiny::setProgress(1, detail='Writing zip file')
+        zip::zipr(file,files)
+      })
+    }
+  )
+
+  #### Helper functions ####
+  # Check for significant changes in the input parameters and
+  # remember last state. If there are no changes, this does not return.
+  # This is a reactive so its value can be tested more than once per
+  # input change and it will give the same value each time.
+  check_for_changes = shiny::reactive({
     # Get the parameters as non-reactive values
     field = input$field
     pheno1 = validate_candidate(phenotype_output()$phenotype)
@@ -72,150 +278,8 @@ server <- function(input, output, session) {
     last_show_as <<- show_as
     last_dot_size <<- dot_size
     last_add_logo <<- add_logo
-
-    shiny::isolate(update_from_to(pheno1, pheno2, input$show_as))
-
-    phenos = phenoptrReports:::parse_phenotypes_with_na(pheno1, pheno2)
-    phenoptrReports::nearest_neighbor_map(csd, field, .export_path,
-                         phenos, color1, color2,
-                         show_as, dot_size, add_logo)
   })
 
-  # Update the from-to popup with friendly labels if phenotypes are defined;
-  # otherwise, make it a prompt.
-  update_from_to = function(pheno1, pheno2, selected) {
-    if (is.na(pheno1) || is.na(pheno2)) {
-      names = rep('Please define two phenotypes', 4)
-    } else {
-      names = c(
-        stringr::str_glue('Nearest {pheno2} to each {pheno1}'),
-        stringr::str_glue('Nearest {pheno1} to each {pheno2}'),
-        'Mutual nearest neighbors', 'None'
-      )
-    }
-
-    choices = list('from_to', 'to_from', 'mutual', 'none') %>%
-      rlang::set_names(names)
-
-    shiny::updateSelectInput(session, 'show_as',
-                             choices=choices, selected=selected)
-  }
-
-  #### Plot output ####
-  shiny::observe(label='plot_output', {
-    nn = plot_and_data()
-    if (!is.null(nn$plot))
-      output$plot = renderPlot(nn$plot)
-  })
-
-  #### Handle Save ####
-  output$save_plot = shiny::downloadHandler(
-    filename = function() {
-      extn = ifelse(save_plot_data(), '.zip', '.png')
-      make_filename(input$field,
-             phenotype_output()$phenotype,
-             phenotype2_output()$phenotype,
-             input$show_as, extn)
-    },
-    content = function(file) {
-      nn = plot_and_data()
-      if (save_plot_data()) {
-        # Save both plot and data to a temp directory and make a zip file
-        owd <- setwd(tempdir())
-        on.exit(setwd(owd))
-
-        pheno1 = phenotype_output()$phenotype
-        pheno2 = phenotype2_output()$phenotype
-        image_filename = make_filename(input$field, pheno1, pheno2,
-                                       input$show_as, '.png')
-        save_plot(nn$plot, image_filename)
-        to_zip = image_filename
-
-        data_filename = make_filename(input$field, pheno1, pheno2,
-                                      input$show_as, '.txt')
-        vroom::vroom_write(nn$data, data_filename, na='#N/A')
-
-        # Create the zip file
-        zip::zipr(file, c(image_filename, data_filename))
-      } else {
-        # Just the plot
-        save_plot(nn$plot, file)
-      }
-    }
-  )
-
-  # Do we have plot data and have we been asked to save it?
-  save_plot_data = function() {
-    input$save_data && !is.null(plot_and_data()$data)
-  }
-
-  #### Handle Save All ####
-  # To save all, we have to save in a temp directory and then make a zip
-  output$save_all <- shiny::downloadHandler(
-    filename = function() {
-      make_filename(basename(.export_path),
-             phenotype_output()$phenotype,
-             phenotype2_output()$phenotype,
-             input$show_as, ".zip")
-
-    },
-
-    content = function(file) {
-      # Write to a temp dir to avoid permission issues
-      owd <- setwd(tempdir())
-      on.exit(setwd(owd))
-      files <- NULL;
-
-      pheno1 = validate_candidate(phenotype_output()$phenotype)
-      pheno2 = validate_candidate(phenotype2_output()$phenotype)
-      color1 = phenotype_output()$color
-      color2 = phenotype2_output()$color
-      show_as = input$show_as
-      dot_size = input$dot_size
-      add_logo = input$add_logo
-
-      phenos = phenoptrReports:::parse_phenotypes_with_na(pheno1, pheno2)
-
-      shiny::withProgress(message='Creating image files', value=0, {
-        # Number of progress messages
-        n_progress = length(available_fields) + 1
-
-        # Combine all data to a single table
-        field_data = tibble::tibble()
-
-        # Loop through the fields
-        for (field in available_fields) {
-          shiny::incProgress(1/n_progress, detail=field)
-
-          nn = phenoptrReports::nearest_neighbor_map(csd, field, .export_path,
-                            phenos, color1, color2,
-                            show_as, dot_size, add_logo)
-
-          # Write the plot to a file, save the name
-          filename = make_filename(field, pheno1, pheno2, show_as, '.png')
-          save_plot(nn$plot, filename)
-          files <- c(filename,files)
-
-          # Remember the data
-          field_data = dplyr::bind_rows(field_data, nn$data)
-        }
-
-        # Optionally save the data
-        if (input$save_data) {
-          filename = make_filename(basename(.export_path),
-                                   pheno1, pheno2, show_as, '.txt')
-          vroom::vroom_write(field_data, filename, na='#N/A')
-          files <- c(filename,files)
-        }
-
-        # Create the zip file
-        shiny::setProgress(1, detail='Writing zip file')
-        zip::zipr(file,files)
-      })
-    }
-  )
-
-  #### Helper functions ####
   # Validate candidate phenotypes
   validate_candidate = function(candidate) {
     if (shiny::isTruthy(candidate) &&

@@ -17,7 +17,8 @@ ui <- shinydashboard::dashboardPage(
                        choices=c(`Please define two phenotypes`='from_to',
                                  `Please define two phenotypes`='to_from',
                                  `Please define two phenotypes`='mutual',
-                                 `Please define two phenotypes`='none')),
+                                 `Please define two phenotypes`='none',
+                                 `Please define two phenotypes`='touching')),
     shiny::hr(),
     shiny::sliderInput('dot_size', 'Dot size', min=1, max=5, value=3, step=1),
     shiny::fluidRow(shiny::column(4, shiny::downloadButton('save_plot', 'Save image')),
@@ -76,6 +77,9 @@ ui <- shinydashboard::dashboardPage(
     ),
     shiny::fluidRow(
       shiny::plotOutput('plot', height='800')
+    ),
+    shiny::fluidRow(
+      shiny::imageOutput('touching', height='800')
     )
   )
 )

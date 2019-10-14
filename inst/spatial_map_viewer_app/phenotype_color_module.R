@@ -54,7 +54,7 @@ phenotype_color_module = function(input, output, session, phenotypes,
     output$error = renderText(msg)
   })
 
-    return(shiny::reactive({
+    return(shiny::reactive(label=session$ns('output'), {
     list(phenotype=ifelse(valid(), input$phenotype, NA),
          color=input$color)
   }))
