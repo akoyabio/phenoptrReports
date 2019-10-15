@@ -72,6 +72,11 @@ consolidate_and_summarize_cell_seg_data = function(csd_files, output_dir,
       d = d[!dups, ]
     }
 
+    if (!'Slide ID' %in% names(d)) {
+      message('Adding Slide ID column to ', basename(path))
+      d['Slide ID'] = 'None'
+    }
+
     update_progress(detail=paste0('Writing report for "', name, '".'))
     out_path = file.path(output_dir, paste0(name, '.html'))
     write_summary_report(csd=d, output_path=out_path, dataset_name=name)
