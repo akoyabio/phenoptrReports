@@ -9,6 +9,9 @@ Spatial map viewer improvements:
   field coordinates (vs slide coordinates) (#16).
 - When saving plots, the viewer optionally saves the associated data (#22)
 
+Consolidate and summarize addin:
+- Add a Slide ID column with value "None" if none is present.
+
 Component levels report:
 - Optionally export data from pairs plots as TSV files.
 

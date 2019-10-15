@@ -131,7 +131,7 @@ if ('Cell Counts' %in% sheet_names) {
       }
       p = ggplot(d, aes(Phenotype, `Cell Count`, fill=Phenotype)) +
         base_line +
-        geom_col() +
+        geom_col(na.rm=TRUE, position='identity') +
         facet_grid(vars(`Tissue Category`), vars(!!.by), switch='x') +
         scale_fill_phenoptr + scale_x_expand +
         labs(x=.by_str, y='Cell Count') +
@@ -175,7 +175,7 @@ if ('Cell Densities' %in% sheet_names) {
       p = ggplot(d,
                  aes(Phenotype, Density, fill=Phenotype)) +
         base_line +
-        geom_col() +
+        geom_col(na.rm=TRUE, position='identity') +
         facet_grid(vars(`Tissue Category`), vars(!!.by), switch='x') +
         scale_fill_phenoptr + scale_x_expand +
         labs(x=.by_str, y=expression(bold(paste('Cell Density (', cells/mm^2, ')')))) +
@@ -218,7 +218,7 @@ if ('Mean Expression' %in% sheet_names) {
       }
       p = ggplot(d, aes(Phenotype, Mean, fill=Phenotype)) +
         base_line +
-        geom_col() +
+        geom_col(na.rm=TRUE, position='identity') +
         facet_grid(vars(`Tissue Category`), vars(!!.by), switch='x') +
         scale_fill_phenoptr + scale_x_expand +
         labs(x=.by_str, y=d$Measure[1]) +
