@@ -10,6 +10,9 @@ source(file.path(base_dir, 'phenotype_color_module.R'))
 delim = ifelse(endsWith(.csd_path, 'csv'), ',', '\t')
 csd = vroom::vroom(.csd_path, na='#N/A', delim=delim, col_types=vroom::cols())
 
+if (any(grepl('pixel', names(csd))))
+  stop('spatial map viewer requires data in microns.')
+
 available_phenotypes = phenoptr::unique_phenotypes(csd) %>%
   purrr::map_chr(~stringr::str_remove(.x, '\\+$'))
 

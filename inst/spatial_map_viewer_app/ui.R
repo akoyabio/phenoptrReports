@@ -61,6 +61,12 @@ ui <- shinydashboard::dashboardPage(
         #save-controls .col-sm-6 {
           padding-right: 0px;
         }",
+
+        # Make touching cells images fit
+        "#touching img {
+          max-width:100%;
+          height: auto;
+        }",
         # CSS for the phenotype module
         phenotype_color_module_css)),
 
@@ -75,11 +81,11 @@ ui <- shinydashboard::dashboardPage(
       shiny::column(2, shiny::actionButton('nxt', 'Next',
                                            class='prev-next'))
     ),
-    shiny::fluidRow(
-      shiny::plotOutput('plot', height='800')
+    shiny::conditionalPanel(condition='input.show_as !="touching"',
+      shiny::plotOutput('plot', height='800px')
     ),
-    shiny::fluidRow(
-      shiny::imageOutput('touching', height='800')
+    shiny::conditionalPanel(condition='input.show_as =="touching"',
+      shiny::imageOutput('touching', height='800px')
     )
   )
 )

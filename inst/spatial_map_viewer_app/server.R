@@ -41,7 +41,7 @@ server = function(input, output, session) {
   #### Update the plot when any of the parameters changes ####
   plot_and_data = reactive(label='plot_and_data', {
     check_for_changes()
-    if (input$show_as=='touching')
+    if (is_touching())
       return (list(plot=NULL, data=NULL))
 
     pheno1 = phenotype_output()$phenotype
@@ -91,7 +91,7 @@ server = function(input, output, session) {
   #### Update the touching image when any of the parameters changes ####
   image_and_data = reactive(label='image_and_data', {
     check_for_changes()
-    if (input$show_as != 'touching')
+    if (!is_touching())
       return (list(image=NULL, data=NULL))
 
     pheno1 = phenotype_output()$phenotype
@@ -100,10 +100,18 @@ server = function(input, output, session) {
 
     phenos = phenoptrReports:::parse_phenotypes_with_na(pheno1, pheno2)
     req(!any(is.na(phenos)))
+
+    tag = make_filename(input$field,
+                  pheno1, pheno2,
+                  input$show_as, '')
+    tag = shiny::span(shiny::strong('Creating image: '), tag)
+    id = shiny::showNotification(tag, duration=NULL, closeButton=FALSE)
     result = phenoptr::count_touching_cells_fast(csd, input$field, .export_path,
-                                          phenos,
-                                          phenotype_output()$color,
-                                          phenotype2_output()$color)
+                                                 phenos,
+                                                 phenotype_output()$color,
+                                                 phenotype2_output()$color,
+                                                 discard_dups=TRUE)
+    shiny::removeNotification(id)
     result
   })
 
@@ -114,7 +122,7 @@ server = function(input, output, session) {
       output$touching = NULL
     } else {
       image = im$image
-      output$touching = renderImage({
+      output$touching = shiny::renderImage({
         # Save the image as a temporary png file
         # Note image is transposed; EBImage::writeImage will flip it
         width  = dim(image)[1]
@@ -143,7 +151,7 @@ server = function(input, output, session) {
              input$show_as, extn)
     },
     content = function(file) {
-      nn = plot_and_data()
+      data = if (is_touching()) image_and_data() else plot_and_data()
       if (save_plot_data()) {
         # Save both plot and data to a temp directory and make a zip file
         owd = setwd(tempdir())
@@ -153,26 +161,32 @@ server = function(input, output, session) {
         pheno2 = phenotype2_output()$phenotype
         image_filename = make_filename(input$field, pheno1, pheno2,
                                        input$show_as, '.png')
-        save_plot(nn$plot, image_filename)
-        to_zip = image_filename
+        save_plot_or_image(data, image_filename)
 
         data_filename = make_filename(input$field, pheno1, pheno2,
                                       input$show_as, '.txt')
-        vroom::vroom_write(nn$data, data_filename, na='#N/A')
+        vroom::vroom_write(data$data, data_filename, na='#N/A')
 
         # Create the zip file
         zip::zipr(file, c(image_filename, data_filename))
       } else {
         # Just the plot
-        save_plot(nn$plot, file)
+        save_plot_or_image(data, file)
+
       }
     }
   )
 
   # Do we have plot data and have we been asked to save it?
   save_plot_data = function() {
-    input$save_data && !is.null(plot_and_data()$data)
+    input$save_data &&
+      ((is_touching() && !is.null(image_and_data()$data))
+       ||
+      (!is_touching() && !is.null(plot_and_data()$data))
+      )
   }
+
+  is_touching = reactive({ input$show_as == 'touching' })
 
   #### Handle Save All ####
   # To save all, we have to save in a temp directory and then make a zip
@@ -212,17 +226,23 @@ server = function(input, output, session) {
         for (field in available_fields) {
           shiny::incProgress(1/n_progress, detail=field)
 
-          nn = phenoptrReports::nearest_neighbor_map(csd, field, .export_path,
-                            phenos, color1, color2,
-                            show_as, dot_size, add_logo)
+          data = if (is_touching()) {
+            phenoptr::count_touching_cells_fast(csd, field, .export_path,
+                                                phenos, color1, color2,
+                                                discard_dups=TRUE)
+          } else {
+            phenoptrReports::nearest_neighbor_map(csd, field, .export_path,
+                          phenos, color1, color2,
+                          show_as, dot_size, add_logo)
+          }
 
           # Write the plot to a file, save the name
           filename = make_filename(field, pheno1, pheno2, show_as, '.png')
-          save_plot(nn$plot, filename)
+          save_plot_or_image(data, filename)
           files = c(filename,files)
 
           # Remember the data
-          field_data = dplyr::bind_rows(field_data, nn$data)
+          field_data = dplyr::bind_rows(field_data, data$data)
         }
 
         # Optionally save the data
@@ -300,7 +320,8 @@ server = function(input, output, session) {
                       from_to = stringr::str_glue('_{pheno2}_near_{pheno1}'),
                       to_from = stringr::str_glue('_{pheno1}_near_{pheno2}'),
                       mutual = stringr::str_glue('_{pheno1}_{pheno2}_mutual_nn'),
-                      none = stringr::str_glue('_{pheno2}_{pheno1}')
+                      none = stringr::str_glue('_{pheno2}_{pheno1}'),
+                      touching = stringr::str_glue('_{pheno1}_touch_{pheno2}')
       )
       name = paste0(name, suffix)
     }
@@ -314,8 +335,21 @@ server = function(input, output, session) {
     name
   }
 
+  # Save a ggplot object or EBImage image, depending on what we are given
+  save_plot_or_image = function(data, file) {
+    if ('plot' %in% names(data)) {
+      save_plot(data$plot, file)
+    } else {
+      save_image(data$image, file)
+    }
+  }
+
   save_plot = function(p, file) {
     ggsave(file, plot=p, device = "png", width=11, height=11)
+  }
+
+  save_image = function(image, file) {
+    EBImage::writeImage(image, file)
   }
 
   # Stop the server when the user closes the app window
