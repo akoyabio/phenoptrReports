@@ -17,3 +17,8 @@ available_phenotypes = phenoptr::unique_phenotypes(csd) %>%
   purrr::map_chr(~stringr::str_remove(.x, '\\+$'))
 
 available_fields = sort(unique(csd[[phenoptr::field_column(csd)]]))
+
+# Create a temp dir to save image files in
+temp_dir = file.path(tempdir(), 'image')
+dir.create(temp_dir, showWarnings=FALSE)
+shiny::addResourcePath('image', temp_dir)

@@ -122,22 +122,19 @@ server = function(input, output, session) {
       output$touching = NULL
     } else {
       image = im$image
-      output$touching = shiny::renderImage({
+      output$touching = shiny::renderUI({
         # Save the image as a temporary png file
         # Note image is transposed; EBImage::writeImage will flip it
         width  = dim(image)[1]
         height = dim(image)[2]
 
         # A temp file to save the output.
-        outfile = tempfile(fileext='.png')
-        EBImage::writeImage(image, outfile)
+        outfile = tempfile(fileext='.jpeg', tmpdir=temp_dir)
+        out_src = paste0('image/', basename(outfile))
+        EBImage::writeImage(image, outfile, quality=90)
 
-        # Return a list containing the filename
-        list(src = outfile,
-             width = width,
-             height = height,
-             alt = "Image of touching cells")
-      }, deleteFile = TRUE)
+        shiny::img(src=out_src, width=width, height=height, alt='Image of touching cells')
+      })
     }
   })
 
@@ -352,8 +349,14 @@ server = function(input, output, session) {
     EBImage::writeImage(image, file)
   }
 
-  # Stop the server when the user closes the app window
-  session$onSessionEnded(stopApp)
+  # Clean up and stop the server when the user closes the app window
+  session$onSessionEnded(function() {
+    stopApp()
+
+    # Clean up our temp dir
+    shiny::removeResourcePath('image')
+    unlink(temp_dir, recursive=TRUE)
+  })
 
 }
 

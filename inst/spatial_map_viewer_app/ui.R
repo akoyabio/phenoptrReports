@@ -85,7 +85,7 @@ ui <- shinydashboard::dashboardPage(
       shiny::plotOutput('plot', height='800px')
     ),
     shiny::conditionalPanel(condition='input.show_as =="touching"',
-      shiny::imageOutput('touching', height='800px')
+      shiny::uiOutput('touching', height='800px')
     )
   )
 )
