@@ -57,7 +57,8 @@ Suggests:
     rstudioapi,
     rtree,
     sessioninfo,
-    testthat (>= 2.1.0)
+    testthat (>= 2.1.0),
+    vdiffr
 URL:
     https://akoyabio.github.io/phenoptrReports/,
     https://github.com/akoyabio/phenoptrReports/

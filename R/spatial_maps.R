@@ -23,8 +23,7 @@ utils::globalVariables(
 #'   \item{`plot`}{The plot, a \code{\link[ggplot2]{ggplot}} object.}
 #'   \item{`data`}{A \code{\link[tibble]{tibble}} containing the data
 #'   used to create the line
-#'   segments in the plot, or `NULL` if `show_as` is `"none"`.
-#'   Columns with the suffix `.nearest` contain data for the "near" cells.}
+#'   segments in the plot, or `NULL` if `show_as` is `"none"`.}
 #' }
 #' @export
 nearest_neighbor_map =
@@ -164,7 +163,8 @@ nearest_neighbor_map =
                                    pheno_name2, pheno_name1)
       match_col = id_column_name(pheno_name1) %>% rlang::sym()
       matching_cells = matching_cells %>%
-        dplyr::filter(`Cell ID`==!!match_col)
+        dplyr::filter(`Cell ID`==!!match_col) %>%
+        dplyr::select(-!!match_col)
 
       p = p +
         ggplot2::geom_segment(data=matching_cells,
@@ -212,6 +212,44 @@ nearest_neighbor_map =
     ggplot2::guides(
       color = ggplot2::guide_legend(override.aes = list(size = 5)))
 
+  # Cleanup of matching_cells
+  if (!is.null(matching_cells)) {
+    if (show_as == 'to_from') {
+      from_name = pheno_name2
+      nearest_name = pheno_name1
+    } else {
+      from_name = pheno_name1
+      nearest_name = pheno_name2
+    }
+
+    # Brute force renaming
+    matching_cells = matching_cells %>%
+
+      # Add from_name as a suffix to from columns
+      dplyr::rename_at(
+        .vars=dplyr::vars(-`Slide ID`,
+                          -!!phenoptr::field_column(matching_cells),
+                          -dplyr::contains(nearest_name),
+                          -dplyr::contains('nearest')),
+       .funs=~paste0(.x, '.', from_name)) %>%
+
+      # Change 'neighbor' to neighbor_name in neighbor columns
+      dplyr::rename_at(dplyr::vars(dplyr::contains('nearest')),
+                       ~stringr::str_replace(.x, 'nearest', nearest_name)) %>%
+
+      # Change 'Cell ID <nearest_name>' to 'Cell ID.<nearest name>'
+      # for consistency with the other 'nearest_name' columns
+      dplyr::rename_at(dplyr::vars(dplyr::starts_with('Cell ID ')),
+                       ~stringr::str_replace(.x, 'Cell ID ', 'Cell ID.')) %>%
+
+      # Re-order a little
+      dplyr::select(`Slide ID`,
+                    !!phenoptr::field_column(matching_cells),
+                    dplyr::ends_with(from_name),
+                    dplyr::starts_with('Distance to '),
+                    dplyr::ends_with(nearest_name),
+                    dplyr::everything())
+  }
   list(plot=p, data=matching_cells)
 }
 
@@ -248,7 +286,6 @@ match_cells = function(from_cells, to_cells, to_name, from_name='.none.') {
       !!phenoptr::field_column(from_cells),
       `Cell ID`,
       dplyr::matches('Cell . Position'),
-      dplyr::starts_with('Phenotype '),
       dplyr::contains('Tissue Category'),
       !!to_id_col,
       !!to_distance_col)
@@ -257,7 +294,6 @@ match_cells = function(from_cells, to_cells, to_name, from_name='.none.') {
     dplyr::select(
       `Cell ID`,
       dplyr::matches('Cell . Position'),
-      dplyr::starts_with('Phenotype '),
       dplyr::contains('Tissue Category'),
       dplyr::contains(from_id_col))
 

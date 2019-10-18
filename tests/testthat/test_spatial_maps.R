@@ -19,17 +19,17 @@ test_that("nearest_neighbor_map works", {
                            'red', 'blue', 'from_to', dot_size=1, add_logo=FALSE)
   vdiffr::expect_doppelganger('from_to dot-1 no logo plot matches', nn$plot,
                               expected_path)
-  expect_equal(nrow(nn$data), 225)
+  expect_equal(dim(nn$data), c(225, 13))
 
   nn = nearest_neighbor_map(csd, field_name, export_path, phenos,
                            'red', 'blue', 'to_from')
   vdiffr::expect_doppelganger('to_from plot matches', nn$plot, expected_path)
-  expect_equal(nrow(nn$data), 347)
+  expect_equal(dim(nn$data), c(347, 13))
 
   nn = nearest_neighbor_map(csd, field_name, export_path, phenos,
                            'red', 'blue', 'mutual')
   vdiffr::expect_doppelganger('mutual plot matches', nn$plot, expected_path)
-  expect_equal(nrow(nn$data), 86)
+  expect_equal(dim(nn$data), c(86, 13))
 
   nn = nearest_neighbor_map(csd, field_name, export_path, phenos,
                            'red', 'blue', 'none')

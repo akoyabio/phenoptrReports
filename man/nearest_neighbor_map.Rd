@@ -32,8 +32,7 @@ Returns a \code{list} containing two items:
 \item{\code{plot}}{The plot, a \code{\link[ggplot2]{ggplot}} object.}
 \item{\code{data}}{A \code{\link[tibble]{tibble}} containing the data
 used to create the line
-segments in the plot, or \code{NULL} if \code{show_as} is \code{"none"}.
-Columns with the suffix \code{.nearest} contain data for the "near" cells.}
+segments in the plot, or \code{NULL} if \code{show_as} is \code{"none"}.}
 }
 }
 \description{
