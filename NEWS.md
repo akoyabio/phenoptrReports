@@ -5,9 +5,10 @@ Analysis addin:
   from the top left to bottom right. 
   
 Spatial map viewer improvements:
+- Add "touching cells" visualization and related data.
+- When saving plots, the viewer optionally saves the associated data (#22).
 - Spatial map viewer works correctly with inForm data containing 
   field coordinates (vs slide coordinates) (#16).
-- When saving plots, the viewer optionally saves the associated data (#22)
 
 Consolidate and summarize addin:
 - Add a Slide ID column with value "None" if none is present.
