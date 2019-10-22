@@ -103,7 +103,7 @@ to save a zip file containing images of all fields in the experiment.
     - Select "Save data with image" to save a tab-separated data file 
     with the image(s).
     - Select "Show logo" to include the Akoya Biosciences logo in 
-    the image(s). De-select to show or save images without the logo.
+    the image(s). Deselect to show or save images without the logo.
 
 ![](figures/Nearest_neighbor_viewer_main.png)
 
