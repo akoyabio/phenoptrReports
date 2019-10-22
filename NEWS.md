@@ -1,4 +1,5 @@
-# phenoptrReports 0.2.4.9000
+# phenoptrReports 0.2.5
+**2019-10-22**
 
 Analysis addin:
 - Reverse the y-axis of heatmaps so that the identity runs 
