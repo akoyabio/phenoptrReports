@@ -71,7 +71,8 @@ addin_20_consolidate = function() {
     shiny::observeEvent(input$browse_source, {
       shiny::req(input$browse_source)
 
-      default = dplyr::if_else(default_dir=='', '', paste0(default_dir, '/*.txt'))
+      default = dplyr::if_else(default_dir=='', '',
+                               paste0(default_dir, '/*.txt'))
       files = phenoptrReports::choose_files(
         default=default,
         caption='Select merge data files',

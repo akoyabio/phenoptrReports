@@ -18,7 +18,8 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-The "Spatial map viewer" addin allows viewing of nearest neighbor relationships
+The "Spatial map viewer" addin allows viewing of nearest neighbor 
+and touching relationships
 between cells of selected phenotypes in a single field. Views can be saved
 for later use.
 
@@ -43,6 +44,11 @@ inForm export settings.
 
 The component images are the source of metadata about fields that is needed
 to properly places cells in the visualizations.
+
+### Segmentation image files
+
+Visualization of touching cells requires the `binary_seg_map.tiff` file 
+created by an adaptive cell segmentation step in inForm.
 
 ## Detailed steps
 
@@ -103,9 +109,9 @@ to save a zip file containing images of all fields in the experiment.
 
 ### Format of saved data files
 
-If "Save data with image" is selected, a tab-separated data file is saved
-with the image(s). The data file contains one row for each pair of connected cells, i.e. the
-cells that are connected with a white line segment in the images.
+If "Save data with image" is selected, a tab-separated data file is saved with
+the image(s). The data file contains one row for each pair of connected cells,
+i.e. the cells that are connected with a white line segment in the images.
 
 - If "Save image" is clicked, the file will include data for
 the single image. 
@@ -115,6 +121,6 @@ with data for all images.
 In either case, the columns in the file will be
 
 - Slide and field identifiers
-- Location and phenotype columns for the "from" and "nearest" cells
+- Cell ID and location for both cells in the pair
 - Distance to the "nearest" cell
 

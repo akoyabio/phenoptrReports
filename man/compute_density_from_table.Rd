@@ -11,7 +11,8 @@ compute_density_from_table(counts, areas, tissue_categories,
 \item{counts}{A data frame with columns for .by, \code{Tissue Category},
 and counts, such as the output of \link{count_phenotypes}.}
 
-\item{areas}{A data frame containing tissue areas in \eqn{cells / micron^2} with
+\item{areas}{A data frame containing tissue areas
+in \eqn{cells / micron^2} with
 sample names and tissue categories matching \code{counts}.}
 
 \item{tissue_categories}{A character vector of tissue category names

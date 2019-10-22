@@ -78,7 +78,8 @@ shinyServer(function(input, output, server) {
       shiny::div(id='well1', shiny::wellPanel(
         shiny::fluidRow(
           shiny::column(6,
-            shiny::checkboxGroupInput('tissue_categories', 'Select tissue categories:',
+            shiny::checkboxGroupInput('tissue_categories',
+                                      'Select tissue categories:',
                                   choices=tissue_categories, inline=TRUE)),
           shiny::column(6,
             shiny::selectInput('by', 'Summarize by',
@@ -98,7 +99,8 @@ shinyServer(function(input, output, server) {
       # Second well panel holds phenotype modules.
       # Start it with one phenotype module and a button to add more.
       shiny::div(id='well2', shiny::wellPanel(
-        paste('Available phenotypes:', paste(available_phenotypes, collapse=', ')),
+        paste('Available phenotypes:',
+              paste(available_phenotypes, collapse=', ')),
         phenotype_module_ui('pheno0', the_data$expression_columns),
         shiny::actionButton('add', 'Add another phenotype')
       )),
@@ -196,7 +198,8 @@ shinyServer(function(input, output, server) {
       analysis_error = 'Spatial statistics require at least two phenotypes.'
     } else if (shiny::isTruthy(the_data$include_count_within)
                && !shiny::isTruthy(the_data$radii)) {
-      analysis_error = 'Radii for "count within" must be numeric and separated by space or comma.'
+      analysis_error =
+        'Radii for "count within" must be numeric and separated by space or comma.'
     } else {
       analysis_error = ''
     }

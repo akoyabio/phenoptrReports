@@ -7,8 +7,9 @@
 # @param d A cell seg table with multiple `Phenotype` columns
 # @return A data frame with just the `Phenotype` columns, coded as 0/1.
 upset_data = function(d) {
-  d = d %>% dplyr::select(dplyr::starts_with('Phenotype')) %>%
-    dplyr::mutate_all( ~(dplyr::case_when(
+  d = d %>%
+    dplyr::select(dplyr::starts_with('Phenotype')) %>%
+    dplyr::mutate_all(~(dplyr::case_when(
       positive(.) ~ 1,
       negative(.) ~ 0,
       TRUE ~ 0)

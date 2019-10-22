@@ -16,7 +16,8 @@
 addin_40_unmixing_quality = function() {
   intro <- shiny::tagList(shiny::p(
     'This app reads component data files for singleplex samples',
-    'and creates an unmixing quality report showing crosstalk between the samples.'
+    'and creates an unmixing quality report',
+    'showing crosstalk between the samples.'
   ))
 
   ui <- miniUI::miniPage(
@@ -50,7 +51,6 @@ addin_40_unmixing_quality = function() {
   )
 
   server <- function(input, output, session) {
-    file_list = shiny::reactiveVal()
     export_dir = shiny::reactiveVal()
 
     # Handle the browse button by selecting a folder
@@ -93,7 +93,8 @@ addin_40_unmixing_quality = function() {
     get_error_text = function() {
       if (is.null(export_dir())) {
         'Please select an output directory.'
-      } else if (length(list.files(export_dir(), pattern='component_data.tif'))==0) {
+      } else if (length(list.files(export_dir(),
+                                   pattern='component_data.tif'))==0) {
         'Please select an export directory containing component data files.'
       } else ''
     }

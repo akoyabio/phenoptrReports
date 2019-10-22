@@ -3,7 +3,7 @@
 
 # Cell styles
 percent_style = openxlsx::createStyle(numFmt='0%')
-percent_style.1 = openxlsx::createStyle(numFmt='0.0%')
+percent_style_1 = openxlsx::createStyle(numFmt='0.0%')
 two_decimal_style = openxlsx::createStyle(numFmt='0.00')
 integer_style = openxlsx::createStyle(numFmt='0')
 bold_style = openxlsx::createStyle(textDecoration='bold')
@@ -20,8 +20,7 @@ bold_wrap_style = openxlsx::createStyle(textDecoration='bold',
 #' @family output functions
 #' @export
 write_summary_sheet = function(wb, summary_table,
-                              sheet_name='Slide Summary')
-{
+                               sheet_name='Slide Summary') {
   # This doesn't fit into the write_sheet template, make it from scratch here.
   # Make a new sheet
   openxlsx::addWorksheet(wb, sheet_name)
@@ -52,8 +51,7 @@ write_summary_sheet = function(wb, summary_table,
 #' @export
 write_counts_sheet = function(wb, counts,
                               sheet_name='Cell Counts',
-                              sheet_title='Cell Counts per Phenotype')
-{
+                              sheet_title='Cell Counts per Phenotype') {
   write_sheet(wb, counts, sheet_name, sheet_title, 3)
 }
 
@@ -70,8 +68,7 @@ write_counts_sheet = function(wb, counts,
 #' @export
 write_percents_sheet = function(wb, percents,
                               sheet_name='Cell Percents',
-                              sheet_title='Percentage of Total Cells')
-{
+                              sheet_title='Percentage of Total Cells') {
   write_sheet(wb, percents, sheet_name, sheet_title, 3)
 
   data_rows = 1:nrow(percents)+2
@@ -97,8 +94,7 @@ write_percents_sheet = function(wb, percents,
 #' @export
 write_density_sheet = function(wb, densities,
                                sheet_name='Cell Densities',
-                               sheet_title='Cell Densities (cells/mm2)')
-{
+                               sheet_title='Cell Densities (cells/mm2)') {
   write_sheet(wb, densities, sheet_name, sheet_title, 4)
 
   # Border to the left of the Area column
@@ -164,9 +160,8 @@ write_expression_sheet = function(wb, exprs,
 #' @family output functions
 #' @export
 write_nearest_neighbor_summary_sheet = function(wb, stats,
-                          sheet_name='Nearest Neighbors',
-                          sheet_title='Nearest Neighbor Distances for Phenotype Pairs (microns)')
-{
+      sheet_name='Nearest Neighbors',
+      sheet_title='Nearest Neighbor Distances for Phenotype Pairs (microns)') {
   write_sheet(wb, stats, sheet_name, sheet_title, 2)
 
   data_rows = 1:nrow(stats)+2
@@ -192,16 +187,16 @@ write_nearest_neighbor_summary_sheet = function(wb, stats,
 #' @family output functions
 #' @export
 write_h_score_sheet = function(wb, h_score,
-                                sheet_name='H-Score',
-                                sheet_title=NULL)
-{
+                               sheet_name='H-Score',
+                               sheet_title=NULL) {
   measure = attr(h_score, 'measure') %>% remove_marker_mean
   if (is.null(sheet_title)) {
     sheet_title = ifelse(is.null(measure),
                          'H-Score', paste0('H-Score, ', measure))
   }
 
-  d = h_score %>% dplyr::select(-Total) %>%
+  d = h_score %>%
+    dplyr::select(-Total) %>%
     dplyr::rename_at(3:6, ~stringr::str_remove(.x, 'Count of '))
 
   openxlsx::addWorksheet(wb, sheet_name)
@@ -215,9 +210,11 @@ write_h_score_sheet = function(wb, h_score,
   # Write two sub-heads
   openxlsx::writeData(wb, sheet_name, startCol=3, startRow=2, 'Cells per Bin')
   merge_and_outline_cells(wb, sheet_name, rows=2, cols=3:6)
-  openxlsx::writeData(wb, sheet_name, startCol=7, startRow=2, 'Percent of Total Cells per Bin')
+  openxlsx::writeData(wb, sheet_name,
+                      startCol=7, startRow=2, 'Percent of Total Cells per Bin')
   merge_and_outline_cells(wb, sheet_name, rows=2, cols=7:10)
-  openxlsx::addStyle(wb, sheet_name, bold_wrap_style, rows=2, cols=3:10, stack=TRUE)
+  openxlsx::addStyle(wb, sheet_name, bold_wrap_style,
+                     rows=2, cols=3:10, stack=TRUE)
 
   # Write the table
   openxlsx::writeData(wb, sheet_name, d, startRow=3,
@@ -254,7 +251,7 @@ write_h_score_sheet = function(wb, h_score,
 
   # Format as percent with one decimal place except for the last column
   # Showing one decimal makes the total add up
-  openxlsx::addStyle(wb, sheet_name, percent_style.1,
+  openxlsx::addStyle(wb, sheet_name, percent_style_1,
                      rows=data_rows, cols=7:10,
                      gridExpand=TRUE, stack=TRUE)
 }
@@ -270,10 +267,8 @@ write_h_score_sheet = function(wb, h_score,
 #' @param sheet_title Optional title header for the table.
 #' @family output functions
 #' @export
-write_count_within_sheet = function(wb, stats,
-  sheet_name='Count Within',
-  sheet_title='Count of cells within the specified radius')
-{
+write_count_within_sheet = function(wb, stats, sheet_name='Count Within',
+                   sheet_title='Count of cells within the specified radius') {
   write_sheet(wb, stats, sheet_name, sheet_title, 3, addGrid=FALSE)
 }
 
@@ -288,8 +283,7 @@ write_count_within_sheet = function(wb, stats,
 #' @family output functions
 #' @export
 write_plot_sheet = function(wb, plot, sheet_name='Phenotypes',
-                  sheet_title='All combinations of phenotypes in all slides')
-{
+                  sheet_title='All combinations of phenotypes in all slides') {
   # Make a new sheet
   openxlsx::addWorksheet(wb, sheet_name)
 
@@ -389,15 +383,18 @@ add_grid_lines <- function(wb, sheet_name, d, header_col, first_data_row) {
                        stack=TRUE)
     openxlsx::addStyle(wb, sheet_name,
                        openxlsx::createStyle(border='Bottom'),
-                       rows=last_data_row, 1:ncol(d),
+                       rows=last_data_row, seq_along(d),
                        stack=TRUE)
 
     # Top border at grid spacing
-    for (start_row in seq(first_data_row, nrow(d)+first_data_row-grid_spacing, grid_spacing))
+    border_rows = seq(first_data_row,
+                      nrow(d)+first_data_row-grid_spacing,
+                      grid_spacing)
+    for (start_row in border_rows)
       openxlsx::addStyle(wb, sheet_name,
                          openxlsx::createStyle(border='Top'),
                          rows=start_row,
-                         cols=1:ncol(d),
+                         cols=seq_along(d),
                          stack=TRUE)
   }
 

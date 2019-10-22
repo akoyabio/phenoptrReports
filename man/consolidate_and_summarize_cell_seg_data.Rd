@@ -20,7 +20,8 @@ A single data frame containing consolidated data and columns for each
 single phenotype, invisibly.
 }
 \description{
-Consolidate several cell seg data files, each with its own \code{Phenotype} column,
+Consolidate several cell seg data files,
+each with its own \code{Phenotype} column,
 into a single file with separate columns for each phenotype.
 }
 \details{

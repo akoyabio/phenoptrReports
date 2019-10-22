@@ -96,8 +96,8 @@ files_module = function(input, output, session) {
   # score_path - Path to score file, if given
   # output_dir - Path to directory for results
 
-  output_dir = reactiveVal()
-  default_dir = reactiveVal('')
+  output_dir = shiny::reactiveVal()
+  default_dir = shiny::reactiveVal('')
 
   input_path = shiny::callModule(browse_file_module, 'data_file',
      default_dir, caption='Select a consolidated data file',
@@ -111,7 +111,8 @@ files_module = function(input, output, session) {
          browse_error = 'Please select a consolidated data file.'
        }else if (!'Slide ID' %in% names(d) ||
                  !'Tissue Category' %in% names(d)) {
-         browse_error = 'This analysis requires a data file with "Slide ID" and "Tissue Category" columns.'
+         browse_error =
+           'This analysis requires a data file with "Slide ID" and "Tissue Category" columns.'
        } else {
          browse_error = ''
        }
@@ -178,4 +179,3 @@ files_module_test = function() {
 }
 
 #shiny::runApp(files_module_test())
-

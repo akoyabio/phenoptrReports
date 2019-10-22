@@ -44,7 +44,7 @@ nearest_neighbor_map =
   pheno_name2 = names(phenos)[[2]]
 
   # Subset csd to just the cells of interest
-  field_data = csd[csd[[phenoptr::field_column(csd)]]==field_name,]
+  field_data = csd[csd[[phenoptr::field_column(csd)]]==field_name, ]
   selected_cells = phenoptr::select_rows(field_data, pheno1) |
     phenoptr::select_rows(field_data, pheno2)
   field_data = field_data[selected_cells, ]
@@ -201,7 +201,7 @@ nearest_neighbor_map =
                                scale_color='white', scale_alpha=overlay_alpha)
 
   if (add_logo) {
-    logo[,,4] = logo[,,4] * overlay_alpha
+    logo[, , 4] = logo[, , 4] * overlay_alpha
     p = add_logo_to_plot(p, logo)
   }
 
@@ -303,7 +303,7 @@ match_cells = function(from_cells, to_cells, to_name, from_name='.none.') {
 
   # We don't really need 11 decimal places in the location & distance columns
   matched = matched %>%
-    dplyr::mutate_at(.vars=dplyr::vars(dplyr::matches('Cell . Position|Distance to')),
+    dplyr::mutate_at(dplyr::vars(dplyr::matches('Cell . Position|Distance to')),
                      ~round(., 2))
   matched
 }
@@ -333,8 +333,7 @@ read_background = function(field, export_path) {
   }
 
   # Read the image as a nativeRaster
-  if (file.exists(background_path))
-  {
+  if (file.exists(background_path)) {
     if (grepl('jpg$', background_path))
       background = jpeg::readJPEG(background_path, native=TRUE)
     else background = tiff::readTIFF(background_path, native=TRUE)

@@ -21,12 +21,15 @@ ui <- shinydashboard::dashboardPage(
                                  `Please define two phenotypes`='touching')),
     shiny::hr(),
     shiny::sliderInput('dot_size', 'Dot size', min=1, max=5, value=3, step=1),
-    shiny::fluidRow(shiny::column(4, shiny::downloadButton('save_plot', 'Save image')),
-                    shiny::column(4, shiny::downloadButton('save_all', 'Save all'))
+    shiny::fluidRow(
+      shiny::column(4, shiny::downloadButton('save_plot', 'Save image')),
+      shiny::column(4, shiny::downloadButton('save_all', 'Save all'))
     ),
     shiny::fluidRow(id='save-controls',
-      shiny::column(6, shiny::checkboxInput('save_data', 'Save data with image')),
-      shiny::column(6, shiny::checkboxInput('add_logo', 'Show logo', value=TRUE))
+      shiny::column(6,
+        shiny::checkboxInput('save_data', 'Save data with image')),
+      shiny::column(6,
+        shiny::checkboxInput('add_logo', 'Show logo', value=TRUE))
     )
   ),
 

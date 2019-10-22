@@ -22,8 +22,7 @@ utils::globalVariables(c(
 #' @importFrom rlang !! :=
 #' @export
 compute_positivity_many = function(csd, phenotypes, positivity_pairs,
-                                   tissue_categories=NULL)
-{
+                                   tissue_categories=NULL) {
   check_phenotypes(purrr::map_chr(positivity_pairs, 1), phenotypes)
 
   csd = make_nested(csd, tissue_categories)
@@ -50,7 +49,8 @@ compute_positivity_many = function(csd, phenotypes, positivity_pairs,
   }
 
   # Actually do the computation for each nested data frame
-  csd %>% dplyr::mutate(positivity = purrr::map(data, compute_data_frame)) %>%
+  csd %>%
+    dplyr::mutate(positivity = purrr::map(data, compute_data_frame)) %>%
     dplyr::select(-data) %>%
     tidyr::unnest(positivity)
 }
@@ -74,10 +74,10 @@ compute_positivity = function(csd, phenotype, positivity) {
   stopifnot(is.data.frame(csd))
 
   # Select just the cells of interest
-  d = csd[phenoptr::select_rows(csd, phenotype),]
+  d = csd[phenoptr::select_rows(csd, phenotype), ]
   count = nrow(d) # Count of all positive
 
-  d = d[phenoptr::select_rows(d, positivity),]
+  d = d[phenoptr::select_rows(d, positivity), ]
   positive = nrow(d)
   tibble::tibble(count=count, positive=positive, fraction=positive/count)
 }
@@ -103,7 +103,7 @@ compute_h_score_from_score_data = function(csd, score_path,
   if (!all(score_names %in% names(score_data)))
     stop('"', score_path, '" does not seem to be an H-Score data file.')
 
-  thresholds = score_data[,score_names] %>%
+  thresholds = score_data[, score_names] %>%
     purrr::map(~{
       # Fix for files using comma as decimal separator
       ifelse(is.character(.x),
@@ -152,10 +152,12 @@ compute_h_score = function(csd, measure, tissue_categories, thresholds,
   measure = rlang::sym(measure)
 
   # We only need three columns
-  d = csd %>% dplyr::select(!!.by, `Tissue Category`, !!measure) %>%
+  d = csd %>%
+    dplyr::select(!!.by, `Tissue Category`, !!measure) %>%
     dplyr::filter(`Tissue Category` %in% tissue_categories)
 
-  d = d %>% dplyr::mutate(score = dplyr::case_when(
+  d = d %>%
+    dplyr::mutate(score = dplyr::case_when(
     !!measure < thresholds[1] ~ 0,
     !!measure < thresholds[2] ~ 1,
     !!measure < thresholds[3] ~ 2,
@@ -167,7 +169,8 @@ compute_h_score = function(csd, measure, tissue_categories, thresholds,
       `Count of 2+` = sum(score==2),
       `Count of 3+` = sum(score==3),
       Total = dplyr::n()
-    ) %>% dplyr::ungroup()
+    ) %>%
+    dplyr::ungroup()
 
   d = add_tissue_category_totals(d, tissue_categories, .by) %>%
     dplyr::mutate(

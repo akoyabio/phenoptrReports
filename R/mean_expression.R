@@ -45,10 +45,9 @@ utils::globalVariables(c(
 #' @importFrom magrittr %>%
 #' @importFrom rlang !!!
 #' @export
-compute_mean_expression_many = function(
-  csd, phenotypes, params,
-  tissue_categories=NULL, percentile=NULL, count=NULL, .by='Slide ID')
-{
+compute_mean_expression_many = function(csd, phenotypes, params,
+                                        tissue_categories=NULL, percentile=NULL,
+                                        count=NULL, .by='Slide ID') {
   check_phenotypes(names(params), phenotypes)
   .by = rlang::sym(.by)
 
@@ -105,7 +104,8 @@ compute_mean_expression_many = function(
   }
 
   # Actually do the computation for each nested data frame
-  result = csd %>% dplyr::mutate(means = purrr::map(data, compute_means)) %>%
+  result = csd %>%
+    dplyr::mutate(means = purrr::map(data, compute_means)) %>%
     dplyr::select(-data) %>%
     tidyr::unnest(means)
 
@@ -120,7 +120,8 @@ compute_mean_expression_many = function(
 
   # Add "All" rows by .by, spread to columns, and fix column order
   # to match params
-  result %>% dplyr::group_by(!!.by, name) %>%
+  result %>%
+    dplyr::group_by(!!.by, name) %>%
     tidyr::nest() %>%
     dplyr::mutate(data=purrr::map(data, function(d) {
       total = tibble::tibble(count=sum(d$count),
@@ -157,9 +158,8 @@ compute_mean_expression_many = function(
 #' @family aggregation functions
 #' @importFrom magrittr %>%
 #' @export
-compute_mean_expression = function(
-  csd, phenotype, param, percentile=NULL, count=NULL)
-{
+compute_mean_expression = function(csd, phenotype, param,
+                                   percentile=NULL, count=NULL) {
   # Parameter checking
   stopifnot(is.data.frame(csd))
 
@@ -169,14 +169,15 @@ compute_mean_expression = function(
   if (!is.null(percentile) && !is.null(count))
     stop("Please specify only one of percentile or count, not both")
 
-  if (!is.null(percentile) && (percentile==0 || percentile< -1 || percentile > 1))
+  if (!is.null(percentile)
+      && (percentile==0 || percentile< -1 || percentile > 1))
     stop("percentile must be non-zero and in the range -1 to 1.")
 
   if (!is.null(count) && count < 1)
     stop("count must be >= 1.")
 
   # Select just the cells and column of interest
-  d = csd[phenoptr::select_rows(csd, phenotype),][[param]]
+  d = csd[phenoptr::select_rows(csd, phenotype), ][[param]]
 
   if (!is.null(percentile)) {
     # Top or bottom percentile

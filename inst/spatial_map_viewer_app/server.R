@@ -84,12 +84,12 @@ server = function(input, output, session) {
     if (is.null(nn$plot)) {
       output$plot = NULL
     } else {
-      output$plot = renderPlot(nn$plot)
+      output$plot = shiny::renderPlot(nn$plot)
     }
   })
 
   #### Update the touching image when any of the parameters changes ####
-  image_and_data = reactive(label='image_and_data', {
+  image_and_data = shiny::reactive(label='image_and_data', {
     check_for_changes()
     if (!is_touching())
       return (list(image=NULL, data=NULL))
@@ -99,7 +99,7 @@ server = function(input, output, session) {
     shiny::isolate(update_from_to(pheno1, pheno2, input$show_as))
 
     phenos = phenoptrReports:::parse_phenotypes_with_na(pheno1, pheno2)
-    req(!any(is.na(phenos)))
+    shiny::req(!any(is.na(phenos)))
 
     tag = make_filename(input$field,
                   pheno1, pheno2,
@@ -133,7 +133,8 @@ server = function(input, output, session) {
         out_src = paste0('image/', basename(outfile))
         EBImage::writeImage(image, outfile, quality=90)
 
-        shiny::img(src=out_src, width=width, height=height, alt='Image of touching cells')
+        shiny::img(src=out_src, width=width, height=height,
+                   alt='Image of touching cells')
       })
     }
   })
@@ -183,7 +184,7 @@ server = function(input, output, session) {
       )
   }
 
-  is_touching = reactive({ input$show_as == 'touching' })
+  is_touching = shiny::reactive({ input$show_as == 'touching' })
 
   #### Handle Save All ####
   # To save all, we have to save in a temp directory and then make a zip
@@ -236,7 +237,7 @@ server = function(input, output, session) {
           # Write the plot to a file, save the name
           filename = make_filename(field, pheno1, pheno2, show_as, '.png')
           save_plot_or_image(data, filename)
-          files = c(filename,files)
+          files = c(filename, files)
 
           # Remember the data
           field_data = dplyr::bind_rows(field_data, data$data)
@@ -247,12 +248,12 @@ server = function(input, output, session) {
           filename = make_filename(basename(.export_path),
                                    pheno1, pheno2, show_as, '.txt')
           vroom::vroom_write(field_data, filename, na='#N/A')
-          files = c(filename,files)
+          files = c(filename, files)
         }
 
         # Create the zip file
         shiny::setProgress(1, detail='Writing zip file')
-        zip::zipr(file,files)
+        zip::zipr(file, files)
       })
     }
   )
@@ -314,11 +315,11 @@ server = function(input, output, session) {
       if (!is.na(pheno2)) name = paste0(name, '_', pheno2)
     } else {
       suffix = switch(show_as,
-                      from_to = stringr::str_glue('_{pheno2}_near_{pheno1}'),
-                      to_from = stringr::str_glue('_{pheno1}_near_{pheno2}'),
-                      mutual = stringr::str_glue('_{pheno1}_{pheno2}_mutual_nn'),
-                      none = stringr::str_glue('_{pheno2}_{pheno1}'),
-                      touching = stringr::str_glue('_{pheno1}_touch_{pheno2}')
+                    from_to = stringr::str_glue('_{pheno2}_near_{pheno1}'),
+                    to_from = stringr::str_glue('_{pheno1}_near_{pheno2}'),
+                    mutual = stringr::str_glue('_{pheno1}_{pheno2}_mutual_nn'),
+                    none = stringr::str_glue('_{pheno2}_{pheno1}'),
+                    touching = stringr::str_glue('_{pheno1}_touch_{pheno2}')
       )
       name = paste0(name, suffix)
     }
@@ -342,7 +343,7 @@ server = function(input, output, session) {
   }
 
   save_plot = function(p, file) {
-    ggsave(file, plot=p, device = "png", width=11, height=11)
+    ggplot2::ggsave(file, plot=p, device = "png", width=11, height=11)
   }
 
   save_image = function(image, file) {
@@ -351,7 +352,7 @@ server = function(input, output, session) {
 
   # Clean up and stop the server when the user closes the app window
   session$onSessionEnded(function() {
-    stopApp()
+    shiny::stopApp()
 
     # Clean up our temp dir
     shiny::removeResourcePath('image')

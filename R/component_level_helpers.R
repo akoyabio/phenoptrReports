@@ -35,9 +35,11 @@ component_ridge_plot = function(path, quantiles=NULL) {
   # This gets `quants` as a data frame with columns for each quantile
   quants = comps %>%
     tidyr::nest(data=c(-Fluor, -Source)) %>%
-    dplyr::mutate(q=purrr::map(data, ~quantile(.$value, quantiles)
-           %>% as.list() %>% tibble::as_tibble())) %>%
-    dplyr::select(-data) %>% tidyr::unnest(cols=c(q))
+    dplyr::mutate(q=purrr::map(data, ~quantile(.$value, quantiles) %>%
+                                        as.list() %>%
+                                        tibble::as_tibble())) %>%
+    dplyr::select(-data) %>%
+    tidyr::unnest(cols=c(q))
 
   # For plotting a long data frame is better
   quants_to_plot = quants %>%
@@ -73,7 +75,8 @@ component_ridge_plot = function(path, quantiles=NULL) {
     ggplot2::geom_text(data=clipping_to_plot,
                        ggplot2::aes(x, y, label=pct),
               hjust=0, vjust= 1.2, size=3, fontface='bold') +
-    ggplot2::facet_wrap(~Fluor, ncol=1, strip.position='left', scales='free_y') +
+    ggplot2::facet_wrap(~Fluor, ncol=1,
+                        strip.position='left', scales='free_y') +
     ggplot2::scale_x_log10(limits=c(xlim_lower, NA)) +
     ggplot2::labs(x='Pixel intensity', y='',
          title=name, subtitle=subtitle) +
@@ -125,7 +128,8 @@ fluor_ridge_plot = function(d, quants, clipping, name, fill) {
     ggplot2::geom_text(data=clipping_to_plot,
                        ggplot2::aes(x, y, label=pct),
               hjust=0, vjust= 1.2, size=3, fontface='bold') +
-    ggplot2::facet_wrap(~Source, ncol=1, strip.position='left', scales='free_y') +
+    ggplot2::facet_wrap(~Source, ncol=1,
+                        strip.position='left', scales='free_y') +
     ggplot2::scale_x_log10(limits=c(xlim_lower, NA)) +
     ggplot2::labs(x='Pixel intensity', y='',
          title=name, subtitle=subtitle) +

@@ -25,7 +25,8 @@ utils::globalVariables(c(
 #' @family aggregation functions
 #' @importFrom magrittr %>%
 #' @export
-count_phenotypes = function(csd, phenotypes, tissue_categories, .by='Slide ID') {
+count_phenotypes = function(csd, phenotypes, tissue_categories,
+                            .by='Slide ID') {
   if (!.by %in% names(csd))
     stop('No ', .by, ' column in cell seg data.')
   .by = rlang::sym(.by)
@@ -34,7 +35,7 @@ count_phenotypes = function(csd, phenotypes, tissue_categories, .by='Slide ID') 
   # negative phenotypes. (We don't know what they are, don't assume.)
   # Any phenotype column works for this.
   pheno_col = purrr::detect(names(csd), ~startsWith(.x, 'Phenotype'))
-  csd_good = csd[csd[[pheno_col]]!='',] %>%
+  csd_good = csd[csd[[pheno_col]]!='', ] %>%
     dplyr::filter(`Tissue Category` %in% tissue_categories)
 
   # Make a data frame with a boolean column for each phenotype
@@ -51,7 +52,8 @@ count_phenotypes = function(csd, phenotypes, tissue_categories, .by='Slide ID') 
 
   # Count the positive selections and fill in
   # missing .by / Tissue Category pairs
-  selections = selections %>% dplyr::group_by(!!.by, `Tissue Category`) %>%
+  selections = selections %>%
+    dplyr::group_by(!!.by, `Tissue Category`) %>%
     dplyr::summarize_all(sum, na.rm=TRUE) %>%
     dplyr::ungroup() %>%
     tidyr::complete(!!.by, `Tissue Category`, fill=fill)

@@ -5,8 +5,8 @@ library(phenoptrReports)
 # Note: The original hard-coded test values in these tests were computed using
 # variations of this snippet from the original MeanOfTop20.R:
 # means = csd %>%
-#   select(`Slide ID`,`Sample Name`, contains('Mean')) %>% # Select just the columns we need
-#   gather('Metric', 'Value', -`Sample Name`,-`Slide ID`) %>% # Convert to a tall data frame
+#   select(`Slide ID`,`Sample Name`, contains('Mean')) %>% # Select columns
+#   gather('Metric', 'Value', -`Sample Name`,-`Slide ID`) %>% # Convert to tall
 #   group_by(`Slide ID`,`Sample Name`, Metric) %>% # Grouping
 #   top_n(20, Value) %>% # This picks the top n within each group
 #   summarize(mean = mean(Value)) %>% # Compute the means
@@ -14,14 +14,16 @@ library(phenoptrReports)
 #
 # The "All" values were hand-checked.
 
-test_that("mean expression per phenotype and tissue category calculation works", {
+test_that(
+  "mean expression per phenotype and tissue category calculation works", {
   csd_path = test_path('test_data', 'Consolidated_data.txt')
   csd = phenoptr::read_cell_seg_data(csd_path)
   tissue_categories = c("Tumor", "Stroma")
   phenotypes = phenoptr::parse_phenotypes('CD8+', 'CD68+', 'Total Cells')
   params = list("CD8+" = "Membrane PDL1 (Opal 520) Mean",
                 "CD68+" = "Membrane PDL1 (Opal 520) Mean",
-                "CD68+" = "Membrane PDL1 (Opal 520) Mean", # Duplicate s/b ignored
+                # Duplicate, should be ignored
+                "CD68+" = "Membrane PDL1 (Opal 520) Mean",
                 "Total Cells" = "Membrane PDL1 (Opal 520) Mean")
 
   ex = expect_warning(
@@ -166,8 +168,10 @@ test_that('mean expression by percentile works', {
   ex = compute_mean_expression_many(csd, phenotypes, params, tissue_categories,
                                     percentile=-0.1)
 
-  expect_equal(names(ex), c("Slide ID", "Tissue Category",
-                            "CD8+ <= 10%ile Membrane PDL1 (Opal 520) Mean",
-                            "CD68+ <= 10%ile Membrane PDL1 (Opal 520) Mean",
-                            "Total Cells <= 10%ile Membrane PDL1 (Opal 520) Mean"))
+  expect_equal(names(ex),
+               c("Slide ID",
+                 "Tissue Category",
+                 "CD8+ <= 10%ile Membrane PDL1 (Opal 520) Mean",
+                 "CD68+ <= 10%ile Membrane PDL1 (Opal 520) Mean",
+                 "Total Cells <= 10%ile Membrane PDL1 (Opal 520) Mean"))
 })

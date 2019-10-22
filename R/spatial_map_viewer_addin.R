@@ -7,10 +7,10 @@ utils::globalVariables(
 
 #' Spatial map viewer addin
 #'
-#' This function starts a GUI which allows you to select a `Consolidated_data.txt`
-#' file and an inForm image directory. Once selected, you can view fields
-#' from the image directory with a superimposed map of nearest neighbor
-#' relationships.
+#' This function starts a GUI which allows you to select a
+#' `Consolidated_data.txt` file and an inForm image directory.
+#' Once selected, you can view fields from the image directory with a
+#' superimposed map of nearest neighbor relationships.
 #' @export
 addin_35_spatial_map_viewer = function() {
   # Run the front end to get the nn file and export directory
@@ -75,7 +75,8 @@ spatial_map_viewer_front_end = function() {
       shiny::wellPanel(
         shiny::h3('Select a data file'),
         'Click the "Browse Input" button to select a ',
-        'Consolidated_data.txt, nearest_neighbors.txt or count_within.txt file.',
+        'Consolidated_data.txt, ',
+        'nearest_neighbors.txt or count_within.txt file.',
         shiny::br(), shiny::br(),
 
         shiny::actionButton('browse_source', 'Browse Input...'),
@@ -109,7 +110,8 @@ spatial_map_viewer_front_end = function() {
     shiny::observeEvent(input$browse_source, {
       shiny::req(input$browse_source)
 
-      default = dplyr::if_else(default_dir=='', '', paste0(default_dir, '/*.txt'))
+      default = dplyr::if_else(default_dir=='', '',
+                               paste0(default_dir, '/*.txt'))
       files = phenoptrReports::choose_files(
         default=default, multi=FALSE,
         caption='Select a data file',

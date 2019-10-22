@@ -61,7 +61,8 @@ add_tissue_category_totals = function(d, tissue_categories, .by='Slide ID') {
     return(d)
 
   .by = rlang::sym(.by)
-  totals = d %>% dplyr::select(-`Tissue Category`) %>%
+  totals = d %>%
+    dplyr::select(-`Tissue Category`) %>%
     dplyr::group_by(!!.by) %>%
     dplyr::summarize_all(sum) %>%
     dplyr::mutate(`Tissue Category` = 'Total')
@@ -141,7 +142,7 @@ choose_files = function(caption='Select files', default='',
              rstudioapi::isAvailable() &&
              rstudioapi::getVersion() > '1.1.287') {
     rstudioapi::selectFile(caption = caption, path=default,
-                           filter=filters[nrow(filters),1])
+                           filter=filters[nrow(filters), 1])
   } else if (tk_avail) {
     tcltk::tk_choose.files(caption = caption, default=default,
                          multi=multi, filters=filters)
@@ -162,7 +163,8 @@ function_exists =function(package, fun) {
 # @return A (possibly empty) numeric vector with NA values for
 # any parsing failures.
 parse_comma_space_values = function(s) {
-  s %>% stringr::str_trim() %>%
+  s %>%
+    stringr::str_trim() %>%
     stringr::str_split('[, ] *') %>%
     purrr::pluck(1) %>%
     purrr::discard(~.x=='') %>%

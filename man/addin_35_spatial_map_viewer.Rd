@@ -7,8 +7,8 @@
 addin_35_spatial_map_viewer()
 }
 \description{
-This function starts a GUI which allows you to select a \code{Consolidated_data.txt}
-file and an inForm image directory. Once selected, you can view fields
-from the image directory with a superimposed map of nearest neighbor
-relationships.
+This function starts a GUI which allows you to select a
+\code{Consolidated_data.txt} file and an inForm image directory.
+Once selected, you can view fields from the image directory with a
+superimposed map of nearest neighbor relationships.
 }

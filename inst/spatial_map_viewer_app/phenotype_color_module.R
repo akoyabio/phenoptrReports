@@ -51,7 +51,7 @@ phenotype_color_module = function(input, output, session, phenotypes,
       msg = phenoptr::validate_phenotype_definitions(
         input$phenotype, phenotypes, csd)
     valid(msg == '' && input$phenotype != '')
-    output$error = renderText(msg)
+    output$error = shiny::renderText(msg)
   })
 
     return(shiny::reactive(label=session$ns('output'), {
@@ -62,7 +62,6 @@ phenotype_color_module = function(input, output, session, phenotypes,
 
 
 phenotype_color_module_test = function() {
-  choices = c('Nucleaus PDL-1 Mean', 'Membrane PDL-1 Mean')
   ui = shiny::fluidPage('Test',
                         shiny::wellPanel(phenotype_color_module_ui('test1'),
                         shiny::br(),

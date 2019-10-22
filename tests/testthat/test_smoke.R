@@ -10,27 +10,28 @@ test_file_generation = function(data_dir, output_dir, expected_path, .by) {
   dir.create(output_dir)
 
   # Data structure for format_all
-  all_data = list(by=.by,
-                  use_regex = FALSE,
-                  slide_id_prefix = "Set",
-                  tissue_categories = c("Tumor", "Stroma"),
-                  input_path = file.path(data_dir, "Consolidated_data.txt"),
-                  summary_path = file.path(data_dir, "Merge_cell_seg_data_summary.txt"),
-                  score_path = file.path(data_dir, "Merge_score_data.txt"),
-                  output_dir = output_dir,
-                  field_col = 'Sample Name',
-                  include_nearest = TRUE,
-                  include_count_within = TRUE,
-                  include_distance_details = TRUE,
-                  radii = c(10, 15),
-                  phenotype_values = list(
-                    list(phenotype = "CD8+", expression = "Membrane PDL1 (Opal 520) Mean"),
-                    list(phenotype = "CD8+", expression = "Membrane PD1 (Opal 650) Mean"),
-                    list(phenotype = "CD68+", expression = "Membrane PDL1 (Opal 520) Mean"),
-                    list(phenotype = "FoxP3+", expression = 'NA'),
-                    list(phenotype = "CK+", expression = "Membrane PDL1 (Opal 520) Mean"),
-                    list(phenotype = "Total Cells", expression = 'NA')
-                  ))
+  all_data = list(
+    by=.by,
+    use_regex = FALSE,
+    slide_id_prefix = "Set",
+    tissue_categories = c("Tumor", "Stroma"),
+    input_path = file.path(data_dir, "Consolidated_data.txt"),
+    summary_path = file.path(data_dir, "Merge_cell_seg_data_summary.txt"),
+    score_path = file.path(data_dir, "Merge_score_data.txt"),
+    output_dir = output_dir,
+    field_col = 'Sample Name',
+    include_nearest = TRUE,
+    include_count_within = TRUE,
+    include_distance_details = TRUE,
+    radii = c(10, 15),
+    phenotype_values = list(
+      list(phenotype = "CD8+", expression = "Membrane PDL1 (Opal 520) Mean"),
+      list(phenotype = "CD8+", expression = "Membrane PD1 (Opal 650) Mean"),
+      list(phenotype = "CD68+", expression = "Membrane PDL1 (Opal 520) Mean"),
+      list(phenotype = "FoxP3+", expression = 'NA'),
+      list(phenotype = "CK+", expression = "Membrane PDL1 (Opal 520) Mean"),
+      list(phenotype = "Total Cells", expression = 'NA')
+    ))
 
   # Get the formatter function from the app
   source(system.file('analysis_app', 'formatters.R', package='phenoptrReports'),
@@ -59,8 +60,10 @@ test_file_generation = function(data_dir, output_dir, expected_path, .by) {
 
   for (sheet in sheets) {
     skip = ifelse(sheet=='H-Score', 2, 1)
-    actual_sheet = read_excel(actual_path, sheet, skip=skip, .name_repair='minimal')
-    expected_sheet = read_excel(expected_path, sheet, skip=skip, .name_repair='minimal')
+    actual_sheet =
+      read_excel(actual_path, sheet, skip=skip, .name_repair='minimal')
+    expected_sheet =
+      read_excel(expected_path, sheet, skip=skip, .name_repair='minimal')
     expect_equal(actual_sheet, expected_sheet, info=paste('Sheet name:', sheet))
   }
 }

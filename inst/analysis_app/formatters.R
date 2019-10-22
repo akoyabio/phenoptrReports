@@ -57,7 +57,8 @@ format_all = function(all_data) {
 # Initial matter
 format_header = function() {
   stringr::str_glue(
-'# Created by phenoptr {packageVersion("phenoptr")} and phenoptrReports {packageVersion("phenoptrReports")} on {Sys.Date()}
+  '# Created by phenoptr {packageVersion("phenoptr")}',
+  ' and phenoptrReports {packageVersion("phenoptrReports")} on {Sys.Date()}
 # http://akoyabio.github.io/phenoptr
 # http://akoyabio.github.io/phenoptrReports
 
@@ -70,15 +71,18 @@ library(openxlsx)
 
 # Format reading cell seg data and making summary table
 format_path = function(path, field_col) {
-  table_pairs <<- c(table_pairs, list(c('summary_table', 'write_summary_sheet')))
+  table_pairs <<- c(table_pairs,
+                    list(c('summary_table', 'write_summary_sheet')))
   path = stringr::str_replace_all(path, '\\\\', '/')
   stringr::str_glue('# Read the consolidated data file
-csd_path = "{path}"
+csd_path =
+  "{path}"
 csd = read_cell_seg_data(csd_path)
 
 # Make a table summarizing the number of fields per slide
-summary_table = csd %>% group_by(`Slide ID`) %>%
-                    summarize(`Number of fields`=n_distinct(`{field_col}`))
+summary_table = csd %>%
+  group_by(`Slide ID`) %>%
+  summarize(`Number of fields`=n_distinct(`{field_col}`))
 \n\n')
 }
 
@@ -127,7 +131,8 @@ format_density = function(summary_path) {
 
   stringr::str_glue(
 '# Path to a cell seg summary file, used for the tissue category area
-summary_path = "{summary_path}"
+summary_path =
+  "{summary_path}"
 
 # Using the counts computed above and the tissue area from the summary,
 # compute cell densities for each phenotype
@@ -168,7 +173,8 @@ format_h_score = function(score_path) {
 
   stringr::str_glue(
 "# Compute H-Score
-score_path = '{score_path}'
+score_path =
+  '{score_path}'
 h_score = compute_h_score_from_score_data(csd, score_path,
                                           tissue_categories, .by=.by)
 \n\n")
@@ -176,12 +182,15 @@ h_score = compute_h_score_from_score_data(csd, score_path,
 
 format_nearest_neighbors = function(output_dir, include_distance_details) {
   table_pairs <<- c(table_pairs,
-                    list(c('nearest_neighbors', 'write_nearest_neighbor_summary_sheet')))
+                    list(c('nearest_neighbors',
+                           'write_nearest_neighbor_summary_sheet')))
 
   if (include_distance_details)
     stringr::str_glue(
 '# Summarize nearest neighbor distances
-nearest_detail_path = file.path("{output_dir}", "nearest_neighbors.txt")
+nearest_detail_path = file.path(
+  "{output_dir}",
+  "nearest_neighbors.txt")
 nearest_neighbors = nearest_neighbor_summary(csd, phenotypes,
                                              nearest_detail_path, .by=.by)
 \n\n')
@@ -200,9 +209,12 @@ format_count_within = function(output_dir, radii,
     stringr::str_glue(
 '# Summary of cells within a specific distance
 radii = {deparse(radii)}
-count_detail_path = file.path("{output_dir}", "count_within.txt")
+count_detail_path = file.path(
+  "{output_dir}",
+  "count_within.txt")
 count_within = count_within_summary(csd, radii, phenotypes,
-                                    tissue_categories, count_detail_path, .by=.by)
+                                    tissue_categories,
+                                    count_detail_path, .by=.by)
 \n\n')
   else
     stringr::str_glue(
@@ -260,19 +272,23 @@ purrr::walk(table_pairs, ~{
 end = stringr::str_glue(
 '
 
-workbook_path = file.path("{output_dir}",
-                          "Results.xlsx")
+workbook_path = file.path(
+  "{output_dir}",
+  "Results.xlsx")
 if (file.exists(workbook_path)) file.remove(workbook_path)
 saveWorkbook(wb, workbook_path)
 
 # Write summary charts
-charts_path = file.path("{output_dir}",
-                        "Charts.docx")
+charts_path = file.path(
+  "{output_dir}",
+  "Charts.docx")
 if (file.exists(charts_path)) file.remove(charts_path)
 write_summary_charts(workbook_path, charts_path, .by=.by)
 
 # Save session info
-info_path = file.path("{output_dir}", "session_info.txt")
+info_path = file.path(
+  "{output_dir}",
+  "session_info.txt")
 write_session_info(info_path)
 ')
 

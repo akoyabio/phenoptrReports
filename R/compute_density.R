@@ -36,8 +36,9 @@ compute_density_from_cell_summary =
   # Read the summary data, extract the columns we need, recode the
   # `Tissue Category` total name to match what `count_phenotypes` gives us,
   # and aggregate by .by and `Tissue Category`
-  summary_data = purrr::map_dfr(summary_path, phenoptr::read_cell_seg_data,
-                                              pixels_per_micron=pixels_per_micron)
+  summary_data = purrr::map_dfr(summary_path,
+                                phenoptr::read_cell_seg_data,
+                                pixels_per_micron=pixels_per_micron)
 
   if ('Phenotype' %in% names(summary_data))
     summary_data = summary_data %>% dplyr::filter(Phenotype=='All')
@@ -56,7 +57,8 @@ compute_density_from_cell_summary =
 #'
 #' @param counts A data frame with columns for .by, `Tissue Category`,
 #'   and counts, such as the output of [count_phenotypes].
-#' @param areas A data frame containing tissue areas in \eqn{cells / micron^2} with
+#' @param areas A data frame containing tissue areas
+#'   in \eqn{cells / micron^2} with
 #'   sample names and tissue categories matching `counts`.
 #' @param tissue_categories A character vector of tissue category names
 #'   of interest.
@@ -65,7 +67,8 @@ compute_density_from_cell_summary =
 #' @family aggregation functions
 #' @importFrom magrittr %>%
 #' @export
-compute_density_from_table = function(counts, areas, tissue_categories, .by='Slide ID') {
+compute_density_from_table = function(counts, areas, tissue_categories,
+                                      .by='Slide ID') {
   stopifnot(inherits(areas, 'data.frame'))
   .by = rlang::sym(.by)
   .by_str = rlang::as_string(.by)
@@ -90,13 +93,17 @@ compute_density_from_table = function(counts, areas, tissue_categories, .by='Sli
   # Normalize the name of the area column
   # Two different column names and two spellings of 'square'. Just brute force.
   if ("Region Area (sq microns)" %in% names(areas))
-    areas = areas %>% dplyr::rename(`Tissue Area`="Region Area (sq microns)")
+    areas = areas %>%
+      dplyr::rename(`Tissue Area`="Region Area (sq microns)")
   else if ("Region Area (square microns)" %in% names(areas))
-    areas = areas %>% dplyr::rename(`Tissue Area`="Region Area (square microns)")
+    areas = areas %>%
+      dplyr::rename(`Tissue Area`="Region Area (square microns)")
   else if ('Tissue Category Area (sq microns)' %in% names(areas))
-    areas = areas %>% dplyr::rename(`Tissue Area`='Tissue Category Area (sq microns)')
+    areas = areas %>%
+      dplyr::rename(`Tissue Area`='Tissue Category Area (sq microns)')
   else if ('Tissue Category Area (square microns)' %in% names(areas))
-    areas = areas %>% dplyr::rename(`Tissue Area`='Tissue Category Area (square microns)')
+    areas = areas %>%
+      dplyr::rename(`Tissue Area`='Tissue Category Area (square microns)')
   else stopifnot('Tissue Area' %in% names(areas))
 
   areas = areas %>%
@@ -116,5 +123,3 @@ compute_density_from_table = function(counts, areas, tissue_categories, .by='Sli
 
   densities
 }
-
-

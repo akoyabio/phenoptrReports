@@ -14,11 +14,11 @@ file_to_fluor = function(path) {
   if (stringr::str_detect(name, 'AF')) return('Autofluorescence')
 
   # If Opal is in the name, find the following number
-  opal_match = stringr::str_match(name, 'Opal[^\\d]{0,1}(\\d{3})[^\\d]')[1,2]
+  opal_match = stringr::str_match(name, 'Opal[^\\d]{0,1}(\\d{3})[^\\d]')[1, 2]
 
   if (is.na(opal_match)) {
     # If the name starts with three digits followed by a non-digit, use that
-    opal_match = stringr::str_match(name, '^(\\d{3})[^\\d]')[1,2]
+    opal_match = stringr::str_match(name, '^(\\d{3})[^\\d]')[1, 2]
   }
 
   if (is.na(opal_match))
@@ -53,7 +53,8 @@ process_singleplex_image = function(path, primary_fluor,
 
   primary_fluor_ix = which(stringr::str_detect(names(comps), primary_fluor))
   if (length(primary_fluor_ix) != 1)
-    stop('Primary fluor ', primary_fluor, ' not found in component data file"', path, '"')
+    stop('Primary fluor ', primary_fluor,
+         ' not found in component data file"', path, '"')
 
   primary = comps[[primary_fluor_ix]]
 
@@ -78,4 +79,3 @@ process_singleplex_image = function(path, primary_fluor,
 
   list(signals=signals, sn=sn, primary=primary)
 }
-

@@ -1,7 +1,7 @@
 # Phenotype module allows input of a phenotype definition
 # and optional expression column.
 phenotype_module_ui = function(id, values, show_help=TRUE) {
-  ns = NS(id)
+  ns = shiny::NS(id)
 
   choices = setNames(c(NA, values), c('None', values))
 
@@ -30,14 +30,14 @@ phenotype_module_ui = function(id, values, show_help=TRUE) {
 phenotype_module = function(input, output, session, phenotypes, csd) {
   # Check for valid phenotype definitions
   observe({
-    req(input$phenotype)
+    shiny::req(input$phenotype)
     output$error = renderText(
       phenoptr::validate_phenotype_definitions(input$phenotype, phenotypes, csd))
   })
 
   # Show help
   observeEvent(input$help, {
-    req(input$help)
+    shiny::req(input$help)
     shiny::showModal(
       shiny::modalDialog(
         shiny::p('Phenotype definitions are composed from the names of phenotypes. ',

@@ -1,5 +1,7 @@
 test_that("nearest_neighbor_map works", {
-  export_path = 'C:/Research/phenoptrExamplesData/AACR Dana Farber Melanoma/subset of diverse fields'
+  export_path = file.path(
+    'C:/Research/phenoptrExamplesData/AACR Dana Farber Melanoma',
+    'subset of diverse fields')
   expected_path = 'expected_spatial_maps'
   skip_if_not(dir.exists(export_path))
 

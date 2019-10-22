@@ -64,7 +64,8 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL, details_path=NULL,
     dist_to_col = paste0('Distance to ', to)
 
     # Get the correct rows and column and summarize
-    d %>% dplyr::filter(phenoptr::select_rows(., phenotypes[[from]])) %>%
+    d %>%
+      dplyr::filter(phenoptr::select_rows(., phenotypes[[from]])) %>%
       dplyr::pull(dist_to_col) %>% # Single column of interest
       dist_summary %>% # Compute
       dplyr::mutate(From=from, To=to) %>%
@@ -94,7 +95,8 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL, details_path=NULL,
 
   # Now we can do the work, computing summary stats for all pairs,
   # grouping by .by
-  distances %>% tidyr::nest(data = c(-(!!.by))) %>%
+  distances %>%
+    tidyr::nest(data = c(-(!!.by))) %>%
     dplyr::mutate(stats=purrr::map(data, summarize_all_pairs)) %>%
     dplyr::select(-data) %>%
     tidyr::unnest(stats)
@@ -178,7 +180,8 @@ count_within_summary = function(csd, radii, phenotypes=NULL, categories=NA,
     dplyr::select(-source) # Chaff from count_within_many
 
   # Aggregate per .by. See ?phenoptr::count_within for explanation
-  distances %>% dplyr::group_by(!!.by, category, from, to, radius) %>%
+  distances %>%
+    dplyr::group_by(!!.by, category, from, to, radius) %>%
     dplyr::summarize(within=sum(from_count*within_mean, na.rm=TRUE),
               from_count=sum(from_count),
               to_count=sum(to_count),

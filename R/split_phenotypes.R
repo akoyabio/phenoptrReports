@@ -12,7 +12,8 @@ utils::globalVariables(c(
 #' Consolidate cell seg data files from parallel projects
 #' and create summary reports
 #'
-#' Consolidate several cell seg data files, each with its own `Phenotype` column,
+#' Consolidate several cell seg data files,
+#' each with its own `Phenotype` column,
 #' into a single file with separate columns for each phenotype.
 #'
 #' Create a summary report for each source file and the consolidated data.
@@ -157,7 +158,8 @@ split_phenotypes = function(csd) {
     result[blanks] = ''
 
     # Fill in the positive value anywhere it appears in the original
-    result[stringr::str_detect(csd$Phenotype, stringr::fixed(positive))] = positive
+    original_pos = stringr::str_detect(csd$Phenotype, stringr::fixed(positive))
+    result[original_pos] = positive
     result
   })
 
@@ -166,7 +168,8 @@ split_phenotypes = function(csd) {
   new_columns = new_columns %>% rlang::set_names(new_names)
 
   # Build a new data frame
-  csd %>% dplyr::select(-Phenotype, -dplyr::contains('Confidence')) %>%
+  csd %>%
+    dplyr::select(-Phenotype, -dplyr::contains('Confidence')) %>%
     dplyr::bind_cols(new_columns)
 }
 
@@ -180,7 +183,8 @@ split_phenotypes = function(csd) {
 # @return A vector of names.
 make_unique_names = function(csd_files) {
   # Get the base names sans extension
-  names = csd_files %>% purrr::map_chr(basename) %>%
+  names = csd_files %>%
+    purrr::map_chr(basename) %>%
     stringr::str_remove('\\.txt')
 
   # If they are unique, we are done

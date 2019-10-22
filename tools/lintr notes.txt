@@ -1,0 +1,5 @@
+lintr exclusion rules:
+- Standard "# nolint" comment
+- Return statements with a space before the paren e.g. "return (foo)"
+- Markdown links because they have to be on one line, e.g. "(link text)[http://some.com]"
+- href attributes

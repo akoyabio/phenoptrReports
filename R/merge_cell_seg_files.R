@@ -14,8 +14,7 @@ merge_cell_seg_files = function(base_path, update_progress=NULL,
   if (is.null(update_progress))
     update_progress = function(x) cat(x, '\n')
 
-  for (suffix in merge_suffixes)
-  {
+  for (suffix in merge_suffixes) {
     # Get paths to the files matching suffix
     files = list.files(base_path, pattern=suffix,
                        full.names=TRUE, recursive=recursive)
@@ -24,12 +23,11 @@ merge_cell_seg_files = function(base_path, update_progress=NULL,
     update_progress(paste('Merging', length(files), suffix, 'files.'))
 
     append = FALSE
-    outPath = file.path(base_path, paste0('Merge', suffix))
-    for (file in files)
-    {
+    out_path = file.path(base_path, paste0('Merge', suffix))
+    for (file in files) {
       update_progress(file)
       data = readr::read_tsv(file, na='#N/A', col_types = readr::cols())
-      readr::write_tsv(data, outPath, na='#N/A', append=append)
+      readr::write_tsv(data, out_path, na='#N/A', append=append)
       append = TRUE
     }
   }
@@ -39,7 +37,8 @@ merge_cell_seg_files = function(base_path, update_progress=NULL,
 merge_progress_count = function(base_path, recursive) {
   # Count the number of files of each type
   counts = merge_suffixes %>%
-    purrr::map_int(~length(list.files(base_path, pattern=.x, recursive=recursive))) %>%
+    purrr::map_int(~length(list.files(base_path, pattern=.x,
+                                      recursive=recursive))) %>%
     purrr::keep(~.x>0)
 
   # Progress advances once for each file and once for each file type
