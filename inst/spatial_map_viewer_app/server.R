@@ -356,6 +356,9 @@ server = function(input, output, session) {
 
     # Clean up our temp dir
     shiny::removeResourcePath('image')
+    # Does unlink remove files in temp_dir? The docs are ambiguous.
+    # Let's make sure
+    list.files(temp_dir, full.names=TRUE) %>% purrr::walk(file.remove)
     unlink(temp_dir, recursive=TRUE)
   })
 
