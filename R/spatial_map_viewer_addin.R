@@ -132,33 +132,33 @@ spatial_map_viewer_front_end = function() {
           'Please select a Consolidated_data.txt, nearest_neighbors.txt or count_within.txt file!',
           type='message')
       } else {
-        # Add to data_file and update the list of files in the UI
+        # Save to data_file and update the UI
         data_file(files)
         output$selected_file = shiny::renderUI({
           shiny::p(paste0(basename(dirname(files)), '/', basename(files)))
         })
-      }
 
-      set_error_text()
+        # Use the selected file's directory if one has not been set
+        if (!shiny::isTruthy(export_dir())) export_dir(default_dir)
+      }
     })
 
     # Handle the browse_output button by selecting a folder
     shiny::observeEvent(input$browse_export, {
       shiny::req(input$browse_export)
-      export_dir(phenoptrReports::choose_directory(
+      selected_dir = phenoptrReports::choose_directory(
         default=default_dir,
         caption='Select an inForm image directory'
-      ))
+      )
 
-      output$export_dir = shiny::renderText(export_dir())
-      set_error_text()
+      if (shiny::isTruthy(selected_dir)) export_dir(selected_dir)
     })
+
+    output$export_dir = shiny::renderText(export_dir())
 
     # Handle the done button by opening the viewer or showing an error
     shiny::observeEvent(input$done, {
-      error_text = get_error_text()
-
-      if (error_text == '') {
+      if (error_text() == '') {
         # This is kind of a hack to open a Shiny app from a Shiny gadget
         # (like this one).
         # https://stackoverflow.com/questions/44891544/how-to-open-a-shiny-app-from-within-an-rstudio-gadget
@@ -169,7 +169,7 @@ spatial_map_viewer_front_end = function() {
         rstudioapi::sendToConsole(command)
         shiny::stopApp()
       } else {
-        shiny::showNotification(error_text, type='message')
+        shiny::showNotification(error_text(), type='message')
       }
     })
 
@@ -178,24 +178,16 @@ spatial_map_viewer_front_end = function() {
       shiny::stopApp()
     })
 
-    # Set error message in response to user input
-    # For some reason this doesn't work as a reactive so just make
-    # it a function and call as needed
-    set_error_text = function() {
-      output$error = shiny::renderText(get_error_text())
-    }
+    output$error = shiny::renderText({ error_text() })
 
-    get_error_text = function() {
-      if (is.null(data_file())) {
+    error_text = reactive({
+      if (!shiny::isTruthy(data_file())) {
         'Please select a data file to process.'
-      } else if (is.null(export_dir())) {
+      } else if (!shiny::isTruthy(export_dir())) {
         'Please select an inForm image directory.'
       } else
         ''
-    }
-
-    # Initialize
-    output$error = shiny::renderText('Please select a data file to process.')
+    })
   }
 
   # Run the gadget in a dialog
