@@ -37,7 +37,7 @@ make_nested = function(csd, tissue_categories=NULL, .by='Slide ID') {
     return (csd)
 
   if (!rlang::as_string(.by) %in% names(csd))
-    stop('Data frame must have "Slide ID" column.')
+    stop('Data frame must have "', rlang::as_string(.by), '" column.')
 
   .by = rlang::sym(.by)
 
