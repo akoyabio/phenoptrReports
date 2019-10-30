@@ -215,7 +215,7 @@ shinyServer(function(input, output, server) {
   # Process the result!!
   shiny::observeEvent(input$process, {
     shiny::req(input$process)
-    shiny::showNotification('Processing, please wait!', duration=NULL,
+    id = shiny::showNotification('Processing, please wait!', duration=NULL,
                      closeButton=FALSE, type='message')
 
     # Create and save the script
@@ -226,6 +226,9 @@ shinyServer(function(input, output, server) {
     # Run the script to do some work!
     source(script_path, local=new.env())
 
+    shiny::removeNotification(id)
+    shiny::showNotification('Done!', duration=2,
+                            closeButton=FALSE, type='message')
     shiny::stopApp()
   })
 })
