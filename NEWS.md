@@ -1,3 +1,9 @@
+# phenoptrReports 0.2.5.9000
+
+- Use the RStudio folder chooser when available, rather than the Windows
+  native chooser. The RStudio chooser is nicer and gives access to 
+  network drives (#29).
+  
 # phenoptrReports 0.2.5
 **2019-10-22**
 

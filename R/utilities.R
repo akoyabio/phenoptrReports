@@ -91,12 +91,12 @@ check_phenotypes = function(params, phenotypes) {
 #' @export
 # Inspired by https://stackoverflow.com/questions/48218491/os-independent-way-to-select-directory-interactively-in-r
 choose_directory = function(caption = 'Select folder', default='') {
-  if (function_exists('utils', 'choose.dir')) {
-    utils::choose.dir(caption = caption, default=default)
-  } else if (function_exists('rstudioapi', 'isAvailable') &&
+  if (function_exists('rstudioapi', 'isAvailable') &&
              rstudioapi::isAvailable() &&
              rstudioapi::getVersion() > '1.1.287') {
     rstudioapi::selectDirectory(caption = caption, path=default)
+  } else if (function_exists('utils', 'choose.dir')) {
+    utils::choose.dir(caption = caption, default=default)
   } else if (function_exists('tcltk', 'tk_choose.dir')) {
     tcltk::tk_choose.dir(caption = caption, default=default)
   } else stop('No directory chooser available.')
