@@ -180,7 +180,7 @@ spatial_map_viewer_front_end = function() {
 
     output$error = shiny::renderText({ error_text() })
 
-    error_text = reactive({
+    error_text = shiny::reactive({
       if (!shiny::isTruthy(data_file())) {
         'Please select a data file to process.'
       } else if (!shiny::isTruthy(export_dir())) {

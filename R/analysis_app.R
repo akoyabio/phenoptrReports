@@ -1,3 +1,7 @@
+# Suppress CMD CHECK notes for things that look like global vars
+utils::globalVariables(
+  c('.rs.invokeShinyWindowViewer'))
+
 #' Run the Analysis app
 #'
 #' Runs a Shiny app which will read a consolidated data file and
