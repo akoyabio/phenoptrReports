@@ -3,6 +3,10 @@
 - Use the RStudio folder chooser when available, rather than the Windows
   native chooser. The RStudio chooser is nicer and gives access to 
   network drives (#29).
+
+Analysis addin:
+- When "Use regular expressions" is checked, the regular expression will
+  match anywhere in the Slide ID, not just the prefix.
   
 # phenoptrReports 0.2.5
 **2019-10-22**

@@ -231,9 +231,11 @@ format_cleanup = function(slide_id_prefix, use_regex, has) {
 
   # We are going to use a regex to remove the Slide ID prefix.
   # If the user did not request regex, escape any special characters in
-  # the prefix they provided.
-  if (!use_regex)
+  # the prefix they provided and ensure that it is a prefix match.
+  if (!use_regex) {
     slide_id_prefix = escapeRegex(slide_id_prefix)
+    slide_id_prefix = paste0('^', slide_id_prefix)
+  }
 
   # Now slide_id_prefix is a valid regex. We still have to double-escape \
   # to put it into a string literal.
@@ -246,7 +248,7 @@ format_cleanup = function(slide_id_prefix, use_regex, has) {
 # Do this at the end or it will break merges
 cleanup = function(d) {{
   by_col = ifelse(.by %in% names(d), .by, 'Slide ID')
-  d[[by_col]] = str_remove(d[[by_col]], '^{slide_id_prefix}')
+  d[[by_col]] = str_remove_all(d[[by_col]], '{slide_id_prefix}')
   d
 }}
 \n\n")
