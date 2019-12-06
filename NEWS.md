@@ -7,7 +7,10 @@
 Analysis addin:
 - When "Use regular expressions" is checked, the regular expression will
   match anywhere in the Slide ID, not just the prefix.
-  
+- Fill in missing tissue categories so all slides have all categories 
+  reported (#1).
+- Report missing / invalid values consistently as #N/A, never as #NUM.
+
 # phenoptrReports 0.2.5
 **2019-10-22**
 
