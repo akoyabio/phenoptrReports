@@ -111,8 +111,10 @@ compute_h_score_from_score_data = function(csd, score_path,
                         .x)
              }) %>%
     purrr::flatten_dbl()
+
   if (is.null(tissue_categories))
     tissue_categories = unique(score_data$`Tissue Category`)
+
   measure = paste(score_data$`Cell Compartment`[1],
                   score_data$`Stain Component`[1],
                   'Mean', sep=' ')
@@ -156,6 +158,7 @@ compute_h_score = function(csd, measure, tissue_categories, thresholds,
     dplyr::select(!!.by, `Tissue Category`, !!measure) %>%
     dplyr::filter(`Tissue Category` %in% tissue_categories)
 
+  # Score each cell and summarize
   d = d %>%
     dplyr::mutate(score = dplyr::case_when(
     !!measure < thresholds[1] ~ 0,
@@ -172,6 +175,11 @@ compute_h_score = function(csd, measure, tissue_categories, thresholds,
     ) %>%
     dplyr::ungroup()
 
+  # Add missing tissue categories
+  fill = rep(0, 5) %>% rlang::set_names(names(d)[3:7]) %>% as.list()
+  d = d %>%
+    tidyr::complete(!!.by, `Tissue Category`, fill=fill)
+
   d = add_tissue_category_totals(d, tissue_categories, .by) %>%
     dplyr::mutate(
       `0+` = round(`Count of 0+`/Total, 3),
@@ -180,6 +188,9 @@ compute_h_score = function(csd, measure, tissue_categories, thresholds,
       `3+` = round(`Count of 3+`/Total, 3),
       `H-Score` = round(100 * (`1+` + 2*`2+` + 3*`3+`))
     )
+
+  # Replace NaN with NA
+  d = d %>% dplyr::mutate_if(is.numeric, ~ifelse(is.nan(.), NA, .))
 
   structure(d, measure=measure, thresholds=thresholds)
 }

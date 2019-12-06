@@ -86,5 +86,7 @@ counts_to_percents = function(counts) {
       stop('Count table must contain a "Total" or "All" column.')
   }
 
-  counts %>% dplyr::mutate_if(is.numeric, ~.x/counts[[column]])
+  # Compute percents using NA for missing values
+  totals = counts[[column]]
+  counts %>% dplyr::mutate_if(is.numeric, ~ifelse(totals==0, NA, .x/totals))
 }

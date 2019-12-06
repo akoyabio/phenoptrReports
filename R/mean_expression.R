@@ -118,7 +118,8 @@ compute_mean_expression_many = function(csd, phenotypes, params,
     return(result[, c(cols, param_names)])
   }
 
-  # Add "All" rows by .by, spread to columns, and fix column order
+  # Add "All" rows by .by, fill in missing tissue categories,
+  # spread to columns, and fix column order
   # to match params
   result %>%
     dplyr::group_by(!!.by, name) %>%
@@ -131,6 +132,8 @@ compute_mean_expression_many = function(csd, phenotypes, params,
     })) %>%
     tidyr::unnest(data) %>%
     dplyr::select(-count) %>%
+    dplyr::ungroup() %>%
+    tidyr::complete(!!.by, `Tissue Category`, name) %>%
     tidyr::spread(name, mean) %>%
     order_by_slide_and_tissue_category(tissue_categories, .by) %>%
     dplyr::select(!!.by, `Tissue Category`, !!!param_names)
