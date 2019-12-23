@@ -188,11 +188,14 @@ write_nearest_neighbor_summary_sheet = function(wb, stats,
 #' @export
 write_h_score_sheet = function(wb, h_score,
                                sheet_name='H-Score',
-                               sheet_title=NULL) {
+                               sheet_title=NULL,
+                               marker=NULL) {
   measure = attr(h_score, 'measure') %>% remove_marker_mean
   if (is.null(sheet_title)) {
     sheet_title = ifelse(is.null(measure),
                          'H-Score', paste0('H-Score, ', measure))
+    if (!is.null(marker))
+      sheet_title = paste0(sheet_title, ', ', marker)
   }
 
   d = h_score %>%

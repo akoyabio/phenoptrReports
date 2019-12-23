@@ -1,7 +1,8 @@
 # Output formatting
 # These functions build a script based on the user inputs
 
-# List to accumulate pairs of (table name, table writing function name)
+# List to accumulate pairs of code snippets for table cleanup and
+# table writing.
 # This reduces the repetition of names and the number of conditional outputs.
 # Sadly it must be at global scope to be shared between all these functions.
 table_pairs = list()
@@ -43,7 +44,7 @@ format_all = function(all_data) {
     format_phenotypes(phenos, .by),
     ifelse(has$density, format_density(all_data$summary_path), ''),
     format_expression(phenos),
-    ifelse(has$h_score, format_h_score(all_data$score_path), ''),
+    ifelse(has$h_score, format_h_score(all_data$score_path, phenos), ''),
     ifelse(has$include_nearest,
            format_nearest_neighbors(all_data$output_dir,
                                     has$include_nearest_details), ''),
@@ -72,7 +73,9 @@ library(openxlsx)
 # Format reading cell seg data and making summary table
 format_path = function(path, field_col) {
   table_pairs <<- c(table_pairs,
-                    list(c('summary_table', 'write_summary_sheet')))
+                    list(c(cleanup_code('summary_table'),
+                           worksheet_code('write_summary_sheet',
+                                          'summary_table'))))
   path = stringr::str_replace_all(path, '\\\\', '/')
   stringr::str_glue('# Read the consolidated data file
 csd_path =
@@ -108,8 +111,10 @@ format_phenotypes = function(vals, .by) {
     phenos = c(unique(phenos), 'Total Cells')
 
   table_pairs <<- c(table_pairs, list(
-    c('counts', 'write_counts_sheet'),
-    c('percents', 'write_percents_sheet')
+    c(cleanup_code('counts'),
+      worksheet_code('write_counts_sheet', 'counts')),
+    c(cleanup_code('percents'),
+      worksheet_code('write_percents_sheet', 'percents'))
   ))
 
   phenos_string = paste(phenos, collapse='", "')
@@ -127,7 +132,9 @@ percents = counts_to_percents(counts)
 
 # Format density calculation
 format_density = function(summary_path) {
-  table_pairs <<- c(table_pairs, list(c('densities', 'write_density_sheet')))
+  table_pairs <<- c(table_pairs,
+                    list(c(cleanup_code('densities'),
+                           worksheet_code('write_density_sheet', 'densities'))))
 
   stringr::str_glue(
 '# Path to a cell seg summary file, used for the tissue category area
@@ -143,14 +150,15 @@ densities = compute_density_from_cell_summary(counts, summary_path,
 
 # Format the expression parameters
 format_expression = function(vals) {
-  # Filter null values that happen when the control is created,
-  # then missing phenotype, then missing expression
+  # Filter out phenotypes with no expression requested
   phenos = vals %>%
     purrr::discard(~.x$expression %in% c('', 'NA'))
   if (length(phenos) == 0) return('')
 
   table_pairs <<- c(table_pairs,
-                    list(c('expression_means', 'write_expression_sheet')))
+                    list(c(cleanup_code('expression_means'),
+                           worksheet_code('write_expression_sheet',
+                                          'expression_means'))))
 
   pairs = purrr::map_chr(phenos,
                   ~stringr::str_glue('"{.x$phenotype}" = "{.x$expression}"'))
@@ -168,22 +176,58 @@ expression_means = csd %>%
 \n\n')
 }
 
-format_h_score = function(score_path) {
-  table_pairs <<- c(table_pairs, list(c('h_score', 'write_h_score_sheet')))
+format_h_score = function(score_path, phenos) {
+  table_pairs <<- c(table_pairs,
+                    list(c(cleanup_code('h_score'),
+                           worksheet_code('write_h_score_sheet', 'h_score'))))
 
-  stringr::str_glue(
+  # First the overall H-Score
+  result = stringr::str_glue(
 "# Compute H-Score
 score_path =
   '{score_path}'
 h_score = compute_h_score_from_score_data(csd, score_path,
                                           tissue_categories, .by=.by)
 \n\n")
+
+  # Add in any optional scoring by appending to result and table_pairs
+  wants_scoring = purrr::map_lgl(phenos,
+                                 ~(!is.null(.x$score) && .x$score==TRUE))
+
+  scoring_phenos = phenos[wants_scoring] %>%
+    purrr::map_chr('phenotype') %>%
+    unique()
+
+  # Names for the constructed data tables
+  table_names = make.names(scoring_phenos) %>%
+    stringr::str_replace_all('\\.+', '_') %>%
+    {stringr::str_glue('h_score_{.}')}
+
+  # Names for the worksheets - tab names may not include any of \/*?:[]
+  tab_names = scoring_phenos %>%
+    stringr::str_replace_all('[\\\\/*?:\\[\\]]', '_') %>%
+    {stringr::str_glue('H-Score {.}')}
+
+  purrr::pmap(list(scoring_phenos, table_names, tab_names),
+              function(pheno, table_name, tab_name) {
+    table_pairs <<-
+      c(table_pairs,
+        list(c(cleanup_code(table_name),
+               stringr::str_glue("write_h_score_sheet(wb, {table_name}, '{tab_name}', marker='{pheno}')\n\n"))))
+
+    result <<- stringr::str_glue(
+    "{result}{table_name}=compute_h_score_from_score_data(csd[select_rows(csd, '{pheno}'),],
+       score_path, tissue_categories, .by=.by)
+\n\n")
+  })
+  result
 }
 
 format_nearest_neighbors = function(output_dir, include_distance_details) {
   table_pairs <<- c(table_pairs,
-                    list(c('nearest_neighbors',
-                           'write_nearest_neighbor_summary_sheet')))
+                    list(c(cleanup_code('nearest_neighbors'),
+                           worksheet_code('write_nearest_neighbor_summary_sheet',
+                                          'nearest_neighbors'))))
 
   if (include_distance_details)
     stringr::str_glue(
@@ -204,7 +248,9 @@ nearest_neighbors = nearest_neighbor_summary(csd, phenotypes, .by=.by)
 format_count_within = function(output_dir, radii,
                                include_count_within_details) {
   table_pairs <<- c(table_pairs,
-                    list(c('count_within', 'write_count_within_sheet')))
+                    list(c(cleanup_code('count_within'),
+                           worksheet_code('write_count_within_sheet',
+                                          'count_within'))))
   if (include_count_within_details)
     stringr::str_glue(
 '# Summary of cells within a specific distance
@@ -255,7 +301,7 @@ cleanup = function(d) {{
 
   # Add a cleanup call for each table
   purrr::walk(table_pairs, ~{
-    start <<- stringr::str_glue("{start}{.x[[1]]} = cleanup({.x[[1]]})\n\n")
+    start <<- stringr::str_glue("{start}{.x[[1]]}")
   })
 
   paste(start, '\n')
@@ -268,7 +314,7 @@ wb = createWorkbook()
 '
 # Add a write call for each table
 purrr::walk(table_pairs, ~{
-  start <<- stringr::str_glue("{start}{.x[[2]]}(wb, {.x[[1]]})\n\n")
+  start <<- stringr::str_glue("{start}{.x[[2]]}")
 })
 
 end = stringr::str_glue(
@@ -297,6 +343,15 @@ write_session_info(info_path)
 paste0(start, end)
 }
 
+# Create a call to `cleanup` for the given table
+cleanup_code = function(table_name) {
+  stringr::str_glue("{table_name} = cleanup({table_name})\n\n")
+}
+
+# Create call to write a worksheet
+worksheet_code = function(worksheet_function, table_name) {
+  stringr::str_glue("{worksheet_function}(wb, {table_name})\n\n")
+}
 
 # Hmisc::escapeRegex
 escapeRegex = function(string) {

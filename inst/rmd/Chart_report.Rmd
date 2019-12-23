@@ -232,16 +232,17 @@ if ('Mean Expression' %in% sheet_names) {
 ```
 
 ```{r h_score,results='asis'}
-
-if ('H-Score' %in% sheet_names) {
+# There may be multiple H-Score sheets
+h_score_names = sheet_names %>% purrr::keep(~startsWith(.x, 'H-Score'))
+for (sheet_name in h_score_names) {
   if ('.name_repair' %in% names(formals(read_xlsx))) {
     # readxl version 1.2.0 adds a .name_repair option. We don't want name repair
     # and have to turn it off if present. We will get duplicate column names
     # that we handle by selecting by index.
-    h_score = read_xlsx(workbook_path, 'H-Score', skip=2, .name_repair='minimal')
+    h_score = read_xlsx(workbook_path, sheet_name, skip=2, .name_repair='minimal')
   } else {
     # Older readxl appends '__1' to column names
-    h_score = read_xlsx(workbook_path, 'H-Score', skip=2)%>%
+    h_score = read_xlsx(workbook_path, sheet_name, skip=2)%>%
       rename_all(~stringr::str_remove(.x, '__1'))
   }
   
@@ -250,7 +251,7 @@ if ('H-Score' %in% sheet_names) {
     mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`))
   
   # Find the marker from the first row, if present
-  h_score_title = read_xlsx(workbook_path, 'H-Score', range='C1', col_names=FALSE) %>% 
+  h_score_title = read_xlsx(workbook_path, sheet_name, range='C1', col_names=FALSE) %>% 
     unlist()
   if (stringr::str_detect(h_score_title, 'H-Score,')) {
     title = stringr::str_glue('Cumulative Percent of Cells in {stringr::str_remove(h_score_title, "H-Score,")} Bins')
