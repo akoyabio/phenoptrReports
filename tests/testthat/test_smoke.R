@@ -30,6 +30,7 @@ test_file_generation = function(data_dir, output_dir, expected_path, .by) {
       list(phenotype = "CD68+", expression = "Membrane PDL1 (Opal 520) Mean"),
       list(phenotype = "FoxP3+", expression = 'NA'),
       list(phenotype = "CK+", expression = "Membrane PDL1 (Opal 520) Mean"),
+      list(phenotype = "CK+/~`Membrane PDL1 (Opal 520) Mean`>1", expression='NA', score=TRUE),
       list(phenotype = "Total Cells", expression = 'NA')
     ))
 
