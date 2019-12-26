@@ -1,10 +1,14 @@
 # Output formatting
-# These functions build a script based on the user inputs
+# These functions build a script based on the user inputs.
+# Each function returns code to be included in the script output.
+# Most code snippets create a table to include in the Results workbook.
+# For each table created, a pair of strings is appended to `table_pairs`.
+# The first string is code to "clean" the table; the second is code
+# to add the table to the final workbook.
 
-# List to accumulate pairs of code snippets for table cleanup and
-# table writing.
-# This reduces the repetition of names and the number of conditional outputs.
-# Sadly it must be at global scope to be shared between all these functions.
+# `table_pairs` accumulates pairs of code snippets for table cleanup and
+# worksheet writing.
+# It must be at global scope to be shared between all these functions.
 table_pairs = list()
 
 # Format everything.
@@ -37,6 +41,7 @@ format_all = function(all_data) {
   # Re-initialize
   table_pairs <<- list()
 
+  # Code generation
   paste0(
     format_header(),
     format_path(all_data$input_path, all_data$field_col),
@@ -55,7 +60,7 @@ format_all = function(all_data) {
     format_trailer(all_data$output_dir, has))
 }
 
-# Initial matter
+# Front matter loads required packages
 format_header = function() {
   stringr::str_glue(
   '# Created by phenoptr {packageVersion("phenoptr")}',
@@ -70,7 +75,7 @@ library(openxlsx)
 \n\n')
 }
 
-# Format reading cell seg data and making summary table
+# Format reading cell seg data and making a summary table
 format_path = function(path, field_col) {
   table_pairs <<- c(table_pairs,
                     list(c(cleanup_code('summary_table'),
@@ -97,7 +102,7 @@ format_tissue_categories = function(cats) {
   stringr::str_glue('tissue_categories = c("{cat_str}")\n\n\n')
 }
 
-# Format the phenotype definitions and counting
+# Format the phenotype definitions, phenotype counts and percentages
 format_phenotypes = function(vals, .by) {
   phenos = purrr::map_chr(vals, 'phenotype')
   if (length(phenos) == 0) return('')
@@ -148,7 +153,7 @@ densities = compute_density_from_cell_summary(counts, summary_path,
 \n\n')
 }
 
-# Format the expression parameters
+# Format the expression parameters and computation of mean expression
 format_expression = function(vals) {
   # Filter out phenotypes with no expression requested
   phenos = vals %>%
@@ -176,6 +181,7 @@ expression_means = csd %>%
 \n\n')
 }
 
+# Format calculation of H-Score for all cells and optional phenotypes
 format_h_score = function(score_path, phenos) {
   table_pairs <<- c(table_pairs,
                     list(c(cleanup_code('h_score'),
@@ -223,6 +229,7 @@ h_score = compute_h_score_from_score_data(csd, score_path,
   result
 }
 
+# Format calculation of nearest neighbors
 format_nearest_neighbors = function(output_dir, include_distance_details) {
   table_pairs <<- c(table_pairs,
                     list(c(cleanup_code('nearest_neighbors'),
@@ -245,6 +252,7 @@ nearest_neighbors = nearest_neighbor_summary(csd, phenotypes, .by=.by)
 \n\n")
 }
 
+# Format calculation of `count_within`
 format_count_within = function(output_dir, radii,
                                include_count_within_details) {
   table_pairs <<- c(table_pairs,
@@ -271,6 +279,7 @@ count_within = count_within_summary(csd, radii, phenotypes,
 \n\n")
 }
 
+# Format generation of cleanup function and calls to it for each table
 format_cleanup = function(slide_id_prefix, use_regex, has) {
   if (!has$phenotypes || is.null(slide_id_prefix) || slide_id_prefix == '')
     return('')
@@ -307,6 +316,7 @@ cleanup = function(d) {{
   paste(start, '\n')
 }
 
+# Format writing the workbook and creating the chart report
 format_trailer = function(output_dir, has) {
 start =
 '# Write it all out to an Excel workbook
@@ -343,6 +353,7 @@ write_session_info(info_path)
 paste0(start, end)
 }
 
+## Helper functions
 # Create a call to `cleanup` for the given table
 cleanup_code = function(table_name) {
   stringr::str_glue("{table_name} = cleanup({table_name})\n\n")
