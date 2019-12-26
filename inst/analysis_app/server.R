@@ -101,7 +101,9 @@ shinyServer(function(input, output, server) {
       shiny::div(id='well2', shiny::wellPanel(
         paste('Available phenotypes:',
               paste(available_phenotypes, collapse=', ')),
-        phenotype_module_ui('pheno0', the_data$expression_columns),
+        phenotype_module_ui('pheno0', the_data$expression_columns,
+                            show_score = !is.null(file_data$score_path()),
+                            show_help=TRUE),
         shiny::actionButton('add', 'Add another phenotype')
       )),
 
@@ -144,7 +146,9 @@ shinyServer(function(input, output, server) {
   # Handle Add button by adding another phenotype_module_ui
   shiny::observeEvent(input$add, {
     id = paste0('pheno', input$add)
-    ui = phenotype_module_ui(id, the_data$expression_columns, show_help=FALSE)
+    ui = phenotype_module_ui(id, the_data$expression_columns,
+                             show_score = !is.null(file_data$score_path()),
+                             show_help=FALSE)
     insertUI('#add', 'beforeBegin', ui)
 
     # Remember the result

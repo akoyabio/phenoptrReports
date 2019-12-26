@@ -1,6 +1,8 @@
 # Phenotype module allows input of a phenotype definition
 # and optional expression column.
-phenotype_module_ui = function(id, values, show_help=TRUE) {
+# If `show_score` is true, add a "Score" checkbox.
+# If `show_help` is true, add a help button.
+phenotype_module_ui = function(id, values, show_score, show_help) {
   ns = shiny::NS(id)
 
   choices = setNames(c(NA, values), c('None', values))
@@ -12,12 +14,19 @@ phenotype_module_ui = function(id, values, show_help=TRUE) {
     shiny::column(5, shiny::selectInput(ns("expression"), 'Expression:',
                                         choices=choices,
                                         selected='None')))
+  if (show_score)
+    input_row = c(input_row, list(
+      shiny::column(1, style='padding-top: 23px;',
+                    shiny::checkboxInput(ns('score'), 'Score'))
+
+    ))
+
   if (show_help)
     input_row = c(input_row, list(
       shiny::column(1, style='padding-top: 23px;',
-                  shiny::actionButton(ns('help'), '',
-                         style='border: none; background: transparent',
-                         icon=shiny::icon('question-circle-o', class='fa-2x')))
+                    shiny::actionButton(ns('help'), '',
+                                        style='border: none; background: transparent',
+                                        icon=shiny::icon('question-circle-o', class='fa-2x')))
 
     ))
 
@@ -60,7 +69,8 @@ phenotype_module = function(input, output, session, phenotypes, csd) {
 
   return(reactive({
     list(phenotype=input$phenotype,
-         expression=input$expression)
+         expression=input$expression,
+         score=input$score)
   }))
 }
 
@@ -68,11 +78,12 @@ phenotype_module = function(input, output, session, phenotypes, csd) {
 phenotype_module_test = function() {
   choices = c('Nucleaus PDL-1 Mean', 'Membrane PDL-1 Mean')
   ui = shiny::fluidPage('Test',
-                        shiny::wellPanel(phenotype_module_ui('test1', choices),
+                        shiny::wellPanel(
+                          phenotype_module_ui('test1', choices, TRUE, TRUE),
                         shiny::br(),
-                        phenotype_module_ui('test2', choices, show_help=FALSE)),
+                        phenotype_module_ui('test2', choices, FALSE, FALSE)),
                         shiny::p('Results',
-                                  shiny::textOutput('results'))
+                                  shiny::uiOutput('results'))
   )
 
   server = function(input, output, session) {
@@ -81,8 +92,13 @@ phenotype_module_test = function() {
     the_data2 = shiny::callModule(phenotype_module, 'test2', available)
 
     observe({
-      output$results = shiny::renderText(paste(the_data1(), collapse='\n'))
-      print(text)})
+      output$results = shiny::renderUI(
+        shiny::HTML(paste(c(the_data1(), the_data2()), collapse='<br>')))
+    })
+
+    session$onSessionEnded(function() {
+      shiny::stopApp()
+    })
   }
 
   shiny::shinyApp(ui, server)
