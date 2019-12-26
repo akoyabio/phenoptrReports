@@ -190,3 +190,11 @@ favicon = function() {
   shiny::tags$link(rel="shortcut icon",
    href="https://www.akoyabio.com/application/files/7715/5959/5805/Asset-1.png")
 }
+
+# Escape inline markdown characters so they appear as normal text
+escape_markdown = function(str) {
+  # Characters to replace are *_[]`$^~\
+  # The replacement is <literal \> <group 1> which become '\\\\' and '\\1'
+  # Why doesn't R have raw strings!!?
+  stringr::str_replace_all(str, '([*_\\[\\]`$^~\\\\])', '\\\\\\1')
+}

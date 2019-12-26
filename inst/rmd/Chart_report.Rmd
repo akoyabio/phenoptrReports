@@ -254,7 +254,9 @@ for (sheet_name in h_score_names) {
   h_score_title = read_xlsx(workbook_path, sheet_name, range='C1', col_names=FALSE) %>% 
     unlist()
   if (stringr::str_detect(h_score_title, 'H-Score,')) {
-    title = stringr::str_glue('Cumulative Percent of Cells in {stringr::str_remove(h_score_title, "H-Score,")} Bins')
+    safe_name = stringr::str_remove(h_score_title, "H-Score,") %>% 
+      phenoptrReports:::escape_markdown()
+    title = stringr::str_glue('Cumulative Percent of Cells in {safe_name} Bins')
   } else title = 'Cumulative Percent of Cells in Expression Bins'
   
   # Clean up duplicate names and reshape for plotting
