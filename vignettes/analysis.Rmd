@@ -135,6 +135,15 @@ as the phenotype.
 
 ![](figures/Phenotypes.png)
 
+### H-Score for individual phenotypes
+
+If you selected a score summary file in the Files tab, the phenotype 
+selections will include a "Score" checkbox. If this is checked, the 
+generated report will include H-Score for the selected phenotype in
+addition to the H-Score for all cells.
+
+![](figures/Phenotypes_with_score.png)
+
 ### Select options for spatial analysis
 
 In this section, select the types of spatial analysis to include.

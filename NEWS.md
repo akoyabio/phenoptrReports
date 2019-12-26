@@ -5,6 +5,9 @@
   network drives (#29).
 
 Analysis addin:
+- Add the ability to compute H-Score for individual phenotypes (#30). 
+  When selected, additional H-Score worksheets and charts will be created in the 
+  output reports.
 - When "Use regular expressions" is checked, the regular expression will
   match anywhere in the Slide ID, not just the prefix.
 - Fill in missing tissue categories so all slides have all categories 
