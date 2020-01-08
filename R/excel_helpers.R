@@ -184,6 +184,8 @@ write_nearest_neighbor_summary_sheet = function(wb, stats,
 #' @param sheet_name Optional name for the worksheet.
 #' @param sheet_title Optional title header for the table. If omitted,
 #' the title will be inferred from the `h_score` data if possible.
+#' @param marker Optional marker name to add to the default sheet title.
+#' Ignored if `sheet_title` is provided.
 #' @family output functions
 #' @export
 write_h_score_sheet = function(wb, h_score,
