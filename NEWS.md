@@ -4,6 +4,10 @@
   native chooser. The RStudio chooser is nicer and gives access to 
   network drives (#29).
 
+Merge addin:
+- Fix a problem that caused data corruption when cell seg data is
+  formatted with comma as decimal separator (#31).
+  
 Analysis addin:
 - Add the ability to compute H-Score for individual phenotypes (#30). 
   When selected, additional H-Score worksheets and charts will be created in the 
