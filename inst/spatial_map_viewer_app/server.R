@@ -106,13 +106,25 @@ server = function(input, output, session) {
                   input$show_as, '')
     tag = shiny::span(shiny::strong('Creating image: '), tag)
     id = shiny::showNotification(tag, duration=NULL, closeButton=FALSE)
-    result = phenoptr::count_touching_cells_fast(csd, input$field, .export_path,
+
+    # Capture and report errors from count_touching_cells_fast
+    safe_count = purrr::safely(phenoptr::count_touching_cells_fast,
+                               otherwise=list())
+    result = safe_count(csd, input$field, .export_path,
                                                  phenos,
                                                  phenotype_output()$color,
                                                  phenotype2_output()$color,
                                                  discard_dups=TRUE)
     shiny::removeNotification(id)
-    result
+
+    if (!is.null(result$error)) {
+      shiny::showModal(
+        shiny::modalDialog(
+          shiny::p(result$error$message), title='Processing error',
+          footer=modalButton('OK'), easyClose=TRUE))
+    }
+
+    result$result
   })
 
   #### Image output ####
