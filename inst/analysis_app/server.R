@@ -78,9 +78,12 @@ shinyServer(function(input, output, server) {
       shiny::div(id='well1', shiny::wellPanel(
         shiny::fluidRow(
           shiny::column(6,
-            shiny::checkboxGroupInput('tissue_categories',
-                                      'Select tissue categories:',
-                                  choices=tissue_categories, inline=TRUE)),
+            shiny::checkboxGroupInput(
+              'tissue_categories', 'Select tissue categories:',
+              choices=tissue_categories,
+              selected = if (length(tissue_categories)==1) # Can't use ifelse
+                                tissue_categories else NULL,
+              inline=TRUE)),
           shiny::column(6,
             shiny::selectInput('by', 'Summarize by',
                                by_choices, selected=by_choices[1]))

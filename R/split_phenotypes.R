@@ -78,6 +78,11 @@ consolidate_and_summarize_cell_seg_data = function(csd_files, output_dir,
       d['Slide ID'] = 'None'
     }
 
+    if (!'Tissue Category' %in% names(d)) {
+      message('Adding Tissue Category column to ', basename(path))
+      d['Tissue Category'] = 'All'
+    }
+
     update_progress(detail=paste0('Writing report for "', name, '".'))
     out_path = file.path(output_dir, paste0(name, '.html'))
     write_summary_report(csd=d, output_path=out_path, dataset_name=name)

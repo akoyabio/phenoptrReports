@@ -31,7 +31,7 @@ Imports:
     RColorBrewer,
     readr,
     readxl (>= 1.2.0),
-    rlang,
+    rlang (>= 0.4.0),
     rmarkdown,
     scales,
     shiny (>= 0.13),
@@ -51,7 +51,7 @@ Remotes:
     akoyabio/tiff,
     hms-dbmi/UpSetR
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 Suggests:
     ggridges,
     rstudioapi,

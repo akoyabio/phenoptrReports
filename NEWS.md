@@ -9,6 +9,7 @@ Merge addin:
   formatted with comma as decimal separator (#31).
   
 Analysis addin:
+- Don't require tissue segmentation in the inForm project (#4).
 - Add the ability to compute H-Score for individual phenotypes (#30). 
   When selected, additional H-Score worksheets and charts will be created in the 
   output reports.

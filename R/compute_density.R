@@ -22,6 +22,7 @@ utils::globalVariables(c(
 #' @return A data table with counts converted to density in  \eqn{cells / mm^2}.
 #' @family aggregation functions
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #' @export
 compute_density_from_cell_summary =
   function(counts, summary_path, tissue_categories,
@@ -33,21 +34,36 @@ compute_density_from_cell_summary =
 
   .by = rlang::sym(.by)
 
-  # Read the summary data, extract the columns we need, recode the
-  # `Tissue Category` total name to match what `count_phenotypes` gives us,
-  # and aggregate by .by and `Tissue Category`
+  # Read the summary data
   summary_data = purrr::map_dfr(summary_path,
                                 phenoptr::read_cell_seg_data,
                                 pixels_per_micron=pixels_per_micron)
 
+  # Drop rows for specific phenotypes, we just want one row per field
   if ('Phenotype' %in% names(summary_data))
     summary_data = summary_data %>% dplyr::filter(Phenotype=='All')
 
+  # Manufacture Tissue Category Area if not present
+  summary_data = ensure_tissue_category_area(summary_data)
+
+  # Just the columns we need
   summary_data = summary_data %>%
     dplyr::select(!!.by, `Tissue Category`,
                   dplyr::starts_with('Tissue Category Area'))
 
   compute_density_from_table(counts, summary_data, tissue_categories, .by)
+}
+
+# Add Tissue Category and Tissue Category Area columns to summary
+# data from inForm projects that don't segment tissue.
+ensure_tissue_category_area = function(summary_data) {
+  if (any(startsWith(names(summary_data), 'Tissue Category Area')))
+    return (summary_data) # Nothing to do
+
+  summary_data %>%
+    dplyr::mutate(`Tissue Category Area (square microns)` =
+              .data$`Total Cells` / .data$`Cell Density (per square mm)` * 1e6,
+              `Tissue Category`='All')
 }
 
 #' Compute cell densities from counts and tissue area
@@ -110,8 +126,15 @@ compute_density_from_table = function(counts, areas, tissue_categories,
     dplyr::filter(`Tissue Category` %in% tissue_categories) %>%
     dplyr::group_by(!!.by, `Tissue Category`) %>%
     dplyr::summarize(`Tissue Area` = sum(`Tissue Area`)/1e6) %>%
-    add_tissue_category_totals(tissue_categories, .by) %>%
-    dplyr::mutate(`Tissue Category` =
+    add_tissue_category_totals(tissue_categories, .by)
+
+  # If the inForm project has tissue categories, `counts` will
+  # have 'Total' lines; change `areas`` to match. For projects without
+  # tissue category, `counts` has a fake 'All' category so `areas`
+  # doesn't need to change.
+  if ('Total' %in% counts$`Tissue Category`)
+    areas = areas %>%
+      dplyr::mutate(`Tissue Category` =
                     dplyr::recode(`Tissue Category`, 'All'='Total'))
 
   # Join with the counts table and divide counts by area to get density
