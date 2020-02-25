@@ -4,8 +4,12 @@
 \alias{compute_h_score_from_score_data}
 \title{Compute H-Score based on parameters in a score data file}
 \usage{
-compute_h_score_from_score_data(csd, score_path,
-  tissue_categories = NULL, .by = "Slide ID")
+compute_h_score_from_score_data(
+  csd,
+  score_path,
+  tissue_categories = NULL,
+  .by = "Slide ID"
+)
 }
 \arguments{
 \item{csd}{Cell seg data to use.}
@@ -25,14 +29,15 @@ percents in each bin and the H-Score. See \link{compute_h_score}.
 Compute H-Score based on parameters in a score data file
 }
 \seealso{
-Other aggregation functions: \code{\link{compute_density_from_cell_summary}},
-  \code{\link{compute_density_from_table}},
-  \code{\link{compute_h_score}},
-  \code{\link{compute_mean_expression_many}},
-  \code{\link{compute_mean_expression}},
-  \code{\link{compute_positivity_many}},
-  \code{\link{compute_positivity}},
-  \code{\link{count_phenotypes}},
-  \code{\link{counts_to_percents}}
+Other aggregation functions: 
+\code{\link{compute_density_from_cell_summary}()},
+\code{\link{compute_density_from_table}()},
+\code{\link{compute_h_score}()},
+\code{\link{compute_mean_expression_many}()},
+\code{\link{compute_mean_expression}()},
+\code{\link{compute_positivity_many}()},
+\code{\link{compute_positivity}()},
+\code{\link{count_phenotypes}()},
+\code{\link{counts_to_percents}()}
 }
 \concept{aggregation functions}

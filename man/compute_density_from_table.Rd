@@ -4,11 +4,10 @@
 \alias{compute_density_from_table}
 \title{Compute cell densities from counts and tissue area}
 \usage{
-compute_density_from_table(counts, areas, tissue_categories,
-  .by = "Slide ID")
+compute_density_from_table(counts, areas, tissue_categories, .by = "Slide ID")
 }
 \arguments{
-\item{counts}{A data frame with columns for .by, \code{Tissue Category},
+\item{counts}{A data frame with columns for .by, \verb{Tissue Category},
 and counts, such as the output of \link{count_phenotypes}.}
 
 \item{areas}{A data frame containing tissue areas
@@ -28,14 +27,15 @@ Compute cell density from a table of cell counts and
 a table of tissue areas.
 }
 \seealso{
-Other aggregation functions: \code{\link{compute_density_from_cell_summary}},
-  \code{\link{compute_h_score_from_score_data}},
-  \code{\link{compute_h_score}},
-  \code{\link{compute_mean_expression_many}},
-  \code{\link{compute_mean_expression}},
-  \code{\link{compute_positivity_many}},
-  \code{\link{compute_positivity}},
-  \code{\link{count_phenotypes}},
-  \code{\link{counts_to_percents}}
+Other aggregation functions: 
+\code{\link{compute_density_from_cell_summary}()},
+\code{\link{compute_h_score_from_score_data}()},
+\code{\link{compute_h_score}()},
+\code{\link{compute_mean_expression_many}()},
+\code{\link{compute_mean_expression}()},
+\code{\link{compute_positivity_many}()},
+\code{\link{compute_positivity}()},
+\code{\link{count_phenotypes}()},
+\code{\link{counts_to_percents}()}
 }
 \concept{aggregation functions}

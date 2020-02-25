@@ -67,7 +67,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.6</span>
       </span>
     </div>
 
@@ -136,6 +136,27 @@
       <small>Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="phenoptrreports-026" class="section level1">
+<h1 class="page-header">
+<a href="#phenoptrreports-026" class="anchor"></a>phenoptrReports 0.2.6</h1>
+<p><strong>2020-02-25</strong></p>
+<p>Analysis addin:</p>
+<ul>
+<li>Don’t require tissue segmentation in the inForm project (<a href='https://github.com/akoyabio/phenoptrReports/issues/4'>#4</a>).</li>
+<li>Add the ability to compute H-Score for individual phenotypes (<a href='https://github.com/akoyabio/phenoptrReports/issues/30'>#30</a>). When selected, additional H-Score worksheets and charts will be created in the output reports.</li>
+<li>When “Use regular expressions” is checked, the regular expression will match anywhere in the Slide ID, not just the prefix.</li>
+<li>Fill in missing tissue categories so all slides have all categories reported (<a href='https://github.com/akoyabio/phenoptrReports/issues/1'>#1</a>).</li>
+<li>Report missing / invalid values consistently as #N/A, never as #NUM.</li>
+</ul>
+<p>Merge addin:</p>
+<ul>
+<li>Fix a problem that caused data corruption when cell seg data is formatted with comma as decimal separator (<a href='https://github.com/akoyabio/phenoptrReports/issues/31'>#31</a>).</li>
+</ul>
+<p>Misc:</p>
+<ul>
+<li>Use the RStudio folder chooser when available, rather than the Windows native chooser. The RStudio chooser is nicer and gives access to network drives (<a href='https://github.com/akoyabio/phenoptrReports/issues/29'>#29</a>).</li>
+</ul>
+</div>
     <div id="phenoptrreports-025" class="section level1">
 <h1 class="page-header">
 <a href="#phenoptrreports-025" class="anchor"></a>phenoptrReports 0.2.5</h1>
@@ -425,6 +446,7 @@
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
+        <li><a href="#phenoptrreports-026">0.2.6</a></li>
         <li><a href="#phenoptrreports-025">0.2.5</a></li>
         <li><a href="#phenoptrreports-024">0.2.4</a></li>
         <li><a href="#phenoptrreports-023">0.2.3</a></li>

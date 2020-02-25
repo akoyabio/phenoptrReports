@@ -5,8 +5,11 @@
 \title{Consolidate cell seg data files from parallel projects
 and create summary reports}
 \usage{
-consolidate_and_summarize_cell_seg_data(csd_files, output_dir,
-  update_progress = NULL)
+consolidate_and_summarize_cell_seg_data(
+  csd_files,
+  output_dir,
+  update_progress = NULL
+)
 }
 \arguments{
 \item{csd_files}{A list or vector of paths to cell seg data files.}
@@ -32,6 +35,6 @@ directory.
 
 The
 individual files must all have exactly the same
-\code{Sample Name} or \code{Annotation ID} and \code{Cell ID}
+\verb{Sample Name} or \verb{Annotation ID} and \verb{Cell ID}
 columns. \link{split_phenotypes} is called to split the \code{Phenotype} columns.
 }

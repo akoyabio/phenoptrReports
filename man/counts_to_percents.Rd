@@ -20,14 +20,15 @@ to a table of fractional percents. Percents are computed row-wise, e.g. per
 tissue category.
 }
 \seealso{
-Other aggregation functions: \code{\link{compute_density_from_cell_summary}},
-  \code{\link{compute_density_from_table}},
-  \code{\link{compute_h_score_from_score_data}},
-  \code{\link{compute_h_score}},
-  \code{\link{compute_mean_expression_many}},
-  \code{\link{compute_mean_expression}},
-  \code{\link{compute_positivity_many}},
-  \code{\link{compute_positivity}},
-  \code{\link{count_phenotypes}}
+Other aggregation functions: 
+\code{\link{compute_density_from_cell_summary}()},
+\code{\link{compute_density_from_table}()},
+\code{\link{compute_h_score_from_score_data}()},
+\code{\link{compute_h_score}()},
+\code{\link{compute_mean_expression_many}()},
+\code{\link{compute_mean_expression}()},
+\code{\link{compute_positivity_many}()},
+\code{\link{compute_positivity}()},
+\code{\link{count_phenotypes}()}
 }
 \concept{aggregation functions}

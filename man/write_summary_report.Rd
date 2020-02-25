@@ -4,8 +4,12 @@
 \alias{write_summary_report}
 \title{Create a summary report for a cell seg data file}
 \usage{
-write_summary_report(csd_path = NULL, csd = NULL,
-  dataset_name = NULL, output_path)
+write_summary_report(
+  csd_path = NULL,
+  csd = NULL,
+  dataset_name = NULL,
+  output_path
+)
 }
 \arguments{
 \item{csd_path}{Path to cell seg data file, or NULL.}

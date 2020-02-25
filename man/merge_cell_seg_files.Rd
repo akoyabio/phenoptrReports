@@ -4,8 +4,7 @@
 \alias{merge_cell_seg_files}
 \title{Merge inForm output from multiple fields.}
 \usage{
-merge_cell_seg_files(base_path, update_progress = NULL,
-  recursive = FALSE)
+merge_cell_seg_files(base_path, update_progress = NULL, recursive = FALSE)
 }
 \arguments{
 \item{base_path}{Path to a directory containing files to merge. All

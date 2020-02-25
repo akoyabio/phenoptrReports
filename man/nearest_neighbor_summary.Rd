@@ -4,12 +4,16 @@
 \alias{nearest_neighbor_summary}
 \title{Summarize nearest neighbor distances}
 \usage{
-nearest_neighbor_summary(csd, phenotypes = NULL, details_path = NULL,
-  .by = "Slide ID")
+nearest_neighbor_summary(
+  csd,
+  phenotypes = NULL,
+  details_path = NULL,
+  .by = "Slide ID"
+)
 }
 \arguments{
-\item{csd}{Cell seg data with \code{Cell X Position},
-\code{Cell Y Position}, field name and \code{Phenotype} columns.}
+\item{csd}{Cell seg data with \verb{Cell X Position},
+\verb{Cell Y Position}, field name and \code{Phenotype} columns.}
 
 \item{phenotypes}{Optional list of phenotypes to include. If omitted,
 will use \code{unique_phenotypes(csd)}.}

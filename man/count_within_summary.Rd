@@ -4,12 +4,18 @@
 \alias{count_within_summary}
 \title{Summarize "count within" distances}
 \usage{
-count_within_summary(csd, radii, phenotypes = NULL, categories = NA,
-  details_path = NULL, .by = "Slide ID")
+count_within_summary(
+  csd,
+  radii,
+  phenotypes = NULL,
+  categories = NA,
+  details_path = NULL,
+  .by = "Slide ID"
+)
 }
 \arguments{
-\item{csd}{Cell seg data with \code{Cell X Position},
-\code{Cell Y Position}, field name and \code{Phenotype} columns.}
+\item{csd}{Cell seg data with \verb{Cell X Position},
+\verb{Cell Y Position}, field name and \code{Phenotype} columns.}
 
 \item{radii}{Vector of radii to search within.}
 

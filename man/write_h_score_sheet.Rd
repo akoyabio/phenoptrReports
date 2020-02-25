@@ -4,31 +4,40 @@
 \alias{write_h_score_sheet}
 \title{Write an H-Score table to an Excel workbook}
 \usage{
-write_h_score_sheet(wb, h_score, sheet_name = "H-Score",
-  sheet_title = NULL)
+write_h_score_sheet(
+  wb,
+  h_score,
+  sheet_name = "H-Score",
+  sheet_title = NULL,
+  marker = NULL
+)
 }
 \arguments{
 \item{wb}{An openxlsx Workbook from \link[openxlsx:createWorkbook]{openxlsx::createWorkbook}}
 
-\item{h_score}{A data frame with columns for \code{Slide ID}, \code{Tissue Category},
+\item{h_score}{A data frame with columns for \verb{Slide ID}, \verb{Tissue Category},
 and percent, such as the output of \link{compute_h_score}.}
 
 \item{sheet_name}{Optional name for the worksheet.}
 
 \item{sheet_title}{Optional title header for the table. If omitted,
 the title will be inferred from the \code{h_score} data if possible.}
+
+\item{marker}{Optional marker name to add to the default sheet title.
+Ignored if \code{sheet_title} is provided.}
 }
 \description{
 Write a formatted H-Score table to a sheet in an Excel workbook.
 }
 \seealso{
-Other output functions: \code{\link{write_count_within_sheet}},
-  \code{\link{write_counts_sheet}},
-  \code{\link{write_density_sheet}},
-  \code{\link{write_expression_sheet}},
-  \code{\link{write_nearest_neighbor_summary_sheet}},
-  \code{\link{write_percents_sheet}},
-  \code{\link{write_plot_sheet}},
-  \code{\link{write_summary_sheet}}
+Other output functions: 
+\code{\link{write_count_within_sheet}()},
+\code{\link{write_counts_sheet}()},
+\code{\link{write_density_sheet}()},
+\code{\link{write_expression_sheet}()},
+\code{\link{write_nearest_neighbor_summary_sheet}()},
+\code{\link{write_percents_sheet}()},
+\code{\link{write_plot_sheet}()},
+\code{\link{write_summary_sheet}()}
 }
 \concept{output functions}

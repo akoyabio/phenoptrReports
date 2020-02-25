@@ -4,8 +4,12 @@
 \alias{write_plot_sheet}
 \title{Write a plot to an Excel workbook}
 \usage{
-write_plot_sheet(wb, plot, sheet_name = "Phenotypes",
-  sheet_title = "All combinations of phenotypes in all slides")
+write_plot_sheet(
+  wb,
+  plot,
+  sheet_name = "Phenotypes",
+  sheet_title = "All combinations of phenotypes in all slides"
+)
 }
 \arguments{
 \item{wb}{An openxlsx Workbook from \link[openxlsx:createWorkbook]{openxlsx::createWorkbook}}
@@ -20,13 +24,14 @@ write_plot_sheet(wb, plot, sheet_name = "Phenotypes",
 Write a plot to a sheet in an Excel workbook.
 }
 \seealso{
-Other output functions: \code{\link{write_count_within_sheet}},
-  \code{\link{write_counts_sheet}},
-  \code{\link{write_density_sheet}},
-  \code{\link{write_expression_sheet}},
-  \code{\link{write_h_score_sheet}},
-  \code{\link{write_nearest_neighbor_summary_sheet}},
-  \code{\link{write_percents_sheet}},
-  \code{\link{write_summary_sheet}}
+Other output functions: 
+\code{\link{write_count_within_sheet}()},
+\code{\link{write_counts_sheet}()},
+\code{\link{write_density_sheet}()},
+\code{\link{write_expression_sheet}()},
+\code{\link{write_h_score_sheet}()},
+\code{\link{write_nearest_neighbor_summary_sheet}()},
+\code{\link{write_percents_sheet}()},
+\code{\link{write_summary_sheet}()}
 }
 \concept{output functions}

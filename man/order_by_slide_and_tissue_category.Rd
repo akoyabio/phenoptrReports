@@ -6,8 +6,7 @@
 categories in the given order and the
 "Total" category in the proper place.}
 \usage{
-order_by_slide_and_tissue_category(d, tissue_categories,
-  .by = "Slide ID")
+order_by_slide_and_tissue_category(d, tissue_categories, .by = "Slide ID")
 }
 \arguments{
 \item{d}{A data frame with \code{.by} and Tissue Category columns}

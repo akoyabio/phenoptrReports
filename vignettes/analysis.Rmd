@@ -99,7 +99,9 @@ In this section, select the tissue categories to include in the analysis.
 The Slide IDs in your data file may contain prefix information that is not
 wanted in the final report. Any text you enter here will be removed from 
 the start of the Slide IDs. The text can be either an exact match or a
-[regular expression](http://r4ds.had.co.nz/strings.html#matching-patterns-with-regular-expressions). In either case it will match from the start of the Slide ID.
+[regular expression](http://r4ds.had.co.nz/strings.html#matching-patterns-with-regular-expressions). Exact matches will match from the start of the Slide ID.
+Regular expressions will match anywhere in the Slide ID; to match only from
+the start, start the regular expression with `^`.
 
 Leave this field blank to use the existing Slide IDs unchanged.
 

@@ -4,9 +4,12 @@
 \alias{write_nearest_neighbor_summary_sheet}
 \title{Write a nearest neighbor summary to an Excel workbook}
 \usage{
-write_nearest_neighbor_summary_sheet(wb, stats,
+write_nearest_neighbor_summary_sheet(
+  wb,
+  stats,
   sheet_name = "Nearest Neighbors",
-  sheet_title = "Nearest Neighbor Distances for Phenotype Pairs (microns)")
+  sheet_title = "Nearest Neighbor Distances for Phenotype Pairs (microns)"
+)
 }
 \arguments{
 \item{wb}{An openxlsx Workbook from \link[openxlsx:createWorkbook]{openxlsx::createWorkbook}}
@@ -22,13 +25,14 @@ Write a formatted nearest neighbor summary table to a
 sheet in an Excel workbook.
 }
 \seealso{
-Other output functions: \code{\link{write_count_within_sheet}},
-  \code{\link{write_counts_sheet}},
-  \code{\link{write_density_sheet}},
-  \code{\link{write_expression_sheet}},
-  \code{\link{write_h_score_sheet}},
-  \code{\link{write_percents_sheet}},
-  \code{\link{write_plot_sheet}},
-  \code{\link{write_summary_sheet}}
+Other output functions: 
+\code{\link{write_count_within_sheet}()},
+\code{\link{write_counts_sheet}()},
+\code{\link{write_density_sheet}()},
+\code{\link{write_expression_sheet}()},
+\code{\link{write_h_score_sheet}()},
+\code{\link{write_percents_sheet}()},
+\code{\link{write_plot_sheet}()},
+\code{\link{write_summary_sheet}()}
 }
 \concept{output functions}

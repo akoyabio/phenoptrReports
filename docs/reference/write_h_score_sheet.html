@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.6</span>
       </span>
     </div>
 
@@ -143,8 +143,13 @@
     <p>Write a formatted H-Score table to a sheet in an Excel workbook.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>write_h_score_sheet</span>(<span class='no'>wb</span>, <span class='no'>h_score</span>, <span class='kw'>sheet_name</span> <span class='kw'>=</span> <span class='st'>"H-Score"</span>,
-  <span class='kw'>sheet_title</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>write_h_score_sheet</span>(
+  <span class='no'>wb</span>,
+  <span class='no'>h_score</span>,
+  <span class='kw'>sheet_name</span> <span class='kw'>=</span> <span class='st'>"H-Score"</span>,
+  <span class='kw'>sheet_title</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>marker</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -167,18 +172,24 @@ and percent, such as the output of <a href='compute_h_score.html'>compute_h_scor
       <td><p>Optional title header for the table. If omitted,
 the title will be inferred from the <code>h_score</code> data if possible.</p></td>
     </tr>
+    <tr>
+      <th>marker</th>
+      <td><p>Optional marker name to add to the default sheet title.
+Ignored if <code>sheet_title</code> is provided.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other output functions: <code><a href='write_count_within_sheet.html'>write_count_within_sheet</a></code>,
-  <code><a href='write_counts_sheet.html'>write_counts_sheet</a></code>,
-  <code><a href='write_density_sheet.html'>write_density_sheet</a></code>,
-  <code><a href='write_expression_sheet.html'>write_expression_sheet</a></code>,
-  <code><a href='write_nearest_neighbor_summary_sheet.html'>write_nearest_neighbor_summary_sheet</a></code>,
-  <code><a href='write_percents_sheet.html'>write_percents_sheet</a></code>,
-  <code><a href='write_plot_sheet.html'>write_plot_sheet</a></code>,
-  <code><a href='write_summary_sheet.html'>write_summary_sheet</a></code></p></div>
+    <div class='dont-index'><p>Other output functions: 
+<code><a href='write_count_within_sheet.html'>write_count_within_sheet</a>()</code>,
+<code><a href='write_counts_sheet.html'>write_counts_sheet</a>()</code>,
+<code><a href='write_density_sheet.html'>write_density_sheet</a>()</code>,
+<code><a href='write_expression_sheet.html'>write_expression_sheet</a>()</code>,
+<code><a href='write_nearest_neighbor_summary_sheet.html'>write_nearest_neighbor_summary_sheet</a>()</code>,
+<code><a href='write_percents_sheet.html'>write_percents_sheet</a>()</code>,
+<code><a href='write_plot_sheet.html'>write_plot_sheet</a>()</code>,
+<code><a href='write_summary_sheet.html'>write_summary_sheet</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

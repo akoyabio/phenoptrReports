@@ -4,8 +4,12 @@
 \alias{choose_files}
 \title{Cross-platform choose files function}
 \usage{
-choose_files(caption = "Select files", default = "", multi = TRUE,
-  filters = NULL)
+choose_files(
+  caption = "Select files",
+  default = "",
+  multi = TRUE,
+  filters = NULL
+)
 }
 \arguments{
 \item{caption}{Caption for the choose directory dialog}

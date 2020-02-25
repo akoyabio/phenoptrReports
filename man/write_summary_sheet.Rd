@@ -9,7 +9,7 @@ write_summary_sheet(wb, summary_table, sheet_name = "Slide Summary")
 \arguments{
 \item{wb}{An openxlsx Workbook from \link[openxlsx:createWorkbook]{openxlsx::createWorkbook}}
 
-\item{summary_table}{A data frame with columns for \code{Slide ID} and count.}
+\item{summary_table}{A data frame with columns for \verb{Slide ID} and count.}
 
 \item{sheet_name}{Optional name for the worksheet.}
 }
@@ -18,13 +18,14 @@ Write a table containing counts of fields per slide to
 a sheet in an Excel workbook.
 }
 \seealso{
-Other output functions: \code{\link{write_count_within_sheet}},
-  \code{\link{write_counts_sheet}},
-  \code{\link{write_density_sheet}},
-  \code{\link{write_expression_sheet}},
-  \code{\link{write_h_score_sheet}},
-  \code{\link{write_nearest_neighbor_summary_sheet}},
-  \code{\link{write_percents_sheet}},
-  \code{\link{write_plot_sheet}}
+Other output functions: 
+\code{\link{write_count_within_sheet}()},
+\code{\link{write_counts_sheet}()},
+\code{\link{write_density_sheet}()},
+\code{\link{write_expression_sheet}()},
+\code{\link{write_h_score_sheet}()},
+\code{\link{write_nearest_neighbor_summary_sheet}()},
+\code{\link{write_percents_sheet}()},
+\code{\link{write_plot_sheet}()}
 }
 \concept{output functions}

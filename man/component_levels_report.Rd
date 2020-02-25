@@ -4,8 +4,11 @@
 \alias{component_levels_report}
 \title{Create a component levels report for multiplex samples}
 \usage{
-component_levels_report(export_path = NULL, quantiles = 0.999,
-  export_data = FALSE)
+component_levels_report(
+  export_path = NULL,
+  quantiles = 0.999,
+  export_data = FALSE
+)
 }
 \arguments{
 \item{export_path}{Path to a directory containing component_data files.}

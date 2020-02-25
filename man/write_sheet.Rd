@@ -4,8 +4,15 @@
 \alias{write_sheet}
 \title{Write a single sheet with formatting common to all sheets.}
 \usage{
-write_sheet(wb, d, sheet_name, sheet_title, header_col, keepNA = TRUE,
-  addGrid = TRUE)
+write_sheet(
+  wb,
+  d,
+  sheet_name,
+  sheet_title,
+  header_col,
+  keepNA = TRUE,
+  addGrid = TRUE
+)
 }
 \arguments{
 \item{wb}{An openxlsx Workbook from \link[openxlsx:createWorkbook]{openxlsx::createWorkbook}}

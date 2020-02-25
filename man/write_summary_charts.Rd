@@ -4,8 +4,13 @@
 \alias{write_summary_charts}
 \title{Create summary charts from the results of an analysis}
 \usage{
-write_summary_charts(workbook_path, output_path, .by = "Slide ID",
-  max_slides_per_plot = 20, max_heatmaps_per_plot = 8)
+write_summary_charts(
+  workbook_path,
+  output_path,
+  .by = "Slide ID",
+  max_slides_per_plot = 20,
+  max_heatmaps_per_plot = 8
+)
 }
 \arguments{
 \item{workbook_path}{Path to an Excel file containing sheets written

@@ -4,14 +4,20 @@
 \alias{compute_mean_expression_many}
 \title{Compute mean expression of cells for multiple phenotypes and markers.}
 \usage{
-compute_mean_expression_many(csd, phenotypes, params,
-  tissue_categories = NULL, percentile = NULL, count = NULL,
-  .by = "Slide ID")
+compute_mean_expression_many(
+  csd,
+  phenotypes,
+  params,
+  tissue_categories = NULL,
+  percentile = NULL,
+  count = NULL,
+  .by = "Slide ID"
+)
 }
 \arguments{
 \item{csd}{Cell seg data to use. This should already have been filtered
 for the slides or fields of interest. It may already be nested by
-!!.by and \code{Tissue Category}.}
+!!.by and \verb{Tissue Category}.}
 
 \item{phenotypes}{A named list of phenotype selectors
 (see \link[phenoptr:parse_phenotypes]{phenoptr::parse_phenotypes}).}
@@ -49,7 +55,7 @@ expression of the highest expressing cells is computed. If a negative
 \code{percentile=-.1} would give the expression of the lowest-expressing
 decile.
 
-By default, this function aggregates by \code{Slide ID} and \code{Tissue Category}.
+By default, this function aggregates by \verb{Slide ID} and \verb{Tissue Category}.
 To compute mean expression by a different aggregate, pass a column name in
 the \code{.by} parameter.
 
@@ -57,14 +63,15 @@ To aggregate over all cells, include \code{"Total Cells"=NA} as one of the
 phenotypes.
 }
 \seealso{
-Other aggregation functions: \code{\link{compute_density_from_cell_summary}},
-  \code{\link{compute_density_from_table}},
-  \code{\link{compute_h_score_from_score_data}},
-  \code{\link{compute_h_score}},
-  \code{\link{compute_mean_expression}},
-  \code{\link{compute_positivity_many}},
-  \code{\link{compute_positivity}},
-  \code{\link{count_phenotypes}},
-  \code{\link{counts_to_percents}}
+Other aggregation functions: 
+\code{\link{compute_density_from_cell_summary}()},
+\code{\link{compute_density_from_table}()},
+\code{\link{compute_h_score_from_score_data}()},
+\code{\link{compute_h_score}()},
+\code{\link{compute_mean_expression}()},
+\code{\link{compute_positivity_many}()},
+\code{\link{compute_positivity}()},
+\code{\link{count_phenotypes}()},
+\code{\link{counts_to_percents}()}
 }
 \concept{aggregation functions}

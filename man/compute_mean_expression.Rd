@@ -4,8 +4,7 @@
 \alias{compute_mean_expression}
 \title{Compute mean expression of cells for a single phenotype and marker.}
 \usage{
-compute_mean_expression(csd, phenotype, param, percentile = NULL,
-  count = NULL)
+compute_mean_expression(csd, phenotype, param, percentile = NULL, count = NULL)
 }
 \arguments{
 \item{csd}{Cell seg data to use. This should already have been filtered
@@ -34,14 +33,15 @@ within the given phenotype.
 Report the mean expression of the high-expressing cells.
 }
 \seealso{
-Other aggregation functions: \code{\link{compute_density_from_cell_summary}},
-  \code{\link{compute_density_from_table}},
-  \code{\link{compute_h_score_from_score_data}},
-  \code{\link{compute_h_score}},
-  \code{\link{compute_mean_expression_many}},
-  \code{\link{compute_positivity_many}},
-  \code{\link{compute_positivity}},
-  \code{\link{count_phenotypes}},
-  \code{\link{counts_to_percents}}
+Other aggregation functions: 
+\code{\link{compute_density_from_cell_summary}()},
+\code{\link{compute_density_from_table}()},
+\code{\link{compute_h_score_from_score_data}()},
+\code{\link{compute_h_score}()},
+\code{\link{compute_mean_expression_many}()},
+\code{\link{compute_positivity_many}()},
+\code{\link{compute_positivity}()},
+\code{\link{count_phenotypes}()},
+\code{\link{counts_to_percents}()}
 }
 \concept{aggregation functions}

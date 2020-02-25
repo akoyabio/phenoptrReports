@@ -1,12 +1,5 @@
-# phenoptrReports 0.2.5.9000
-
-- Use the RStudio folder chooser when available, rather than the Windows
-  native chooser. The RStudio chooser is nicer and gives access to 
-  network drives (#29).
-
-Merge addin:
-- Fix a problem that caused data corruption when cell seg data is
-  formatted with comma as decimal separator (#31).
+# phenoptrReports 0.2.6
+**2020-02-25**
   
 Analysis addin:
 - Don't require tissue segmentation in the inForm project (#4).
@@ -18,6 +11,15 @@ Analysis addin:
 - Fill in missing tissue categories so all slides have all categories 
   reported (#1).
 - Report missing / invalid values consistently as #N/A, never as #NUM.
+
+Merge addin:
+- Fix a problem that caused data corruption when cell seg data is
+  formatted with comma as decimal separator (#31).
+
+Misc:
+- Use the RStudio folder chooser when available, rather than the Windows
+  native chooser. The RStudio chooser is nicer and gives access to 
+  network drives (#29).
 
 # phenoptrReports 0.2.5
 **2019-10-22**

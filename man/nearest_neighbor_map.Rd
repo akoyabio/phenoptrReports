@@ -4,9 +4,17 @@
 \alias{nearest_neighbor_map}
 \title{Make a nearest neighbor map for a single field}
 \usage{
-nearest_neighbor_map(csd, field_name, export_path, phenos, color1, color2,
-  show_as = c("from_to", "to_from", "mutual", "none"), dot_size = 3,
-  add_logo = TRUE)
+nearest_neighbor_map(
+  csd,
+  field_name,
+  export_path,
+  phenos,
+  color1,
+  color2,
+  show_as = c("from_to", "to_from", "mutual", "none"),
+  dot_size = 3,
+  add_logo = TRUE
+)
 }
 \arguments{
 \item{csd}{Cell seg data with distance columns}

@@ -4,13 +4,17 @@
 \alias{write_percents_sheet}
 \title{Write a cell percent table to an Excel workbook}
 \usage{
-write_percents_sheet(wb, percents, sheet_name = "Cell Percents",
-  sheet_title = "Percentage of Total Cells")
+write_percents_sheet(
+  wb,
+  percents,
+  sheet_name = "Cell Percents",
+  sheet_title = "Percentage of Total Cells"
+)
 }
 \arguments{
 \item{wb}{An openxlsx Workbook from \link[openxlsx:createWorkbook]{openxlsx::createWorkbook}}
 
-\item{percents}{A data frame with columns for \code{Slide ID}, \code{Tissue Category},
+\item{percents}{A data frame with columns for \verb{Slide ID}, \verb{Tissue Category},
 and percent.}
 
 \item{sheet_name}{Optional name for the worksheet.}
@@ -21,13 +25,14 @@ and percent.}
 Write a formatted cell percent table to a sheet in an Excel workbook.
 }
 \seealso{
-Other output functions: \code{\link{write_count_within_sheet}},
-  \code{\link{write_counts_sheet}},
-  \code{\link{write_density_sheet}},
-  \code{\link{write_expression_sheet}},
-  \code{\link{write_h_score_sheet}},
-  \code{\link{write_nearest_neighbor_summary_sheet}},
-  \code{\link{write_plot_sheet}},
-  \code{\link{write_summary_sheet}}
+Other output functions: 
+\code{\link{write_count_within_sheet}()},
+\code{\link{write_counts_sheet}()},
+\code{\link{write_density_sheet}()},
+\code{\link{write_expression_sheet}()},
+\code{\link{write_h_score_sheet}()},
+\code{\link{write_nearest_neighbor_summary_sheet}()},
+\code{\link{write_plot_sheet}()},
+\code{\link{write_summary_sheet}()}
 }
 \concept{output functions}

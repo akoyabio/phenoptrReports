@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.6</span>
       </span>
     </div>
 
@@ -99,7 +99,7 @@
       <h1>Analyzing inForm data</h1>
                         <h4 class="author">Kent Johnson</h4>
             
-            <h4 class="date">2019-10-22</h4>
+            <h4 class="date">2020-02-25</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/akoyabio/phenoptrReports/blob/master/vignettes/analysis.Rmd"><code>vignettes/analysis.Rmd</code></a></small>
       <div class="hidden name"><code>analysis.Rmd</code></div>
@@ -169,7 +169,7 @@
 <div id="slide-id-prefix" class="section level4">
 <h4 class="hasAnchor">
 <a href="#slide-id-prefix" class="anchor"></a>Slide ID prefix</h4>
-<p>The Slide IDs in your data file may contain prefix information that is not wanted in the final report. Any text you enter here will be removed from the start of the Slide IDs. The text can be either an exact match or a <a href="http://r4ds.had.co.nz/strings.html#matching-patterns-with-regular-expressions">regular expression</a>. In either case it will match from the start of the Slide ID.</p>
+<p>The Slide IDs in your data file may contain prefix information that is not wanted in the final report. Any text you enter here will be removed from the start of the Slide IDs. The text can be either an exact match or a <a href="http://r4ds.had.co.nz/strings.html#matching-patterns-with-regular-expressions">regular expression</a>. Exact matches will match from the start of the Slide ID. Regular expressions will match anywhere in the Slide ID; to match only from the start, start the regular expression with <code><a href="https://rdrr.io/r/base/Arithmetic.html">^</a></code>.</p>
 <p>Leave this field blank to use the existing Slide IDs unchanged.</p>
 <p><img src="figures/Slide_id_prefix.png"></p>
 </div>
@@ -185,6 +185,12 @@
 <p>To compute expression of multiple markers for a single phenotype, add a duplicate phenotype with the second marker selected. To compute expression of a marker for all cells, enter “Total Cells” as the phenotype.</p>
 <p><img src="figures/Phenotypes.png"></p>
 </div>
+</div>
+<div id="h-score-for-individual-phenotypes" class="section level3">
+<h3 class="hasAnchor">
+<a href="#h-score-for-individual-phenotypes" class="anchor"></a>H-Score for individual phenotypes</h3>
+<p>If you selected a score summary file in the Files tab, the phenotype selections will include a “Score” checkbox. If this is checked, the generated report will include H-Score for the selected phenotype in addition to the H-Score for all cells.</p>
+<p><img src="figures/Phenotypes_with_score.png"></p>
 </div>
 <div id="select-options-for-spatial-analysis" class="section level3">
 <h3 class="hasAnchor">
@@ -241,6 +247,7 @@
       <li><a href="#define-phenotypes-and-markers">Define phenotypes and markers</a></li>
       </ul>
 </li>
+      <li><a href="#h-score-for-individual-phenotypes">H-Score for individual phenotypes</a></li>
       <li><a href="#select-options-for-spatial-analysis">Select options for spatial analysis</a></li>
       <li><a href="#create-reports">Create reports</a></li>
       </ul>
