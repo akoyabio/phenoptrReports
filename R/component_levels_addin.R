@@ -55,7 +55,6 @@ addin_50_component_levels = function() {
   )
 
   server <- function(input, output, session) {
-    file_list = shiny::reactiveVal()
     export_dir = shiny::reactiveVal()
     quantiles = shiny::reactiveVal(default_quantiles)
 

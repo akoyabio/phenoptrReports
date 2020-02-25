@@ -24,9 +24,9 @@ phenotype_module_ui = function(id, values, show_score, show_help) {
   if (show_help)
     input_row = c(input_row, list(
       shiny::column(1, style='padding-top: 23px;',
-                    shiny::actionButton(ns('help'), '',
-                                        style='border: none; background: transparent',
-                                        icon=shiny::icon('question-circle-o', class='fa-2x')))
+        shiny::actionButton(ns('help'), '',
+          style='border: none; background: transparent',
+          icon=shiny::icon('question-circle-o', class='fa-2x')))
 
     ))
 

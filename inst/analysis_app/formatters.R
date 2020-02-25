@@ -225,7 +225,7 @@ h_score = compute_h_score_from_score_data(csd, score_path,
 
     result <<- stringr::str_glue(
     "{result}{table_name}=compute_h_score_from_score_data(
-       csd[select_rows(csd, phenotypes[['{pheno}']]),],
+       csd[select_rows(csd, phenotypes[['{pheno}']]), ],
        score_path, tissue_categories, .by=.by)
 \n\n")
   })
@@ -236,8 +236,8 @@ h_score = compute_h_score_from_score_data(csd, score_path,
 format_nearest_neighbors = function(output_dir, include_distance_details) {
   table_pairs <<- c(table_pairs,
                     list(c(cleanup_code('nearest_neighbors'),
-                           worksheet_code('write_nearest_neighbor_summary_sheet',
-                                          'nearest_neighbors'))))
+                         worksheet_code('write_nearest_neighbor_summary_sheet',
+                                        'nearest_neighbors'))))
 
   if (include_distance_details)
     stringr::str_glue(
