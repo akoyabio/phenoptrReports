@@ -113,9 +113,13 @@ if ('Cell Counts' %in% sheet_names) {
   counts = read_xlsx(workbook_path, 'Cell Counts', skip=1)
   tall = counts %>%
     gather('Phenotype', 'Cell Count', -(!!.by), -`Tissue Category`) %>%
-    filter(!Phenotype %in% c('Other', 'Total Cells')) %>% 
+    filter(!Phenotype %in% c('Other')) %>% 
     mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`))
   
+  # If there were phenotypes defined, exclude 'Total Cells' from the chart(s)
+  if (dplyr::n_distinct(tall$Phenotype) > 1)
+    tall = tall %>% filter(Phenotype != 'Total Cells')
+
   # If any count > 2000 we will make two sets of plots
   plot_limits = if (max(tall$`Cell Count`) > 2000) c(NA, 1000) else NA
   
@@ -156,8 +160,12 @@ if ('Cell Densities' %in% sheet_names) {
   # Reshape for plotting
   tall = density %>% gather('Phenotype', 'Density',
                                     -(!!.by), -`Tissue Category`) %>%
-    filter(!Phenotype %in% c('Tissue Area (mm2)', 'Other', 'Total Cells')) %>% 
+    filter(!Phenotype %in% c('Tissue Area (mm2)', 'Other')) %>% 
     mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`)) 
+  
+  # If there were phenotypes defined, exclude 'Total Cells' from the chart(s)
+  if (dplyr::n_distinct(tall$Phenotype) > 1)
+    tall = tall %>% filter(Phenotype != 'Total Cells')
   
   # If any Density > 2000 we will make two sets of plots
   plot_limits = if (max(tall$Density) > 2000) c(NA, 1000) else NA

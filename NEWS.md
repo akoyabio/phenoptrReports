@@ -1,3 +1,9 @@
+# phenoptrReports 0.2.6.9000
+
+Analysis addin:
+- Fix chart report to run when 'Total Cells' is the only 'phenotype' 
+  defined (#32).
+
 # phenoptrReports 0.2.6
 **2020-02-25**
   

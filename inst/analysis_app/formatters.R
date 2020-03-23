@@ -105,7 +105,6 @@ format_tissue_categories = function(cats) {
 # Format the phenotype definitions, phenotype counts and percentages
 format_phenotypes = function(vals, .by) {
   phenos = purrr::map_chr(vals, 'phenotype')
-  if (length(phenos) == 0) return('')
 
   # This allows multiple expression markers per pheno
   phenos = unique(phenos)
