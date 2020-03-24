@@ -121,7 +121,7 @@ if ('Cell Counts' %in% sheet_names) {
     tall = tall %>% filter(Phenotype != 'Total Cells')
 
   # If any count > 2000 we will make two sets of plots
-  plot_limits = if (max(tall$`Cell Count`) > 2000) c(NA, 1000) else NA
+  plot_limits = if (max(tall$`Cell Count`, na.rm=TRUE) > 2000) c(NA, 1000) else NA
   
   tall = tall %>% split_slides
 
@@ -168,7 +168,7 @@ if ('Cell Densities' %in% sheet_names) {
     tall = tall %>% filter(Phenotype != 'Total Cells')
   
   # If any Density > 2000 we will make two sets of plots
-  plot_limits = if (max(tall$Density) > 2000) c(NA, 1000) else NA
+  plot_limits = if (max(tall$Density, na.rm=TRUE) > 2000) c(NA, 1000) else NA
   
   tall = tall %>% split_slides
 
@@ -370,7 +370,7 @@ if ('Count Within' %in% sheet_names) {
   # Find max count per radius and category so we can use the same 
   # fill scale on every page within each group.
   max_counts = counts %>% group_by(Radius, `Tissue Category`) %>% 
-    summarize(max=max(`From with`))
+    summarize(max=max(`From with`, na.rm=TRUE))
   
   # Split to multiple pages
   split_counts = split_slides(counts, max_heatmaps_per_plot, pack=TRUE)
