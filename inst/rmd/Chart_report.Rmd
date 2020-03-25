@@ -116,9 +116,9 @@ if ('Cell Counts' %in% sheet_names) {
     filter(!Phenotype %in% c('Other')) %>% 
     mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`))
   
-  # If there were phenotypes defined, exclude 'Total Cells' from the chart(s)
+  # If there were phenotypes defined, exclude 'Total/All Cells' from the chart(s)
   if (dplyr::n_distinct(tall$Phenotype) > 1)
-    tall = tall %>% filter(Phenotype != 'Total Cells')
+    tall = tall %>% filter(!Phenotype %in% c('Total Cells', 'All Cells'))
 
   # If any count > 2000 we will make two sets of plots
   plot_limits = if (max(tall$`Cell Count`, na.rm=TRUE) > 2000) c(NA, 1000) else NA
@@ -163,9 +163,9 @@ if ('Cell Densities' %in% sheet_names) {
     filter(!Phenotype %in% c('Tissue Area (mm2)', 'Other')) %>% 
     mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`)) 
   
-  # If there were phenotypes defined, exclude 'Total Cells' from the chart(s)
+  # If there were phenotypes defined, exclude 'Total/All Cells' from the chart(s)
   if (dplyr::n_distinct(tall$Phenotype) > 1)
-    tall = tall %>% filter(Phenotype != 'Total Cells')
+    tall = tall %>% filter(!Phenotype %in% c('Total Cells', 'All Cells'))
   
   # If any Density > 2000 we will make two sets of plots
   plot_limits = if (max(tall$Density, na.rm=TRUE) > 2000) c(NA, 1000) else NA
@@ -208,7 +208,8 @@ if ('Mean Expression' %in% sheet_names) {
   tall = expression %>% gather('Measure', 'Mean',
                                     -(!!.by), -`Tissue Category`) %>%
     mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`)) %>%
-    separate(Measure, into=c('Phenotype', 'Measure'), sep=' ', extra='merge') %>% 
+    extract(Measure, into=c('Phenotype', 'Measure'), 
+            regex='(Total Cells|All Cells|[^ ]+) (.*)') %>% 
     mutate(Measure = stringr::str_replace(Measure, '([^(]*) (\\(.*\\) )?Mean', 'Mean \\1 Expression'))
   
   # We may have multiple measures, first split on Measure
