@@ -204,7 +204,11 @@ h_score = compute_h_score_from_score_data(csd, score_path,
     unique()
 
   # Names for the constructed data tables
-  table_names = make.names(scoring_phenos) %>%
+  # We need to distinguish e.g. CD8+ and CD8- here so replace + and -
+  # with valid characters before calling make.names.
+  table_names = scoring_phenos %>%
+    stringr::str_replace_all(c('\\+'='p', '-'='m')) %>%
+    make.names() %>%
     stringr::str_replace_all('\\.+', '_') %>%
     {stringr::str_glue('h_score_{.}')}
 
