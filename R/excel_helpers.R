@@ -201,8 +201,11 @@ write_h_score_sheet = function(wb, h_score,
   }
 
   d = h_score %>%
-    dplyr::select(-Total) %>%
-    dplyr::rename_at(3:6, ~stringr::str_remove(.x, 'Count of '))
+    dplyr::select(-Total)
+
+  # These names duplicate columns 7-10
+  # In the worksheet, they will have subheads to disambiguate them
+  names(d)[3:6] = c("0+", "1+", "2+", "3+")
 
   openxlsx::addWorksheet(wb, sheet_name)
 
