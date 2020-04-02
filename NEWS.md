@@ -3,6 +3,8 @@
 Analysis addin:
 - Fix chart report to run when 'Total Cells' is the only 'phenotype' 
   defined (#32).
+- Fix H-Score report to always include every combination of 
+  Slide ID (or Sample Name) and Tissue Category.
 
 # phenoptrReports 0.2.6
 **2020-02-25**

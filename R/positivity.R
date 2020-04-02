@@ -89,6 +89,7 @@ compute_positivity = function(csd, phenotype, positivity) {
 #' @param tissue_categories optionally specify tissue categories of interest.
 #'   If not given, tissue categories are taken from the score file.
 #' @param .by Column to aggregate by
+#' @param phenotype Optional phenotype to subset `csd`.
 #' @return A data frame with one row per Slide ID, showing cell counts and
 #'   percents in each bin and the H-Score. See [compute_h_score].
 #' @family aggregation functions
@@ -96,7 +97,8 @@ compute_positivity = function(csd, phenotype, positivity) {
 #' @export
 compute_h_score_from_score_data = function(csd, score_path,
                                            tissue_categories=NULL,
-                                           .by='Slide ID') {
+                                           .by='Slide ID',
+                                           phenotype=NULL) {
   # Read the score data to get the required parameters
   score_data = readr::read_tsv(score_path, n_max=1, col_types=readr::cols())
   score_names = c('Threshold 0/1+', 'Threshold 1+/2+', 'Threshold 2+/3+')
@@ -115,11 +117,33 @@ compute_h_score_from_score_data = function(csd, score_path,
   if (is.null(tissue_categories))
     tissue_categories = unique(score_data$`Tissue Category`)
 
+  # Remember the full combinations of .by and tissue_categories
+  # so we can reconstruct missing combinations
+  tc = tissue_categories
+  if (length(tc)>1) tc = c(tc, 'Total')
+  full_combos = tidyr::expand_grid(!!.by:=sort(unique(csd[[.by]])),
+                                   `Tissue Category`=tc)
+
+  # Now subset to the specified phenotype
+  if (!is.null(phenotype)) {
+    csd = csd[phenoptr::select_rows(csd, phenotype), ]
+  }
+
   measure = paste(score_data$`Cell Compartment`[1],
                   score_data$`Stain Component`[1],
                   'Mean', sep=' ')
 
-  compute_h_score(csd, measure, tissue_categories, thresholds, .by)
+  result = compute_h_score(csd, measure, tissue_categories, thresholds, .by)
+
+  if (nrow(result) != nrow(full_combos)) {
+    # Add in missing combinations
+    fill = rep(0, 5) %>% rlang::set_names(names(result)[3:7]) %>% as.list()
+    result = full_combos %>%
+      dplyr::left_join(result) %>%
+      tidyr::replace_na(replace = fill)
+  }
+
+  result
 }
 
 #' Compute H-Score for a single marker aggregated by `.by`
@@ -142,10 +166,6 @@ compute_h_score = function(csd, measure, tissue_categories, thresholds,
                            .by='Slide ID') {
   if (!measure %in% names(csd))
     stop("Column not found: ", measure)
-
-  if (length(tissue_categories)==0 ||
-      !all(tissue_categories %in% unique(csd$`Tissue Category`)))
-    stop('Incorrect tissue categories.')
 
   if (length(thresholds) != 3)
     stop('Please provide three threshold values.')

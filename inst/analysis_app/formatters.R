@@ -228,8 +228,8 @@ h_score = compute_h_score_from_score_data(csd, score_path,
 
     result <<- stringr::str_glue(
     "{result}{table_name}=compute_h_score_from_score_data(
-       csd[select_rows(csd, phenotypes[['{pheno}']]), ],
-       score_path, tissue_categories, .by=.by)
+       csd, score_path, tissue_categories, .by=.by,
+       phenotypes[['{pheno}']])
 \n\n")
   })
   result

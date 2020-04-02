@@ -8,7 +8,8 @@ compute_h_score_from_score_data(
   csd,
   score_path,
   tissue_categories = NULL,
-  .by = "Slide ID"
+  .by = "Slide ID",
+  phenotype = NULL
 )
 }
 \arguments{
@@ -20,6 +21,8 @@ compute_h_score_from_score_data(
 If not given, tissue categories are taken from the score file.}
 
 \item{.by}{Column to aggregate by}
+
+\item{phenotype}{Optional phenotype to subset \code{csd}.}
 }
 \value{
 A data frame with one row per Slide ID, showing cell counts and
