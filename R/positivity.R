@@ -140,7 +140,9 @@ compute_h_score_from_score_data = function(csd, score_path,
     fill = rep(0, 5) %>% rlang::set_names(names(result)[3:7]) %>% as.list()
     result = full_combos %>%
       dplyr::left_join(result) %>%
-      tidyr::replace_na(replace = fill)
+      tidyr::replace_na(replace = fill) %>%
+      structure(measure=attr(result, 'measure'),
+                thresholds=attr(result, 'thresholds'))
   }
 
   result
