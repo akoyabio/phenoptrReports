@@ -125,8 +125,8 @@ compute_mean_expression_many = function(csd, phenotypes, params,
     dplyr::group_by(!!.by, name) %>%
     tidyr::nest() %>%
     dplyr::mutate(data=purrr::map(data, function(d) {
-      total = tibble::tibble(count=sum(d$count),
-                                mean=sum(d$count*d$mean)/sum(d$count))
+      total = tibble::tibble(count=sum(d$count, na.rm=TRUE),
+                  mean=sum(d$count*d$mean, na.rm=TRUE)/sum(d$count, na.rm=TRUE))
       total$`Tissue Category` = 'All'
       dplyr::bind_rows(d, total)
     })) %>%
