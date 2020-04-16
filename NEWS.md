@@ -6,6 +6,9 @@ Analysis addin:
 - Fix H-Score report to always include every combination of 
   Slide ID (or Sample Name) and Tissue Category.
 
+Spatial map viewer addin:
+- Don't require Slide ID in the source cell data file.
+
 # phenoptrReports 0.2.6
 **2020-02-25**
   

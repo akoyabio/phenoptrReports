@@ -227,7 +227,7 @@ nearest_neighbor_map =
 
       # Add from_name as a suffix to from columns
       dplyr::rename_at(
-        .vars=dplyr::vars(-`Slide ID`,
+        .vars=dplyr::vars(-dplyr::contains('Slide ID'),
                           -!!phenoptr::field_column(matching_cells),
                           -dplyr::contains(nearest_name),
                           -dplyr::contains('nearest')),
@@ -243,7 +243,7 @@ nearest_neighbor_map =
                        ~stringr::str_replace(.x, 'Cell ID ', 'Cell ID.')) %>%
 
       # Re-order a little
-      dplyr::select(`Slide ID`,
+      dplyr::select(dplyr::contains('Slide ID'),
                     !!phenoptr::field_column(matching_cells),
                     dplyr::ends_with(from_name),
                     dplyr::starts_with('Distance to '),
