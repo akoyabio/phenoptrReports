@@ -179,22 +179,48 @@ count_within_summary = function(csd, radii, phenotypes=NULL, categories=NA,
     tidyr::unnest(cols=c(within)) %>%
     dplyr::select(-source) # Chaff from count_within_many
 
-  # Aggregate per .by. See ?phenoptr::count_within for explanation
-  distances %>%
+  rm(nested) # Don't need this any more, and it may be large
+
+  # Aggregate counts for grouped observations
+  # See ?phenoptr::count_within for explanation
+  aggregate_counts = function(df) {
+    df %>%
+      dplyr::summarize(within=sum(from_count*within_mean, na.rm=TRUE),
+                       from_count=sum(from_count),
+                       to_count=sum(to_count),
+                       from_with=sum(from_with),
+                       within_mean=within/from_count) %>%
+      dplyr::select(-within)
+  }
+
+  # Aggregate per .by.
+  distances = distances %>%
     dplyr::group_by(!!.by, category, from, to, radius) %>%
-    dplyr::summarize(within=sum(from_count*within_mean, na.rm=TRUE),
-              from_count=sum(from_count),
-              to_count=sum(to_count),
-              from_with=sum(from_with),
-              within_mean=within/from_count) %>%
-    dplyr::select(-within) %>%
-    dplyr::ungroup() %>%
-    # Make pretty names for the Excel export
+    aggregate_counts() %>%
+    dplyr::ungroup()
+
+  # If there are multiple tissue categories, add another level of
+  # aggregation.
+  if (length(categories) > 1) {
+    distances = distances %>%
+      tidyr::nest(data=c(category, from_count, to_count,
+                         from_with, within_mean)) %>%
+      # This adds an "All" row to each nested group
+      dplyr::mutate(data=purrr::map(data,
+                             ~dplyr::bind_rows(.x,
+                             cbind(category='All', aggregate_counts(.x),
+                                   stringsAsFactors=FALSE)))) %>%
+      tidyr::unnest(data)
+
+  }
+
+  distances %>%
+    # Make pretty names for the Excel export and re-order a little
     dplyr::rename(`Tissue Category` = category,
                   From=from, To=to, Radius=radius,
                   `From count` = from_count,
                   `To count` = to_count,
                   `From with` = from_with,
-                  `Within mean` = within_mean)
-
+                  `Within mean` = within_mean) %>%
+    dplyr::select(!!.by, `Tissue Category`, dplyr::everything())
 }
