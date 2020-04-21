@@ -210,11 +210,11 @@ h_score = compute_h_score_from_score_data(csd, score_path,
     stringr::str_replace_all(c('\\+'='p', '-'='m')) %>%
     make.names() %>%
     stringr::str_replace_all('\\.+', '_') %>%
-    {stringr::str_glue('h_score_{.}')}
+    { stringr::str_glue('h_score_{.}') }
 
   # Names for the worksheets
   tab_names = scoring_phenos %>%
-    {stringr::str_glue('H-Score {.}')} %>%
+    { stringr::str_glue('H-Score {.}') } %>%
     as_valid_tab_name()
 
   purrr::pmap(list(scoring_phenos, table_names, tab_names),
