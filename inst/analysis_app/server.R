@@ -1,6 +1,7 @@
 # Server (and dynamic UI) for analysis_app
 shinyServer(function(input, output, server) {
 
+  #### Data ####
   # Data container for all fields needed by the formatters. Will contain
   # by - Field to aggregate by
   # available_phenotypes - Base names (no +/-) of all available phenotypes
@@ -42,7 +43,7 @@ shinyServer(function(input, output, server) {
 
     shiny::req(file_data$input_path())
 
-    # Read the data file and get some info about it
+    #### Read the data file and get some info about it ####
     shiny::showModal(
       shiny::modalDialog(
         shiny::p('Reading input data...'), title='Please wait', footer=NULL))
@@ -72,7 +73,7 @@ shinyServer(function(input, output, server) {
 
     shiny::removeModal()
 
-    # Create the initial GUI with tissue and phenotype selectors
+    #### Create the initial GUI with tissue and phenotype selectors ####
     new_ui = shiny::tagList(
       # First well panel has miscellaneous inputs
       shiny::div(id='well1', shiny::wellPanel(
@@ -134,6 +135,7 @@ shinyServer(function(input, output, server) {
 
   })
 
+  #### Misc inputs ####
   # Handle by
   shiny::observe({
     shiny::req(input$by)
@@ -146,7 +148,7 @@ shinyServer(function(input, output, server) {
     the_data$use_regex = input$use_regex
   })
 
-  # Handle Add button by adding another phenotype_module_ui
+  #### Handle Add button by adding another phenotype_module_ui ####
   shiny::observeEvent(input$add, {
     id = paste0('pheno', input$add)
     ui = phenotype_module_ui(id, the_data$expression_columns,
@@ -161,6 +163,7 @@ shinyServer(function(input, output, server) {
                                             csd())))
   })
 
+  #### Handle checkbox selections ####
   # Handle the nearest neighbor checkbox
   shiny::observeEvent(input$include_nearest, {
     the_data$include_nearest = shiny::isTruthy(input$include_nearest)
@@ -191,7 +194,7 @@ shinyServer(function(input, output, server) {
     }
   })
 
-  # Update the error message
+  #### Update the error message ####
   shiny::observe({
     if (is.null(file_data$input_path())) {
       analysis_error = 'Please select a data file in the Files tab.'
@@ -213,13 +216,13 @@ shinyServer(function(input, output, server) {
     output$analysis_error = shiny::renderText(analysis_error)
   })
 
-  # Update the script text in response to user selections
+  #### Update the script text in response to user selections ####
   output$the_script = renderText({
     the_data$tissue_categories = input$tissue_categories
     format_all(all_data())
   })
 
-  # Process the result!!
+  #### Process the result!! ####
   shiny::observeEvent(input$process, {
     shiny::req(input$process)
     id = shiny::showNotification('Processing, please wait!', duration=NULL,

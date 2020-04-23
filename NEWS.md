@@ -3,10 +3,14 @@
 Analysis addin:
 - The Count Within worksheet includes summary counts across all tissue 
   categories when multiple categories are reported.
-- Fix chart report to run when 'Total Cells' is the only 'phenotype' 
+- Fix chart report to run when "Total Cells" is the only phenotype 
   defined (#32).
+- Fix chart report to handle "All Cells" correctly.
 - Fix H-Score report to always include every combination of 
   Slide ID (or Sample Name) and Tissue Category.
+- When computing mean expression for All tissue categories, 
+  don't propagate NA. The All numbers reflect the valid tissue categories.
+- Fix to work with latest `dplyr`.
 
 Spatial map viewer addin:
 - Don't require Slide ID in the source cell data file.
