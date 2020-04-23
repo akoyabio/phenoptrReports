@@ -231,7 +231,7 @@ shinyServer(function(input, output, server) {
     write_lines(script, script_path)
 
     # Run the script to do some work!
-    source(script_path, local=new.env())
+    source(script_path, local=new.env(), echo=TRUE)
 
     shiny::removeNotification(id)
     shiny::showNotification('Done!', duration=2,
