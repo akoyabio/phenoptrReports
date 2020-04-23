@@ -1,4 +1,5 @@
-# phenoptrReports 0.2.6.9000
+# phenoptrReports 0.2.7
+**2020-04-23**
 
 Analysis addin:
 - The Count Within worksheet includes summary counts across all tissue 

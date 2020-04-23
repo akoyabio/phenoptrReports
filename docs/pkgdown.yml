@@ -1,11 +1,12 @@
 pandoc: 2.7.3
-pkgdown: 1.4.1
+pkgdown: 1.5.1
 pkgdown_sha: ~
 articles:
   analysis: analysis.html
   consolidation: consolidation.html
   spatial_map_viewer: spatial_map_viewer.html
   unmixing_quality_report: unmixing_quality_report.html
+last_built: 2020-04-23T18:55Z
 urls:
   reference: http://akoyabio.github.io/phenoptrReports/reference
   article: http://akoyabio.github.io/phenoptrReports/articles
