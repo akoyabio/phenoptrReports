@@ -30,12 +30,17 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL, details_path=NULL,
   .by = rlang::sym(.by)
 
   # Compute nearest neighbor distances for all cells, one field at a time.
-  distances <- csd %>%
-    dplyr::group_by(!!.by, !!field_col) %>%
+  if (.by == field_col)
+    distances = csd %>% dplyr::group_by(!!.by)
+  else
+    distances = csd %>% dplyr::group_by(!!.by, !!field_col)
+
+  distances = distances %>%
     tidyr::nest() %>%
     dplyr::mutate(distance=purrr::map(data,
                            phenoptr::find_nearest_distance, phenotypes)) %>%
-    tidyr::unnest(cols=c(data, distance))
+    tidyr::unnest(cols=c(data, distance)) %>%
+    dplyr::ungroup()
 
   # Optionally save details with a subset of columns
   if (!is.null(details_path)) {
@@ -143,9 +148,12 @@ count_within_summary = function(csd, radii, phenotypes=NULL, categories=NA,
     purrr::map(unlist)
 
   # Nest by field
-  nested = csd %>%
-    dplyr::group_by(!!.by, !!field_col) %>%
-    tidyr::nest()
+  if (.by == field_col)
+    nested = csd %>% dplyr::group_by(!!.by)
+  else
+    nested = csd %>% dplyr::group_by(!!.by, !!field_col)
+
+  nested = nested %>% tidyr::nest()
 
   # Compute and save the detail table if requested and available
   if (!is.null(details_path)) {

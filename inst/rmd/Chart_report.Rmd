@@ -260,7 +260,8 @@ for (sheet_name in h_score_names) {
     mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`))
   
   # Find the marker from the first row, if present
-  h_score_title = read_xlsx(workbook_path, sheet_name, range='C1', col_names=FALSE) %>% 
+  h_score_title = read_xlsx(workbook_path, sheet_name, range='C1', 
+                            col_names='title') %>% 
     unlist()
   if (stringr::str_detect(h_score_title, 'H-Score,')) {
     safe_name = stringr::str_remove(h_score_title, "H-Score,") %>% 
