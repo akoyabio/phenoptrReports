@@ -10,6 +10,16 @@ server = function(input, output, session) {
     shiny::callModule(phenotype_color_module, 'phenotype2',
                       available_phenotypes, csd)
 
+  #### Create the Save All button ####
+  output$save_all_impl = shiny::renderUI({
+    # If we are running locally we can save directly to the file system
+    # Otherwise we need to use the Shiny download mechanism
+    if (session$clientData$url_hostname=='127.0.0.1')
+      shiny::actionButton('save_all_local', 'Save all', icon("download"))
+    else
+      shiny::downloadButton('save_all', 'Save all')
+  })
+
   #### Cache for last values ####
   last_field = last_color1 = last_color2 = ''
   last_pheno1 = last_pheno2 = NA
@@ -198,70 +208,25 @@ server = function(input, output, session) {
 
   is_touching = shiny::reactive({ input$show_as == 'touching' })
 
-  #### Handle Save All ####
-  # To save all, we have to save in a temp directory and then make a zip
+  #### Handle Save All - remote version ####
+  # Save All code for when the client browser is not running on the same machine
+  # as the server. To save all, we have to save in a temp directory, make a zip
+  # file and download the zip via the browser.
   output$save_all = shiny::downloadHandler(
     filename = function() {
       make_filename(basename(.export_path),
-             phenotype_output()$phenotype,
-             phenotype2_output()$phenotype,
-             input$show_as, ".zip")
-
+                    phenotype_output()$phenotype,
+                    phenotype2_output()$phenotype,
+                    input$show_as, ".zip")
     },
 
     content = function(file) {
       # Write to a temp dir to avoid permission issues
       owd = setwd(tempdir())
       on.exit(setwd(owd))
-      files = NULL;
-
-      pheno1 = validate_candidate(phenotype_output()$phenotype)
-      pheno2 = validate_candidate(phenotype2_output()$phenotype)
-      color1 = phenotype_output()$color
-      color2 = phenotype2_output()$color
-      show_as = input$show_as
-      dot_size = input$dot_size
-      add_logo = input$add_logo
-
-      phenos = phenoptrReports:::parse_phenotypes_with_na(pheno1, pheno2)
 
       shiny::withProgress(message='Creating image files', value=0, {
-        # Number of progress messages
-        n_progress = length(available_fields) + 1
-
-        # Combine all data to a single table
-        field_data = tibble::tibble()
-
-        # Loop through the fields
-        for (field in available_fields) {
-          shiny::incProgress(1/n_progress, detail=field)
-
-          data = if (is_touching()) {
-            phenoptr::count_touching_cells_fast(csd, field, .export_path,
-                                                phenos, color1, color2,
-                                                discard_dups=TRUE)
-          } else {
-            phenoptrReports::nearest_neighbor_map(csd, field, .export_path,
-                          phenos, color1, color2,
-                          show_as, dot_size, add_logo)
-          }
-
-          # Write the plot to a file, save the name
-          filename = make_filename(field, pheno1, pheno2, show_as, '.png')
-          save_plot_or_image(data, filename)
-          files = c(filename, files)
-
-          # Remember the data
-          field_data = dplyr::bind_rows(field_data, data$data)
-        }
-
-        # Optionally save the data
-        if (input$save_data) {
-          filename = make_filename(basename(.export_path),
-                                   pheno1, pheno2, show_as, '.txt')
-          vroom::vroom_write(field_data, filename, na='#N/A')
-          files = c(filename, files)
-        }
+        files = write_all_files()
 
         # Create the zip file
         shiny::setProgress(1, detail='Writing zip file')
@@ -269,6 +234,79 @@ server = function(input, output, session) {
       })
     }
   )
+
+  #### Handle Save All - local version ####
+  # Save All code for when the client browser is on the server machine
+  # We can save directly to the local file system
+    observeEvent(input$save_all_local, {
+      # Create a directory in the user's Downloads directory
+      download_base = normalizePath(path.expand('~/../Downloads'), mustWork=FALSE)
+      output_dir = file.path(download_base, basename(.export_path))
+      dir.create(output_dir, recursive=TRUE)
+      owd = setwd(output_dir)
+      on.exit(setwd(owd))
+
+      shiny::withProgress(message='Saving image files', value=0, {
+        files = write_all_files()
+      })
+    }
+  )
+
+  #### Write all files ####
+  # Write all image files and (optionally) data files to the
+  # current working directory. Return a list of file names written.
+  write_all_files = function() {
+    files = NULL;
+
+    pheno1 = validate_candidate(phenotype_output()$phenotype)
+    pheno2 = validate_candidate(phenotype2_output()$phenotype)
+    color1 = phenotype_output()$color
+    color2 = phenotype2_output()$color
+    show_as = input$show_as
+    dot_size = input$dot_size
+    add_logo = input$add_logo
+
+    phenos = phenoptrReports:::parse_phenotypes_with_na(pheno1, pheno2)
+
+    # Number of progress messages
+    n_progress = length(available_fields) + 1
+
+    # Combine all data to a single table
+    field_data = tibble::tibble()
+
+    # Loop through the fields
+    for (field in available_fields) {
+      shiny::incProgress(1/n_progress, detail=field)
+
+      data = if (is_touching()) {
+        phenoptr::count_touching_cells_fast(csd, field, .export_path,
+                                            phenos, color1, color2,
+                                            discard_dups=TRUE)
+      } else {
+        phenoptrReports::nearest_neighbor_map(csd, field, .export_path,
+                                              phenos, color1, color2,
+                                              show_as, dot_size, add_logo)
+      }
+
+      # Write the plot to a file, save the name
+      filename = make_filename(field, pheno1, pheno2, show_as, '.png')
+      save_plot_or_image(data, filename)
+      files = c(filename, files)
+
+      # Remember the data
+      field_data = dplyr::bind_rows(field_data, data$data)
+    }
+
+    # Optionally save the data
+    if (input$save_data) {
+      filename = make_filename(basename(.export_path),
+                               pheno1, pheno2, show_as, '.txt')
+      vroom::vroom_write(field_data, filename, na='#N/A')
+      files = c(filename, files)
+    }
+
+    return(files)
+  }
 
   #### Helper functions ####
   # Check for significant changes in the input parameters and

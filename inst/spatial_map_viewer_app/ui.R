@@ -23,7 +23,7 @@ ui <- shinydashboard::dashboardPage(
     shiny::sliderInput('dot_size', 'Dot size', min=1, max=5, value=3, step=1),
     shiny::fluidRow(
       shiny::column(4, shiny::downloadButton('save_plot', 'Save image')),
-      shiny::column(4, shiny::downloadButton('save_all', 'Save all'))
+      shiny::column(4, shiny::uiOutput('save_all_impl', inline=TRUE))
     ),
     shiny::fluidRow(id='save-controls',
       shiny::column(6,
@@ -38,10 +38,14 @@ ui <- shinydashboard::dashboardPage(
     shiny::tags$head(
       # CSS
       shiny::tags$style(HTML(
-        # Fixes for Save button
+        # Fixes for Save buttons
         ".skin-blue .sidebar div a {
           color: #444;
           margin-left: 30px;
+        }
+        #save_all_local {
+            margin-left: 30px;
+            margin-top: 0px;
         }",
 
         # Align the prev_next buttons with the field dropdown

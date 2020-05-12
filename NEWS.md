@@ -1,3 +1,14 @@
+# phenoptrReports 0.2.7.9000
+
+Spatial map viewer addin:
+- For the usual use where the client browser is running on the user's 
+  computer, the "Save all" saves directly to the local file system without
+  creating an intermediate zip file. This is faster and avoids transfer of a
+  potentially large zip file.
+  
+Misc:
+- Fix to work correctly with dplyr 1.0.0.
+
 # phenoptrReports 0.2.7
 **2020-04-23**
 
