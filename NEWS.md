@@ -1,5 +1,9 @@
 # phenoptrReports 0.2.7.9000
 
+Analysis addin:
+- Remove summary lines from the Count Within worksheet, they are not
+  correct (#35)!
+
 Spatial map viewer addin:
 - For the usual use where the client browser is running on the user's 
   computer, the "Save all" saves directly to the local file system without

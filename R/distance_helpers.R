@@ -207,20 +207,9 @@ count_within_summary = function(csd, radii, phenotypes=NULL, categories=NA,
     aggregate_counts() %>%
     dplyr::ungroup()
 
-  # If there are multiple tissue categories, add another level of
-  # aggregation.
-  if (length(categories) > 1) {
-    distances = distances %>%
-      tidyr::nest(data=c(category, from_count, to_count,
-                         from_with, within_mean)) %>%
-      # This adds an "All" row to each nested group
-      dplyr::mutate(data=purrr::map(data,
-                             ~dplyr::bind_rows(.x,
-                             cbind(category='All', aggregate_counts(.x),
-                                   stringsAsFactors=FALSE)))) %>%
-      tidyr::unnest(data)
-
-  }
+  # Better row order
+  distances = distances %>%
+    dplyr::arrange(!!.by, from, to, radius)
 
   distances %>%
     # Make pretty names for the Excel export and re-order a little
