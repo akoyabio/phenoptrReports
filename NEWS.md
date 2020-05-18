@@ -1,4 +1,5 @@
-# phenoptrReports 0.2.7.9000
+# phenoptrReports 0.2.8
+**2020-05-18**
 
 Analysis addin:
 - Remove summary lines from the Count Within worksheet, they are not
