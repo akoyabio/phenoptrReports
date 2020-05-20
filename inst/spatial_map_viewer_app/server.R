@@ -240,7 +240,7 @@ server = function(input, output, session) {
   # We can save directly to the local file system
     observeEvent(input$save_all_local, {
       # Create a directory in the user's Downloads directory
-      download_base = normalizePath(path.expand('~/../Downloads'), mustWork=FALSE)
+      download_base = fs::path_home('Downloads')
       output_dir = file.path(download_base, basename(.export_path))
       dir.create(output_dir, recursive=TRUE)
       owd = setwd(output_dir)

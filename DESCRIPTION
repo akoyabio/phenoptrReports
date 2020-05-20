@@ -1,6 +1,6 @@
 Package: phenoptrReports
 Title: Create reports using Phenoptics data
-Version: 0.2.8
+Version: 0.2.8.9000
 Date: 2020-05-18
 Authors@R: c(
     person("Kent S", "Johnson", role = c("aut", "cre"),
@@ -19,6 +19,7 @@ Imports:
     dplyr (>= 0.8.0),
     formattable (>= 0.2),
     forcats,
+    fs,
     ggplot2 (>= 3.0.0),
     jpeg,
     knitr,

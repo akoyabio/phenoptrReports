@@ -1,3 +1,8 @@
+# phenoptrReports 0.2.8.9000
+
+Spatial map viewer addin:
+- Fix "Save all" to work on a Mac
+
 # phenoptrReports 0.2.8
 **2020-05-18**
 
