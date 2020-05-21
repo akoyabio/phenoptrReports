@@ -18,13 +18,19 @@ if (getRversion() >= "2.15.1")
 #' @param details_path If present, path to save a tab-separated table with
 #' nearest-neighbor data for each cell.
 #' @param .by Column to aggregate by
+#' @param extra_cols The names of extra columns to include in the detailed
+#' results.
 #' @return A data frame with summary statistics for each phenotype pair
 #' in each Slide ID.
 #' @export
 #' @importFrom magrittr %>%
 nearest_neighbor_summary = function(csd, phenotypes=NULL, details_path=NULL,
-                                    .by='Slide ID') {
+                                    .by='Slide ID', extra_cols=NULL) {
   phenotypes = phenoptr::validate_phenotypes(phenotypes, csd)
+  extra_cols = c(unlist(extra_cols),
+                 phenoptr::phenotype_columns(phenotypes)) %>%
+    unique() %>%
+    sort()
 
   field_col = rlang::sym(phenoptr::field_column(csd))
   .by = rlang::sym(.by)
@@ -48,6 +54,7 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL, details_path=NULL,
       dplyr::select(!!.by, `Cell ID`, `Cell X Position`, `Cell Y Position`,
                     !!field_col,
                     dplyr::contains('Tissue Category'),
+                    tidyselect::any_of(extra_cols),
                     dplyr::starts_with('Phenotype'),
                     # This preserves order of Distance and Cell ID columns
                     dplyr::matches('Distance to |Cell ID '))
@@ -130,13 +137,20 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL, details_path=NULL,
 #' @param details_path If present, path to save a tab-separated table with
 #' nearest-neighbor data for each cell.
 #' @param .by Column to aggregate by
+#' @param extra_cols The names of extra columns to include in the detailed
+#' results.
 #' @return A data frame with summary statistics for each phenotype pair
 #' in each Slide ID.
 #' @export
 #' @importFrom magrittr %>%
 count_within_summary = function(csd, radii, phenotypes=NULL, categories=NA,
-                                details_path=NULL, .by='Slide ID') {
+                                details_path=NULL, .by='Slide ID',
+                                extra_cols=NULL) {
   phenotypes = phenoptr::validate_phenotypes(phenotypes, csd)
+  extra_cols = c(unlist(extra_cols),
+                   phenoptr::phenotype_columns(phenotypes)) %>%
+    unique() %>%
+    sort()
 
   # The column name that defines fields
   field_col = rlang::sym(phenoptr::field_column(csd))
@@ -170,6 +184,7 @@ count_within_summary = function(csd, radii, phenotypes=NULL, categories=NA,
         dplyr::select(!!.by, `Cell ID`, `Cell X Position`, `Cell Y Position`,
                       !!field_col,
                       dplyr::contains('Tissue Category'),
+                      tidyselect::any_of(extra_cols),
                       dplyr::starts_with('Phenotype'),
                       dplyr::contains('within'))
       readr::write_tsv(detail, details_path, na='#N/A')

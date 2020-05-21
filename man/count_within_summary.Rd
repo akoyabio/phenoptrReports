@@ -10,7 +10,8 @@ count_within_summary(
   phenotypes = NULL,
   categories = NA,
   details_path = NULL,
-  .by = "Slide ID"
+  .by = "Slide ID",
+  extra_cols = NULL
 )
 }
 \arguments{
@@ -29,6 +30,9 @@ pairs of phenotypes.}
 nearest-neighbor data for each cell.}
 
 \item{.by}{Column to aggregate by}
+
+\item{extra_cols}{The names of extra columns to include in the detailed
+results.}
 }
 \value{
 A data frame with summary statistics for each phenotype pair

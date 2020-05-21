@@ -8,7 +8,8 @@ nearest_neighbor_summary(
   csd,
   phenotypes = NULL,
   details_path = NULL,
-  .by = "Slide ID"
+  .by = "Slide ID",
+  extra_cols = NULL
 )
 }
 \arguments{
@@ -22,6 +23,9 @@ will use \code{unique_phenotypes(csd)}.}
 nearest-neighbor data for each cell.}
 
 \item{.by}{Column to aggregate by}
+
+\item{extra_cols}{The names of extra columns to include in the detailed
+results.}
 }
 \value{
 A data frame with summary statistics for each phenotype pair

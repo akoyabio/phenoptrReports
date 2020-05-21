@@ -19,6 +19,8 @@ format_all = function(all_data) {
   # then missing phenotype
   phenos = purrr::compact(phenotype_values, 'phenotype') %>%
     purrr::discard(~.x$phenotype %in% c(''))
+  names(phenos) = purrr::map_chr(phenos, 'phenotype') %>%
+    phenoptr:::phenotype_names()
 
   .by = all_data$by
 
@@ -157,7 +159,8 @@ format_expression = function(vals) {
   # Filter out phenotypes with no expression requested
   phenos = vals %>%
     purrr::discard(~.x$expression %in% c('', 'NA'))
-  if (length(phenos) == 0) return('')
+  if (length(phenos) == 0)
+    return('expression_params = NULL\n\n')
 
   table_pairs <<- c(table_pairs,
                     list(c(cleanup_code('expression_means'),
@@ -201,6 +204,7 @@ h_score = compute_h_score_from_score_data(csd, score_path,
 
   scoring_phenos = phenos[wants_scoring] %>%
     purrr::map_chr('phenotype') %>%
+    names() %>%
     unique()
 
   # Names for the constructed data tables
@@ -248,8 +252,9 @@ format_nearest_neighbors = function(output_dir, include_distance_details) {
 nearest_detail_path = file.path(
   "{output_dir}",
   "nearest_neighbors.txt")
-nearest_neighbors = nearest_neighbor_summary(csd, phenotypes,
-                                             nearest_detail_path, .by=.by)
+nearest_neighbors = nearest_neighbor_summary(
+  csd, phenotypes, nearest_detail_path, .by=.by,
+  extra_cols=expression_params)
 \n\n')
   else
     stringr::str_glue(
@@ -272,9 +277,9 @@ radii = {deparse(radii)}
 count_detail_path = file.path(
   "{output_dir}",
   "count_within.txt")
-count_within = count_within_summary(csd, radii, phenotypes,
-                                    tissue_categories,
-                                    count_detail_path, .by=.by)
+count_within = count_within_summary(
+  csd, radii, phenotypes, tissue_categories,
+  count_detail_path, .by=.by, extra_cols=expression_params)
 \n\n')
   else
     stringr::str_glue(

@@ -1,5 +1,10 @@
 # phenoptrReports 0.2.8.9000
 
+Analysis addin:
+- Include expression-based phenotype columns and measured expression columns
+  in count_within.txt and nearest_neighbors.txt (#36).
+- Output has nicer names for expression-based phenotypes (#36).
+
 Spatial map viewer addin:
 - Fix "Save all" to work on a Mac
 
