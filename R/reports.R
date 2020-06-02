@@ -92,6 +92,11 @@ unmixing_quality_report = function(export_path=NULL) {
                          package="phenoptrReports")
 
   output_path = file.path(export_path, 'Unmixing_quality_report.html')
+
+  # Don't complain about missing \VignetteIndexEntry
+  old_opts = options(rmarkdown.html_vignette.check_title = FALSE)
+  on.exit(options(old_opts))
+
   rmarkdown::render(rmd_path, output_file=output_path, quiet=TRUE,
                     intermediates_dir=temp_dir_by(output_path),
                     params=list(export_path = export_path))
@@ -121,6 +126,11 @@ component_levels_report = function(export_path=NULL, quantiles=0.999,
                          package="phenoptrReports")
 
   output_path = file.path(export_path, 'Component_levels_report.html')
+
+  # Don't complain about missing \VignetteIndexEntry
+  old_opts = options(rmarkdown.html_vignette.check_title = FALSE)
+  on.exit(options(old_opts))
+
   rmarkdown::render(rmd_path, output_file=output_path, quiet=TRUE,
                     intermediates_dir=temp_dir_by(output_path),
                     params=list(export_path = export_path,
