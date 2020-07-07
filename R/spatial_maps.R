@@ -54,26 +54,13 @@ nearest_neighbor_map =
     field_data = ensure_distance_columns(field_data, phenos)
 
   # Get spatial reference info from the component image
-  field_info = read_field_info(field_name, export_path)
+  field_info = phenoptr::read_field_info(field_name, export_path)
   if (is.null(field_info)) {
     warning('No component image available for ', field_name, ', skipping.')
     return()
   }
 
-  # Workaround for inForm data that was originally pixels. In that case
-  # field_data will have the origin at top left; convert to slide origin
-  # to match the field_info.
-  # Assume that the data was converted with the default 2 pixels per micron.
-  # Test for all cells in a field fitting within the field size after
-  # correcting the location.
-  correction = 2 / field_info$pixels_per_micron
-  if (max(field_data$`Cell X Position`)*correction < field_info$field_size[1]
-      && max(field_data$`Cell Y Position`)*correction < field_info$field_size[2]) {
-    field_data = field_data %>% dplyr::mutate(
-      `Cell Y Position` = `Cell Y Position`*correction+field_info$location[2],
-      `Cell X Position` = `Cell X Position`*correction+field_info$location[1]
-    )
-  }
+  field_data = phenoptr:::correct_for_pixel_data(field_data, field_info)
 
   # Filter to just relevant from & to phenotypes
   pheno1_cells = if (!have_pheno1) NULL else field_data %>%
@@ -341,19 +328,4 @@ read_background = function(field, export_path) {
     background = NULL
   }
   background
-}
-
-# Get field metadata from the component data file
-read_field_info = function(field, export_path) {
-  field_base = stringr::str_remove(field, '\\.im3')
-  component_path = file.path(export_path, paste0(field_base,
-                                                 '_component_data.tif'))
-  if(!file.exists(component_path)) {
-    warning('File not found: "', component_path, '"')
-    return(NULL)
-  }
-
-  field_info = phenoptr::get_field_info(component_path)
-  field_info$pixels_per_micron = 1/field_info$microns_per_pixel
-  field_info
 }
