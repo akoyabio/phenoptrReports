@@ -1,11 +1,15 @@
 # phenoptrReports 0.2.8.9000
 
+- New spatial statistics report plots the G function, L function, and 
+  pair correlation function for all fields in an experiment.
+  
 Analysis addin:
 - Include expression-based phenotype columns and measured expression columns
   in count_within.txt and nearest_neighbors.txt (#36).
 - Output has nicer names for expression-based phenotypes (#36).
 
 Spatial map viewer addin:
+- Add option to generate spatial statistics report
 - Fix "Save all" to work on a Mac
 
 # phenoptrReports 0.2.8

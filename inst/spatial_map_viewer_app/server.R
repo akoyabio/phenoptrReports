@@ -308,6 +308,50 @@ server = function(input, output, session) {
     return(files)
   }
 
+  #### Handle Spatial Stats Report ####
+  output$stats_report = shiny::downloadHandler(
+    filename = function() {
+      if (input$show_as == 'from_to')
+        name = stringr::str_glue(
+          'Spatial_statistics_report_from_',
+          '{phenotype_output()$phenotype}_to_',
+          '{phenotype2_output()$phenotype}.html')
+      else
+        name = stringr::str_glue(
+          'Spatial_statistics_report_from_',
+          '{phenotype2_output()$phenotype}_to_',
+          '{phenotype_output()$phenotype}.html')
+      fs::path_sanitize(name, replacement='_')
+    },
+
+    content = function(file) {
+      id = shiny::showNotification(
+        'Creating spatial statistics report, please wait!',
+        duration=NULL, closeButton=FALSE, type='message')
+
+      if (input$show_as == 'from_to')
+        spatial_statistics_report(csd, NULL, .export_path,
+                                  phenotype_output()$phenotype,
+                                  phenotype2_output()$phenotype,
+                                  file)
+      else
+        spatial_statistics_report(csd, NULL, .export_path,
+                                  phenotype2_output()$phenotype,
+                                  phenotype_output()$phenotype,
+                                  file)
+      shiny::removeNotification(id)
+    }
+  )
+
+  # Observable to set visibility of the stats report button
+  output$allow_stats_report = reactive({
+    (!is.na(phenotype_output()$phenotype)
+      && !is.na(phenotype2_output()$phenotype)
+      && input$show_as %in% c('from_to', 'to_from'))
+  })
+
+  outputOptions(output, "allow_stats_report", suspendWhenHidden = FALSE)
+
   #### Helper functions ####
   # Check for significant changes in the input parameters and
   # remember last state. If there are no changes, this does not return.
@@ -377,9 +421,7 @@ server = function(input, output, session) {
 
     name = paste0(name, extn)
 
-    # Remove unallowed characters
-    illegal = "[/\\?<>\\:*|\":]" # From fs::path_sanitize
-    name = stringr::str_replace_all(name, illegal, '_')
+    name = fs::path_sanitize(name, replacement='_')
     name
   }
 

@@ -1,0 +1,177 @@
+---
+title: "Spatial Statistics Report"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
+params:
+  csd:
+    label: "Consolidated data"
+    value: NULL
+  csd_path:
+    label: "Path to Consolidated_data.txt"
+    value: C:/Research/phenoptrExamplesData/200601 GC/Consolidated_data.txt
+    input: file
+  export_path: 
+    label: "Path to directory with component data"
+    value: C:/Research/phenoptrExamplesData/200601 GC/export
+  from_phenotype:
+    label: "'From' phenotype"
+    value: "CD8+"
+  to_phenotype:
+    label: "'To' phenotype"
+    value: "CK+"
+  tissue_categories:
+    label: "Tissue categories"
+    value: NULL
+vignette: >
+  %\VignetteIndexEntry{Spatial Statistics Report}
+---
+
+<style type="text/css">
+body {
+    max-width: 800px;
+}
+
+table {
+    width: auto !important;
+    max-width: 100%;
+    margin-bottom: 20px;
+    margin-left: 0px;
+}
+
+img {
+  border: none;
+}
+</style>
+
+```{r setup, echo=FALSE,include=FALSE,message=FALSE}
+knitr::opts_chunk$set(echo=FALSE,fig.width=9, fig.height=6, 
+                      comment=NA, warning=FALSE, message=FALSE)
+
+suppressPackageStartupMessages(library(tidyverse))
+
+# Make local vars for params, for easier debugging
+csd = params$csd
+csd_path = params$csd_path
+export_path = params$export_path
+from_phenotype = params$from_phenotype
+to_phenotype = params$to_phenotype
+tissue_categories = params$tissue_categories
+
+phenos = phenoptr::parse_phenotypes(from_phenotype, to_phenotype)
+from_name = names(phenos)[[1]]
+to_name = names(phenos)[[2]]
+```
+
+```{r data}
+if (is.null(csd))
+  csd = phenoptr::read_cell_seg_data(csd_path)
+field_col = phenoptr::field_column(csd)
+fields = sort(unique(csd[[field_col]]))
+plot_rows = ceiling(length(fields)/2)
+
+category_names = ifelse(is.null(tissue_categories), "All",
+  paste(tissue_categories, collapse=', '))
+
+# Summary of fields and cell counts
+cell_counts = csd %>% 
+  group_by(!!field_col) %>% 
+  nest(data=-!!field_col) %>% 
+  mutate(summary=map(data, 
+           function(d) map_dfc(phenos, 
+                               ~sum(phenoptr::select_rows(d, .x))))) %>% 
+  select(-data) %>% 
+  unnest('summary')
+```
+
+### Summary
+
+Cell data from `` `r csd_path` ``.  
+_From_ phenotype: `r from_name`  
+_To_ phenotype: `r to_name`  
+_Tissue categories_: `r category_names`  
+
+#### Summary of fields and cell counts
+
+`r knitr::kable(cell_counts)`
+
+```{r funcs}
+# Make a ppp for a single field with the given phenotypes and tissue categories
+make_ppp2 = function(field) {
+  pp1 = phenoptr::make_ppp(csd, export_path, from_phenotype, field,
+                           tissue_categories=tissue_categories)
+  pp2 = phenoptr::make_ppp(csd, export_path, to_phenotype, field,
+                           tissue_categories=tissue_categories)
+  spatstat::superimpose(pp1, pp2)
+}
+```
+
+### Nearest neighbor function G from `r from_name` to `r to_name`
+
+The G function shows the distribution of nearest neighbors. 
+It is the cumulative distribution function of the distance from
+a typical cell to its nearest neighbor.
+
+```{r Gcross, fig.height=plot_rows*4}
+# Compute and plot Gcross for each field
+par(mar=rep(4, 4), mfrow=c(plot_rows, 2))
+
+purrr::walk(fields, function(field) {
+  pp = make_ppp2(field)
+  spatstat::plot.fv(spatstat::Gcross(pp, from_name, to_name),
+                    main=field)
+})
+```
+
+### L function from `r from_name` to `r to_name`
+
+The L function is a normalized summary of the number of cells within
+a radius of cells of another type.
+
+These plots show L(r)/r vs r.
+
+```{r Lcross, fig.height=plot_rows*4}
+# Compute and plot Lcross for each field
+par(mar=rep(4, 4), mfrow=c(plot_rows, 2))
+
+purrr::walk(fields, function(field) {
+  pp = make_ppp2(field)
+  spatstat::plot.fv(spatstat::Lcross(pp, from_name, to_name),
+                    ./r ~ r, main=field)
+})
+```
+
+### Pair correlation from `r from_name` to `r to_name`
+
+Pair-correlation summarizes the relative density of cells of one type 
+at each distance from cells of a second type.
+
+```{r pcfcross, fig.height=plot_rows*4}
+# Compute and plot pcfcross for each field
+par(mar=rep(4, 4), mfrow=c(plot_rows, 2))
+
+purrr::walk(fields, function(field) {
+  pp = make_ppp2(field)
+  spatstat::plot.fv(spatstat::pcfcross(pp, from_name, to_name, divisor='d'),
+                    main=field)
+})
+```
+
+### References
+
+A readable and comprehensive discussion of spatial statistics may
+be found in Baddeley, Rubak and Turner, 
+_Spatial Point Patterns: Methodology and Applications with R_, 
+Chapman and Hall/CRC Press, 2016
+([link](http://www.crcpress.com/books/details/9781482210200/)).
+
+More information about the specific functions shown in this report is
+available in the R help for `spatstat::Gcross()`, `spatstat::Lcross()`
+and `spatstat::pcfcross()` and at the 
+`spatstat` [website](https://spatstat.org/).
+
+This report created by phenoptr `r packageVersion("phenoptr")`
+and phenoptrReports `r packageVersion("phenoptrReports")` on `r Sys.Date()`.  
+http://akoyabio.github.io/phenoptrReports

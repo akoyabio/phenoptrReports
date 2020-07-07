@@ -30,6 +30,12 @@ ui <- shinydashboard::dashboardPage(
         shiny::checkboxInput('save_data', 'Save data with image')),
       shiny::column(6,
         shiny::checkboxInput('add_logo', 'Show logo', value=TRUE))
+    ),
+    shiny::fluidRow(id='stats_report_row',
+      shiny::conditionalPanel(
+       condition='output.allow_stats_report',
+        shiny::downloadButton('stats_report', 'Spatial statistics report')
+        )
     )
   ),
 
@@ -46,6 +52,10 @@ ui <- shinydashboard::dashboardPage(
         #save_all_local {
             margin-left: 30px;
             margin-top: 0px;
+        }
+
+        #stats_report_row {
+            margin-left: 0px;
         }",
 
         # Align the prev_next buttons with the field dropdown

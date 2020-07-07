@@ -74,6 +74,7 @@ reference:
     contents:
       - unmixing_quality_report
       - component_levels_report
+      - spatial_statistics_report
       - write_summary_report
   - title: Data reporting - Excel and Word
     desc: These functions write analysis results to Excel worksheets

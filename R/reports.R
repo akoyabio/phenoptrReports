@@ -138,6 +138,56 @@ component_levels_report = function(export_path=NULL, quantiles=0.999,
                                 export_data = export_data))
 }
 
+#' Spatial statistics report
+#'
+#' Create a report showing the G function ([spatstat::Gcross()]),
+#' L function ([spatstat::Lcross()]) and pair correlation function
+#' ([spatstat::pcfcross()]) for two phenotypes and all fields in an
+#' experiment.
+#'
+#' @param csd Consolidated cell seg data (from `Consolidated_data.txt`),
+#' or NULL.
+#' @param csd_path Path to `Consolidated_data.txt` or NULL.
+#' @param export_path Path to a directory containing composite and component
+#'   image files from inForm.
+#' @param from_pheno,to_pheno Phenotype definitions.
+#' Each parameter is a character
+#' vector to be parsed by [phenoptr::parse_phenotypes()].
+#' @param output_file If provided, the full path to the output file.
+#' If omitted, the report will be written to the `export_path` directory.
+#' @param tissue_categories Tissue categories of interest. If supplied, the
+#' generated report will reflect only cells in these categories. Note:
+#' providing this parameter may significantly slow the report generation.
+#' @export
+spatial_statistics_report = function(csd=NULL, csd_path=NULL,
+                                     export_path, from_pheno, to_pheno,
+                                     output_file=NULL, tissue_categories=NULL) {
+  if (is.null(csd_path) == is.null(csd))
+    stop('Provide csd_path or csd but not both.')
+
+  stopifnot(dir.exists(export_path))
+
+  rmd_path = system.file("rmd", "Spatial_statistics_report.Rmd",
+                         package="phenoptrReports")
+
+  if (is.null(output_file)) {
+    name = stringr::str_glue(
+      'Spatial_statistics_report_from_{names(from_pheno)[[1]]}_to_{names(to_pheno)[[1]]}.html')
+    name = fs::path_sanitize(name, replacement='_')
+    output_file = file.path(export_path, name)
+  }
+
+  rmarkdown::render(rmd_path, output_file=output_file, quiet=TRUE,
+                    intermediates_dir=temp_dir_by(output_file),
+                    params=list(csd=csd,
+                                csd_path=csd_path,
+                                export_path = export_path,
+                                from_phenotype=from_pheno,
+                                to_phenotype=to_pheno,
+                                tissue_categories=tissue_categories))
+
+}
+
 #' Write session info to a file
 #'
 #' This will write the output of `sessioninfo::session_info()`

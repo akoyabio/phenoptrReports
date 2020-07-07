@@ -37,6 +37,7 @@ Imports:
     scales,
     shiny (>= 0.13),
     shinydashboard,
+    spatstat,
     stringr,
     tibble (>= 2.0.0),
     tidyr (>= 1.0.0),

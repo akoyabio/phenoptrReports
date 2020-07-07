@@ -124,3 +124,17 @@ test_that("Component levels report runs", {
   component_levels_report(export_path)
   expect(file.exists(report_path), 'Failed to create component levels report')
 })
+
+test_that("Spatial statistics report runs", {
+  csd_path =
+    'C:/Research/phenoptrExamplesData/DemoSlides/export/Consolidated_data.txt'
+  export_path = 'C:/Research/phenoptrExamplesData/DemoSlides/export'
+  skip_if_not(dir.exists(export_path))
+
+  report_path = file.path(export_path, 'Spatial_statistics_report.html')
+  if (file.exists(report_path)) file.remove(report_path)
+
+  spatial_statistics_report(NULL, csd_path, export_path,
+                            'CD8+', 'CD68+', report_path)
+  expect(file.exists(report_path), 'Failed to create spatial statistics report')
+})
