@@ -125,12 +125,23 @@ purrr::walk(fields, function(field) {
 })
 ```
 
+### J function from `r from_name` to `r to_name`
+
+```{r Jcross, fig.height=plot_rows*4}
+# Compute and plot Lcross for each field
+par(mar=rep(4, 4), mfrow=c(plot_rows, 2))
+
+purrr::walk(fields, function(field) {
+  pp = make_ppp2(field)
+  spatstat::plot.fv(spatstat::Jcross(pp, from_name, to_name),
+                    main=field)
+})
+```
+
 ### L function from `r from_name` to `r to_name`
 
 The L function is a normalized summary of the number of cells within
 a radius of cells of another type.
-
-These plots show L(r)/r vs r.
 
 ```{r Lcross, fig.height=plot_rows*4}
 # Compute and plot Lcross for each field
@@ -139,7 +150,7 @@ par(mar=rep(4, 4), mfrow=c(plot_rows, 2))
 purrr::walk(fields, function(field) {
   pp = make_ppp2(field)
   spatstat::plot.fv(spatstat::Lcross(pp, from_name, to_name),
-                    ./r ~ r, main=field)
+                    main=field)
 })
 ```
 
