@@ -14,7 +14,7 @@ upset_data = function(d) {
       negative(.) ~ 0,
       TRUE ~ 0)
     )) %>%
-    dplyr::rename_all(dplyr::funs(stringr::str_remove(., 'Phenotype '))) %>%
+    dplyr::rename_all(list(~stringr::str_remove(., 'Phenotype '))) %>%
     as.data.frame() # UpSetR fails with tibble
 
   # Add a junk column to work around another bug
