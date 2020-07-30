@@ -330,12 +330,12 @@ server = function(input, output, session) {
         duration=NULL, closeButton=FALSE, type='message')
 
       if (input$show_as == 'from_to')
-        spatial_statistics_report(csd, NULL, .export_path,
+        phenoptrReports::spatial_statistics_report(csd, NULL, .export_path,
                                   phenotype_output()$phenotype,
                                   phenotype2_output()$phenotype,
                                   file)
       else
-        spatial_statistics_report(csd, NULL, .export_path,
+        phenoptrReports::spatial_statistics_report(csd, NULL, .export_path,
                                   phenotype2_output()$phenotype,
                                   phenotype_output()$phenotype,
                                   file)
