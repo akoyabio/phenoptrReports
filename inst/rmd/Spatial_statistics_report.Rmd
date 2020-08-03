@@ -106,52 +106,78 @@ make_ppp2 = function(field) {
                            tissue_categories=tissue_categories)
   spatstat::superimpose(pp1, pp2)
 }
+
+# Plot pp_expr for all fields
+# pp_expr is an expression with pp as a free variable, whose
+# value is a spatstat function object (fv)
+# fmla is an optional expression to control what is plotted
+plot_all = function(pp_expr, fmla=.~r) {
+  # Make a function that takes pp as an argument and evaluates pp_expr
+  pp_expr = rlang::enexpr(pp_expr)
+  f = rlang::new_function(rlang::exprs(pp = ), pp_expr)
+
+  par(mar=rep(4, 4), mfrow=c(plot_rows, 2))
+
+  # Evaluate and plot pp_expr for each field
+  purrr::walk(fields, function(field) {
+    pp = make_ppp2(field)
+    if (length(unique(pp$marks))==2) {
+      spatstat::plot.fv(f(pp), fmla, main=field)
+    } else {
+      # A phenotype is missing from this field, create a 
+      # placeholder plot.
+      plot(x=0, y=0, type='n', xlab='', ylab='', xaxt='n', yaxt='n', main=field)
+      text(0, 0.5, 'No data')
+    }
+  })
+}
 ```
 
 ### Nearest neighbor function G from `r from_name` to `r to_name`
 
 The G function shows the distribution of nearest neighbors. 
 It is the cumulative distribution function of the distance from
-a typical cell to its nearest neighbor.
+a typical cell to its nearest neighbor. Because G is a cumulative
+probability distribution, the values of G vary
+between 0 and 1 and quantiles can be read directly from the chart.
 
 ```{r Gcross, fig.height=plot_rows*4}
 # Compute and plot Gcross for each field
-par(mar=rep(4, 4), mfrow=c(plot_rows, 2))
-
-purrr::walk(fields, function(field) {
-  pp = make_ppp2(field)
-  spatstat::plot.fv(spatstat::Gcross(pp, from_name, to_name),
-                    main=field)
-})
+plot_all(spatstat::Gcross(pp, from_name, to_name, correction=c('km')))
 ```
 
 ### J function from `r from_name` to `r to_name`
 
-```{r Jcross, fig.height=plot_rows*4}
-# Compute and plot Lcross for each field
-par(mar=rep(4, 4), mfrow=c(plot_rows, 2))
+The J function is computed as $J = (1-G)/(1-F)$ where G is the nearest
+neighbor function and F is the "empty space" function.
 
-purrr::walk(fields, function(field) {
-  pp = make_ppp2(field)
-  spatstat::plot.fv(spatstat::Jcross(pp, from_name, to_name),
-                    main=field)
-})
+```{r Jcross, fig.height=plot_rows*4}
+# Compute and plot Jcross for each field
+plot_all(spatstat::Jcross(pp, from_name, to_name, correction=c('km')))
+```
+
+### K function from `r from_name` to `r to_name`
+
+Ripley's K function is a normalized summary of the number of cells within
+a radius of cells of another type. If the cells are independent and randomly
+distributed, the K function has the shape $K = \pi r^2$.
+
+```{r Kcross, fig.height=plot_rows*4}
+# Compute and plot Kcross for each field
+plot_all(spatstat::Kcross(pp, from_name, to_name, correction=c('best')))
 ```
 
 ### L function from `r from_name` to `r to_name`
 
 The L function is a normalized summary of the number of cells within
-a radius of cells of another type.
+a radius of cells of another type. If the cells are independent and randomly
+distributed, the L function has the shape $L = r$.
+
+These plots show $L/r$ vs $r$.
 
 ```{r Lcross, fig.height=plot_rows*4}
 # Compute and plot Lcross for each field
-par(mar=rep(4, 4), mfrow=c(plot_rows, 2))
-
-purrr::walk(fields, function(field) {
-  pp = make_ppp2(field)
-  spatstat::plot.fv(spatstat::Lcross(pp, from_name, to_name),
-                    main=field)
-})
+plot_all(spatstat::Lcross(pp, from_name, to_name, correction='best'), ./r~r)
 ```
 
 ### Pair correlation from `r from_name` to `r to_name`
@@ -161,13 +187,8 @@ at each distance from cells of a second type.
 
 ```{r pcfcross, fig.height=plot_rows*4}
 # Compute and plot pcfcross for each field
-par(mar=rep(4, 4), mfrow=c(plot_rows, 2))
-
-purrr::walk(fields, function(field) {
-  pp = make_ppp2(field)
-  spatstat::plot.fv(spatstat::pcfcross(pp, from_name, to_name, divisor='d'),
-                    main=field)
-})
+plot_all(spatstat::pcfcross(pp, from_name, to_name, 
+                            divisor='d', correction='Ripley'))
 ```
 
 ### References
