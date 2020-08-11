@@ -15,6 +15,10 @@ write_summary_report = function(csd_path=NULL, csd=NULL,
   if (is.null(output_path))
     stop('You must provide an output path.')
 
+  # Don't complain about missing \VignetteIndexEntry
+  old_opts = options(rmarkdown.html_vignette.check_title = FALSE)
+  on.exit(options(old_opts))
+
   rmd_path = system.file("rmd", "Cell_seg_summary_report.Rmd",
                          package="phenoptrReports")
 
