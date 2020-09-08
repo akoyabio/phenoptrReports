@@ -1,6 +1,8 @@
 # phenoptrReports 0.2.8.9000
 
 Analysis addin:
+- Nearest neighbors are computed per tissue category and for all cells in
+  any included category (#39). 
 - Include expression-based phenotype columns and measured expression columns
   in count_within.txt and nearest_neighbors.txt (#36).
 - Output has nicer names for expression-based phenotypes (#36).

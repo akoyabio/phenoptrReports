@@ -11,21 +11,28 @@ if (getRversion() >= "2.15.1")
 #'
 #' Computes summary nearest neighbor statistics (mean, median, etc)
 #' for each `.by` in `csd` and each pair of phenotypes in `phenotypes`.
+#' Statistics are computed separately for each category in `categories`
+#' and, if multiple categories are provided, once for all included cells.
 #' @param csd Cell seg data with `Cell X Position`,
 #'        `Cell Y Position`, field name and `Phenotype` columns.
 #' @param phenotypes Optional list of phenotypes to include. If omitted,
 #' will use `unique_phenotypes(csd)`.
-#' @param details_path If present, path to save a tab-separated table with
-#' nearest-neighbor data for each cell.
+#' @param categories Optional list of tissue categories to compute within. If
+#' omitted, all cells will be included.
+#' @param details_path If present, path to save a tab-separated table
+#' for each tissue category containing
+#' nearest-neighbor data for each cell in the tissue category.
 #' @param .by Column to aggregate by
 #' @param extra_cols The names of extra columns to include in the detailed
 #' results.
 #' @return A data frame with summary statistics for each phenotype pair
-#' in each Slide ID.
+#' in each Slide ID for each tissue category.
 #' @export
 #' @importFrom magrittr %>%
-nearest_neighbor_summary = function(csd, phenotypes=NULL, details_path=NULL,
+nearest_neighbor_summary = function(csd, phenotypes=NULL,
+                                    categories=NA, details_path=NULL,
                                     .by='Slide ID', extra_cols=NULL) {
+  # Prep parameters
   phenotypes = phenoptr::validate_phenotypes(phenotypes, csd)
   extra_cols = c(unlist(extra_cols),
                  phenoptr::phenotype_columns(phenotypes)) %>%
@@ -35,16 +42,71 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL, details_path=NULL,
   field_col = rlang::sym(phenoptr::field_column(csd))
   .by = rlang::sym(.by)
 
-  # Compute nearest neighbor distances for all cells, one field at a time.
-  if (.by == field_col)
-    distances = csd %>% dplyr::group_by(!!.by)
-  else
-    distances = csd %>% dplyr::group_by(!!.by, !!field_col)
+  # If no categories, compute once for all cells
+  if (any(is.na(categories))) {
+    result = nearest_neighbor_summary_impl(csd, phenotypes,
+                                           categories, details_path,
+                                           .by, field_col, extra_cols)
+    return(result)
+  }
 
-  distances = distances %>%
-    tidyr::nest() %>%
+  # Compute once for each category and once for all categories
+  result = list()
+  for (category in categories) {
+    # Assume that details_path ends with .txt and make a path per category
+    category_path = stringr::str_replace(details_path,
+                      '\\.txt$', paste0('_', category, '.txt'))
+    category_result = nearest_neighbor_summary_single_impl(csd, phenotypes,
+                        category, category_path,
+                        .by, field_col, extra_cols) %>%
+      dplyr::mutate(`Tissue Category`=category)
+    result = c(result, list(category_result))
+  }
+
+  if (length(categories) > 1) {
+    category_path = stringr::str_replace(details_path,
+                                         '\\.txt$', '_All.txt')
+    category_result = nearest_neighbor_summary_single_impl(csd, phenotypes,
+                        categories, category_path,
+                        .by, field_col, extra_cols) %>%
+      dplyr::mutate(`Tissue Category`='All')
+    result = c(result, list(category_result))
+  }
+
+  # Row-bind and re-order columns
+  result = result %>%
+    dplyr::bind_rows() %>%
+    dplyr::select(!!.by, `Tissue Category`, everything())
+
+  # Re-order rows
+  result =
+    order_by_slide_phenotype_category(result, .by, categories, phenotypes)
+
+  result
+}
+
+# Internal implementation of nearest_neighbor_summary for a single
+# category (or categories), from cleaned parameters.
+nearest_neighbor_summary_single_impl = function(csd, phenotypes,
+                                         categories, details_path,
+                                         .by, field_col, extra_cols) {
+
+  # Filter by category if provided
+  if (!any(is.na(categories)))
+      csd = csd %>%
+        dplyr::filter(`Tissue Category` %in% categories)
+
+  # Prep data - nest csd by field and .by
+  if (.by == field_col)
+    csd_nested = csd %>% dplyr::group_by(!!.by) %>% tidyr::nest()
+  else
+    csd_nested = csd %>% dplyr::group_by(!!.by, !!field_col) %>% tidyr::nest()
+
+  # Compute nearest neighbor distances for all cells in categories,
+  # one field at a time.
+  distances = csd_nested %>%
     dplyr::mutate(distance=purrr::map(data,
-                           phenoptr::find_nearest_distance, phenotypes)) %>%
+                    phenoptr::find_nearest_distance, phenotypes)) %>%
     tidyr::unnest(cols=c(data, distance)) %>%
     dplyr::ungroup()
 

@@ -314,7 +314,7 @@ heatmap_labeller = function(d) {
 
 if ('Nearest Neighbors' %in% sheet_names) {
   # Make heat maps of the median distance between phenotypes,
-  # one heat map per slide.
+  # one heat map per slide and tissue category.
   neighbors = read_xlsx(workbook_path, 'Nearest Neighbors', skip=1)
   
   # Filter out Total Cells, they are not interesting and add clutter
@@ -324,30 +324,37 @@ if ('Nearest Neighbors' %in% sheet_names) {
   max_median = max(neighbors$Median, na.rm=TRUE)
   
   # Split to multiple pages
+  categories = levels(order_tissue_categories(neighbors$`Tissue Category`))
   neighbors = split_slides(neighbors, max_heatmaps_per_plot, pack=TRUE)
-  iwalk(neighbors, function(d, i) {
-    if (length(neighbors) > 1) {
-      cat(stringr::str_glue('## Median Distance to Nearest Neighbor ({i} of {length(neighbors)})\n\n'))
-    } else {
-      cat('## Median Distance to Nearest Neighbor\n\n')
-    }
-    d = d %>% mutate(From=factor(From, levels=rev(sort(unique(From)))))
-    p = ggplot(d, aes(To, From, fill=Median)) +
-      geom_raster(na.rm=TRUE) +
-      facet_wrap(vars(!!.by), nrow=2, labeller=heatmap_labeller) +
-      scale_fill_gradientn('Median\nDistance', na.value='grey90', 
-                           limits=c(0, max_median),
-                           colors=RColorBrewer::brewer.pal(9, 'RdYlBu')) +
-      theme_phenoptr +
-      # Overrides for theme_phenoptr elements
-      theme(strip.text.x=element_text(face='plain', angle=0,
-                                      margin=margin(b=1)),
-            axis.text.x=element_text(size=8, angle=90, hjust=1)) +
-      coord_equal()
-  
-   
-    print(p)
-    cat('\n\n')
+  walk(categories, function(category) {
+    iwalk(neighbors, function(d, i) {
+      if (length(neighbors) > 1) {
+        cat(stringr::str_glue(
+          '## Median Distance to Nearest Neighbor in {category} Tissue ',
+          '({i} of {length(neighbors)})\n\n'))
+      } else {
+        cat(stringr::str_glue('## Median Distance to Nearest Neighbor in {category} Tissue\n\n'))
+      }
+      d = d %>% 
+        filter(`Tissue Category`==category) %>% 
+        mutate(From=factor(From, levels=rev(sort(unique(From)))))
+      p = ggplot(d, aes(To, From, fill=Median)) +
+        geom_raster(na.rm=TRUE) +
+        facet_wrap(vars(!!.by), nrow=2, labeller=heatmap_labeller) +
+        scale_fill_gradientn('Median\nDistance', na.value='grey90', 
+                             limits=c(0, max_median),
+                             colors=RColorBrewer::brewer.pal(9, 'RdYlBu')) +
+        theme_phenoptr +
+        # Overrides for theme_phenoptr elements
+        theme(strip.text.x=element_text(face='plain', angle=0,
+                                        margin=margin(b=1)),
+              axis.text.x=element_text(size=8, angle=90, hjust=1)) +
+        coord_equal()
+    
+     
+      print(p)
+      cat('\n\n')
+    })
   })
 }
 ```

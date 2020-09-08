@@ -50,7 +50,9 @@ test_file_generation = function(data_dir, output_dir, expected_path, .by) {
   expect_true(file.exists(file.path(output_dir, 'Script.R')))
   expect_true(file.exists(actual_path))
   expect_true(file.exists(file.path(output_dir, 'Charts.docx')))
-  expect_true(file.exists(file.path(output_dir, 'nearest_neighbors.txt')))
+  expect_true(file.exists(file.path(output_dir, 'nearest_neighbors_Tumor.txt')))
+  expect_true(file.exists(file.path(output_dir, 'nearest_neighbors_Stroma.txt')))
+  expect_true(file.exists(file.path(output_dir, 'nearest_neighbors_All.txt')))
   expect_true(file.exists(file.path(output_dir, 'count_within.txt')))
   expect_true(file.exists(file.path(output_dir, 'session_info.txt')))
 

@@ -21,6 +21,24 @@ order_by_slide_and_tissue_category =
     dplyr::arrange(!!.by, tissue_order[`Tissue Category`])
 }
 
+
+# Re-order From, To and Tissue Category rows in the order provided by the user
+order_by_slide_phenotype_category =
+  function(d, .by, categories, phenotypes, ...) {
+    # Lookup table for ordering tissue categories and phenotypes
+    tissue_order = 1:(length(categories)+2) %>%
+      rlang::set_names(c(categories, 'Total', 'All'))
+
+    phenotype_order = seq_along(phenotypes) %>%
+      rlang::set_names(names(phenotypes))
+
+    d %>%
+      dplyr::arrange(!!.by,
+                     phenotype_order[From], phenotype_order[To],
+                     ..., tissue_order[`Tissue Category`])
+
+}
+
 # Make a nested data frame with one row per Slide ID and
 # optionally Tissue Category.
 #

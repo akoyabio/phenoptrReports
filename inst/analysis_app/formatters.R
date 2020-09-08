@@ -99,7 +99,7 @@ summary_table = csd %>%
 # Format tissue categories
 format_tissue_categories = function(cats) {
   cats = cats %>% purrr::compact() %>% purrr::discard(~.x=='')
-  if (length(cats)==0) return('')
+  if (length(cats)==0) return('tissue_categories = NA\n\n\n')
   cat_str = paste(cats, collapse='", "')
   stringr::str_glue('tissue_categories = c("{cat_str}")\n\n\n')
 }
@@ -253,13 +253,14 @@ nearest_detail_path = file.path(
   "{output_dir}",
   "nearest_neighbors.txt")
 nearest_neighbors = nearest_neighbor_summary(
-  csd, phenotypes, nearest_detail_path, .by=.by,
+  csd, phenotypes, tissue_categories, nearest_detail_path, .by=.by,
   extra_cols=expression_params)
 \n\n')
   else
     stringr::str_glue(
 "# Summarize nearest neighbor distances
-nearest_neighbors = nearest_neighbor_summary(csd, phenotypes, .by=.by)
+nearest_neighbors = nearest_neighbor_summary(
+  csd, phenotypes, tissue_categories, .by=.by)
 \n\n")
 }
 
