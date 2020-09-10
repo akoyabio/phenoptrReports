@@ -5,7 +5,8 @@ if (getRversion() >= "2.15.1")
   utils::globalVariables(
     c('Cell X Position', 'Cell Y Position', 'From', 'To',
       'category', 'from', 'to', 'radius', 'from_count', 'within_mean',
-      'to_count', 'from_with', 'data', 'distance', 'stats'))
+      'to_count', 'from_with', 'data', 'distance', 'stats',
+      'Radius', 'count_summary'))
 
 #' Summarize nearest neighbor distances
 #'
@@ -13,12 +14,18 @@ if (getRversion() >= "2.15.1")
 #' for each `.by` in `csd` and each pair of phenotypes in `phenotypes`.
 #' Statistics are computed separately for each category in `categories`
 #' and, if multiple categories are provided, once for all included cells.
+
+#' Note: If `categories` is `NA` or includes `NA`, the "All" tissue category in
+#' the results will include all cells in `csd`. If `categories` does not include
+#' `NA`, the "All" tissue category will include only cells in the provided
+#' categories.
+#'
 #' @param csd Cell seg data with `Cell X Position`,
 #'        `Cell Y Position`, field name and `Phenotype` columns.
 #' @param phenotypes Optional list of phenotypes to include. If omitted,
 #' will use `unique_phenotypes(csd)`.
 #' @param categories Optional list of tissue categories to compute within. If
-#' omitted, all cells will be included.
+#' omitted or `NA`, all cells will be included.
 #' @param details_path If present, path to save a tab-separated table
 #' for each tissue category containing
 #' nearest-neighbor data for each cell in the tissue category.
@@ -43,14 +50,14 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL,
   .by = rlang::sym(.by)
 
   # If no categories, compute once for all cells
-  if (any(is.na(categories))) {
-    result = nearest_neighbor_summary_impl(csd, phenotypes,
+  if (all(is.na(categories))) {
+    result = nearest_neighbor_summary_single_impl(csd, phenotypes,
                                            categories, details_path,
                                            .by, field_col, extra_cols)
     return(result)
   }
 
-  # Compute once for each category and once for all categories
+  # Compute once for each category and once for all supplied categories
   result = list()
   for (category in categories) {
     # Assume that details_path ends with .txt and make a path per category
@@ -63,7 +70,7 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL,
     result = c(result, list(category_result))
   }
 
-  if (length(categories) > 1) {
+  if (length(categories) > 1 && !any(is.na(categories))) {
     category_path = stringr::str_replace(details_path,
                                          '\\.txt$', '_All.txt')
     category_result = nearest_neighbor_summary_single_impl(csd, phenotypes,
@@ -76,7 +83,7 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL,
   # Row-bind and re-order columns
   result = result %>%
     dplyr::bind_rows() %>%
-    dplyr::select(!!.by, `Tissue Category`, everything())
+    dplyr::select(!!.by, `Tissue Category`, dplyr::everything())
 
   # Re-order rows
   result =
@@ -185,19 +192,23 @@ nearest_neighbor_summary_single_impl = function(csd, phenotypes,
 #'
 #' If `details_path` is provided, this will save a table with one
 #' row per cell and columns for each phenotype and radius giving
-#' the count of cells of that type within that distance. The detail table
-#' is computed without regard to tissue category so it may not exactly
-#' match the summary table. Details are only saved if the `akoyabio/rtree`
-#' package is available.
+#' the count of cells of that type within that distance.
+#'
+#' Note: If `categories` is `NA` or includes `NA`, the "All" tissue category in
+#' the results will include all cells in `csd`. If `categories` does not include
+#' `NA`, the "All" tissue category will include only cells in the provided
+#' categories.
+#'
 #' @param csd Cell seg data with `Cell X Position`,
 #'        `Cell Y Position`, field name and `Phenotype` columns.
 #' @param radii Vector of radii to search within.
 #' @param phenotypes Optional list of phenotypes to include. If omitted,
 #' will use `unique_phenotypes(csd)`. Counts are computed for all
 #' pairs of phenotypes.
-#' @param categories Optional list of tissue categories to compute within.
-#' @param details_path If present, path to save a tab-separated table with
-#' nearest-neighbor data for each cell.
+#' @param categories Optional list of tissue categories to compute within. If
+#' omitted or `NA`, all cells will be included.
+#' @param details_path If present, path to save tab-separated tables with
+#' count within data for each cell.
 #' @param .by Column to aggregate by
 #' @param extra_cols The names of extra columns to include in the detailed
 #' results.
@@ -218,83 +229,115 @@ count_within_summary = function(csd, radii, phenotypes=NULL, categories=NA,
   field_col = rlang::sym(phenoptr::field_column(csd))
   .by = rlang::sym(.by)
 
-  # All pairs of phenotypes as a list of vectors.
-  # Order matters so this will include both (a, b) and (b, a).
-  pheno_pairs = purrr::cross2(names(phenotypes), names(phenotypes)) %>%
-    purrr::map(unlist)
-
-  # Nest by field
-  if (.by == field_col)
-    nested = csd %>% dplyr::group_by(!!.by)
-  else
-    nested = csd %>% dplyr::group_by(!!.by, !!field_col)
-
-  nested = nested %>% tidyr::nest()
-
-  # Compute and save the detail table if requested and available
-  if (!is.null(details_path)) {
-    if (!requireNamespace('rtree', quietly=TRUE))
-      warning('count_within details requires the akoyabio/rtree package.')
-    else {
-      # Just do the calculation again, it is fast enough.
-      # This is a bit of a cop-out but surfacing the details from
-      # count_within_many is a pain.
-      detail = nested %>%
-        dplyr::mutate(within=purrr::map(data,
-                      phenoptr::count_within_detail, phenotypes, radii)) %>%
-        tidyr::unnest(cols=c(data, within)) %>%
-        dplyr::select(!!.by, `Cell ID`, `Cell X Position`, `Cell Y Position`,
-                      !!field_col,
-                      dplyr::contains('Tissue Category'),
-                      tidyselect::any_of(extra_cols),
-                      dplyr::starts_with('Phenotype'),
-                      dplyr::contains('within'))
-      readr::write_tsv(detail, details_path, na='#N/A')
-    }
+  # If no categories, compute once for all cells
+  if (all(is.na(categories))) {
+    result = count_within_summary_impl(csd, phenotypes, radii,
+                                       categories, details_path,
+                                       .by, field_col, extra_cols)
+    return(result)
   }
 
-  # Compute count_within for each field.
-  distances <- nested %>%
-    # The actual calculation.
-    # count_within_many handles multiple pairs, radii and tissue categories.
-    dplyr::mutate(within=purrr::map(data, phenoptr::count_within_many,
-                pheno_pairs, radii, categories, phenotypes, verbose=FALSE)) %>%
-    # Unnest and cleanup
-    dplyr::select(-data) %>%
-    tidyr::unnest(cols=c(within)) %>%
-    dplyr::select(-source) # Chaff from count_within_many
-
-  rm(nested) # Don't need this any more, and it may be large
-
-  # Aggregate counts for grouped observations
-  # See ?phenoptr::count_within for explanation
-  aggregate_counts = function(df) {
-    df %>%
-      dplyr::summarize(within=sum(from_count*within_mean, na.rm=TRUE),
-                       from_count=sum(from_count),
-                       to_count=sum(to_count),
-                       from_with=sum(from_with),
-                       within_mean=within/from_count) %>%
-      dplyr::select(-within)
+  # Compute once for each category and once for all supplied categories
+  result = list()
+  for (category in categories) {
+    # Assume that details_path ends with .txt and make a path per category
+    category_path = stringr::str_replace(details_path,
+                                         '\\.txt$', paste0('_', category, '.txt'))
+    category_result = count_within_summary_impl(csd, phenotypes, radii,
+                                                category, category_path,
+                                                .by, field_col, extra_cols)
+    result = c(result, list(category_result))
   }
 
-  # Aggregate per .by.
-  distances = distances %>%
-    dplyr::group_by(!!.by, category, from, to, radius) %>%
-    aggregate_counts() %>%
-    dplyr::ungroup()
+  if (length(categories) > 1 && !any(is.na(categories))) {
+    category_path = stringr::str_replace(details_path,
+                                         '\\.txt$', '_All.txt')
+    category_result = count_within_summary_impl(csd, phenotypes, radii,
+                                                categories, category_path,
+                                                .by, field_col, extra_cols)
+    result = c(result, list(category_result))
+  }
 
-  # Better row order
-  distances = distances %>%
-    dplyr::arrange(!!.by, from, to, radius)
-
-  distances %>%
-    # Make pretty names for the Excel export and re-order a little
+  # Row-bind, clean up names and re-order
+  result = result %>%
+    dplyr::bind_rows() %>%
+    # Uppercase 'All'
+    dplyr::mutate(category=ifelse(category=='all', 'All', category)) %>%
+    # Make pretty names for the Excel export
     dplyr::rename(`Tissue Category` = category,
                   From=from, To=to, Radius=radius,
                   `From count` = from_count,
                   `To count` = to_count,
                   `From with` = from_with,
                   `Within mean` = within_mean) %>%
-    dplyr::select(!!.by, `Tissue Category`, dplyr::everything())
+    # Re-order columns
+    dplyr::select(!!.by, `Tissue Category`, dplyr::everything()) %>%
+    # Re-order rows
+    order_by_slide_phenotype_category(.by, categories, phenotypes, Radius)
+
+  result
+}
+
+# Internal implementation of count_within_summary for a single category
+# (or categories) from cleaned parameters
+count_within_summary_impl = function(csd, phenotypes, radii,
+                                     categories, category_path,
+                                     .by, field_col, extra_cols) {
+  # Filter by categories if provided
+  if (!any(is.na(categories)))
+    csd = csd %>%
+      dplyr::filter(`Tissue Category` %in% categories)
+
+  # All pairs of phenotypes as a list of vectors.
+  # Order matters so this will include both (a, b) and (b, a).
+  pheno_pairs = purrr::cross2(names(phenotypes), names(phenotypes)) %>%
+    purrr::map(unlist)
+
+  # Prep data - nest csd by field and .by
+  if (.by == field_col)
+    csd_nested = csd %>% dplyr::group_by(!!.by) %>% tidyr::nest()
+  else
+    csd_nested = csd %>% dplyr::group_by(!!.by, !!field_col) %>% tidyr::nest()
+
+  # Compute counts for all cells in categories, one field at a time.
+  counts = csd_nested %>%
+    dplyr::mutate(counts=purrr::map(data,
+                    phenoptr::count_within_detail, phenotypes, radii)) %>%
+    tidyr::unnest(cols=c(data, counts)) %>%
+    dplyr::ungroup()
+
+  # Optionally save details with a subset of columns
+  if (!is.null(category_path) && nrow(counts) > 0) {
+    counts_subset = counts %>%
+      dplyr::select(!!.by, `Cell ID`, `Cell X Position`, `Cell Y Position`,
+                    !!field_col,
+                    dplyr::contains('Tissue Category'),
+                    tidyselect::any_of(extra_cols),
+                    dplyr::starts_with('Phenotype'),
+                    dplyr::contains('within'))
+    readr::write_tsv(counts_subset, category_path, na='#N/A')
+  }
+
+  # Summarize counts for one `.by` grouping and all pairs
+  # summarize_combo does the work
+  # This function breaks up the nested map in the calculation of counts_summary
+  # summarize_combo is going to filter by category, we have to give it something
+  summarize_category = ifelse(length(categories)>1, NA, categories)
+  summarize_group = function(d) {
+    purrr::map_dfr(pheno_pairs, function(pheno_pair) {
+      phenoptr:::summarize_combo(d, summarize_category, phenotypes,
+                                 pheno_pair[[1]], pheno_pair[[2]], radii)
+    })
+  }
+
+  # Now we can compute summary stats for all combos and radii for each .by
+  counts_summary = counts %>%
+    dplyr::group_by(!!.by) %>%
+    tidyr::nest() %>%
+    # Summarize each group
+    dplyr::mutate(count_summary=purrr::map(data, summarize_group)) %>%
+    dplyr::select(-data) %>%
+    tidyr::unnest(count_summary)
+
+  counts_summary
 }

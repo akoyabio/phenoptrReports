@@ -391,9 +391,13 @@ if ('Count Within' %in% sheet_names) {
               mutate(From=factor(From, levels=rev(sort(unique(From)))))
 
         if (length(split_counts) > 1) {
-          cat(stringr::str_glue('## Count of "From" cells in {category} with a "To" cell within {radius} microns ({i} of {length(split_counts)})\n\n'))
+          cat(stringr::str_glue(
+            '## Count of "From" cells in {category} Tissue with a "To" cell ',
+            'within {radius} microns ({i} of {length(split_counts)})\n\n'))
         } else {
-          cat(stringr::str_glue('## Count of "From" cells in {category} with a "To" cell within {radius} microns\n\n'))
+          cat(stringr::str_glue(
+            '## Count of "From" cells in {category} Tissue with a "To" cell ',
+            'within {radius} microns\n\n'))
         }
         
         # Find the max count for this group
