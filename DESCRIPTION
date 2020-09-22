@@ -1,7 +1,7 @@
 Package: phenoptrReports
 Title: Create reports using Phenoptics data
-Version: 0.2.8.9000
-Date: 2020-05-18
+Version: 0.2.9
+Date: 2020-08-22
 Authors@R: c(
     person("Kent S", "Johnson", role = c("aut", "cre"),
            email = "kjohnson@akoyabio.com"),
@@ -10,7 +10,7 @@ Authors@R: c(
 Copyright: Akoya Biosciences
 Description: Creates diagnostic and summary reports from inForm data.
 Language: en-US
-Depends: R (>= 3.5.0)
+Depends: R (>= 3.6.0)
 License: Zlib | file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -20,22 +20,22 @@ Imports:
     formattable (>= 0.2),
     forcats,
     fs,
-    ggplot2 (>= 3.0.0),
+    ggplot2 (>= 3.2.0),
     jpeg,
     knitr,
     magrittr,
     miniUI (>= 0.1.1),
     openxlsx,
-    phenoptr (> 0.2.7),
+    phenoptr (>= 0.2.8),
     png,
-    purrr,
+    purrr (>= 0.3),
     RColorBrewer,
-    readr,
+    readr (>= 1.2.1),
     readxl (>= 1.2.0),
     rlang (>= 0.4.0),
     rmarkdown,
     scales,
-    shiny (>= 0.13),
+    shiny (>= 1.3.2),
     shinydashboard,
     stringr,
     tibble (>= 2.0.0),
@@ -53,7 +53,7 @@ Remotes:
     akoyabio/tiff,
     hms-dbmi/UpSetR
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Suggests:
     ggridges,
     rstudioapi,

@@ -7,6 +7,7 @@
 nearest_neighbor_summary(
   csd,
   phenotypes = NULL,
+  categories = NA,
   details_path = NULL,
   .by = "Slide ID",
   extra_cols = NULL
@@ -19,8 +20,12 @@ nearest_neighbor_summary(
 \item{phenotypes}{Optional list of phenotypes to include. If omitted,
 will use \code{unique_phenotypes(csd)}.}
 
-\item{details_path}{If present, path to save a tab-separated table with
-nearest-neighbor data for each cell.}
+\item{categories}{Optional list of tissue categories to compute within. If
+omitted or \code{NA}, all cells will be included.}
+
+\item{details_path}{If present, path to save a tab-separated table
+for each tissue category containing
+nearest-neighbor data for each cell in the tissue category.}
 
 \item{.by}{Column to aggregate by}
 
@@ -29,9 +34,15 @@ results.}
 }
 \value{
 A data frame with summary statistics for each phenotype pair
-in each Slide ID.
+in each Slide ID for each tissue category.
 }
 \description{
 Computes summary nearest neighbor statistics (mean, median, etc)
 for each \code{.by} in \code{csd} and each pair of phenotypes in \code{phenotypes}.
+Statistics are computed separately for each category in \code{categories}
+and, if multiple categories are provided, once for all included cells.
+Note: If \code{categories} is \code{NA} or includes \code{NA}, the "All" tissue category in
+the results will include all cells in \code{csd}. If \code{categories} does not include
+\code{NA}, the "All" tissue category will include only cells in the provided
+categories.
 }

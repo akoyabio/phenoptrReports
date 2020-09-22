@@ -75,7 +75,7 @@ summary calculation." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.9</span>
       </span>
     </div>
 
@@ -153,12 +153,13 @@ summary calculation.</p>
     </div>
 
     <pre class="usage"><span class='fu'>count_within_summary</span>(
-  <span class='no'>csd</span>,
-  <span class='no'>radii</span>,
-  <span class='kw'>phenotypes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>categories</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
-  <span class='kw'>details_path</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>.by</span> <span class='kw'>=</span> <span class='st'>"Slide ID"</span>
+  <span class='kw'>csd</span>,
+  <span class='kw'>radii</span>,
+  phenotypes = <span class='kw'>NULL</span>,
+  categories = <span class='fl'>NA</span>,
+  details_path = <span class='kw'>NULL</span>,
+  .by = <span class='st'>"Slide ID"</span>,
+  extra_cols = <span class='kw'>NULL</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -181,16 +182,22 @@ pairs of phenotypes.</p></td>
     </tr>
     <tr>
       <th>categories</th>
-      <td><p>Optional list of tissue categories to compute within.</p></td>
+      <td><p>Optional list of tissue categories to compute within. If
+omitted or <code>NA</code>, all cells will be included.</p></td>
     </tr>
     <tr>
       <th>details_path</th>
-      <td><p>If present, path to save a tab-separated table with
-nearest-neighbor data for each cell.</p></td>
+      <td><p>If present, path to save tab-separated tables with
+count within data for each cell.</p></td>
     </tr>
     <tr>
       <th>.by</th>
       <td><p>Column to aggregate by</p></td>
+    </tr>
+    <tr>
+      <th>extra_cols</th>
+      <td><p>The names of extra columns to include in the detailed
+results.</p></td>
     </tr>
     </table>
 
@@ -202,10 +209,11 @@ in each Slide ID.</p>
 
     <p>If <code>details_path</code> is provided, this will save a table with one
 row per cell and columns for each phenotype and radius giving
-the count of cells of that type within that distance. The detail table
-is computed without regard to tissue category so it may not exactly
-match the summary table. Details are only saved if the <code>akoyabio/rtree</code>
-package is available.</p>
+the count of cells of that type within that distance.</p>
+<p>Note: If <code>categories</code> is <code>NA</code> or includes <code>NA</code>, the "All" tissue category in
+the results will include all cells in <code>csd</code>. If <code>categories</code> does not include
+<code>NA</code>, the "All" tissue category will include only cells in the provided
+categories.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -222,7 +230,7 @@ package is available.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

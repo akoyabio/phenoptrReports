@@ -24,10 +24,11 @@ count_within_summary(
 will use \code{unique_phenotypes(csd)}. Counts are computed for all
 pairs of phenotypes.}
 
-\item{categories}{Optional list of tissue categories to compute within.}
+\item{categories}{Optional list of tissue categories to compute within. If
+omitted or \code{NA}, all cells will be included.}
 
-\item{details_path}{If present, path to save a tab-separated table with
-nearest-neighbor data for each cell.}
+\item{details_path}{If present, path to save tab-separated tables with
+count within data for each cell.}
 
 \item{.by}{Column to aggregate by}
 
@@ -47,8 +48,10 @@ summary calculation.
 \details{
 If \code{details_path} is provided, this will save a table with one
 row per cell and columns for each phenotype and radius giving
-the count of cells of that type within that distance. The detail table
-is computed without regard to tissue category so it may not exactly
-match the summary table. Details are only saved if the \code{akoyabio/rtree}
-package is available.
+the count of cells of that type within that distance.
+
+Note: If \code{categories} is \code{NA} or includes \code{NA}, the "All" tissue category in
+the results will include all cells in \code{csd}. If \code{categories} does not include
+\code{NA}, the "All" tissue category will include only cells in the provided
+categories.
 }

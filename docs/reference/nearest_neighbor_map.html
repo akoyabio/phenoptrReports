@@ -73,7 +73,7 @@ shown with any available phenotype." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.9</span>
       </span>
     </div>
 
@@ -149,15 +149,15 @@ shown with any available phenotype.</p>
     </div>
 
     <pre class="usage"><span class='fu'>nearest_neighbor_map</span>(
-  <span class='no'>csd</span>,
-  <span class='no'>field_name</span>,
-  <span class='no'>export_path</span>,
-  <span class='no'>phenos</span>,
-  <span class='no'>color1</span>,
-  <span class='no'>color2</span>,
-  <span class='kw'>show_as</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"from_to"</span>, <span class='st'>"to_from"</span>, <span class='st'>"mutual"</span>, <span class='st'>"none"</span>),
-  <span class='kw'>dot_size</span> <span class='kw'>=</span> <span class='fl'>3</span>,
-  <span class='kw'>add_logo</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+  <span class='kw'>csd</span>,
+  <span class='kw'>field_name</span>,
+  <span class='kw'>export_path</span>,
+  <span class='kw'>phenos</span>,
+  <span class='kw'>color1</span>,
+  <span class='kw'>color2</span>,
+  show_as = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"from_to"</span>, <span class='st'>"to_from"</span>, <span class='st'>"mutual"</span>, <span class='st'>"none"</span>),
+  dot_size = <span class='fl'>3</span>,
+  add_logo = <span class='fl'>TRUE</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -200,7 +200,7 @@ image files from inForm</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Returns a <code>list</code> containing two items:</p><dl'>
+    <p>Returns a <code>list</code> containing two items:</p><dl>
 <dt><code>plot</code></dt><dd><p>The plot, a <code><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></code> object.</p></dd>
 <dt><code>data</code></dt><dd><p>A <code><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></code> containing the data
 used to create the line
@@ -224,7 +224,7 @@ segments in the plot, or <code>NULL</code> if <code>show_as</code> is <code>"non
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

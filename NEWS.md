@@ -1,4 +1,5 @@
-# phenoptrReports 0.2.8.9000
+# phenoptrReports 0.2.9
+**2020-08-22**
 
 Analysis addin:
 - Nearest neighbors and count within are computed per tissue category and 

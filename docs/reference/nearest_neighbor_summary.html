@@ -41,7 +41,13 @@
 
 <meta property="og:title" content="Summarize nearest neighbor distances — nearest_neighbor_summary" />
 <meta property="og:description" content="Computes summary nearest neighbor statistics (mean, median, etc)
-for each .by in csd and each pair of phenotypes in phenotypes." />
+for each .by in csd and each pair of phenotypes in phenotypes.
+Statistics are computed separately for each category in categories
+and, if multiple categories are provided, once for all included cells.
+Note: If categories is NA or includes NA, the &quot;All&quot; tissue category in
+the results will include all cells in csd. If categories does not include
+NA, the &quot;All&quot; tissue category will include only cells in the provided
+categories." />
 
 
 
@@ -73,7 +79,7 @@ for each .by in csd and each pair of phenotypes in phenotypes." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.9</span>
       </span>
     </div>
 
@@ -145,14 +151,22 @@ for each .by in csd and each pair of phenotypes in phenotypes." />
 
     <div class="ref-description">
     <p>Computes summary nearest neighbor statistics (mean, median, etc)
-for each <code>.by</code> in <code>csd</code> and each pair of phenotypes in <code>phenotypes</code>.</p>
+for each <code>.by</code> in <code>csd</code> and each pair of phenotypes in <code>phenotypes</code>.
+Statistics are computed separately for each category in <code>categories</code>
+and, if multiple categories are provided, once for all included cells.
+Note: If <code>categories</code> is <code>NA</code> or includes <code>NA</code>, the "All" tissue category in
+the results will include all cells in <code>csd</code>. If <code>categories</code> does not include
+<code>NA</code>, the "All" tissue category will include only cells in the provided
+categories.</p>
     </div>
 
     <pre class="usage"><span class='fu'>nearest_neighbor_summary</span>(
-  <span class='no'>csd</span>,
-  <span class='kw'>phenotypes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>details_path</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>.by</span> <span class='kw'>=</span> <span class='st'>"Slide ID"</span>
+  <span class='kw'>csd</span>,
+  phenotypes = <span class='kw'>NULL</span>,
+  categories = <span class='fl'>NA</span>,
+  details_path = <span class='kw'>NULL</span>,
+  .by = <span class='st'>"Slide ID"</span>,
+  extra_cols = <span class='kw'>NULL</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -169,20 +183,31 @@ for each <code>.by</code> in <code>csd</code> and each pair of phenotypes in <co
 will use <code>unique_phenotypes(csd)</code>.</p></td>
     </tr>
     <tr>
+      <th>categories</th>
+      <td><p>Optional list of tissue categories to compute within. If
+omitted or <code>NA</code>, all cells will be included.</p></td>
+    </tr>
+    <tr>
       <th>details_path</th>
-      <td><p>If present, path to save a tab-separated table with
-nearest-neighbor data for each cell.</p></td>
+      <td><p>If present, path to save a tab-separated table
+for each tissue category containing
+nearest-neighbor data for each cell in the tissue category.</p></td>
     </tr>
     <tr>
       <th>.by</th>
       <td><p>Column to aggregate by</p></td>
+    </tr>
+    <tr>
+      <th>extra_cols</th>
+      <td><p>The names of extra columns to include in the detailed
+results.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A data frame with summary statistics for each phenotype pair
-in each Slide ID.</p>
+in each Slide ID for each tissue category.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -199,7 +224,7 @@ in each Slide ID.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
