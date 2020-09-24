@@ -47,14 +47,28 @@ addin_20_consolidate = function() {
       ),
 
       shiny::wellPanel(
-      shiny::h3('Select output directory'),
-      'Click the "Browse Output" button to select the directory',
-      'where the consolidated data and summary reports will be placed.',
-      shiny::br(), shiny::br(),
+        shiny::h3('Select output directory'),
+        'Click the "Browse Output" button to select the directory',
+        'where the consolidated data and summary reports will be placed.',
+        shiny::br(), shiny::br(),
 
-      shiny::actionButton('browse_output', 'Browse output...'),
-      shiny::br(),
-      shiny::textOutput('output_dir')
+        shiny::actionButton('browse_output', 'Browse Output...'),
+        shiny::br(), shiny::br(),
+        shiny::textOutput('output_dir')
+      ),
+
+      shiny::wellPanel(
+        shiny::h3('Select study directory'),
+        '(Optional) Click the "Browse Study" button to select a directory',
+        'containing annotation files for the images in this analysis.',
+        shiny::br(), shiny::br(),
+
+        shiny::fillRow(
+          shiny::actionButton('browse_study', 'Browse Study...'),
+          shiny::checkboxInput('require_include', 'Require #IncludeInResults tag'),
+          flex=c(1, 2)),
+        shiny::br(), shiny::br(),
+        shiny::textOutput('study_dir')
       ),
 
       shiny::h4(shiny::textOutput('error'), style='color: maroon')
@@ -64,6 +78,7 @@ addin_20_consolidate = function() {
   server <- function(input, output, session) {
     file_list = shiny::reactiveVal()
     output_dir = shiny::reactiveVal()
+    study_dir = shiny::reactiveVal()
     default_dir = ''
 
     # Handle the browse_source button by putting up a file browser
@@ -115,21 +130,38 @@ addin_20_consolidate = function() {
       set_error_text()
     })
 
+    # Handle the browse_study button by selecting a folder
+    shiny::observeEvent(input$browse_study, {
+      shiny::req(input$browse_output)
+      study_dir(phenoptrReports::choose_directory(
+        default=default_dir,
+        caption='Select a study folder'
+      ))
+
+      output$study_dir = shiny::renderText(study_dir())
+      set_error_text()
+    })
+
     # Handle the done button by processing files or showing an error
     shiny::observeEvent(input$done, {
       error_text = get_error_text()
 
       if (error_text == '') {
-        progress <- shiny::Progress$new(max=2*length(file_list())+2)
+        # Progress reports on
+        # - Reading + reporting each file
+        # - Writing + reporting the result
+        # - Optionally processing regions
+        progress_max = 2*length(file_list())+ 2 + !is.null(study_dir())
+        progress <- shiny::Progress$new(max=progress_max)
         progress$set(message = 'Processing files, please wait!',
                      value = 0)
         update_progress <- function(detail = NULL) {
           cat(detail, '\n')
           progress$set(value = progress$getValue()+1, detail = detail)
         }
-        phenoptrReports::consolidate_and_summarize_cell_seg_data(file_list(),
-                                                           output_dir(),
-                                                           update_progress)
+        phenoptrReports::consolidate_and_summarize_cell_seg_data(
+          file_list(), output_dir(), study_dir(), input$require_include,
+          update_progress)
         update_progress(detail='Done!')
         Sys.sleep(0.5)
         shiny::stopApp()
@@ -164,6 +196,7 @@ addin_20_consolidate = function() {
   }
 
   # Run the gadget in a dialog
-  viewer <- shiny::dialogViewer('Consolidate cell seg data files')
+  viewer <- shiny::dialogViewer('Consolidate cell seg data files',
+                                width=750, height=900)
   shiny::runGadget(ui, server, viewer = viewer)
 }

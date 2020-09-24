@@ -28,13 +28,20 @@ utils::globalVariables(c(
 #'
 #' @param csd_files A list or vector of paths to cell seg data files.
 #' @param output_dir Path to a directory where the results will be saved.
+#' @param study_dir Optional path to a directory containing annotation files
+#' for the images in the analysis. If provided, the files will be searched
+#' for tagged ROIs. Cells in ROIs tagged with `#ExcludeFromResults` will
+#' be omitted from the consolidated data file.
+#' @param require_include If `study_dir` is provided, should the result
+#' include only cells contained in ROIs tagged with `#IncludeInResults`?
 #' @param update_progress Callback function which is called with progress.
 #' @return A single data frame containing consolidated data and columns for each
 #'   single phenotype, invisibly.
 #' @importFrom magrittr %>%
 #' @export
-consolidate_and_summarize_cell_seg_data = function(csd_files, output_dir,
-                                             update_progress=NULL) {
+consolidate_and_summarize_cell_seg_data = function(
+    csd_files, output_dir, study_dir=NULL, require_include=FALSE,
+    update_progress=NULL) {
   if (!dir.exists(output_dir))
     stopifnot(dir.create(output_dir, recursive=TRUE))
 
@@ -109,6 +116,32 @@ consolidate_and_summarize_cell_seg_data = function(csd_files, output_dir,
       stop(field_col, 's or Cell IDs do not match (rows dropped in join).\n',
            nrow(csd), ' != ', start_row_count, ' Failed at\n', path)
   })
+
+  if (!is.null(study_dir)) {
+    update_progress(detail='Processing regions.')
+    roi_results = process_rois(csd, study_dir, require_include)
+    csd = roi_results$csd
+
+    # Write a workbook with stats
+    wb = openxlsx::createWorkbook()
+    write_sheet(wb, roi_results$removed, 'Cells removed',
+                "Cells removed by ROI",
+                header_col=2, addGrid=FALSE)
+    openxlsx::setColWidths(wb, 'Cells removed',
+                           cols=2:ncol(roi_results$removed), widths=20)
+
+    if (ncol(roi_results$stats) > 1) {
+      write_sheet(wb, roi_results$stats, 'Cells in ROIs',
+                  "Cells in other ROIs",
+                  header_col=2, addGrid=FALSE)
+      openxlsx::setColWidths(wb, 'Cells in ROIs',
+                             cols=2:ncol(roi_results$stats), widths=20)
+    }
+
+    workbook_path = file.path(output_dir, "ROI_Results.xlsx")
+    if (file.exists(workbook_path)) file.remove(workbook_path)
+    openxlsx::saveWorkbook(wb, workbook_path)
+  }
 
   # Write out the result
   update_progress(detail='Writing consolidated data.')

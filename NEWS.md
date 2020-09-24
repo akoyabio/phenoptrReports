@@ -1,3 +1,12 @@
+# phenoptrReports 0.2.9.9000
+
+Consolidate and summarize addin:
+- Process named regions from Phenochart
+  - Optionally include only cells in a region tagged #IncludeInResults
+  - Exclude any cells in a region tagged #ExcludeFromResults
+  - For any other tagged regions, add a column to the consolidated data
+    showing membership in the region.
+    
 # phenoptrReports 0.2.9
 **2020-08-22**
 
