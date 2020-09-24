@@ -126,7 +126,7 @@ spatial_map_viewer_front_end = function() {
 
       # Only allow _data.txt, count_within.txt or nearest_neighbors.txt files!
       is_nn = stringr::str_detect(files,
-                '(_data.txt|nearest_neighbors.txt|count_within.txt)$')
+                '(_data\\.txt|nearest_neighbors.*\\.txt|count_within.*\\.txt)$')
       if (!all(is_nn)) {
         shiny::showNotification(
           'Please select a Consolidated_data.txt, nearest_neighbors.txt or count_within.txt file!',

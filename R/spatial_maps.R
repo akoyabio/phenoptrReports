@@ -251,10 +251,11 @@ ensure_distance_columns = function(field_data, phenos) {
                        id_column_name(pheno_names))
 
   if (!all(required_columns %in% names(field_data))) {
-    # Remove any required fields that are already there so we don't duplicate
-    field_data = field_data[, setdiff(names(field_data), required_columns)]
-    field_data = dplyr::bind_cols(field_data,
-                          phenoptr::find_nearest_distance(field_data, phenos))
+    distance_columns = phenoptr::find_nearest_distance(field_data, phenos)
+    # Remove any computed fields that are already there so we don't duplicate
+    distance_columns = distance_columns[, setdiff(names(distance_columns),
+                                                  names(field_data))]
+    field_data = dplyr::bind_cols(field_data, distance_columns)
   }
   field_data
 }
