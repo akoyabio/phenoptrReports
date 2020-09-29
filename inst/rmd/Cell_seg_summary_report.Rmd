@@ -159,8 +159,9 @@ counts_NA = csd %>% group_by(`Slide ID`) %>%
   count() %>% 
   rename('N/A'='n')
 
- counts %>% spread(Phenotype, Count, fill=0) %>% left_join(counts_NA) %>% 
-    left_join(totals)
+ counts %>% spread(Phenotype, Count, fill=0) %>% 
+   left_join(counts_NA, by='Slide ID') %>% 
+   left_join(totals, by='Slide ID')
 
 ```
 
