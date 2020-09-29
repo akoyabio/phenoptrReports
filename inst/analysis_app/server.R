@@ -203,9 +203,12 @@ shinyServer(function(input, output, server) {
     } else if (length(input$tissue_categories)==0) {
       analysis_error = 'Please select tissue categories.'
     } else if ((shiny::isTruthy(the_data$include_nearest)
-             || shiny::isTruthy(the_data$include_count_within))
+               || shiny::isTruthy(the_data$include_count_within))
                && length(the_data$phenotype_modules) < 2) {
       analysis_error = 'Spatial statistics require at least two phenotypes.'
+    } else if (shiny::isTruthy(the_data$include_count_within)
+               && !requireNamespace('rtree', quietly=TRUE)) {
+      analysis_error = 'Please install the rtree package with the command "remotes::install_github(\'akoyabio/rtree\')"'
     } else if (shiny::isTruthy(the_data$include_count_within)
                && !shiny::isTruthy(the_data$radii)) {
       analysis_error =
