@@ -1,4 +1,6 @@
 library(testthat)
+library(dplyr)
+library(tidyr)
 library(readxl)
 
 test_file_generation = function(data_dir, output_dir, expected_path, .by) {
@@ -70,6 +72,47 @@ test_file_generation = function(data_dir, output_dir, expected_path, .by) {
       read_excel(expected_path, sheet, skip=skip, .name_repair='minimal')
     expect_equal(actual_sheet, expected_sheet, info=paste('Sheet name:', sheet))
   }
+
+  # Additional sanity checks on aggregation
+  # (on both actual and expected, since they are the same)
+  check_nearest_neighbors(actual_path)
+  check_count_within(actual_path)
+}
+
+check_nearest_neighbors = function(actual_path) {
+  df = read_excel(actual_path, 'Nearest Neighbors',
+                  skip=1, .name_repair='minimal') %>%
+    select(-Median, -SD) %>%
+    pivot_wider(names_from='Tissue Category', values_from=Min:Max)
+
+  # Because adding more candidate cells can only decrease the nearest neighbor
+  # distance, these should all be true:
+  expect_true(all(df$Min_All<=pmin(df$Min_Stroma, df$Min_Tumor), na.rm=TRUE))
+
+  # OK almost true. Field 4_1-6plex_[15206,60541].im3 has no CD68+ in Tumor
+  # and the nn distance from FoxP3+ to CD68+ in All happens to be the max,
+  # so in the by Slide ID aggregation there is one row where this is not true.
+  expect_lte(sum(df$Max_All>pmax(df$Max_Stroma, df$Max_Tumor), na.rm=TRUE), 1)
+
+  expect_true(all(df$Mean_All<=pmax(df$Mean_Stroma, df$Mean_Tumor), na.rm=TRUE))
+}
+
+check_count_within = function(actual_path) {
+  df = read_excel(actual_path, 'Count Within',
+                  skip=1, .name_repair='minimal') %>%
+    select(-`Within mean`) %>%
+    pivot_wider(names_from='Tissue Category',
+                values_from=`From count`:`From with`)
+
+  # From and To counts should directly add
+  expect_true(
+    all(df$`From count_All`==df$`From count_Stroma`+df$`From count_Tumor`))
+  expect_true(
+    all(df$`To count_All`==df$`To count_Stroma`+df$`To count_Tumor`))
+
+  # `From with` should be at least as big as the sum of the components
+  expect_true(
+    all(df$`From with_All`>=df$`From with_Stroma`+df$`From with_Tumor`))
 }
 
 test_that("file generation works", {
