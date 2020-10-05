@@ -48,7 +48,9 @@ shinyServer(function(input, output, server) {
       shiny::modalDialog(
         shiny::p('Reading input data...'), title='Please wait', footer=NULL))
 
-    d = phenoptr::read_cell_seg_data(file_data$input_path())
+    d = vroom::vroom(file_data$input_path(), na='#N/A', delim='\t',
+                     col_types=vroom::cols())
+
     tissue_categories = unique(d$`Tissue Category`)
     the_data$expression_columns = stringr::str_subset(names(d), 'Mean$')
     the_data$field_col = phenoptr::field_column(d)
@@ -56,6 +58,8 @@ shinyServer(function(input, output, server) {
     the_data$available_phenotypes = available_phenotypes = names(d) %>%
       stringr::str_subset('Phenotype ') %>%
       stringr::str_remove('Phenotype ')
+
+    available_hashtags = names(d) %>% stringr::str_subset('^#')
 
     # Slide ID prefix and aggregation choices
     if ('Slide ID' %in% names(d)) {
@@ -103,8 +107,16 @@ shinyServer(function(input, output, server) {
       # Second well panel holds phenotype modules.
       # Start it with one phenotype module and a button to add more.
       shiny::div(id='well2', shiny::wellPanel(
-        paste('Available phenotypes:',
-              paste(available_phenotypes, collapse=', ')),
+        shiny::fluidRow(
+          shiny::column(5,
+            paste('Available phenotypes:',
+                  paste(available_phenotypes, collapse=', '))),
+          shiny::column(5,
+            ifelse(length(available_hashtags) > 0,
+                   paste('Available hashtags:',
+                         paste(available_hashtags, collapse=', ')),
+                   ''))
+        ),
         phenotype_module_ui('pheno0', the_data$expression_columns,
                             show_score = !is.null(file_data$score_path()),
                             show_help=TRUE),

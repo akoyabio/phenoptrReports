@@ -18,6 +18,8 @@ available_phenotypes = phenoptr::unique_phenotypes(csd) %>%
 
 available_fields = sort(unique(csd[[phenoptr::field_column(csd)]]))
 
+available_hashtags = names(csd) %>% stringr::str_subset('^#')
+
 # Create a temp dir to save image files in
 temp_dir = file.path(tempdir(), 'image')
 dir.create(temp_dir, showWarnings=FALSE)

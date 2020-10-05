@@ -10,6 +10,10 @@ ui <- shinydashboard::dashboardPage(
     # Selector for phenotype
     'Available phenotypes:',
     paste(available_phenotypes, collapse=', '),
+    if(length(available_hashtags)>0)
+           shiny::tagList(shiny::br(), 'Available hashtags:',
+                 paste(available_hashtags, collapse=', '))
+           else '',
     phenotype_color_module_ui('phenotype', 'First phenotype:', 'red'),
     phenotype_color_module_ui('phenotype2', 'Second phenotype:', '#1E90FF'),
     shiny::hr(),

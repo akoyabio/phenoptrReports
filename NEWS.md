@@ -6,7 +6,14 @@ Consolidate and summarize addin:
   - Exclude any cells in a region tagged #ExcludeFromResults
   - For any other tagged regions, add a column to the consolidated data
     showing membership in the region.
-    
+
+Analysis addin:
+- Add support for hashtags in phenotype definitions
+- Export hashtag columns in nearest neighbor and count within detail files
+
+Spatial map viewer addin:
+- Add support for hashtags in phenotype definitions
+
 # phenoptrReports 0.2.9
 **2020-08-22**
 
