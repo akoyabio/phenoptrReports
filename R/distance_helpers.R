@@ -118,7 +118,7 @@ nearest_neighbor_summary_single_impl = function(csd, phenotypes,
     dplyr::ungroup()
 
   # Optionally save details with a subset of columns
-  if (!is.null(details_path)) {
+  if (!is.null(details_path) && length(details_path) > 0 && nrow(distances) > 0) {
     distances_subset = distances %>%
       dplyr::select(!!.by, `Cell ID`, `Cell X Position`, `Cell Y Position`,
                     !!field_col,
@@ -307,7 +307,7 @@ count_within_summary_impl = function(csd, phenotypes, radii,
     dplyr::ungroup()
 
   # Optionally save details with a subset of columns
-  if (!is.null(category_path) && nrow(counts) > 0) {
+  if (!is.null(category_path) && length(category_path) > 0 && nrow(counts) > 0) {
     counts_subset = counts %>%
       dplyr::select(!!.by, `Cell ID`, `Cell X Position`, `Cell Y Position`,
                     !!field_col,
