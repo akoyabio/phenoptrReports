@@ -26,6 +26,9 @@ phenotype. The inputs to this step are merged cell seg data files from
 multiple inForm projects. The output is a consolidated data file and a
 summary report for each file. 
 
+Optionally, this step includes, excludes and tags cells according to
+regions of interest created in Phenochart.
+
 NOTE: The consolidation step will fail if 
 the Slide IDs and Cell IDs in the merge files do not exactly agree. This can
 happen, for example, if
@@ -59,6 +62,12 @@ The names of positive phenotypes used with `phenoptrReports` must end
 with "+", for example "CD8+" or "FoxP3+". Negative and "Other"
 phenotype names should not end in "+".
 
+#### Tagged regions
+
+Tagged regions are read from annotation files created in Phenochart. To
+process tagged regions, these files must be available to the 
+consolidation app. 
+
 ## Detailed steps
 
 #### Choose "Consolidate and summarize" from the RStudio Addins menu
@@ -74,7 +83,7 @@ the GUI. Use the file selection dialog to select your inForm merge data files.
 If the files are in multiple directories, click the Browse button multiple
 times to select them.
   
-![](figures/Select_merge_files.PNG "")
+![](figures/Select_merge_files.png)
 
 #### Select output directory
 
@@ -82,7 +91,26 @@ Click the "Browse Output" button in the "Select output directory" section of
 the GUI. Use the directory selection dialog to create a new directory to
 contain the output files.
 
-![](figures/Select_output_directory.PNG)
+![](figures/Select_output_directory.png)
+
+#### Select study directory (optional)
+
+To process tagged annotation regions as part of the consolidation,
+click the "Browse Study" button and select a study directory 
+(or other directory) containing the annotation files for the images in the
+current project.
+
+If a study directory is selected,
+
+- Cells in regions tagged `#ExcludeFromResults` will be omitted from
+  the consolidated data.
+- If "Require #IncludeInResults tag" is checked, cells that **are not**
+  in regions tagged `#IncludeInResults` will be omitted from the 
+  consolidated data.
+- If there are tagged annotations with other names, new columns will be 
+  created in the consolidated data showing membership in the tagged regions.
+
+![](figures/Select_study_directory.png)
 
 #### Process files
 
@@ -103,6 +131,8 @@ several files:
 - `Consolidated_data.txt` - A data file containing the consolidated results
 - `Consolidated_data.html` - A report containing summary information about
   the consolidated data
+- `ROI_Results.xlsx` - If a study directory was selected, this file
+  reports the number of cells excluded or tagged in each image.
 - Summary reports for each merge file that contributed to the result
 
 The consolidated data file is used for the actual analysis. The summary reports

@@ -54,6 +54,9 @@ phenotype. The inputs to this addin are merged cell seg
 data files created by inForm. The output is a consolidated data file and a
 summary report for each file. 
 
+Optionally, this addin will include, exclude and tag cells according to
+regions of interest created in Phenochart.
+
 Run the consolidation addin even if your data comes from a single
 inForm project. This creates a data file in the format that the analysis
 addin uses.
