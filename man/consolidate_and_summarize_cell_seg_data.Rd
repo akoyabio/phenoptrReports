@@ -8,6 +8,9 @@ and create summary reports}
 consolidate_and_summarize_cell_seg_data(
   csd_files,
   output_dir,
+  study_dir = NULL,
+  export_dir = NULL,
+  require_include = FALSE,
   update_progress = NULL
 )
 }
@@ -15,6 +18,18 @@ consolidate_and_summarize_cell_seg_data(
 \item{csd_files}{A list or vector of paths to cell seg data files.}
 
 \item{output_dir}{Path to a directory where the results will be saved.}
+
+\item{study_dir}{Optional path to a directory containing annotation files
+for the images in the analysis. If provided, the files will be searched
+for tagged ROIs. Cells in ROIs tagged with \verb{#ExcludeFromResults} will
+be omitted from the consolidated data file.}
+
+\item{export_dir}{If \code{study_dir} is provided, the path to an export folder
+containing \code{binary_seg_maps} files and merged cell seg summary files
+for the annotations referenced in \code{csd_files}.}
+
+\item{require_include}{If \code{study_dir} is provided, should the result
+include only cells contained in ROIs tagged with \verb{#IncludeInResults}?}
 
 \item{update_progress}{Callback function which is called with progress.}
 }
@@ -37,4 +52,8 @@ The
 individual files must all have exactly the same
 \verb{Sample Name} or \verb{Annotation ID} and \verb{Cell ID}
 columns. \link{split_phenotypes} is called to split the \code{Phenotype} columns.
+
+Optionally, filter the resulting cell table by regions tagged
+\verb{#IncludeInResults} or \verb{#ExcludeFromResults} and update tissue category
+areas to reflect the new regions.
 }

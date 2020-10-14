@@ -26,12 +26,19 @@ utils::globalVariables(c(
 #' `Sample Name` or `Annotation ID` and `Cell ID`
 #' columns. [split_phenotypes] is called to split the `Phenotype` columns.
 #'
+#' Optionally, filter the resulting cell table by regions tagged
+#' `#IncludeInResults` or `#ExcludeFromResults` and update tissue category
+#' areas to reflect the new regions.
+#'
 #' @param csd_files A list or vector of paths to cell seg data files.
 #' @param output_dir Path to a directory where the results will be saved.
 #' @param study_dir Optional path to a directory containing annotation files
 #' for the images in the analysis. If provided, the files will be searched
 #' for tagged ROIs. Cells in ROIs tagged with `#ExcludeFromResults` will
 #' be omitted from the consolidated data file.
+#' @param export_dir If `study_dir` is provided, the path to an export folder
+#' containing `binary_seg_maps` files and merged cell seg summary files
+#' for the annotations referenced in `csd_files`.
 #' @param require_include If `study_dir` is provided, should the result
 #' include only cells contained in ROIs tagged with `#IncludeInResults`?
 #' @param update_progress Callback function which is called with progress.
@@ -40,8 +47,8 @@ utils::globalVariables(c(
 #' @importFrom magrittr %>%
 #' @export
 consolidate_and_summarize_cell_seg_data = function(
-    csd_files, output_dir, study_dir=NULL, require_include=FALSE,
-    update_progress=NULL) {
+    csd_files, output_dir, study_dir=NULL, export_dir=NULL,
+    require_include=FALSE, update_progress=NULL) {
   if (!dir.exists(output_dir))
     stopifnot(dir.create(output_dir, recursive=TRUE))
 
@@ -119,7 +126,8 @@ consolidate_and_summarize_cell_seg_data = function(
 
   if (!is.null(study_dir)) {
     update_progress(detail='Processing regions.')
-    roi_results = process_rois(csd, study_dir, require_include)
+    roi_results =
+      process_rois(csd, study_dir, export_dir, output_dir, require_include)
     csd = roi_results$csd
 
     # Write a workbook with stats

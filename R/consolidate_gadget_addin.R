@@ -58,17 +58,23 @@ addin_20_consolidate = function() {
       ),
 
       shiny::wellPanel(
-        shiny::h3('Select study directory'),
+        shiny::h3('Select study and export directory'),
         '(Optional) Click the "Browse Study" button to select a directory',
         'containing annotation files for the images in this analysis.',
+        shiny::br(),
+        'Click the "Browse export" button to select a related',
+        'inForm export directory.',
         shiny::br(), shiny::br(),
 
         shiny::fillRow(
           shiny::actionButton('browse_study', 'Browse Study...'),
+          shiny::actionButton('browse_export', 'Browse Export...'),
           shiny::checkboxInput('require_include', 'Require #IncludeInResults tag'),
-          flex=c(1, 2)),
+          flex=c(1, 1, 2)),
         shiny::br(), shiny::br(),
-        shiny::textOutput('study_dir')
+        shiny::textOutput('study_dir'),
+        shiny::br(),
+        shiny::textOutput('export_dir')
       ),
 
       shiny::h4(shiny::textOutput('error'), style='color: maroon')
@@ -79,6 +85,7 @@ addin_20_consolidate = function() {
     file_list = shiny::reactiveVal()
     output_dir = shiny::reactiveVal()
     study_dir = shiny::reactiveVal()
+    export_dir = shiny::reactiveVal()
     default_dir = ''
 
     # Handle the browse_source button by putting up a file browser
@@ -132,13 +139,25 @@ addin_20_consolidate = function() {
 
     # Handle the browse_study button by selecting a folder
     shiny::observeEvent(input$browse_study, {
-      shiny::req(input$browse_output)
+      shiny::req(input$browse_study)
       study_dir(phenoptrReports::choose_directory(
         default=default_dir,
         caption='Select a study folder'
       ))
 
       output$study_dir = shiny::renderText(study_dir())
+      set_error_text()
+    })
+
+    # Handle the browse_export button by selecting a folder
+    shiny::observeEvent(input$browse_export, {
+      shiny::req(input$browse_export)
+      export_dir(phenoptrReports::choose_directory(
+        default=default_dir,
+        caption='Select an export folder'
+      ))
+
+      output$export_dir = shiny::renderText(export_dir())
       set_error_text()
     })
 
@@ -160,7 +179,8 @@ addin_20_consolidate = function() {
           progress$set(value = progress$getValue()+1, detail = detail)
         }
         phenoptrReports::consolidate_and_summarize_cell_seg_data(
-          file_list(), output_dir(), study_dir(), input$require_include,
+          file_list(), output_dir(), study_dir(), export_dir(),
+          input$require_include,
           update_progress)
         update_progress(detail='Done!')
         Sys.sleep(0.5)
@@ -187,6 +207,8 @@ addin_20_consolidate = function() {
         'Please select files to process.'
       } else if (is.null(output_dir())) {
         'Please select an output directory.'
+      } else if (!is.null(study_dir()) && is.null(export_dir())) {
+        'Please select an export directory.'
       } else
         ''
     }
@@ -197,6 +219,6 @@ addin_20_consolidate = function() {
 
   # Run the gadget in a dialog
   viewer <- shiny::dialogViewer('Consolidate cell seg data files',
-                                width=750, height=900)
+                                width=900, height=1000)
   shiny::runGadget(ui, server, viewer = viewer)
 }
