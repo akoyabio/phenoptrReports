@@ -69,7 +69,8 @@ process_rois = function(csd, study_dir, export_dir, output_dir,
   csd_nested$data = purrr::pmap(csd_nested, function(`Sample Name`, data) {
     # Get ROIs and process cell data
     sample_results =
-      process_rois_single(`Sample Name`, data, annotation_paths, require_include)
+      process_rois_single(`Sample Name`, data, annotation_paths,
+                          require_include, output_dir)
 
     # Update stats
     removed <<- dplyr::bind_rows(removed, sample_results$removed)
@@ -111,6 +112,7 @@ process_rois = function(csd, study_dir, export_dir, output_dir,
 #' @param annotation_paths Full paths to all candidate annotation files
 #' @param require_include Should the result
 #' include only cells contained in ROIs tagged with `#IncludeInResults`?
+#' @param output_dir Directory to save a check plot
 #' @return A list containing these items:
 #' - `csd`: `data` filtered by `#ExcludeFromResults` and (optionally)
 #'   `#IncludeInResults` ROIs, and with extra columns added to show
@@ -121,7 +123,7 @@ process_rois = function(csd, study_dir, export_dir, output_dir,
 #' - `exclude_roi`: The union of all #Exclude ROIs, or NULL if none.
 #' @keywords internal
 process_rois_single = function(
-    sample_name, data, annotation_paths, require_include) {
+    sample_name, data, annotation_paths, require_include, output_dir) {
   # Find the annotation file
   sample = stringr::str_remove(sample_name, '\\.qptiff$')
   annotation_file = stringr::str_subset(annotation_paths, sample)
@@ -215,6 +217,33 @@ process_rois_single = function(
 
   # Remove the geometry from data
   data = sf::st_drop_geometry(data)
+
+  # Save a check plot
+  cell_plot_path = file.path(output_dir,
+                             paste0(sample_name, '_trimmed_cells.png'))
+  # Make a phenotype colummn
+  phenos = data %>%
+    select(starts_with('Phenotype')) %>%
+    do.call(paste, .) %>%
+    stringr::str_trim()
+
+  grDevices::png(cell_plot_path, type='cairo', antialias='gray',
+                 width=980, height=980)
+  data %>%
+    dplyr::mutate(Phenotype=phenos) %>%
+    dplyr::filter(stringr::str_detect(Phenotype, '\\+')) %>%
+    ggplot2::ggplot(ggplot2::aes(`Cell X Position`, `Cell Y Position`,
+                                 color=Phenotype)) +
+    ggplot2::geom_point(shape='.', alpha=0.8) +
+    ggplot2::coord_equal() +
+    ggplot2::scale_y_reverse() +
+    ggplot2::guides(color = ggplot2::guide_legend(
+      override.aes=list(shape=19, size=3, alpha=1), ncol=1)) +
+    ggplot2::labs(title=paste(sample_name, 'trimmed cells')) +
+    ggplot2::theme_minimal()
+
+  grDevices::dev.off()
+
 
   return(list(csd=data, removed=removed, stats=stats,
               include_roi=include_roi, exclude_roi=exclude_roi))
