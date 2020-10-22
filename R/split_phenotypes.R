@@ -52,16 +52,45 @@ consolidate_and_summarize_cell_seg_data = function(
   if (!dir.exists(output_dir))
     stopifnot(dir.create(output_dir, recursive=TRUE))
 
-  csd_files = unlist(csd_files)
-  if (!is.character(csd_files) || !all(purrr::map_lgl(csd_files, file.exists)))
-    stop('Please pass a list of paths to existing cell seg data files.')
-
   # Make a progress function if we don't have one so we don't have to
   # check every time
   if (!is.function(update_progress))
     update_progress = function(detail) {
       cat(detail, '\n')
     }
+
+  csd = merge_and_split_phenotypes(csd_files, output_dir, update_progress)
+
+  if (!is.null(study_dir)) {
+    update_progress(detail='Processing regions.')
+    roi_results =
+      process_rois(csd, study_dir, export_dir, output_dir, require_include)
+    csd = roi_results$csd
+
+    # Write a workbook with ROI stats
+    write_roi_stats(roi_results, output_dir)
+  }
+
+  # Write out the result
+  update_progress(detail='Writing consolidated data.')
+  readr::write_tsv(csd, file.path(output_dir, 'Consolidated_data.txt'),
+                   na='#N/A')
+
+  # And the report for the consolidated data
+  update_progress(detail='Writing report for consolidated data.')
+  write_summary_report(csd=csd,
+    output_path=file.path(output_dir, 'Consolidated_data.html'),
+    dataset_name='Consolidated data')
+
+  invisible(csd)
+}
+
+# Read cell seg data files, split phenotypes into separate columns and
+# merge to a single data frame
+merge_and_split_phenotypes <- function(csd_files, output_dir, update_progress) {
+  csd_files = unlist(csd_files)
+  if (!is.character(csd_files) || !all(purrr::map_lgl(csd_files, file.exists)))
+    stop('Please pass a list of paths to existing cell seg data files.')
 
   # Make some names, these will be for files and headers
   names = make_unique_names(csd_files)
@@ -83,7 +112,7 @@ consolidate_and_summarize_cell_seg_data = function(
     dups = duplicated(d[, c(field_col, 'Cell ID')])
     if (sum(dups > 0)) {
       warning('Removing ', sum(dups), ' duplicated rows from ', name,
-           '. Did you merge an already merged file?')
+              '. Did you merge an already merged file?')
       d = d[!dups, ]
     }
 
@@ -124,44 +153,7 @@ consolidate_and_summarize_cell_seg_data = function(
            nrow(csd), ' != ', start_row_count, ' Failed at\n', path)
   })
 
-  if (!is.null(study_dir)) {
-    update_progress(detail='Processing regions.')
-    roi_results =
-      process_rois(csd, study_dir, export_dir, output_dir, require_include)
-    csd = roi_results$csd
-
-    # Write a workbook with stats
-    wb = openxlsx::createWorkbook()
-    write_sheet(wb, roi_results$removed, 'Cells removed',
-                "Cells removed by ROI",
-                header_col=2, addGrid=FALSE)
-    openxlsx::setColWidths(wb, 'Cells removed',
-                           cols=2:ncol(roi_results$removed), widths=20)
-
-    if (ncol(roi_results$stats) > 1) {
-      write_sheet(wb, roi_results$stats, 'Cells in ROIs',
-                  "Cells in other ROIs",
-                  header_col=2, addGrid=FALSE)
-      openxlsx::setColWidths(wb, 'Cells in ROIs',
-                             cols=2:ncol(roi_results$stats), widths=20)
-    }
-
-    workbook_path = file.path(output_dir, "ROI_Results.xlsx")
-    if (file.exists(workbook_path)) file.remove(workbook_path)
-    openxlsx::saveWorkbook(wb, workbook_path)
-  }
-
-  # Write out the result
-  update_progress(detail='Writing consolidated data.')
-  readr::write_tsv(csd, file.path(output_dir, 'Consolidated_data.txt'))
-
-  # And the report
-  update_progress(detail='Writing report for consolidated data.')
-  write_summary_report(csd=csd,
-    output_path=file.path(output_dir, 'Consolidated_data.html'),
-    dataset_name='Consolidated data')
-
-  invisible(csd)
+  csd
 }
 
 #' Split a phenotype column

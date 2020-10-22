@@ -28,6 +28,7 @@ utils::globalVariables(c(
 #' @keywords internal
 process_rois = function(csd, study_dir, export_dir, output_dir,
                         require_include) {
+  # Parameter checks
   if (is.null(study_dir) || !dir.exists(study_dir))
     stop('Missing or invalid study directory: ', study_dir)
 
@@ -220,7 +221,7 @@ process_rois_single = function(
 
   # Save a check plot
   cell_plot_path = file.path(output_dir,
-                             paste0(sample_name, '_trimmed_cells.png'))
+                             paste0(sample, '_trimmed_cells.png'))
   # Make a phenotype colummn
   phenos = data %>%
     select(starts_with('Phenotype')) %>%
@@ -239,7 +240,7 @@ process_rois_single = function(
     ggplot2::scale_y_reverse() +
     ggplot2::guides(color = ggplot2::guide_legend(
       override.aes=list(shape=19, size=3, alpha=1), ncol=1)) +
-    ggplot2::labs(title=paste(sample_name, 'trimmed cells')) +
+    ggplot2::labs(title=paste(sample, 'trimmed cells')) +
     ggplot2::theme_minimal()
 
   grDevices::dev.off()
@@ -270,8 +271,9 @@ process_tissue_categories_single = function(
     trim_roi = sf::st_difference(trim_roi, exclude_roi)
 
   # Get the updated areas and save a reference plot
+  sample = stringr::str_remove(sample_name, '\\.qptiff$')
   trim_plot_path = file.path(output_dir,
-                             paste0(sample_name, '_trimmed_categories.png'))
+                             paste0(sample, '_trimmed_categories.png'))
   result = phenoptr::trim_tissue_categories(annotations, trim_roi,
                                    export_dir, trim_plot_path)
   result
@@ -368,4 +370,29 @@ update_summary_data = function(export_dir, output_dir, areas) {
   }
 
   purrr::walk(candidates, process_one)
+}
+
+#' Write a workbook with stats from the ROI trimming
+#' @param roi_results Results from [process_rois]
+#' @param output_dir Directory for the report
+#' @keywords internal
+write_roi_stats <- function(roi_results, output_dir) {
+  wb = openxlsx::createWorkbook()
+  write_sheet(wb, roi_results$removed, 'Cells removed',
+              "Cells removed by ROI",
+              header_col=2, addGrid=FALSE)
+  openxlsx::setColWidths(wb, 'Cells removed',
+                         cols=2:ncol(roi_results$removed), widths=20)
+
+  if (ncol(roi_results$stats) > 1) {
+    write_sheet(wb, roi_results$stats, 'Cells in ROIs',
+                "Cells in other ROIs",
+                header_col=2, addGrid=FALSE)
+    openxlsx::setColWidths(wb, 'Cells in ROIs',
+                           cols=2:ncol(roi_results$stats), widths=20)
+  }
+
+  workbook_path = file.path(output_dir, "ROI_Results.xlsx")
+  if (file.exists(workbook_path)) file.remove(workbook_path)
+  openxlsx::saveWorkbook(wb, workbook_path)
 }
