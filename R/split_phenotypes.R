@@ -139,9 +139,13 @@ merge_and_split_phenotypes <- function(csd_files, output_dir, update_progress) {
 
   # Read subsequent files, report, split phenotypes, join with the first file.
   purrr::walk2(names[-1], csd_files[-1], function(name, path) {
-    csd2 = process_one_file(name, path) %>%
+    # We only need the phenotype columns and join columns from the previous file
+    # Drop everything else to free memory
+    csd = csd %>%
       dplyr::select(!!rlang::sym(field_col), `Cell ID`,
                     dplyr::starts_with('Phenotype '))
+
+    csd2 = process_one_file(name, path)
 
     if (nrow(csd2) != start_row_count)
       stop('Number of rows in data frames do not match.\n',
