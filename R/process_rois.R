@@ -172,6 +172,7 @@ process_rois_single = function(
   # Process include ROIs if requested
   if (require_include) {
     # At this point we know we have at least one include ROI
+    cat('Trimming cells not in #Include ROIs\n')
     include_roi = rois %>%
       dplyr::filter(stringr::str_detect(tags, include_name)) %>%
       sf::st_union()
@@ -188,6 +189,7 @@ process_rois_single = function(
 
   # Process exclude ROIs if any
   if (exclude_name %in% all_roi_names) {
+    cat('Trimming cells in #Exclude ROIs\n')
     exclude_roi = rois %>%
       dplyr::filter(stringr::str_detect(tags, exclude_name)) %>%
       sf::st_union()
@@ -207,6 +209,7 @@ process_rois_single = function(
   #   reflecting membership in the tag.
   # - Add a cell count to `stats`
   for (roi_name in generic_roi_names) {
+    cat('Tagging cells in ', roi_name, '\n')
     generic_roi = rois %>%
       dplyr::filter(stringr::str_detect(tags, roi_name)) %>%
       sf::st_union()
@@ -222,6 +225,8 @@ process_rois_single = function(
   # Save a check plot
   cell_plot_path = file.path(output_dir,
                              paste0(sample, '_trimmed_cells.png'))
+  cat('Saving cell check plot to ', cell_plot_path, '\n')
+
   # Make a phenotype colummn
   phenos = data %>%
     select(starts_with('Phenotype')) %>%
