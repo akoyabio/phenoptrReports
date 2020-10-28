@@ -235,7 +235,7 @@ process_rois_single = function(
 
   grDevices::png(cell_plot_path, type='cairo', antialias='gray',
                  width=980, height=980)
-  data %>%
+  p = data %>%
     dplyr::mutate(Phenotype=phenos) %>%
     dplyr::filter(stringr::str_detect(Phenotype, '\\+')) %>%
     ggplot2::ggplot(ggplot2::aes(`Cell X Position`, `Cell Y Position`,
@@ -248,6 +248,7 @@ process_rois_single = function(
     ggplot2::labs(title=paste(sample, 'trimmed cells')) +
     ggplot2::theme_minimal()
 
+  print(p)
   grDevices::dev.off()
 
 
