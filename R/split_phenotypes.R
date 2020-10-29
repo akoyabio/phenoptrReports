@@ -174,8 +174,17 @@ merge_and_split_phenotypes <- function(csd_files, output_dir, update_progress) {
 #' @importFrom magrittr %>%
 #' @export
 split_phenotypes = function(csd) {
-  if (!'Phenotype' %in% names(csd))
+  if (!'Phenotype' %in% names(csd)) {
+    # Has this file already been split? If so just return it as-is
+    # Split files have phenotype columns like "Phenotype CD8"
+    if (sum(stringr::str_detect(names(csd), 'Phenotype ')) > 0) {
+      message('Phenotypes are already split, no additional splitting needed.')
+      return(csd)
+    }
+
+    # Otherwise this is an error
     stop('Cell seg data does not have a Phenotype column.')
+  }
 
   # Look for positive phenotypes
   phenotypes = unique(csd$Phenotype) %>%
