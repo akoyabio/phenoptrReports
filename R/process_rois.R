@@ -134,15 +134,8 @@ process_rois_single = function(
   cat('Processing ROIs for', sample, '\n')
 
   # Get named ROIs from the annotation file
-  rois = phenoptr::read_phenochart_polygons(annotation_file)
-  if (nrow(rois) > 0) {
-    rois = rois %>% dplyr::filter(tags != '')
-    all_roi_names = rois$tags %>%
-      stringr::str_split(' ') %>%
-      unlist() %>%
-      unique() %>%
-      sort()
-  } else all_roi_names = character()
+  rois = read_tagged_rois(annotation_file)
+  all_roi_names = names(rois)
 
   # Hard-coded tag names with special meaning
   include_name = '#IncludeInResults'
@@ -171,11 +164,9 @@ process_rois_single = function(
 
   # Process include ROIs if requested
   if (require_include) {
-    # At this point we know we have at least one include ROI
+    # At this point we know we have an include ROI
     cat('Trimming cells not in #Include ROIs\n')
-    include_roi = rois %>%
-      dplyr::filter(stringr::str_detect(tags, include_name)) %>%
-      sf::st_union()
+    include_roi = rois[[include_name]]
     before_count = nrow(data)
     # Note: st_intersects with x=include_roi is faster than
     # st_intersection with x=data
@@ -190,9 +181,7 @@ process_rois_single = function(
   # Process exclude ROIs if any
   if (exclude_name %in% all_roi_names) {
     cat('Trimming cells in #Exclude ROIs\n')
-    exclude_roi = rois %>%
-      dplyr::filter(stringr::str_detect(tags, exclude_name)) %>%
-      sf::st_union()
+    exclude_roi = rois[[exclude_name]]
 
     # Filter cells
     before_count = nrow(data)
@@ -210,9 +199,7 @@ process_rois_single = function(
   # - Add a cell count to `stats`
   for (roi_name in generic_roi_names) {
     cat('Tagging cells in ', roi_name, '\n')
-    generic_roi = rois %>%
-      dplyr::filter(stringr::str_detect(tags, roi_name)) %>%
-      sf::st_union()
+    generic_roi = rois[[roi_name]]
     membership =
       sf::st_intersects(generic_roi, data, sparse=FALSE)[1, , drop=TRUE]
     data[roi_name] = membership
@@ -254,6 +241,34 @@ process_rois_single = function(
 
   return(list(csd=data, removed=removed, stats=stats,
               include_roi=include_roi, exclude_roi=exclude_roi))
+}
+
+#' Read and combine all tagged ROIS from an annotation file
+#' @param annotation_file Path to file
+#' @return A named list of polygons, one for each tag in the annotations
+#' @keywords internal
+read_tagged_rois = function(annotation_file) {
+  rois = phenoptr::read_phenochart_polygons(annotation_file)
+  if (nrow(rois) > 0) {
+    rois = rois %>% dplyr::filter(tags != '') # Only tagged ROIs
+
+    # Get a list of all unique tags
+    all_roi_names = rois$tags %>%
+      stringr::str_split(' ') %>%
+      unlist() %>%
+      unique() %>%
+      sort() %>%
+      rlang::set_names()
+  } else return(list())
+
+  # Make a single (multi) polygon for each tag
+  tagged_rois = purrr::map(all_roi_names, function(tag_name) {
+    rois %>%
+      dplyr::filter(stringr::str_detect(tags, tag_name)) %>%
+      sf::st_union()
+  })
+
+  tagged_rois
 }
 
 #' Get corrected tissue category areas for a single image.
