@@ -1,3 +1,15 @@
+# phenoptrReports 0.2.10
+**2020-11-11**
+
+Consolidate and summarize addin:
+- Reduce memory use to allow consolidation of larger files
+
+Bug fixes:
+- Nearest neighbor and count within summaries work correctly 
+  if detailed data is not requested.
+- Correctly double-escape *all* backslashes in the slide id prefix.
+- Improved error checks and error messages
+
 # phenoptrReports 0.2.9
 **2020-08-22**
 

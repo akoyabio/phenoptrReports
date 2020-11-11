@@ -1,7 +1,7 @@
 Package: phenoptrReports
 Title: Create reports using Phenoptics data
-Version: 0.2.9.1
-Date: 2020-08-22
+Version: 0.2.10
+Date: 2020-11-11
 Authors@R: c(
     person("Kent S", "Johnson", role = c("aut", "cre"),
            email = "kjohnson@akoyabio.com"),
