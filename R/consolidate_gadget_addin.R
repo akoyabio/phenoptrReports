@@ -41,9 +41,13 @@ addin_20_consolidate = function() {
         'Continue until all files are selected.',
         shiny::br(), shiny::br(),
 
-        shiny::actionButton('browse_source', 'Browse Input...'),
+        shiny::fillRow(
+          shiny::actionButton('browse_source', 'Browse Input...'),
+          shiny::checkboxInput('phenoptr_only',
+                               'Keep only phenoptrReports fields')
+        ),
         shiny::h4('Selected files:'),
-        shiny::uiOutput('selected_files')
+        shiny::uiOutput('selected_files'),
       ),
 
       shiny::wellPanel(
@@ -127,9 +131,10 @@ addin_20_consolidate = function() {
           cat(detail, '\n')
           progress$set(value = progress$getValue()+1, detail = detail)
         }
+
+        col_select = ifelse(input$phenoptr_only, 'phenoptrReports', NULL)
         phenoptrReports::consolidate_and_summarize_cell_seg_data(file_list(),
-                                                           output_dir(),
-                                                           update_progress)
+                            output_dir(), update_progress, col_select)
         update_progress(detail='Done!')
         Sys.sleep(0.5)
         shiny::stopApp()

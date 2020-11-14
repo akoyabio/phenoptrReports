@@ -1,3 +1,11 @@
+# phenoptrReports 0.2.10.9000
+
+Consolidate and summarize addin:
+- Add support for reading (and saving) only fields needed in phenoptrReports.
+
+Analysis addin:
+- Only read cell seg fields needed for the analysis.
+
 # phenoptrReports 0.2.10
 **2020-11-11**
 

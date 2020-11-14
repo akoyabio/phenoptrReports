@@ -8,7 +8,8 @@ and create summary reports}
 consolidate_and_summarize_cell_seg_data(
   csd_files,
   output_dir,
-  update_progress = NULL
+  update_progress = NULL,
+  col_select = NULL
 )
 }
 \arguments{
@@ -17,6 +18,8 @@ consolidate_and_summarize_cell_seg_data(
 \item{output_dir}{Path to a directory where the results will be saved.}
 
 \item{update_progress}{Callback function which is called with progress.}
+
+\item{col_select}{Column selection for \code{\link[phenoptr:read_cell_seg_data]{phenoptr::read_cell_seg_data()}}}
 }
 \value{
 A single data frame containing consolidated data and columns for each

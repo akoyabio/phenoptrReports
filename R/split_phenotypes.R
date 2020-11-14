@@ -29,12 +29,14 @@ utils::globalVariables(c(
 #' @param csd_files A list or vector of paths to cell seg data files.
 #' @param output_dir Path to a directory where the results will be saved.
 #' @param update_progress Callback function which is called with progress.
+#' @param col_select Column selection for [phenoptr::read_cell_seg_data()]
 #' @return A single data frame containing consolidated data and columns for each
 #'   single phenotype, invisibly.
 #' @importFrom magrittr %>%
 #' @export
 consolidate_and_summarize_cell_seg_data = function(csd_files, output_dir,
-                                             update_progress=NULL) {
+                                             update_progress=NULL,
+                                             col_select=NULL) {
   if (!dir.exists(output_dir))
     stopifnot(dir.create(output_dir, recursive=TRUE))
 
@@ -56,7 +58,7 @@ consolidate_and_summarize_cell_seg_data = function(csd_files, output_dir,
   # Function to read a file, create a summary report, split phenotypes
   process_one_file <- function(name, path) {
     update_progress(detail=paste0('Reading "', name, '".'))
-    d = phenoptr::read_cell_seg_data(path)
+    d = phenoptr::read_cell_seg_data(path, col_select=col_select)
 
     # Figure out the field column name from the first file
     if (is.null(field_col))
@@ -116,7 +118,8 @@ consolidate_and_summarize_cell_seg_data = function(csd_files, output_dir,
 
   # Write out the result
   update_progress(detail='Writing consolidated data.')
-  readr::write_tsv(csd, file.path(output_dir, 'Consolidated_data.txt'))
+  vroom::vroom_write(csd, file.path(output_dir, 'Consolidated_data.txt'),
+                     delim='\t', na='#N/A')
 
   # And the report
   update_progress(detail='Writing report for consolidated data.')
