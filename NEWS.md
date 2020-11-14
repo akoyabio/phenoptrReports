@@ -1,6 +1,7 @@
 # phenoptrReports 0.2.10.9000
 
 Consolidate and summarize addin:
+- Add support for reading (and saving) only fields needed in phenoptrReports.
 - Process named regions from Phenochart
   - Optionally include only cells in a region tagged #IncludeInResults
   - Exclude any cells in a region tagged #ExcludeFromResults
@@ -8,6 +9,7 @@ Consolidate and summarize addin:
     showing membership in the region.
 
 Analysis addin:
+- Only read cell seg fields needed for the analysis.
 - Add support for hashtags in phenotype definitions
 - Export hashtag columns in nearest neighbor and count within detail files
 

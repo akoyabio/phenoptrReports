@@ -42,13 +42,14 @@ utils::globalVariables(c(
 #' @param require_include If `study_dir` is provided, should the result
 #' include only cells contained in ROIs tagged with `#IncludeInResults`?
 #' @param update_progress Callback function which is called with progress.
+#' @param col_select Column selection for [phenoptr::read_cell_seg_data()]
 #' @return A single data frame containing consolidated data and columns for each
 #'   single phenotype, invisibly.
 #' @importFrom magrittr %>%
 #' @export
 consolidate_and_summarize_cell_seg_data = function(
     csd_files, output_dir, study_dir=NULL, export_dir=NULL,
-    require_include=FALSE, update_progress=NULL) {
+    require_include=FALSE, update_progress=NULL, col_select=NULL) {
   if (!dir.exists(output_dir))
     stopifnot(dir.create(output_dir, recursive=TRUE))
 
@@ -99,7 +100,7 @@ merge_and_split_phenotypes <- function(csd_files, output_dir, update_progress) {
   # Function to read a file, create a summary report, split phenotypes
   process_one_file <- function(name, path) {
     update_progress(detail=paste0('Reading "', name, '".'))
-    d = phenoptr::read_cell_seg_data(path)
+    d = phenoptr::read_cell_seg_data(path, col_select=col_select)
 
     # Figure out the field column name from the first file
     if (is.null(field_col))
@@ -157,7 +158,18 @@ merge_and_split_phenotypes <- function(csd_files, output_dir, update_progress) {
            nrow(csd), ' != ', start_row_count, ' Failed at\n', path)
   })
 
-  csd
+  # Write out the result
+  update_progress(detail='Writing consolidated data.')
+  vroom::vroom_write(csd, file.path(output_dir, 'Consolidated_data.txt'),
+                     delim='\t', na='#N/A')
+
+  # And the report
+  update_progress(detail='Writing report for consolidated data.')
+  write_summary_report(csd=csd,
+    output_path=file.path(output_dir, 'Consolidated_data.html'),
+    dataset_name='Consolidated data')
+
+  invisible(csd)
 }
 
 #' Split a phenotype column

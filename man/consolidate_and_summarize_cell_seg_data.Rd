@@ -11,7 +11,7 @@ consolidate_and_summarize_cell_seg_data(
   study_dir = NULL,
   export_dir = NULL,
   require_include = FALSE,
-  update_progress = NULL
+  col_select = NULL
 )
 }
 \arguments{
@@ -32,6 +32,8 @@ for the annotations referenced in \code{csd_files}.}
 include only cells contained in ROIs tagged with \verb{#IncludeInResults}?}
 
 \item{update_progress}{Callback function which is called with progress.}
+
+\item{col_select}{Column selection for \code{\link[phenoptr:read_cell_seg_data]{phenoptr::read_cell_seg_data()}}}
 }
 \value{
 A single data frame containing consolidated data and columns for each

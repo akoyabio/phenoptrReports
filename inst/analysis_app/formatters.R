@@ -87,7 +87,7 @@ format_path = function(path, field_col) {
   stringr::str_glue('# Read the consolidated data file
 csd_path =
   "{path}"
-csd = read_cell_seg_data(csd_path)
+csd = read_cell_seg_data(csd_path, col_select="phenoptrReports")
 
 # Make a table summarizing the number of fields per slide
 summary_table = csd %>%

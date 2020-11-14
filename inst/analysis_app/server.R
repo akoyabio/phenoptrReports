@@ -48,9 +48,10 @@ shinyServer(function(input, output, server) {
       shiny::modalDialog(
         shiny::p('Reading input data...'), title='Please wait', footer=NULL))
 
-    d = vroom::vroom(file_data$input_path(), na='#N/A', delim='\t',
-                     col_types=vroom::cols())
-
+    # We don't need all columns here, we are looking for
+    # unique tissue categories, expression columns, phenotypes and samples
+    d = phenoptr::read_cell_seg_data(file_data$input_path(),
+          col_select='phenoptrReports')
     tissue_categories = unique(d$`Tissue Category`)
     the_data$expression_columns = stringr::str_subset(names(d), 'Mean$')
     the_data$field_col = phenoptr::field_column(d)
