@@ -83,7 +83,7 @@ the GUI. Use the file selection dialog to select your inForm merge data files.
 If the files are in multiple directories, click the Browse button multiple
 times to select them.
   
-![](figures/Select_merge_files.png)
+![](figures/Select_merge_files.png "")
 
 #### Select output directory
 
