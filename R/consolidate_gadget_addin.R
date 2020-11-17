@@ -183,7 +183,7 @@ addin_20_consolidate = function() {
           progress$set(value = progress$getValue()+1, detail = detail)
         }
 
-        col_select = ifelse(input$phenoptr_only, 'phenoptrReports', NULL)
+        col_select = if (input$phenoptr_only) 'phenoptrReports' else NULL
         phenoptrReports::consolidate_and_summarize_cell_seg_data(
           file_list(), output_dir(), study_dir(), export_dir(), 
           input$require_include, update_progress, col_select)
