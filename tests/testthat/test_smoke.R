@@ -3,7 +3,8 @@ library(dplyr)
 library(tidyr)
 library(readxl)
 
-test_file_generation = function(data_dir, output_dir, expected_path, .by) {
+test_file_generation = function(data_dir, output_dir, expected_path,
+                                .by, multisession) {
   if (dir.exists(output_dir)) {
     unlink(output_dir, recursive=TRUE)
     Sys.sleep(0.1) # Wait for it...
@@ -13,6 +14,7 @@ test_file_generation = function(data_dir, output_dir, expected_path, .by) {
   # Data structure for format_all
   all_data = list(
     by=.by,
+    multisession=multisession,
     use_regex = FALSE,
     slide_id_prefix = "Set",
     tissue_categories = c("Tumor", "Stroma"),
@@ -116,19 +118,33 @@ check_count_within = function(actual_path) {
 }
 
 test_that("file generation works", {
-  output_dir = normalizePath(test_path('results'), winslash='/', mustWork=FALSE)
+  output_dir = normalizePath(test_path('results'),
+                             winslash='/', mustWork=FALSE)
 
-  data_dir = normalizePath(test_path('test_data'), winslash='/', mustWork=FALSE)
+  data_dir = normalizePath(test_path('test_data'),
+                           winslash='/', mustWork=FALSE)
   expected_path = file.path(data_dir, 'Results.xlsx')
 
   # Aggregate by Slide ID
-  test_file_generation(data_dir, output_dir, expected_path, .by='Slide ID')
+  test_file_generation(data_dir, output_dir, expected_path,
+                       .by='Slide ID', multisession=FALSE)
+
+  output_dir = normalizePath(test_path('results_multi'),
+                             winslash='/', mustWork=FALSE)
+  test_file_generation(data_dir, output_dir, expected_path,
+                       .by='Slide ID', multisession=TRUE)
 
   # And by Sample Name
   output_dir = normalizePath(test_path('results_by_sample'),
                              winslash='/', mustWork=FALSE)
   expected_path = file.path(data_dir, 'Results_by_sample.xlsx')
-  test_file_generation(data_dir, output_dir, expected_path, .by='Sample Name')
+  test_file_generation(data_dir, output_dir, expected_path,
+                       .by='Sample Name', multisession=FALSE)
+
+  output_dir = normalizePath(test_path('results_by_sample_multi'),
+                             winslash='/', mustWork=FALSE)
+  test_file_generation(data_dir, output_dir, expected_path,
+                       .by='Sample Name', multisession=TRUE)
 })
 
 # Test writing charts with multiple pages per chart

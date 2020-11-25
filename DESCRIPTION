@@ -20,6 +20,7 @@ Imports:
     formattable (>= 0.2),
     forcats,
     fs,
+    future,
     ggplot2 (>= 3.2.0),
     jpeg,
     knitr,

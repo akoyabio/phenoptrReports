@@ -26,6 +26,7 @@ format_all = function(all_data) {
 
   # Flags for various sections present
   has = list()
+  has$multisession = shiny::isTruthy(all_data$multisession)
   has$phenotypes = length(phenos) > 0
   has$density = has$phenotypes && !is.null(all_data$summary_path)
   has$expression = any(purrr::map_lgl(phenos, ~!.x$expression %in% c('', 'NA')))
@@ -46,6 +47,7 @@ format_all = function(all_data) {
   # Code generation
   paste0(
     format_header(),
+    format_multisession_start(has),
     format_path(all_data$input_path, all_data$field_col),
     format_tissue_categories(all_data$tissue_categories),
     format_phenotypes(phenos, .by),
@@ -58,6 +60,7 @@ format_all = function(all_data) {
     ifelse(has$include_count_within,
            format_count_within(all_data$output_dir, all_data$radii,
                                has$include_count_within_details), ''),
+    format_multisession_stop(has),
     format_cleanup(all_data$slide_id_prefix, all_data$use_regex, has),
     format_trailer(all_data$output_dir, has))
 }
@@ -75,6 +78,22 @@ library(phenoptr)
 library(phenoptrReports)
 library(openxlsx)
 \n\n')
+}
+
+format_multisession_start = function(has) {
+  # Note: I have not found a way to use the futures package that
+  # reliably uses all cores for nearest neighbors and count within
+  # so this limits to four worker processes to reduce startup time.
+  if (has$multisession) {
+    '# Initialize parallel processing
+future::plan(future::multisession, workers=min(future::availableCores(), 4))\n\n'
+  } else ''
+}
+
+format_multisession_stop = function(has) {
+  if (has$multisession)
+    '# Shut down parallel processing\nfuture::plan(future::sequential)\n\n'
+  else ''
 }
 
 # Format reading cell seg data and making a summary table

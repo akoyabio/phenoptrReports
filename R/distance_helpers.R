@@ -111,9 +111,18 @@ nearest_neighbor_summary_single_impl = function(csd, phenotypes,
 
   # Compute nearest neighbor distances for all cells in categories,
   # one field at a time.
+  # distances = csd_nested %>%
+  #   dplyr::mutate(distance=purrr::map(data,
+  #                   phenoptr::find_nearest_distance, phenotypes)) %>%
+  #   tidyr::unnest(cols=c(data, distance)) %>%
+  #   dplyr::ungroup()
+
+  # Multiprocessing version
   distances = csd_nested %>%
-    dplyr::mutate(distance=purrr::map(data,
-                    phenoptr::find_nearest_distance, phenotypes)) %>%
+    dplyr::mutate(
+      distance=purrr::map(data,
+        ~future::future({phenoptr::find_nearest_distance(.x, phenotypes)})) %>%
+        purrr::map(future::value)) %>%
     tidyr::unnest(cols=c(data, distance)) %>%
     dplyr::ungroup()
 
@@ -300,9 +309,18 @@ count_within_summary_impl = function(csd, phenotypes, radii,
     csd_nested = csd %>% dplyr::group_by(!!.by, !!field_col) %>% tidyr::nest()
 
   # Compute counts for all cells in categories, one field at a time.
+  # counts = csd_nested %>%
+  #   dplyr::mutate(counts=purrr::map(data,
+  #                   phenoptr::count_within_detail, phenotypes, radii)) %>%
+  #   tidyr::unnest(cols=c(data, counts)) %>%
+  #   dplyr::ungroup()
+
+  # Multiprocessing version
   counts = csd_nested %>%
-    dplyr::mutate(counts=purrr::map(data,
-                    phenoptr::count_within_detail, phenotypes, radii)) %>%
+    dplyr::mutate(
+      counts=purrr::map(data,
+        ~future::future({phenoptr::count_within_detail(.x, phenotypes, radii)})) %>%
+        purrr::map(future::value)) %>%
     tidyr::unnest(cols=c(data, counts)) %>%
     dplyr::ungroup()
 

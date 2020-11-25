@@ -30,6 +30,7 @@ shinyServer(function(input, output, server) {
   # This allows making test values for formatter
   all_data = reactive({
     ad = c(shiny::reactiveValuesToList(the_data), purrr::map(file_data, ~.()))
+    ad$multisession = input$multisession
     ad$phenotype_values = purrr::map(ad$phenotype_modules, function(ph) ph())
     ad$phenotype_modules = NULL
     ad
@@ -117,12 +118,14 @@ shinyServer(function(input, output, server) {
       # Third well panel holds options for spatial processing
       shiny::div(id='well3', shiny::wellPanel(
         shiny::fluidRow(
-          shiny::column(4, shiny::checkboxInput('include_nearest',
+          shiny::column(3, shiny::checkboxInput('include_nearest',
                              label='Include nearest neighbor summary')),
-          shiny::column(4, shiny::checkboxInput('include_count_within',
+          shiny::column(3, shiny::checkboxInput('include_count_within',
                              label='Include "count within radius" summary')),
-          shiny::column(4, shiny::checkboxInput('include_distance_details',
-                         label='Save nearest neighbor / count within details'))
+          shiny::column(3, shiny::checkboxInput('include_distance_details',
+                         label='Save nearest neighbor / count within details')),
+          shiny::column(3, shiny::checkboxInput('multisession',
+                             label='Process spatial metrics in parallel'))
         ),
           shiny::textInput('radii', value='15',
             label='Radius or radii for "count within" (in microns, separate with comma or space)')
