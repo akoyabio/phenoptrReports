@@ -5,6 +5,7 @@ Consolidate and summarize addin:
 
 Analysis addin:
 - Only read cell seg fields needed for the analysis.
+- Add support for parallel processing of nearest neighbors and count within.
 
 # phenoptrReports 0.2.10
 **2020-11-11**

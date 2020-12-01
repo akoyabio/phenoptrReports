@@ -148,7 +148,8 @@ addition to the H-Score for all cells.
 
 ### Select options for spatial analysis
 
-In this section, select the types of spatial analysis to include.
+In this section, select the types of spatial analysis to include and options
+for the spatial processing.
 
 - **Include nearest neighbor summary** If this is selected, the generated
 report will include a table summarizing nearest neighbor distances between
@@ -170,6 +171,10 @@ write a `count_within.txt` file containing, for each cell, the
 count of cells within the specified radii.
   - These files may be useful
 for more detailed statistical analysis of spatial relationships.
+
+- **Process spatial metrics in parallel** If this is selected, the `futures`
+package will be used to compute spatial metrics in parallel using multiple
+processing cores. This is most helpful when the data contains many fields.
 
 ![](figures/Spatial_options.png)
 
