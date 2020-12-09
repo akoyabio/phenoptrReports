@@ -32,13 +32,19 @@ if (getRversion() >= "2.15.1")
 #' @param .by Column to aggregate by
 #' @param extra_cols The names of extra columns to include in the detailed
 #' results.
+#' @param whole_slide If `TRUE`, process all fields for each slide as one
+#' data set; if `FALSE`, fields are processed individually.
 #' @return A data frame with summary statistics for each phenotype pair
 #' in each Slide ID for each tissue category.
 #' @export
 #' @importFrom magrittr %>%
 nearest_neighbor_summary = function(csd, phenotypes=NULL,
                                     categories=NA, details_path=NULL,
-                                    .by='Slide ID', extra_cols=NULL) {
+                                    .by='Slide ID', extra_cols=NULL,
+                                    whole_slide=FALSE) {
+  if (whole_slide && .by != 'Slide ID')
+    stop('Whole slide processing must be by Slide ID.')
+
   # Prep parameters
   phenotypes = phenoptr::validate_phenotypes(phenotypes, csd)
   extra_cols = c(unlist(extra_cols),
@@ -53,7 +59,8 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL,
   if (all(is.na(categories))) {
     result = nearest_neighbor_summary_single_impl(csd, phenotypes,
                                            categories, details_path,
-                                           .by, field_col, extra_cols)
+                                           .by, field_col, extra_cols,
+                                           whole_slide)
     return(result)
   }
 
@@ -65,7 +72,7 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL,
                       '\\.txt$', paste0('_', category, '.txt'))
     category_result = nearest_neighbor_summary_single_impl(csd, phenotypes,
                         category, category_path,
-                        .by, field_col, extra_cols) %>%
+                        .by, field_col, extra_cols, whole_slide) %>%
       dplyr::mutate(`Tissue Category`=category)
     result = c(result, list(category_result))
   }
@@ -75,7 +82,7 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL,
                                          '\\.txt$', '_All.txt')
     category_result = nearest_neighbor_summary_single_impl(csd, phenotypes,
                         categories, category_path,
-                        .by, field_col, extra_cols) %>%
+                        .by, field_col, extra_cols, whole_slide) %>%
       dplyr::mutate(`Tissue Category`='All')
     result = c(result, list(category_result))
   }
@@ -96,7 +103,8 @@ nearest_neighbor_summary = function(csd, phenotypes=NULL,
 # category (or categories), from cleaned parameters.
 nearest_neighbor_summary_single_impl = function(csd, phenotypes,
                                          categories, details_path,
-                                         .by, field_col, extra_cols) {
+                                         .by, field_col, extra_cols,
+                                         whole_slide) {
 
   # Filter by category if provided
   if (!any(is.na(categories)))
@@ -104,7 +112,7 @@ nearest_neighbor_summary_single_impl = function(csd, phenotypes,
         dplyr::filter(`Tissue Category` %in% categories)
 
   # Prep data - nest csd by field and .by
-  if (.by == field_col)
+  if (whole_slide || .by == field_col)
     csd_nested = csd %>% dplyr::group_by(!!.by) %>% tidyr::nest()
   else
     csd_nested = csd %>% dplyr::group_by(!!.by, !!field_col) %>% tidyr::nest()
@@ -212,13 +220,18 @@ nearest_neighbor_summary_single_impl = function(csd, phenotypes,
 #' @param .by Column to aggregate by
 #' @param extra_cols The names of extra columns to include in the detailed
 #' results.
+#' @param whole_slide If `TRUE`, process all fields for each slide as one
+#' data set; if `FALSE`, fields are processed individually.
 #' @return A data frame with summary statistics for each phenotype pair
 #' in each Slide ID.
 #' @export
 #' @importFrom magrittr %>%
 count_within_summary = function(csd, radii, phenotypes=NULL, categories=NA,
                                 details_path=NULL, .by='Slide ID',
-                                extra_cols=NULL) {
+                                extra_cols=NULL, whole_slide=FALSE) {
+  if (whole_slide && .by != 'Slide ID')
+    stop('Whole slide processing must be by Slide ID.')
+
   phenotypes = phenoptr::validate_phenotypes(phenotypes, csd)
   extra_cols = c(unlist(extra_cols),
                    phenoptr::phenotype_columns(phenotypes)) %>%
@@ -233,7 +246,8 @@ count_within_summary = function(csd, radii, phenotypes=NULL, categories=NA,
   if (all(is.na(categories))) {
     result = count_within_summary_impl(csd, phenotypes, radii,
                                        categories, details_path,
-                                       .by, field_col, extra_cols)
+                                       .by, field_col, extra_cols,
+                                       whole_slide)
     return(result)
   }
 
@@ -245,7 +259,8 @@ count_within_summary = function(csd, radii, phenotypes=NULL, categories=NA,
                                          '\\.txt$', paste0('_', category, '.txt'))
     category_result = count_within_summary_impl(csd, phenotypes, radii,
                                                 category, category_path,
-                                                .by, field_col, extra_cols)
+                                                .by, field_col, extra_cols,
+                                                whole_slide)
     result = c(result, list(category_result))
   }
 
@@ -254,7 +269,8 @@ count_within_summary = function(csd, radii, phenotypes=NULL, categories=NA,
                                          '\\.txt$', '_All.txt')
     category_result = count_within_summary_impl(csd, phenotypes, radii,
                                                 categories, category_path,
-                                                .by, field_col, extra_cols)
+                                                .by, field_col, extra_cols,
+                                                whole_slide)
     result = c(result, list(category_result))
   }
 
@@ -282,7 +298,8 @@ count_within_summary = function(csd, radii, phenotypes=NULL, categories=NA,
 # (or categories) from cleaned parameters
 count_within_summary_impl = function(csd, phenotypes, radii,
                                      categories, category_path,
-                                     .by, field_col, extra_cols) {
+                                     .by, field_col, extra_cols,
+                                     whole_slide) {
   # Filter by categories if provided
   if (!any(is.na(categories)))
     csd = csd %>%
@@ -294,7 +311,7 @@ count_within_summary_impl = function(csd, phenotypes, radii,
     purrr::map(unlist)
 
   # Prep data - nest csd by field and .by
-  if (.by == field_col)
+  if (whole_slide || .by == field_col)
     csd_nested = csd %>% dplyr::group_by(!!.by) %>% tidyr::nest()
   else
     csd_nested = csd %>% dplyr::group_by(!!.by, !!field_col) %>% tidyr::nest()
