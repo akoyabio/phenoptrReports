@@ -398,11 +398,11 @@ add_grid_lines <- function(wb, sheet_name, d, header_col, first_data_row) {
     border_rows = seq(first_data_row,
                       nrow(d)+first_data_row-grid_spacing,
                       grid_spacing)
-    for (start_row in border_rows)
-      openxlsx::addStyle(wb, sheet_name,
+    openxlsx::addStyle(wb, sheet_name,
                          openxlsx::createStyle(border='Top'),
-                         rows=start_row,
+                         rows=border_rows,
                          cols=seq_along(d),
+                         gridExpand=TRUE,
                          stack=TRUE)
   }
 
