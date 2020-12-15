@@ -11,7 +11,8 @@ count_within_summary(
   categories = NA,
   details_path = NULL,
   .by = "Slide ID",
-  extra_cols = NULL
+  extra_cols = NULL,
+  whole_slide = FALSE
 )
 }
 \arguments{
@@ -34,6 +35,9 @@ count within data for each cell.}
 
 \item{extra_cols}{The names of extra columns to include in the detailed
 results.}
+
+\item{whole_slide}{If \code{TRUE}, process all fields for each slide as one
+data set; if \code{FALSE}, fields are processed individually.}
 }
 \value{
 A data frame with summary statistics for each phenotype pair

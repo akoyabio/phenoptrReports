@@ -11,6 +11,7 @@ consolidate_and_summarize_cell_seg_data(
   study_dir = NULL,
   export_dir = NULL,
   require_include = FALSE,
+  update_progress = NULL,
   col_select = NULL
 )
 }

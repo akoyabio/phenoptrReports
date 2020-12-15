@@ -17,6 +17,6 @@ data files.}
 and category area.}
 }
 \description{
-Write new files with corrected areas and limited columns to \code{output_dir}.
+Write new files with corrected areas and selected columns to \code{output_dir}.
 }
 \keyword{internal}

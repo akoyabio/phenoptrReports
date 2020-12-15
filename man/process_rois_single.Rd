@@ -5,7 +5,13 @@
 \title{Process ROIs for a single image, removing cells that don't meet
 the inclusion and exclusion criteria.}
 \usage{
-process_rois_single(sample_name, data, annotation_paths, require_include)
+process_rois_single(
+  sample_name,
+  data,
+  annotation_paths,
+  require_include,
+  output_dir
+)
 }
 \arguments{
 \item{sample_name}{Name of the sample image (without the extension)}
@@ -16,6 +22,8 @@ process_rois_single(sample_name, data, annotation_paths, require_include)
 
 \item{require_include}{Should the result
 include only cells contained in ROIs tagged with \verb{#IncludeInResults}?}
+
+\item{output_dir}{Directory to save a check plot}
 }
 \value{
 A list containing these items:
