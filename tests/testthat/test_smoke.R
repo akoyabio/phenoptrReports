@@ -25,6 +25,7 @@ test_file_generation = function(data_dir, output_dir, expected_path, .by) {
     include_count_within = TRUE,
     include_distance_details = TRUE,
     radii = c(10, 15),
+    whole_slide=FALSE,
     phenotype_values = list(
       list(phenotype = "CD8+", expression = "Membrane PDL1 (Opal 520) Mean"),
       list(phenotype = "CD8+", expression = "Membrane PD1 (Opal 650) Mean", score=TRUE),
