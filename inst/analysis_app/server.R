@@ -15,6 +15,7 @@ shinyServer(function(input, output, server) {
   # include_count_within - Include "count within radius" summary?
   # include_distance_details - Write a detail table for distance metrics?
   # radii - For count_within, if selected
+  # whole_slide - Compute spatial metrics on whole slide data?
   the_data = reactiveValues()
 
   # Cell seg data
@@ -127,12 +128,14 @@ shinyServer(function(input, output, server) {
       # Third well panel holds options for spatial processing
       shiny::div(id='well3', shiny::wellPanel(
         shiny::fluidRow(
-          shiny::column(4, shiny::checkboxInput('include_nearest',
+          shiny::column(3, shiny::checkboxInput('include_nearest',
                              label='Include nearest neighbor summary')),
-          shiny::column(4, shiny::checkboxInput('include_count_within',
+          shiny::column(3, shiny::checkboxInput('include_count_within',
                              label='Include "count within radius" summary')),
-          shiny::column(4, shiny::checkboxInput('include_distance_details',
-                         label='Save nearest neighbor / count within details'))
+          shiny::column(3, shiny::checkboxInput('include_distance_details',
+                             label='Save nearest neighbor / count within details')),
+          shiny::column(3, shiny::checkboxInput('whole_slide',
+                             label='Process as whole slide'))
         ),
           shiny::textInput('radii', value='15',
             label='Radius or radii for "count within" (in microns, separate with comma or space)')
@@ -194,6 +197,12 @@ shinyServer(function(input, output, server) {
       shiny::isTruthy(input$include_distance_details)
   })
 
+  # Handle the whole_slide checkbox
+  shiny::observeEvent(input$whole_slide, {
+    the_data$whole_slide =
+      shiny::isTruthy(input$whole_slide)
+  })
+
   # Handle the radii text box
   shiny::observeEvent(input$radii, {
     shiny::req(input$radii)
@@ -226,6 +235,8 @@ shinyServer(function(input, output, server) {
                && !shiny::isTruthy(the_data$radii)) {
       analysis_error =
         'Radii for "count within" must be numeric and separated by space or comma.'
+    } else if (shiny::isTruthy(the_data$whole_slide && the_data$by!='Slide ID')) {
+      analysis_error = 'Whole slide spatial analysis requires summarize by Slide ID.'
     } else {
       analysis_error = ''
     }

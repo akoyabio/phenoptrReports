@@ -12,7 +12,9 @@ Analysis addin:
 - Only read cell seg fields needed for the analysis.
 - Add support for hashtags in phenotype definitions
 - Export hashtag columns in nearest neighbor and count within detail files
-
+- Add support for computing spatial metrics for whole-slide data, rather
+  than field-based.
+  
 Spatial map viewer addin:
 - Add support for hashtags in phenotype definitions
 

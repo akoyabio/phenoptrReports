@@ -121,7 +121,7 @@ nearest_neighbor_summary_single_impl = function(csd, phenotypes,
   # one field at a time.
   distances = csd_nested %>%
     dplyr::mutate(distance=purrr::map(data,
-                    phenoptr::find_nearest_distance, phenotypes)) %>%
+      phenoptr::find_nearest_distance, phenotypes, whole_slide=whole_slide)) %>%
     tidyr::unnest(cols=c(data, distance)) %>%
     dplyr::ungroup()
 
@@ -319,7 +319,7 @@ count_within_summary_impl = function(csd, phenotypes, radii,
   # Compute counts for all cells in categories, one field at a time.
   counts = csd_nested %>%
     dplyr::mutate(counts=purrr::map(data,
-                    phenoptr::count_within_detail, phenotypes, radii)) %>%
+      phenoptr::count_within_detail, phenotypes, radii, whole_slide)) %>%
     tidyr::unnest(cols=c(data, counts)) %>%
     dplyr::ungroup()
 

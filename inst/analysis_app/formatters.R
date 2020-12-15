@@ -54,10 +54,10 @@ format_all = function(all_data) {
     ifelse(has$h_score, format_h_score(all_data$score_path, phenos), ''),
     ifelse(has$include_nearest,
            format_nearest_neighbors(all_data$output_dir,
-                                    has$include_nearest_details), ''),
+              has$include_nearest_details, all_data$whole_slide), ''),
     ifelse(has$include_count_within,
            format_count_within(all_data$output_dir, all_data$radii,
-                               has$include_count_within_details), ''),
+              has$include_count_within_details, all_data$whole_slide), ''),
     format_cleanup(all_data$slide_id_prefix, all_data$use_regex, has),
     format_trailer(all_data$output_dir, has))
 }
@@ -240,11 +240,14 @@ h_score = compute_h_score_from_score_data(csd, score_path,
 }
 
 # Format calculation of nearest neighbors
-format_nearest_neighbors = function(output_dir, include_distance_details) {
+format_nearest_neighbors = function(output_dir, include_distance_details,
+                                    whole_slide) {
   table_pairs <<- c(table_pairs,
                     list(c(cleanup_code('nearest_neighbors'),
                          worksheet_code('write_nearest_neighbor_summary_sheet',
                                         'nearest_neighbors'))))
+
+  whole_slide_str = ifelse(whole_slide, ', whole_slide=TRUE', '')
 
   if (include_distance_details)
     stringr::str_glue(
@@ -254,23 +257,27 @@ nearest_detail_path = file.path(
   "nearest_neighbors.txt")
 nearest_neighbors = nearest_neighbor_summary(
   csd, phenotypes, tissue_categories, nearest_detail_path, .by=.by,
-  extra_cols=expression_params)
+  extra_cols=expression_params{whole_slide_str})
 \n\n')
   else
     stringr::str_glue(
 "# Summarize nearest neighbor distances
 nearest_neighbors = nearest_neighbor_summary(
-  csd, phenotypes, tissue_categories, .by=.by)
+  csd, phenotypes, tissue_categories, .by=.by{whole_slide_str})
 \n\n")
 }
 
 # Format calculation of `count_within`
 format_count_within = function(output_dir, radii,
-                               include_count_within_details) {
+                               include_count_within_details,
+                               whole_slide) {
   table_pairs <<- c(table_pairs,
                     list(c(cleanup_code('count_within'),
                            worksheet_code('write_count_within_sheet',
                                           'count_within'))))
+
+  whole_slide_str = ifelse(whole_slide, ', whole_slide=TRUE', '')
+
   if (include_count_within_details)
     stringr::str_glue(
 '# Summary of cells within a specific distance
@@ -280,14 +287,14 @@ count_detail_path = file.path(
   "count_within.txt")
 count_within = count_within_summary(
   csd, radii, phenotypes, tissue_categories,
-  count_detail_path, .by=.by, extra_cols=expression_params)
+  count_detail_path, .by=.by, extra_cols=expression_params{whole_slide_str})
 \n\n')
   else
     stringr::str_glue(
 "# Summary of cells within a specific distance
 radii = {deparse(radii)}
 count_within = count_within_summary(csd, radii, phenotypes,
-                                    tissue_categories, .by=.by)
+                                    tissue_categories, .by=.by{whole_slide_str})
 \n\n")
 }
 
