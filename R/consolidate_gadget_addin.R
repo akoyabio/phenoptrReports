@@ -110,9 +110,9 @@ addin_20_consolidate = function() {
       # Set the default directory even if nothing valid is selected
       default_dir <<- dirname(files[1])
 
-      # Only allow cell_seg_data.txt files, and not rejected!
+      # Only allow cell_seg_data.txt or consolidated data files, and not rejected!
       is_cell_seg = stringr::str_detect(files,
-                                        '(?<!rejected)_cell_seg_data.txt$')
+                      '(?<!rejected)_cell_seg_data.txt$|Consolidated_data.txt$')
       if (!all(is_cell_seg)) {
         shiny::showNotification('Please select only cell_seg_data files!',
                                 type='message')
