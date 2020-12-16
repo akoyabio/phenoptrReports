@@ -3,13 +3,7 @@ library(dplyr)
 library(tidyr)
 library(readxl)
 
-test_file_generation = function(data_dir, output_dir, expected_path, .by) {
-  if (dir.exists(output_dir)) {
-    unlink(output_dir, recursive=TRUE)
-    Sys.sleep(0.1) # Wait for it...
-  }
-  dir.create(output_dir)
-
+test_file_generation_by_field = function(data_dir, output_dir, expected_path, .by) {
   # Data structure for format_all
   all_data = list(
     by=.by,
@@ -35,6 +29,40 @@ test_file_generation = function(data_dir, output_dir, expected_path, .by) {
       list(phenotype = "CK+/~`Membrane PDL1 (Opal 520) Mean`>1", expression='NA', score=TRUE),
       list(phenotype = "Total Cells", expression = 'NA')
     ))
+
+  test_file_generation(all_data, output_dir, expected_path)
+}
+
+test_file_generation_whole_slide = function(data_dir, output_dir, expected_path) {
+  # Data structure for format_all
+  all_data = list(
+    by="Slide ID",
+    use_regex = FALSE,
+    slide_id_prefix = "",
+    tissue_categories = c("Tumor", "Stroma"),
+    input_path = file.path(data_dir, "Consolidated_data.txt"),
+    output_dir = output_dir,
+    field_col = 'Sample Name',
+    include_nearest = TRUE,
+    include_count_within = TRUE,
+    include_distance_details = TRUE,
+    radii = c(20, 80),
+    whole_slide=TRUE,
+    phenotype_values = list(
+      list(phenotype = "CD8+", expression = 'NA'),
+      list(phenotype = "CD68+", expression = 'NA'),
+      list(phenotype = "Total Cells", expression = 'NA')
+    ))
+
+  test_file_generation(all_data, output_dir, expected_path)
+}
+
+test_file_generation = function(all_data, output_dir, expected_path) {
+  if (dir.exists(output_dir)) {
+    unlink(output_dir, recursive=TRUE)
+    Sys.sleep(0.1) # Wait for it...
+  }
+  dir.create(output_dir)
 
   # Get the formatter function from the app
   source(system.file('analysis_app', 'formatters.R', package='phenoptrReports'),
@@ -75,7 +103,6 @@ test_file_generation = function(data_dir, output_dir, expected_path, .by) {
   }
 
   # Additional sanity checks on aggregation
-  # (on both actual and expected, since they are the same)
   check_nearest_neighbors(actual_path)
   check_count_within(actual_path)
 }
@@ -123,13 +150,24 @@ test_that("file generation works", {
   expected_path = file.path(data_dir, 'Results.xlsx')
 
   # Aggregate by Slide ID
-  test_file_generation(data_dir, output_dir, expected_path, .by='Slide ID')
+  test_file_generation_by_field(data_dir, output_dir, expected_path, .by='Slide ID')
 
   # And by Sample Name
   output_dir = normalizePath(test_path('results_by_sample'),
                              winslash='/', mustWork=FALSE)
   expected_path = file.path(data_dir, 'Results_by_sample.xlsx')
-  test_file_generation(data_dir, output_dir, expected_path, .by='Sample Name')
+  test_file_generation_by_field(data_dir, output_dir, expected_path, .by='Sample Name')
+})
+
+test_that("Whole-slide file generation works", {
+  data_dir = r'(C:\Research\phenoptrTestData\Whole_slide)'
+  skip_if_not(dir.exists(data_dir))
+
+  output_dir = normalizePath(test_path('results_ws'), winslash='/', mustWork=FALSE)
+  expected_dir = normalizePath(test_path('test_data'), winslash='/', mustWork=FALSE)
+  expected_path = file.path(expected_dir, 'Results_ws.xlsx')
+
+  test_file_generation_whole_slide(data_dir, output_dir, expected_path)
 })
 
 # Test writing charts with multiple pages per chart
