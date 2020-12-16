@@ -94,6 +94,13 @@ In this section, select the tissue categories to include in the analysis.
 
 ![](figures/Tissue_categories.png)
 
+#### Summarize by
+
+In this section, select whether to report results by slide (Slide ID)
+or field (Sample Name or Annotation ID).
+
+![](figures/Summarize_by.png)
+
 #### Slide ID prefix
 
 The Slide IDs in your data file may contain prefix information that is not
@@ -171,6 +178,13 @@ count of cells within the specified radii.
   - These files may be useful
 for more detailed statistical analysis of spatial relationships.
 
+- **Process as whole slide**
+  - If this is selected, spatial metrics are computed on data for each slide
+as a single data set. If this is not selected, spatial metrics are computed
+for each field separately.
+  - Only check this if your data consists of contiguous fields for each slide.
+  - You must select "Summarize by Slide ID" to use this option.
+  
 ![](figures/Spatial_options.png)
 
 ### Create reports
