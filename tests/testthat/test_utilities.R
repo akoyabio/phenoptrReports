@@ -34,3 +34,10 @@ test_that('parse_comma_space_values works', {
                       .x[[2]],
                       info=.x[[1]]))
 })
+
+test_that('discrete_colors works', {
+  for (n in 1:40) {
+    colors = discrete_colors(n)
+    expect_vector(colors, ptype=character(), size=n)
+  }
+})

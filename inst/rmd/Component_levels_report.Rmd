@@ -115,7 +115,7 @@ component_fig_height = 1 + 0.5 * n_distinct(all_components$Source)
 ```{r histogram_by_component,fig.height=component_fig_height,results='asis'}
 message('Creating histograms by component')
 fluors = sort(unique(all_components$Fluor))
-palette = RColorBrewer::brewer.pal(length(fluors), 'Spectral')
+palette = discrete_colors(length(fluors))
 
 purrr::walk2(fluors, palette, 
    function(fluor, fill) {
@@ -134,6 +134,8 @@ purrr::walk2(fluors, palette,
 Pair plots show the expression of each marker against each other marker.
 They may help identify crosstalk between markers.
 
+Pair plots are shown only for images with ten or fewer components.
+
 ```{r pairs,fig.width=8,fig.height=8.5,results='asis'}
 message('Creating pair plots')
 purrr::iwalk(all_data, function(d, n) {
@@ -150,10 +152,15 @@ purrr::iwalk(all_data, function(d, n) {
     pairs_path = file.path(export_path, pairs_name)
     readr::write_tsv(d, pairs_path)
   }
-  axis_max = max(d)
-  pairs(d, pch='.', cex=3, col=scales::alpha('black', 0.2),
-              main=n, xlim=c(0, axis_max), ylim=c(0, axis_max))
-  cat('\n\n  \n----\n  \n')
+
+  # Only show pairs plots if the number of fluors is <= 10, they are not
+  # helpful with many parts
+  if (ncol(d) <= 10) {
+    axis_max = max(d)
+    pairs(d, pch='.', cex=3, col=scales::alpha('black', 0.2),
+                main=n, xlim=c(0, axis_max), ylim=c(0, axis_max))
+    cat('\n\n  \n----\n  \n')
+  }
 })
 ```
 
@@ -164,7 +171,7 @@ if (length(quantiles) >= 2) {
   cat('\n\n### Signal to noise\n\n')
   cat(stringr::str_glue(
   'This table shows the ratio of the ',
-  '{scales::percent(quantiles[length(quantiles)])}ile signal ',
+  '{scales::percent(quantiles[length(quantiles)], accuracy=0.1)}ile signal ',
   'level to the {scales::percent(quantiles[1])}ile signal level.\n\n'))
   
   # What columns of all_quants do we want?

@@ -6,6 +6,10 @@ Consolidate and summarize addin:
 Analysis addin:
 - Only read cell seg fields needed for the analysis.
 
+Component levels report:
+- Fix histograms to work with more than 11 components.
+- Omit pairs plots with more than 10 components.
+
 # phenoptrReports 0.2.10
 **2020-11-11**
 

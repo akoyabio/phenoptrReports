@@ -64,6 +64,8 @@ component_ridge_plot = function(path, quantiles=NULL) {
     subtitle = stringr::str_glue(
       'Vertical lines show {cc_and(names(quants)[-(1:2)])} percentiles. {subtitle}')
 
+  palette = discrete_colors(dplyr::n_distinct(comps$Fluor))
+
   # Some component data has very few distinct values. That makes density
   # plots look really weird, with peaks at each distinct value.
   # A histogram with lots of bins works pretty well with few or many values.
@@ -80,8 +82,8 @@ component_ridge_plot = function(path, quantiles=NULL) {
     ggplot2::scale_x_log10(limits=c(xlim_lower, NA)) +
     ggplot2::labs(x='Pixel intensity', y='',
          title=name, subtitle=subtitle) +
-    ggplot2::scale_color_brewer(palette='Spectral') +
-    ggplot2::scale_fill_brewer(palette='Spectral') +
+    ggplot2::scale_color_manual(values=palette) +
+    ggplot2::scale_fill_manual(values=palette) +
     ggplot2::guides(color='none', fill='none') +
     ggplot2::theme_minimal() +
     ggplot2::theme(
