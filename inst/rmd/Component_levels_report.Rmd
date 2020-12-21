@@ -84,7 +84,9 @@ Intensity is shown on a log scale.
 ```{r data}
 # Initial data acquisition and creation of the first round of plots
 # all_data is a list of lists of plot, data, quants, clipping
-all_data = purrr::map(comp_files, phenoptrReports:::component_ridge_plot, quantiles=quantiles)
+all_data = purrr::map(comp_files, 
+                      phenoptrReports:::get_component_level_data, 
+                      quantiles=quantiles)
 
 # Save some data
 all_quants = purrr::map_dfr(all_data, 'quants')
@@ -94,15 +96,16 @@ all_clipping = purrr::map_dfr(all_data, 'clipping')
 readr::write_csv(all_clipping, file.path(export_path, 'all_clipping.csv'))
 
 all_components = purrr::map_dfr(all_data, 'data')
-density_fig_height =  1 + 0.5 * n_distinct(all_components$Fluor)
+density_fig_height =  1 + 0.6 * n_distinct(all_components$Fluor)
 ```
 
 ```{r histogram_by_file,fig.height=density_fig_height,results='asis'}
 # Output density plots by file
 message('Creating histograms by source')
 purrr::iwalk(all_data, function(d, n) {
-  message('Processing ', n)
-  print(d$plot)
+  message('Histogram for ', n)
+  
+  print(phenoptrReports:::component_ridge_plot(d$data, d$quants, d$clipping))
   cat('\n\n  \n----\n  \n')
 })
 

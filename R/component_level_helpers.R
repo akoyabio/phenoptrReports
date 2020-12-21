@@ -6,17 +6,16 @@ utils::globalVariables(c('Fluor', 'level', 'value', 'Source', 'clip_frac',
 
 xlim_lower = 0.01
 
-# Create a ridge plot for a single component data file
+# Get data for a single component data file
 # @param path Full path to a component data file
 # @param quantiles A length 2 vector of quantiles to show and report,
 #   or NULL to use the default quantiles of 0.1 and 0.99.
 # @return A list containing
-#  - plot - a ggplot object containing the ridge plot
 #  - data - a long data frame containing sampled component data
 #  - quants - a data frame containing the requested quantiles for each component
 #  - clipping - a data frame with the percent of pixels clipped to zero for
 #    each component
-component_ridge_plot = function(path, quantiles=NULL) {
+get_component_level_data = function(path, quantiles=NULL) {
   message('Processing ', basename(path))
 
   if (is.null(quantiles))
@@ -36,21 +35,31 @@ component_ridge_plot = function(path, quantiles=NULL) {
   quants = comps %>%
     tidyr::nest(data=c(-Fluor, -Source)) %>%
     dplyr::mutate(q=purrr::map(data, ~quantile(.$value, quantiles) %>%
-                                        as.list() %>%
-                                        tibble::as_tibble())) %>%
+                                 as.list() %>%
+                                 tibble::as_tibble())) %>%
     dplyr::select(-data) %>%
     tidyr::unnest(cols=c(q))
-
-  # For plotting a long data frame is better
-  quants_to_plot = quants %>%
-    dplyr::select(-Source) %>%
-    tidyr::gather(level, value, -Fluor) %>%
-    dplyr::mutate(value = pmax(value, xlim_lower))
 
   # How much data are we clipping (because it is 0)
   clipping = comps %>%
     dplyr::group_by(Fluor, Source) %>%
     dplyr::summarize(clip_frac=sum(value==0)/dplyr::n())
+
+  list(data=comps, quants=quants, clipping=clipping)
+}
+
+# Create a ridge plot for a single component data file
+# @param comps A long data frame containing sampled component data
+# @param quants A data frame containing the requested quantiles for each component
+# @param clipping A data frame with the percent of pixels clipped to zero for
+#    each component
+# @return A ggplot object containing the ridge plot
+component_ridge_plot = function(comps, quants, clipping) {
+  # For plotting a long data frame is better
+  quants_to_plot = quants %>%
+    dplyr::select(-Source) %>%
+    tidyr::gather(level, value, -Fluor) %>%
+    dplyr::mutate(value = pmax(value, xlim_lower))
 
   # Format clipping data as percent and add a plot location near the left margin
   clipping_to_plot = clipping %>%
@@ -60,16 +69,17 @@ component_ridge_plot = function(path, quantiles=NULL) {
   clipping_to_plot$pct[1] = paste0('Clipping: ', clipping_to_plot$pct[1])
 
   subtitle = 'Values of 0 are clipped.'
-  if (length(quantiles) > 0)
+  if (ncol(quants) > 2)
     subtitle = stringr::str_glue(
       'Vertical lines show {cc_and(names(quants)[-(1:2)])} percentiles. {subtitle}')
 
   palette = discrete_colors(dplyr::n_distinct(comps$Fluor))
+  name = comps$Source[[1]]
 
   # Some component data has very few distinct values. That makes density
   # plots look really weird, with peaks at each distinct value.
   # A histogram with lots of bins works pretty well with few or many values.
-  p = ggplot2::ggplot(comps %>% dplyr::filter(value>0)) +
+  ggplot2::ggplot(comps %>% dplyr::filter(value>0)) +
     ggplot2::geom_histogram(bins=1000, na.rm=TRUE,
                             ggplot2::aes(value, color=Fluor, fill=Fluor)) +
     ggplot2::geom_vline(data=quants_to_plot,
@@ -87,14 +97,13 @@ component_ridge_plot = function(path, quantiles=NULL) {
     ggplot2::guides(color='none', fill='none') +
     ggplot2::theme_minimal() +
     ggplot2::theme(
-      strip.text.y=ggplot2::element_text(face='bold', angle=180, hjust=0),
+      strip.text.y=ggplot2::element_text(face='bold', size=ggplot2::rel(0.9), hjust=0),
           axis.ticks.y=ggplot2::element_blank(),
           axis.text.y=ggplot2::element_blank(),
           panel.grid.major.y=ggplot2::element_blank(),
           panel.grid.minor=ggplot2::element_blank())
 
-  list(plot=p, data=comps, quants=quants, clipping=clipping)
-}
+  }
 
 # Create a ridge plot for a single fluor in multiple fields
 # @param d Data for the fluor
