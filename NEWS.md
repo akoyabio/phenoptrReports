@@ -5,6 +5,7 @@ Consolidate and summarize addin:
 
 Analysis addin:
 - Only read cell seg fields needed for the analysis.
+- Fix network file paths in `Script.R`.
 
 Component levels report:
 - Fix histograms to work with more than 11 components.
