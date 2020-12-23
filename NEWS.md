@@ -10,6 +10,7 @@ Analysis addin:
 Component levels report:
 - Fix histograms to work with more than 11 components.
 - Omit pairs plots with more than 10 components.
+- Add correlation heatmaps for each file
 
 # phenoptrReports 0.2.10
 **2020-11-11**

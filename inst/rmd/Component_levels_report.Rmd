@@ -69,7 +69,8 @@ from <pre><strong>`r export_path`</strong></pre>.
 
 ```{r files}
 comp_files = list.files(export_path, pattern='component_data.tif', full.names=TRUE) %>% 
-  purrr::set_names(., basename(.))
+  purrr::set_names(., basename(.) %>% stringr::str_remove('_component_data.tif'))
+
 if (length(comp_files) == 0)
   stop('No component data files found at "', export_path, '"')
 
@@ -84,9 +85,10 @@ Intensity is shown on a log scale.
 ```{r data}
 # Initial data acquisition and creation of the first round of plots
 # all_data is a list of lists of plot, data, quants, clipping
-all_data = purrr::map(comp_files, 
-                      phenoptrReports:::get_component_level_data, 
+all_data = purrr::imap(comp_files, function(path, name) {
+                      phenoptrReports:::get_component_level_data(path, name, 
                       quantiles=quantiles)
+})
 
 # Save some data
 all_quants = purrr::map_dfr(all_data, 'quants')
@@ -102,10 +104,10 @@ density_fig_height =  1 + 0.6 * n_distinct(all_components$Fluor)
 ```{r histogram_by_file,fig.height=density_fig_height,results='asis'}
 # Output density plots by file
 message('Creating histograms by source')
-purrr::iwalk(all_data, function(d, n) {
-  message('Histogram for ', n)
+purrr::iwalk(all_data, function(d, name) {
+  message('Histogram for ', name)
   
-  print(phenoptrReports:::component_ridge_plot(d$data, d$quants, d$clipping))
+  print(phenoptrReports:::component_ridge_plot(d$data, d$quants, d$clipping, name))
   cat('\n\n  \n----\n  \n')
 })
 
@@ -118,7 +120,8 @@ component_fig_height = 1 + 0.5 * n_distinct(all_components$Source)
 ```{r histogram_by_component,fig.height=component_fig_height,results='asis'}
 message('Creating histograms by component')
 fluors = sort(unique(all_components$Fluor))
-palette = discrete_colors(length(fluors))
+num_fluors = length(fluors)
+palette = phenoptrReports::discrete_colors(num_fluors)
 
 purrr::walk2(fluors, palette, 
    function(fluor, fill) {
@@ -130,6 +133,32 @@ purrr::walk2(fluors, palette,
     cat('\n\n  \n----\n  \n')
 })
 
+corr_plot_size = num_fluors/2
+```
+
+### Correlation between markers
+
+These heatmaps show the correlation between each pair of markers.
+This may help identify crosstalk between markers.
+
+```{r correlation,fig.width=8,fig.height=8.5,results='asis'}
+message('Creating correlation heatmaps')
+purrr::iwalk(all_data, function(d, name) {
+  corr = d$data %>% 
+    dplyr::select(-Source) %>% 
+    tidyr::pivot_wider(names_from='Fluor', values_from='value', values_fn=list) %>% 
+    tidyr::unnest(cols=everything()) %>% 
+    stats::cor()
+  
+  p = pheatmap::pheatmap(corr, color = rev(RColorBrewer::brewer.pal(n = 7, name = 'RdYlBu')), 
+           breaks=seq(-1, 1, length.out=8),
+           treeheight_row=0,
+           clustering_distance_rows='correlation',
+           clustering_distance_cols='correlation',
+           main=name)
+  print(p)
+  cat('\n\n  \n----\n  \n')
+})
 ```
 
 ### Pair plots
@@ -141,9 +170,9 @@ Pair plots are shown only for images with ten or fewer components.
 
 ```{r pairs,fig.width=8,fig.height=8.5,results='asis'}
 message('Creating pair plots')
-purrr::iwalk(all_data, function(d, n) {
+purrr::iwalk(all_data, function(d, name) {
   # Unstack and subsample
-  message('Processing ', n)
+  message('Processing ', name)
   d = d$data %>% select(-Source) %>% 
     filter(!Fluor %in% c('Sample AF', 'AF', 'Autofluorescence')) %>% 
     unstack(value ~ Fluor) %>% 
@@ -161,7 +190,7 @@ purrr::iwalk(all_data, function(d, n) {
   if (ncol(d) <= 10) {
     axis_max = max(d)
     pairs(d, pch='.', cex=3, col=scales::alpha('black', 0.2),
-                main=n, xlim=c(0, axis_max), ylim=c(0, axis_max))
+                main=name, xlim=c(0, axis_max), ylim=c(0, axis_max))
     cat('\n\n  \n----\n  \n')
   }
 })

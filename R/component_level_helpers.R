@@ -8,6 +8,7 @@ xlim_lower = 0.01
 
 # Get data for a single component data file
 # @param path Full path to a component data file
+# @param name Component name
 # @param quantiles A length 2 vector of quantiles to show and report,
 #   or NULL to use the default quantiles of 0.1 and 0.99.
 # @return A list containing
@@ -15,13 +16,11 @@ xlim_lower = 0.01
 #  - quants - a data frame containing the requested quantiles for each component
 #  - clipping - a data frame with the percent of pixels clipped to zero for
 #    each component
-get_component_level_data = function(path, quantiles=NULL) {
+get_component_level_data = function(path, name, quantiles=NULL) {
   message('Processing ', basename(path))
 
   if (is.null(quantiles))
     quantiles = c(0.1, 0.99)
-
-  name = basename(path) %>% stringr::str_remove('_component_data.tif')
 
   # Read and subsample the components and make a long data frame
   comps = phenoptr::read_components(path) %>%
@@ -53,8 +52,9 @@ get_component_level_data = function(path, quantiles=NULL) {
 # @param quants A data frame containing the requested quantiles for each component
 # @param clipping A data frame with the percent of pixels clipped to zero for
 #    each component
+# @param name Component name
 # @return A ggplot object containing the ridge plot
-component_ridge_plot = function(comps, quants, clipping) {
+component_ridge_plot = function(comps, quants, clipping, name) {
   # For plotting a long data frame is better
   quants_to_plot = quants %>%
     dplyr::select(-Source) %>%
@@ -74,7 +74,6 @@ component_ridge_plot = function(comps, quants, clipping) {
       'Vertical lines show {cc_and(names(quants)[-(1:2)])} percentiles. {subtitle}')
 
   palette = discrete_colors(dplyr::n_distinct(comps$Fluor))
-  name = comps$Source[[1]]
 
   # Some component data has very few distinct values. That makes density
   # plots look really weird, with peaks at each distinct value.
