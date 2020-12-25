@@ -10,3 +10,4 @@
 ^tests/testthat/results.*$
 ^_pkgdown\.yml$
 ^inst/rmd/Unmixing_error\.html$
+^\.github$

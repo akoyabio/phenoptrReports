@@ -126,3 +126,7 @@ For more information about the unmixing quality report, see the
 The **Component levels report** addin analyzes unmixed, multiplex images to help
 evaluate staining levels for an entire experiment. This report shows
 the distribution of signal and dark pixels for all components.
+
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/akoyabio/phenoptrReports/workflows/R-CMD-check/badge.svg)](https://github.com/akoyabio/phenoptrReports/actions)
+<!-- badges: end -->
