@@ -135,9 +135,11 @@ test_that("file generation works", {
 test_that("Chart segmentation works", {
   workbook_path = normalizePath(test_path('test_data/Results_by_sample.xlsx'),
                                 winslash='/', mustWork=FALSE)
-  charts_path = normalizePath(
-    test_path('results_by_sample/Charts_segmented.docx'),
-    winslash='/', mustWork=FALSE)
+
+  # On macOS, normalizePath only gives the full path if the target exists
+  charts_path = normalizePath(test_path('results_by_sample'),
+                              winslash='/', mustWork=FALSE)
+  charts_path = file.path(charts_path, 'Charts_segmented.docx')
 
   if (!dir.exists(dirname(charts_path))) dir.create(dirname(charts_path))
   if (file.exists(charts_path)) file.remove(charts_path)
