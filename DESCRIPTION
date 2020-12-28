@@ -56,12 +56,13 @@ Remotes:
     hms-dbmi/UpSetR
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
+Config/testthat/edition: 3
 Suggests:
     ggridges,
     rstudioapi,
     rtree,
     sessioninfo,
-    testthat (>= 2.1.0),
+    testthat (>= 3.0.0),
     vdiffr
 URL:
     https://akoyabio.github.io/phenoptrReports/,
