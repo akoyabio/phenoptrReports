@@ -39,7 +39,7 @@ jobs:
       - name: Install dependencies
         run: |
           install.packages(c("remotes", "rcmdcheck"))
-          remotes::install_github("akoyabio/phenoptr", ref="${GITHUB_REF}")
+          remotes::install_github("akoyabio/phenoptr", ref="${{GITHUB_REF}}")
           remotes::install_deps(dependencies = TRUE)
         shell: Rscript {0}
       - name: Check
