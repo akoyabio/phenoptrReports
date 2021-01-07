@@ -86,6 +86,7 @@ Intensity is shown on a log scale.
 # Initial data acquisition and creation of the first round of plots
 # all_data is a list of lists of plot, data, quants, clipping
 all_data = purrr::imap(comp_files, function(path, name) {
+                      message('Reading ', basename(path))
                       phenoptrReports:::get_component_level_data(path, name, 
                       quantiles=quantiles)
 })
@@ -105,8 +106,7 @@ density_fig_height =  1 + 0.6 * n_distinct(all_components$Fluor)
 # Output density plots by file
 message('Creating histograms by source')
 purrr::iwalk(all_data, function(d, name) {
-  message('Histogram for ', name)
-  
+  message(name)
   print(phenoptrReports:::component_ridge_plot(d$data, d$quants, d$clipping, name))
   cat('\n\n  \n----\n  \n')
 })
@@ -125,6 +125,7 @@ palette = phenoptrReports::discrete_colors(num_fluors)
 
 purrr::walk2(fluors, palette, 
    function(fluor, fill) {
+     message(fluor)
      print(phenoptrReports:::fluor_ridge_plot(
        all_components %>% filter(Fluor==fluor),
        all_quants %>% filter(Fluor==fluor), 
@@ -138,12 +139,18 @@ corr_plot_size = num_fluors/2
 
 ### Correlation between markers
 
-These heatmaps show the correlation between each pair of markers.
+These heatmaps show the Pearson's correlation between per-pixel
+expression values for each pair of markers.
 This may help identify crosstalk between markers.
 
-```{r correlation,fig.width=8,fig.height=8.5,results='asis'}
-message('Creating correlation heatmaps')
+#### Clustered
+
+The first set of heatmaps group correlated components together
+
+```{r correlation_clustered,fig.width=8,fig.height=8.5,results='asis'}
+message('Creating clustered correlation heatmaps')
 purrr::iwalk(all_data, function(d, name) {
+  message(name)
   corr = d$data %>% 
     dplyr::select(-Source) %>% 
     tidyr::pivot_wider(names_from='Fluor', values_from='value', values_fn=list) %>% 
@@ -161,6 +168,31 @@ purrr::iwalk(all_data, function(d, name) {
 })
 ```
 
+#### Natural order
+
+The second set of heatmaps shows components in the order in which they
+appear in the source files.
+
+```{r correlation_ordered,fig.width=8,fig.height=8,results='asis'}
+message('Creating ordered correlation heatmaps')
+purrr::iwalk(all_data, function(d, name) {
+  message(name)
+  corr = d$data %>% 
+    dplyr::select(-Source) %>% 
+    tidyr::pivot_wider(names_from='Fluor', values_from='value', values_fn=list) %>% 
+    tidyr::unnest(cols=everything()) %>% 
+    stats::cor()
+  
+  p = pheatmap::pheatmap(corr, color = rev(RColorBrewer::brewer.pal(n = 7, name = 'RdYlBu')), 
+           breaks=seq(-1, 1, length.out=8),
+           cluster_rows=FALSE,
+           cluster_cols=FALSE,
+           main=name)
+  print(p)
+  cat('\n\n  \n----\n  \n')
+})
+```
+
 ### Pair plots
 
 Pair plots show the expression of each marker against each other marker.
@@ -172,7 +204,7 @@ Pair plots are shown only for images with ten or fewer components.
 message('Creating pair plots')
 purrr::iwalk(all_data, function(d, name) {
   # Unstack and subsample
-  message('Processing ', name)
+  message(name)
   d = d$data %>% select(-Source) %>% 
     filter(!Fluor %in% c('Sample AF', 'AF', 'Autofluorescence')) %>% 
     unstack(value ~ Fluor) %>% 

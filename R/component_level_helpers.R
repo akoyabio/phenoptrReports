@@ -17,8 +17,6 @@ xlim_lower = 0.01
 #  - clipping - a data frame with the percent of pixels clipped to zero for
 #    each component
 get_component_level_data = function(path, name, quantiles=NULL) {
-  message('Processing ', basename(path))
-
   if (is.null(quantiles))
     quantiles = c(0.1, 0.99)
 
@@ -112,8 +110,6 @@ component_ridge_plot = function(comps, quants, clipping, name) {
 # @param fill Fill color for the plot
 # @return A ggplot2 object
 fluor_ridge_plot = function(d, quants, clipping, name, fill) {
-  message('Processing ', name)
-
   clipping_to_plot = clipping %>%
     dplyr::mutate(
       pct=scales::percent(clip_frac, accuracy=1), x=xlim_lower*10^0.1, y=Inf)

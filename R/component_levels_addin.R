@@ -89,6 +89,14 @@ addin_50_component_levels = function() {
       if (error_text == '') {
         shiny::showNotification('Processing, please wait!', duration=NULL,
                                 closeButton=FALSE, type='message')
+
+        # Log the command to the console for convenient debugging
+        cmd = stringr::str_glue(
+          'phenoptrReports::component_levels_report(\n',
+          '  export_path="{export_dir()}",\n',
+          '  quantiles={deparse(quantiles())},\n',
+          '  export_data={input$export_data})')
+        message('Running command\n', cmd)
         phenoptrReports::component_levels_report(export_dir(), quantiles(),
                                                  input$export_data)
         shiny::stopApp()
