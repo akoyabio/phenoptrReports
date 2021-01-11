@@ -127,11 +127,14 @@ merge_and_split_phenotypes <- function(csd_files, output_dir, update_progress) {
       d['Tissue Category'] = 'All'
     }
 
+    # Split before reporting to handle multi-schema phenotyping
+    d = d %>% split_phenotypes()
+
     update_progress(detail=paste0('Writing report for "', name, '".'))
     out_path = file.path(output_dir, paste0(name, '.html'))
     write_summary_report(csd=d, output_path=out_path, dataset_name=name)
 
-    d %>% split_phenotypes()
+    d
   }
 
   # Process the first file, we will use it as the basis for the result
@@ -172,7 +175,41 @@ merge_and_split_phenotypes <- function(csd_files, output_dir, update_progress) {
   invisible(csd)
 }
 
-#' Split a phenotype column
+#' Split all phenotype columns
+#'
+#' All columns containing multiple phenotypes are split
+#' into multiple columns, one for each single phenotype.
+#'
+#' Multiple phenotypes in the original column must be separated with "/".
+#' The names of positive phenotypes must end in "+".
+#'
+#' @param csd Cell seg data to use.
+#' @return A new data frame with `Phenotype` and `Phenotype-<scheme>` columns
+#'  replaced with
+#'   individual columns per phenotype and the `Confidence` column(s) removed.
+#' @importFrom magrittr %>%
+#' @export
+split_phenotypes = function(csd) {
+  # Has this file already been split? If so just return it as-is
+  # Split files have phenotype columns like "Phenotype CD8"
+  if (sum(stringr::str_detect(names(csd), 'Phenotype ')) > 0) {
+    message('Phenotypes are already split, no additional splitting needed.')
+    return(csd)
+  }
+
+  # Look for classic 'Phenotype' column or multi-schema columns
+  # ('Phenotype-<schema name>')
+  columns_to_split = stringr::str_subset(names(csd), '^Phenotype(-|$)')
+  if (length(columns_to_split) == 0)
+    stop('No phenotype columns found.')
+
+  for (column in columns_to_split)
+    csd = split_phenotype_column(csd, column)
+
+  csd
+}
+
+#' Split a single phenotype column
 #'
 #' A column containing multiple phenotypes is split
 #' into multiple columns, one for each single phenotype.
@@ -181,25 +218,14 @@ merge_and_split_phenotypes <- function(csd_files, output_dir, update_progress) {
 #' The names of positive phenotypes must end in "+".
 #'
 #' @param csd Cell seg data to use.
-#' @return A new data frame with the `Phenotype` column replaced with
-#'   individual columns per phenotype and the `Confidence` column removed.
+#' @param column The name of the column to split
+#' @return A new data frame with the `column` column replaced with
+#'   individual columns per phenotype and the `Confidence` column(s) removed.
 #' @importFrom magrittr %>%
-#' @export
-split_phenotypes = function(csd) {
-  if (!'Phenotype' %in% names(csd)) {
-    # Has this file already been split? If so just return it as-is
-    # Split files have phenotype columns like "Phenotype CD8"
-    if (sum(stringr::str_detect(names(csd), 'Phenotype ')) > 0) {
-      message('Phenotypes are already split, no additional splitting needed.')
-      return(csd)
-    }
-
-    # Otherwise this is an error
-    stop('Cell seg data does not have a Phenotype column.')
-  }
-
+#' @keywords internal
+split_phenotype_column = function(csd, column) {
   # Look for positive phenotypes
-  phenotypes = unique(csd$Phenotype) %>%
+  phenotypes = unique(csd[[column]]) %>%
     stringr::str_split('/|(\\s+)') %>% # Split on single / or any whitespace
     purrr::flatten_chr()
   positives = phenotypes[endsWith(phenotypes, '+')] %>% unique()
@@ -208,7 +234,7 @@ split_phenotypes = function(csd) {
     stop('No positive phenotypes found.')
 
   # If there is no phenotype in the original, leave the new ones blank as well
-  blanks = csd$Phenotype == ''
+  blanks = csd[[column]] == ''
 
   # Make a new column for each positive phenotype
   new_columns = purrr::map(positives, ~{
@@ -221,7 +247,7 @@ split_phenotypes = function(csd) {
     result[blanks] = ''
 
     # Fill in the positive value anywhere it appears in the original
-    original_pos = stringr::str_detect(csd$Phenotype, stringr::fixed(positive))
+    original_pos = stringr::str_detect(csd[[column]], stringr::fixed(positive))
     result[original_pos] = positive
     result
   })
@@ -232,7 +258,7 @@ split_phenotypes = function(csd) {
 
   # Build a new data frame
   csd %>%
-    dplyr::select(-Phenotype, -dplyr::contains('Confidence')) %>%
+    dplyr::select(-!!rlang::sym(column), -dplyr::contains('Confidence')) %>%
     dplyr::bind_cols(new_columns)
 }
 
