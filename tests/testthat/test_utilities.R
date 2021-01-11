@@ -1,4 +1,3 @@
-context("utilities")
 library(testthat)
 
 test_that("file_to_fluor works", {
@@ -33,4 +32,11 @@ test_that('parse_comma_space_values works', {
         ~expect_equal(phenoptrReports:::parse_comma_space_values(.x[[1]]),
                       .x[[2]],
                       info=.x[[1]]))
+})
+
+test_that('discrete_colors works', {
+  for (n in 1:40) {
+    colors = discrete_colors(n)
+    expect_vector(colors, ptype=character(), size=n)
+  }
 })

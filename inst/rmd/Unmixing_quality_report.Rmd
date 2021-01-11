@@ -290,13 +290,15 @@ all_primaries = tibble::tibble(
                      dplyr::sample_frac(size=0.1))) %>% 
   tidyr::unnest(cols=c(data))
 
+palette = discrete_colors(dplyr::n_distinct(all_primaries$Fluor))
+
 if (require(ggridges)){
   all_primaries %>% 
     dplyr::filter(primary > 0) %>% 
     ggplot(aes(primary, forcats::fct_rev(Source), fill=Fluor)) +
     geom_density_ridges(color='gray50', na.rm=TRUE) +
     labs(x='Pixel intensity', y='') +
-    scale_fill_brewer(palette='Spectral') +
+    scale_fill_manual(values=palette) +
     guides(color='none', fill='none') +
     theme_minimal() +
     theme(axis.text.y=element_text(face='bold', hjust=0, vjust=0)) +
@@ -309,8 +311,8 @@ if (require(ggridges)){
     facet_wrap(~Source, ncol=1, strip.position='left', scales='free_y') +
     labs(x='Pixel intensity', y='') +
     scale_x_log10(limits=c(0.1, NA)) +
-    scale_color_brewer(palette='Spectral') +
-    scale_fill_brewer(palette='Spectral') +
+    scale_color_manual(values=palette) +
+    scale_fill_manual(values=palette) +
     guides(color='none', fill='none') +
     theme_minimal() +
     theme(strip.text.y=element_text(face='bold', angle=180, hjust=0),

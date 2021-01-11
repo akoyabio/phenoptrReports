@@ -1,4 +1,3 @@
-context("expression")
 library(testthat)
 library(phenoptrReports)
 

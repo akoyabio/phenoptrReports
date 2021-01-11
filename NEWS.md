@@ -14,9 +14,15 @@ Analysis addin:
 - Export hashtag columns in nearest neighbor and count within detail files
 - Add support for computing spatial metrics for whole-slide data, rather
   than field-based.
+- Fix network file paths in `Script.R`.
   
 Spatial map viewer addin:
 - Add support for hashtags in phenotype definitions
+
+Component levels report:
+- Fix histograms to work with more than 11 components.
+- Omit pairs plots with more than 10 components.
+- Add correlation heatmaps for each file
 
 # phenoptrReports 0.2.10
 **2020-11-11**

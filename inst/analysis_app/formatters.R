@@ -83,10 +83,9 @@ format_path = function(path, field_col) {
                     list(c(cleanup_code('summary_table'),
                            worksheet_code('write_summary_sheet',
                                           'summary_table'))))
-  path = stringr::str_replace_all(path, '\\\\', '/')
   stringr::str_glue('# Read the consolidated data file
 csd_path =
-  "{path}"
+  "{escape_path(path)}"
 csd = read_cell_seg_data(csd_path, col_select="phenoptrReports")
 
 # Make a table summarizing the number of fields per slide
@@ -145,7 +144,7 @@ format_density = function(summary_path) {
   stringr::str_glue(
 '# Path to a cell seg summary file, used for the tissue category area
 summary_path =
-  "{summary_path}"
+  "{escape_path(summary_path)}"
 
 # Using the counts computed above and the tissue area from the summary,
 # compute cell densities for each phenotype
@@ -193,7 +192,7 @@ format_h_score = function(score_path, phenos) {
   result = stringr::str_glue(
 "# Compute H-Score
 score_path =
-  '{score_path}'
+  '{escape_path(score_path)}'
 h_score = compute_h_score_from_score_data(csd, score_path,
                                           tissue_categories, .by=.by)
 \n\n")
@@ -253,7 +252,7 @@ format_nearest_neighbors = function(output_dir, include_distance_details,
     stringr::str_glue(
 '# Summarize nearest neighbor distances
 nearest_detail_path = file.path(
-  "{output_dir}",
+  "{escape_path(output_dir)}",
   "nearest_neighbors.txt")
 nearest_neighbors = nearest_neighbor_summary(
   csd, phenotypes, tissue_categories, nearest_detail_path, .by=.by,
@@ -283,7 +282,7 @@ format_count_within = function(output_dir, radii,
 '# Summary of cells within a specific distance
 radii = {deparse(radii)}
 count_detail_path = file.path(
-  "{output_dir}",
+  "{escape_path(output_dir)}",
   "count_within.txt")
 count_within = count_within_summary(
   csd, radii, phenotypes, tissue_categories,
@@ -350,21 +349,21 @@ end = stringr::str_glue(
 '
 
 workbook_path = file.path(
-  "{output_dir}",
+  "{escape_path(output_dir)}",
   "Results.xlsx")
 if (file.exists(workbook_path)) file.remove(workbook_path)
 saveWorkbook(wb, workbook_path)
 
 # Write summary charts
 charts_path = file.path(
-  "{output_dir}",
+  "{escape_path(output_dir)}",
   "Charts.docx")
 if (file.exists(charts_path)) file.remove(charts_path)
 write_summary_charts(workbook_path, charts_path, .by=.by)
 
 # Save session info
 info_path = file.path(
-  "{output_dir}",
+  "{escape_path(output_dir)}",
   "session_info.txt")
 write_session_info(info_path)
 ')
@@ -388,6 +387,11 @@ cleanup_code = function(table_name) {
 # Create call to write a worksheet
 worksheet_code = function(worksheet_function, table_name) {
   stringr::str_glue("{worksheet_function}(wb, {table_name})\n\n")
+}
+
+# Escape a file path by changing all \ to /
+escape_path = function(path) {
+  stringr::str_replace_all(path, '\\\\', '/')
 }
 
 # Hmisc::escapeRegex

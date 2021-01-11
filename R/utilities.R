@@ -216,3 +216,16 @@ escape_markdown = function(str) {
   # Why doesn't R have raw strings!!?
   stringr::str_replace_all(str, '([*_\\[\\]`$^~\\\\])', '\\\\\\1')
 }
+
+#' Create a discrete palette with `n` colors
+#' @param n The number of colors needed
+#' @return A color vector of length `n`
+#' @export
+discrete_colors = function(n) {
+  if (n <= 9)  return (RColorBrewer::brewer.pal(max(n, 3), 'Set1')[1:n])
+  if (n <= 12) return (RColorBrewer::brewer.pal(n, 'Paired'))
+  if (n <= 26) return (unname(pals::alphabet2(n)))
+  if (n <= 32) return (pals::glasbey(n))
+  if (n <= 36) return (unname(pals::polychrome(n)))
+  return (scales::hue_pal()(n))
+}

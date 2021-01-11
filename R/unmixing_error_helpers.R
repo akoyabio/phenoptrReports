@@ -27,7 +27,7 @@ file_to_fluor = function(path) {
   # Fixup for 430 and 431 => 480
   if (opal_match %in% c('430', '431')) opal_match = '480'
 
-  return(stringr::str_glue('Opal {opal_match}'))
+  return(as.character(stringr::str_glue('Opal {opal_match}')))
 }
 
 # Read a singleplex image and extract signal information

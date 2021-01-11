@@ -143,18 +143,24 @@ check_count_within = function(actual_path) {
     all(df$`From with_All`>=df$`From with_Stroma`+df$`From with_Tumor`))
 }
 
+# Normalize the path to a directory, creating it if needed
+# On macOS, normalizePath doesn't create an absolute path if the
+# target doesn't exist; this is a workaround
+normalize_dir = function(rel_path) {
+  if (!dir.exists(rel_path)) dir.create(rel_path)
+  normalizePath(rel_path, winslash='/', mustWork=FALSE)
+}
 test_that("file generation works", {
-  output_dir = normalizePath(test_path('results'), winslash='/', mustWork=FALSE)
+  output_dir = normalize_dir(test_path('results'))
 
-  data_dir = normalizePath(test_path('test_data'), winslash='/', mustWork=FALSE)
+  data_dir = normalize_dir(test_path('test_data'))
   expected_path = file.path(data_dir, 'Results.xlsx')
 
   # Aggregate by Slide ID
   test_file_generation_by_field(data_dir, output_dir, expected_path, .by='Slide ID')
 
   # And by Sample Name
-  output_dir = normalizePath(test_path('results_by_sample'),
-                             winslash='/', mustWork=FALSE)
+  output_dir = normalize_dir(test_path('results_by_sample'))
   expected_path = file.path(data_dir, 'Results_by_sample.xlsx')
   test_file_generation_by_field(data_dir, output_dir, expected_path, .by='Sample Name')
 })
@@ -174,9 +180,8 @@ test_that("Whole-slide file generation works", {
 test_that("Chart segmentation works", {
   workbook_path = normalizePath(test_path('test_data/Results_by_sample.xlsx'),
                                 winslash='/', mustWork=FALSE)
-  charts_path = normalizePath(
-    test_path('results_by_sample/Charts_segmented.docx'),
-    winslash='/', mustWork=FALSE)
+  charts_path = normalize_dir(test_path('results_by_sample'))
+  charts_path = file.path(charts_path, 'Charts_segmented.docx')
 
   if (!dir.exists(dirname(charts_path))) dir.create(dirname(charts_path))
   if (file.exists(charts_path)) file.remove(charts_path)
