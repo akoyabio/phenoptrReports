@@ -40,16 +40,37 @@ consolidate_and_summarize_cell_seg_data = function(csd_files, output_dir,
   if (!dir.exists(output_dir))
     stopifnot(dir.create(output_dir, recursive=TRUE))
 
-  csd_files = unlist(csd_files)
-  if (!is.character(csd_files) || !all(purrr::map_lgl(csd_files, file.exists)))
-    stop('Please pass a list of paths to existing cell seg data files.')
-
   # Make a progress function if we don't have one so we don't have to
   # check every time
   if (!is.function(update_progress))
     update_progress = function(detail) {
       cat(detail, '\n')
     }
+
+  csd = merge_and_split_phenotypes(csd_files, output_dir,
+                                   update_progress, col_select)
+
+  # Write out the result
+  update_progress(detail='Writing consolidated data.')
+  vroom::vroom_write(csd, file.path(output_dir, 'Consolidated_data.txt'),
+                     delim='\t', na='#N/A')
+
+  # And the report for the consolidated data
+  update_progress(detail='Writing report for consolidated data.')
+  write_summary_report(csd=csd,
+    output_path=file.path(output_dir, 'Consolidated_data.html'),
+    dataset_name='Consolidated data')
+
+  invisible(csd)
+}
+
+# Read cell seg data files, split phenotypes into separate columns and
+# merge to a single data frame
+merge_and_split_phenotypes <- function(csd_files, output_dir,
+                                       update_progress, col_select) {
+  csd_files = unlist(csd_files)
+  if (!is.character(csd_files) || !all(purrr::map_lgl(csd_files, file.exists)))
+    stop('Please pass a list of paths to existing cell seg data files.')
 
   # Make some names, these will be for files and headers
   names = make_unique_names(csd_files)
@@ -71,7 +92,7 @@ consolidate_and_summarize_cell_seg_data = function(csd_files, output_dir,
     dups = duplicated(d[, c(field_col, 'Cell ID')])
     if (sum(dups > 0)) {
       warning('Removing ', sum(dups), ' duplicated rows from ', name,
-           '. Did you merge an already merged file?')
+              '. Did you merge an already merged file?')
       d = d[!dups, ]
     }
 
@@ -116,18 +137,7 @@ consolidate_and_summarize_cell_seg_data = function(csd_files, output_dir,
            nrow(csd), ' != ', start_row_count, ' Failed at\n', path)
   })
 
-  # Write out the result
-  update_progress(detail='Writing consolidated data.')
-  vroom::vroom_write(csd, file.path(output_dir, 'Consolidated_data.txt'),
-                     delim='\t', na='#N/A')
-
-  # And the report
-  update_progress(detail='Writing report for consolidated data.')
-  write_summary_report(csd=csd,
-    output_path=file.path(output_dir, 'Consolidated_data.html'),
-    dataset_name='Consolidated data')
-
-  invisible(csd)
+  csd
 }
 
 #' Split a phenotype column
