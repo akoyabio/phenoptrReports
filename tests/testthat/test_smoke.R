@@ -166,7 +166,7 @@ test_that("file generation works", {
 })
 
 test_that("Whole-slide file generation works", {
-  data_dir = r'(C:\Research\phenoptrTestData\Whole_slide)'
+  data_dir = 'C:/Research/phenoptrTestData/Whole_slide'
   skip_if_not(dir.exists(data_dir))
 
   output_dir = normalizePath(test_path('results_ws'), winslash='/', mustWork=FALSE)
@@ -213,4 +213,17 @@ test_that("Component levels report runs", {
 
   component_levels_report(export_path)
   expect(file.exists(report_path), 'Failed to create component levels report')
+})
+
+test_that("Consolidation runs", {
+  csd_path = "C:/Research/phenoptrTestData/Multi-schema/test_multi_schema.txt"
+  skip_if_not(file.exists(csd_path))
+
+  temp_dir = temp_dir_by(csd_path)
+  create_empty_dir(temp_dir)
+
+  consolidate_and_summarize_cell_seg_data(csd_path, temp_dir)
+  expected_files = c("Consolidated_data.html", "Consolidated_data.txt", "temp",
+                     "test_multi_schema.html")
+  expect_setequal(list.files(temp_dir), expected_files)
 })

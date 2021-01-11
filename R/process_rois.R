@@ -216,7 +216,7 @@ process_rois_single = function(
 
   # Make a phenotype colummn
   phenos = data %>%
-    select(starts_with('Phenotype')) %>%
+    dplyr::select(dplyr::starts_with('Phenotype')) %>%
     do.call(paste, .) %>%
     stringr::str_trim()
 

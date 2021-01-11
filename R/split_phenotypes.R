@@ -60,7 +60,8 @@ consolidate_and_summarize_cell_seg_data = function(
       cat(detail, '\n')
     }
 
-  csd = merge_and_split_phenotypes(csd_files, output_dir, update_progress)
+  csd = merge_and_split_phenotypes(csd_files, output_dir,
+                                   update_progress, col_select)
 
   if (!is.null(study_dir)) {
     update_progress(detail='Processing regions.')
@@ -88,7 +89,8 @@ consolidate_and_summarize_cell_seg_data = function(
 
 # Read cell seg data files, split phenotypes into separate columns and
 # merge to a single data frame
-merge_and_split_phenotypes <- function(csd_files, output_dir, update_progress) {
+merge_and_split_phenotypes <- function(csd_files, output_dir,
+                                       update_progress, col_select) {
   csd_files = unlist(csd_files)
   if (!is.character(csd_files) || !all(purrr::map_lgl(csd_files, file.exists)))
     stop('Please pass a list of paths to existing cell seg data files.')
