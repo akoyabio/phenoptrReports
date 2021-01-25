@@ -184,8 +184,21 @@ addin_20_consolidate = function() {
         }
 
         col_select = if (input$phenoptr_only) 'phenoptrReports' else NULL
+
+        # Log the command to the console for convenient audit and debugging
+        # NB: `deparse` can return multiple strings!
+        cmd = stringr::str_glue(
+          'phenoptrReports::consolidate_and_summarize_cell_seg_data(\n',
+          '  csd_files={rlang::expr_text(file_list())},\n',
+          '  output_dir="{output_dir()}",\n',
+          '  study_dir ="{study_dir()}",\n',
+          '  export_dir = "{export_dir()}",\n',
+          '  require_include = {input$require_include},\n',
+          '  col_select = {deparse(col_select)})\n')
+        message('Running command\n', cmd)
+
         phenoptrReports::consolidate_and_summarize_cell_seg_data(
-          file_list(), output_dir(), study_dir(), export_dir(), 
+          file_list(), output_dir(), study_dir(), export_dir(),
           input$require_include, update_progress, col_select)
         update_progress(detail='Done!')
         Sys.sleep(0.5)
