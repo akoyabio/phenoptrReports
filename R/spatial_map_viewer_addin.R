@@ -54,7 +54,7 @@ spatial_map_viewer_front_end = function() {
       ' app or a nearest_neighbors.txt or count_within.txt ',
       'file created by the analysis app, ',
       'and an inForm export directory containing composite and component ',
-      'image files.'
+      'or segmentation map image files.'
     ))
 
   ui <- miniUI::miniPage(

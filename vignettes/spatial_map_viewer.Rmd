@@ -33,16 +33,18 @@ It can also use the `nearest_neighbors.txt` or `count_within.txt` file
 created by the "Analyze consolidated data" addin when 
 "Save nearest neighbor / count within details" is selected.
 
-### Composite and component image files
+### Composite and component or segmentation map image files
 
-The viewer uses both composite and component image files for the fields of
+The viewer uses both composite and component or segmentation map
+image files for the fields of
 interest. These files are written by the inForm export step.
 
 The composite images are shown as the background of the nearest neighbor
 visualizations. The colors and components shown are determined by the
 inForm export settings.
 
-The component images are the source of metadata about fields that is needed
+The component or segmentation map images are the source of metadata about 
+fields that is needed
 to properly places cells in the visualizations.
 
 ### Segmentation image files

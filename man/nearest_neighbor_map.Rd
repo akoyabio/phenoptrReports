@@ -22,7 +22,7 @@ nearest_neighbor_map(
 \item{field_name}{Sample Name or Annotation ID to map}
 
 \item{export_path}{Path to a directory containing composite and component
-image files from inForm}
+or segmentation map image files from inForm}
 
 \item{phenos}{Named list of phenotype definitions. Must have length 2.}
 

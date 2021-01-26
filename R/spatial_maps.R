@@ -12,7 +12,7 @@ utils::globalVariables(
 #' @param csd Cell seg data with distance columns
 #' @param field_name Sample Name or Annotation ID to map
 #' @param export_path Path to a directory containing composite and component
-#'   image files from inForm
+#'   or segmentation map image files from inForm
 #' @param phenos Named list of phenotype definitions. Must have length 2.
 #' @param color1,color2 Colors to draw the phenotype dots
 #' @param show_as Which nearest neighbors should be shown?
@@ -56,7 +56,8 @@ nearest_neighbor_map =
   # Get spatial reference info from the component image
   field_info = phenoptr::read_field_info(field_name, export_path)
   if (is.null(field_info)) {
-    warning('No component image available for ', field_name, ', skipping.')
+    warning('No component or segmentation map image available for ',
+            field_name, ', skipping.')
     return()
   }
 
