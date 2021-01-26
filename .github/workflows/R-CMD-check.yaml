@@ -45,7 +45,7 @@ jobs:
           install.packages(c("remotes", "rcmdcheck"))
           install.packages('sf', type='binary')
           remotes::install_version('BH', '1.72.0-3') # BH 1.75 won't build on Windows R 3.6
-          remotes::install_github("akoyabio/phenoptr", ref="${{github.ref}}")
+          remotes::install_github("akoyabio/phenoptr", ref="${{github.ref}}", upgrade="never")
           remotes::install_deps(dependencies = TRUE, type='binary', upgrade="never")
         shell: Rscript {0}
       - name: Check
