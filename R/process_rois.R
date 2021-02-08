@@ -79,13 +79,15 @@ process_rois = function(csd, study_dir, export_dir, output_dir,
 
     # Process tissue category data and update areas
     # Note we only have to process annotations that are still in the data
-    annotations = unique(sample_results$csd$`Annotation ID`)
-    areas <<- dplyr::bind_rows(areas,
-                process_tissue_categories_single(
-                  `Sample Name`, annotations,
-                  sample_results$include_roi, sample_results$exclude_roi,
-                  export_dir, output_dir))
-
+    # Skip this if we are missing a required #Include ROI
+    if (!require_include || !is.null(sample_results$include_roi)) {
+      annotations = unique(sample_results$csd$`Annotation ID`)
+      areas <<- dplyr::bind_rows(areas,
+                  process_tissue_categories_single(
+                    `Sample Name`, annotations,
+                    sample_results$include_roi, sample_results$exclude_roi,
+                    export_dir, output_dir))
+  }
     sample_results$csd
   })
 
@@ -154,9 +156,13 @@ process_rois_single = function(
     tibble::as_tibble_row()
 
   if (require_include && !include_name %in% all_roi_names) {
-    # There is no include ROI, everything is discarded
+    # There is no include ROI, this is an error
+    # To completely exclude a sample, it should be omitted from the consolidation
+    stop('No #IncludeInResults ROI found for sample ', sample, '.\n',
+            'Either omit this sample from consolidation or add an include ROI.')
     removed[include_name] = nrow(data)
-    return(list(csd=data[0,], removed=removed, stats=stats))
+    return(list(csd=data[0,], removed=removed, stats=stats,
+                include_roi=NULL, exclude_roi=NULL))
   }
 
   # Start spatial processing by adding a geometry column
@@ -214,7 +220,7 @@ process_rois_single = function(
                              paste0(sample, '_trimmed_cells.png'))
   cat('Saving cell check plot to ', cell_plot_path, '\n')
 
-  # Make a phenotype colummn
+  # Make a phenotype column
   phenos = data %>%
     dplyr::select(dplyr::starts_with('Phenotype')) %>%
     do.call(paste, .) %>%
