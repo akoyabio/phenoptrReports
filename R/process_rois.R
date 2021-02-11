@@ -136,7 +136,7 @@ process_rois_single = function(
   cat('Processing ROIs for', sample, '\n')
 
   # Get named ROIs from the annotation file
-  rois = read_tagged_rois(annotation_file)
+  rois = phenoptr::read_tagged_rois(annotation_file)
   all_roi_names = names(rois)
 
   # Hard-coded tag names with special meaning
@@ -160,9 +160,6 @@ process_rois_single = function(
     # To completely exclude a sample, it should be omitted from the consolidation
     stop('No #IncludeInResults ROI found for sample ', sample, '.\n',
             'Either omit this sample from consolidation or add an include ROI.')
-    removed[include_name] = nrow(data)
-    return(list(csd=data[0,], removed=removed, stats=stats,
-                include_roi=NULL, exclude_roi=NULL))
   }
 
   # Start spatial processing by adding a geometry column
@@ -247,34 +244,6 @@ process_rois_single = function(
 
   return(list(csd=data, removed=removed, stats=stats,
               include_roi=include_roi, exclude_roi=exclude_roi))
-}
-
-#' Read and combine all tagged ROIS from an annotation file
-#' @param annotation_file Path to file
-#' @return A named list of polygons, one for each tag in the annotations
-#' @keywords internal
-read_tagged_rois = function(annotation_file) {
-  rois = phenoptr::read_phenochart_polygons(annotation_file)
-  if (nrow(rois) > 0) {
-    rois = rois %>% dplyr::filter(tags != '') # Only tagged ROIs
-
-    # Get a list of all unique tags
-    all_roi_names = rois$tags %>%
-      stringr::str_split(' ') %>%
-      unlist() %>%
-      unique() %>%
-      sort() %>%
-      rlang::set_names()
-  } else return(list())
-
-  # Make a single (multi) polygon for each tag
-  tagged_rois = purrr::map(all_roi_names, function(tag_name) {
-    rois %>%
-      dplyr::filter(stringr::str_detect(tags, tag_name)) %>%
-      sf::st_union()
-  })
-
-  tagged_rois
 }
 
 #' Get corrected tissue category areas for a single image.
