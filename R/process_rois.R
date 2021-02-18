@@ -334,10 +334,17 @@ update_summary_data = function(export_dir, output_dir, areas) {
     df = phenoptr::read_cell_seg_data(candidate)
 
     # Missing columns means we picked an incorrect file?
-    required_names = c('Annotation ID', 'Tissue Category', 'Phenotype',
+    required_names = c('Annotation ID', 'Tissue Category',
                        "Tissue Category Area (square microns)")
-    if (!all(required_names %in% names(df))) {
-      cat('Skipping ', basename(candidate), '\n')
+    missing_names = setdiff(required_names, names(df))
+
+    # Look for 'Phenotype' or 'Phenotype-xx'
+    if (!any(stringr::str_detect(names(df), '^Phenotype')))
+      missing_names = c(missing_names, 'Phenotype')
+    if (length(missing_names) > 0) {
+      cat('Skipping ', basename(candidate), '\n',
+          'Missing required columns: ',
+          paste(smissing_names, collapse=', '), '\n')
       return()
     }
 
@@ -354,8 +361,11 @@ update_summary_data = function(export_dir, output_dir, areas) {
       dplyr::select(dplyr::contains('Path'),
                     dplyr::contains('Slide ID'),
                     dplyr::contains('Sample Name'),
-                    'Annotation ID', 'Tissue Category', 'Phenotype') %>%
-      dplyr::filter(Phenotype=='All') %>%
+                    'Annotation ID', 'Tissue Category',
+                    dplyr::starts_with('Phenotype')) %>%
+      # This selects rows with 'All' in all phenotype columns
+      dplyr::filter(
+        dplyr::across(dplyr::starts_with('Phenotype'), ~.x=='All')) %>%
       dplyr::inner_join(areas, by=c('Annotation ID', 'Tissue Category'))
 
     # Write the updated file

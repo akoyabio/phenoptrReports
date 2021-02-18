@@ -16,7 +16,7 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     colourpicker,
-    dplyr (>= 0.8.0),
+    dplyr (>= 1.0.0),
     formattable (>= 0.2),
     forcats,
     fs,
