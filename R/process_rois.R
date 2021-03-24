@@ -344,7 +344,7 @@ update_summary_data = function(export_dir, output_dir, areas) {
     if (length(missing_names) > 0) {
       cat('Skipping ', basename(candidate), '\n',
           'Missing required columns: ',
-          paste(smissing_names, collapse=', '), '\n')
+          paste(missing_names, collapse=', '), '\n')
       return()
     }
 

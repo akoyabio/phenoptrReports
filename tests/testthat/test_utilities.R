@@ -29,7 +29,7 @@ test_that('parse_comma_space_values works', {
   )
 
   purrr::walk(test_values,
-        ~expect_equal(phenoptrReports:::parse_comma_space_values(.x[[1]]),
+        ~expect_equal(parse_comma_space_values(.x[[1]]),
                       .x[[2]],
                       info=.x[[1]]))
 })
