@@ -292,7 +292,7 @@ find_bounding_box = function(annotations, export_dir) {
   # Get dimensions of an annotation from the binary seg map file
   annotation_dims = function(annotation) {
     map_path = phenoptr::get_map_path(annotation, export_dir)
-    tiff::readTIFFDirectory(map_path)
+    phenoptr::readTIFFDirectory(map_path)
   }
 
   # Position is in microns so directly usable
