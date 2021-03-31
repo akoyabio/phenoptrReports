@@ -31,6 +31,9 @@ write_sheet(
 on the tissue categories in the data. If FALSE, no grid lines are added
 and page breaks are added where needed.}
 }
+\value{
+Invisibly, the number of columns added with TMA info (0, 3, or 4)
+}
 \description{
 \itemize{
 \item Bold, centered header
@@ -39,4 +42,8 @@ and page breaks are added where needed.}
 \item Two-row page title
 \item Page breaks as needed
 }
+}
+\details{
+If the provided data has TMA core information embedded in a
+\verb{Sample Name} column, add columns with the TMA info.
 }

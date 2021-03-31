@@ -9,6 +9,7 @@ Consolidate and summarize addin:
     showing membership in the region.
 
 Analysis addin:
+- Preserve (or recreate) TMA information in the analysis output files.
 - Only read cell seg fields needed for the analysis.
 - Add support for hashtags in phenotype definitions
 - Export hashtag columns in nearest neighbor and count within detail files

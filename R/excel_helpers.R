@@ -69,10 +69,10 @@ write_counts_sheet = function(wb, counts,
 write_percents_sheet = function(wb, percents,
                               sheet_name='Cell Percents',
                               sheet_title='Percentage of Total Cells') {
-  write_sheet(wb, percents, sheet_name, sheet_title, 3)
+  added_columns = write_sheet(wb, percents, sheet_name, sheet_title, 3)
 
   data_rows = 1:nrow(percents)+2
-  data_cols = 3:ncol(percents)
+  data_cols = 3:ncol(percents) + added_columns
 
   # Format the data columns as percent
   openxlsx::addStyle(wb, sheet_name, percent_style,
@@ -95,20 +95,20 @@ write_percents_sheet = function(wb, percents,
 write_density_sheet = function(wb, densities,
                                sheet_name='Cell Densities',
                                sheet_title='Cell Densities (cells/mm2)') {
-  write_sheet(wb, densities, sheet_name, sheet_title, 4)
+  added_columns = write_sheet(wb, densities, sheet_name, sheet_title, 4)
 
   # Border to the left of the Area column
   openxlsx::addStyle(wb, sheet_name,
                      openxlsx::createStyle(border='Left'),
-                     rows=3:(nrow(densities)+2), cols=3,
+                     rows=3:(nrow(densities)+2), cols=3+added_columns,
                      stack=TRUE)
 
   # Format tissue area with two decimal places, densities as integer
   data_rows = 1:nrow(densities)+2
   openxlsx::addStyle(wb, sheet_name, two_decimal_style,
-                     rows=data_rows, cols=3, stack=TRUE)
+                     rows=data_rows, cols=3+added_columns, stack=TRUE)
   openxlsx::addStyle(wb, sheet_name, integer_style, rows=data_rows,
-                     cols=4:ncol(densities),
+                     cols=4:ncol(densities) + added_columns,
                      gridExpand=TRUE, stack=TRUE)
 }
 
@@ -135,11 +135,11 @@ write_expression_sheet = function(wb, exprs,
     dplyr::select(-dplyr::contains('Count')) %>%
     dplyr::rename_all(remove_marker_mean)
 
-  write_sheet(wb, exprs, sheet_name, sheet_title, 3)
+  added_columns = write_sheet(wb, exprs, sheet_name, sheet_title, 3)
 
   # Make the expression columns a little wider
   data_rows = 1:nrow(exprs)+2
-  data_cols = 3:ncol(exprs)
+  data_cols = 3:ncol(exprs) + added_columns
   openxlsx::setColWidths(wb, sheet_name, data_cols, 14)
 
   # Format with two decimal places
@@ -162,10 +162,10 @@ write_expression_sheet = function(wb, exprs,
 write_nearest_neighbor_summary_sheet = function(wb, stats,
       sheet_name='Nearest Neighbors',
       sheet_title='Nearest Neighbor Distances for Phenotype Pairs (microns)') {
-  write_sheet(wb, stats, sheet_name, sheet_title, 2)
+  added_columns = write_sheet(wb, stats, sheet_name, sheet_title, 2)
 
   data_rows = 1:nrow(stats)+2
-  data_cols = 4:ncol(stats)
+  data_cols = 4:ncol(stats) + added_columns
 
   # Format with two decimal places
   openxlsx::addStyle(wb, sheet_name, two_decimal_style,
@@ -207,22 +207,32 @@ write_h_score_sheet = function(wb, h_score,
   # In the worksheet, they will have subheads to disambiguate them
   names(d)[3:6] = c("0+", "1+", "2+", "3+")
 
+  # Add TMA columns, if any
+  added_columns = 0
+  tma_cols = parse_tma_columns(d)
+  if (!is.null(tma_cols)) {
+    added_columns = ncol(tma_cols)
+    d = tibble::add_column(d, !!!tma_cols, .after=1, .name_repair='minimal')
+  }
+
   openxlsx::addWorksheet(wb, sheet_name)
 
   # Write a bold header across all the data columns
-  header_col = 3
+  header_col = 3 + added_columns
   openxlsx::writeData(wb, sheet_name, startCol=header_col, sheet_title)
   openxlsx::addStyle(wb, sheet_name, bold_wrap_style, rows=1, cols=1:header_col)
   merge_and_outline_cells(wb, sheet_name, rows=1, cols=header_col:ncol(d))
 
   # Write two sub-heads
-  openxlsx::writeData(wb, sheet_name, startCol=3, startRow=2, 'Cells per Bin')
-  merge_and_outline_cells(wb, sheet_name, rows=2, cols=3:6)
+  openxlsx::writeData(wb, sheet_name, startCol=3 + added_columns, startRow=2,
+                      'Cells per Bin')
+  merge_and_outline_cells(wb, sheet_name, rows=2, cols=3:6 + added_columns)
   openxlsx::writeData(wb, sheet_name,
-                      startCol=7, startRow=2, 'Percent of Total Cells per Bin')
-  merge_and_outline_cells(wb, sheet_name, rows=2, cols=7:10)
+                      startCol=7 + added_columns, startRow=2,
+                      'Percent of Total Cells per Bin')
+  merge_and_outline_cells(wb, sheet_name, rows=2, cols=7:10 + added_columns)
   openxlsx::addStyle(wb, sheet_name, bold_wrap_style,
-                     rows=2, cols=3:10, stack=TRUE)
+                     rows=2, cols=3:10 + added_columns, stack=TRUE)
 
   # Write the table
   openxlsx::writeData(wb, sheet_name, d, startRow=3,
@@ -230,25 +240,30 @@ write_h_score_sheet = function(wb, h_score,
 
 
   # Make the initial headers be multiple rows
-  for (col in 1:2) {
+  for (col in 1:(2 + added_columns)) {
     openxlsx::writeData(wb, sheet_name, startCol=col,
                         data.frame(xx=names(d)[col]), colNames=FALSE)
     merge_and_outline_cells(wb, sheet_name, rows=1:3, cols=col)
   }
 
   # The rest of the headers get outlined
-  for (col in 3:(ncol(d)-1))
+  for (col in (3 + added_columns):(ncol(d)-1))
     outline_cells(wb, sheet_name, rows=3, cols=col)
 
   # H-Score column is special
-  openxlsx::writeData(wb, sheet_name, startRow=2, startCol=11, 'H-Score')
-  merge_and_outline_cells(wb, sheet_name, rows=2:3, cols=11)
+  openxlsx::writeData(wb, sheet_name, startRow=2, startCol=11 + added_columns,
+                      'H-Score')
+  merge_and_outline_cells(wb, sheet_name, rows=2:3, cols=11 + added_columns)
 
   first_data_row = 4
   format_slide_id(wb, sheet_name, d, first_data_row)
 
+  # Narrower TMA columns
+  if (added_columns > 0)
+    openxlsx::setColWidths(wb, sheet_name, 1:added_columns + 1, 7)
+
   # Wider Tissue Category column
-  openxlsx::setColWidths(wb, sheet_name, 2, 11)
+  openxlsx::setColWidths(wb, sheet_name, 2 + added_columns, 11)
 
   grid_spacing = add_grid_lines(wb, sheet_name, d, header_col, first_data_row)
 
@@ -260,7 +275,7 @@ write_h_score_sheet = function(wb, h_score,
   # Format as percent with one decimal place except for the last column
   # Showing one decimal makes the total add up
   openxlsx::addStyle(wb, sheet_name, percent_style_1,
-                     rows=data_rows, cols=7:10,
+                     rows=data_rows, cols=7:10 + added_columns,
                      gridExpand=TRUE, stack=TRUE)
 }
 
@@ -312,6 +327,10 @@ write_plot_sheet = function(wb, plot, sheet_name='Phenotypes',
 #' - Bold Slide ID column
 #' - Two-row page title
 #' - Page breaks as needed
+#'
+#' If the provided data has TMA core information embedded in a
+#' `Sample Name` column, add columns with the TMA info.
+#'
 #' @param wb An openxlsx Workbook from [openxlsx::createWorkbook]
 #' @param d A data frame to write.
 #' @param sheet_name Name for the worksheet.
@@ -321,9 +340,17 @@ write_plot_sheet = function(wb, plot, sheet_name='Phenotypes',
 #' @param addGrid If TRUE, grid lines (and page breaks) are added based
 #' on the tissue categories in the data. If FALSE, no grid lines are added
 #' and page breaks are added where needed.
+#' @return Invisibly, the number of columns added with TMA info (0, 3, or 4)
 #' @export
 write_sheet <- function(wb, d, sheet_name, sheet_title, header_col,
                         keepNA=TRUE, addGrid=TRUE) {
+  added_columns = 0
+  tma_cols = parse_tma_columns(d)
+  if (!is.null(tma_cols)) {
+    added_columns = ncol(tma_cols)
+    d = tibble::add_column(d, !!!tma_cols, .after=1)
+    header_col = header_col + added_columns
+  }
   # Make a new sheet
   openxlsx::addWorksheet(wb, sheet_name)
 
@@ -352,9 +379,14 @@ write_sheet <- function(wb, d, sheet_name, sheet_title, header_col,
 
   format_slide_id(wb, sheet_name, d, first_data_row)
 
+  # Narrower TMA columns
+  if (added_columns > 0)
+    openxlsx::setColWidths(wb, sheet_name, 1:added_columns + 1, 7)
+
   # Wider Tissue Category column
-  if ('Tissue Category' %in% names(d))
-    openxlsx::setColWidths(wb, sheet_name, 2, 11)
+  tissue_col = match('Tissue Category', names(d))
+  if (!is.na(tissue_col))
+    openxlsx::setColWidths(wb, sheet_name, tissue_col, 11)
 
   if (addGrid) {
     grid_spacing = add_grid_lines(wb, sheet_name, d, header_col, first_data_row)
@@ -364,6 +396,41 @@ write_sheet <- function(wb, d, sheet_name, sheet_title, header_col,
 
   # Page formatting
   insert_page_breaks(wb, sheet_name, d, grid_spacing)
+
+  invisible(added_columns)
+}
+
+# Parse TMA columns from Sample Name
+# @param d A tibble, possibly containing a Sample Name column
+# @return If `d` contains Sample Names with Core IDs, a tibble with
+# columns TMA Sector, TMA Row, TMA Column, and possibly TMA Field.
+# If `d` does not contain TMA information, return `NULL`.
+# Note: the logic here is based on `GetTMAInfoFromName` in MangoLib.
+parse_tma_columns = function(d) {
+  if (!'Sample Name' %in% names(d)) return(NULL)
+
+  re1 = stringr::regex("core\\[([,\\w]+)\\]_", ignore_case=TRUE)
+
+  # Check the first item for a match so we can fail fast
+  if (!stringr::str_detect(d$`Sample Name`[1], re1))
+    return(NULL)
+
+  name_candidates = c('TMA Sector', 'TMA Row', 'TMA Column', 'TMA Field')
+  tma_cols = d$`Sample Name` %>%
+    stringr::str_match(re1) %>%
+    `[`(,2, drop=TRUE) %>% # Get just the id portion
+    stringr::str_split(',') %>%
+    purrr::transpose() %>% # Convert to column lists
+    purrr::simplify_all() %>%
+    tibble::as_tibble(.name_repair='minimal') %>%
+    rlang::set_names(name_candidates[1:ncol(.)])
+
+  # Convert to numeric if possible
+  numeric_cols = !is.na(suppressWarnings(as.numeric(tma_cols[1,])))
+  tma_cols = tma_cols %>%
+    dplyr::mutate(dplyr::across(which(numeric_cols), as.numeric))
+
+  tma_cols
 }
 
 # Wider, bold Slide ID column

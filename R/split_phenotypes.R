@@ -75,8 +75,8 @@ consolidate_and_summarize_cell_seg_data = function(
 
   # Write out the result
   update_progress(detail='Writing consolidated data.')
-  readr::write_tsv(csd, file.path(output_dir, 'Consolidated_data.txt'),
-                   na='#N/A')
+  vroom::vroom_write(csd, file.path(output_dir, 'Consolidated_data.txt'),
+                     delim='\t', na='#N/A')
 
   # And the report for the consolidated data
   update_progress(detail='Writing report for consolidated data.')
@@ -163,18 +163,7 @@ merge_and_split_phenotypes <- function(csd_files, output_dir,
            nrow(csd), ' != ', start_row_count, ' Failed at\n', path)
   })
 
-  # Write out the result
-  update_progress(detail='Writing consolidated data.')
-  vroom::vroom_write(csd, file.path(output_dir, 'Consolidated_data.txt'),
-                     delim='\t', na='#N/A')
-
-  # And the report
-  update_progress(detail='Writing report for consolidated data.')
-  write_summary_report(csd=csd,
-    output_path=file.path(output_dir, 'Consolidated_data.html'),
-    dataset_name='Consolidated data')
-
-  invisible(csd)
+  csd
 }
 
 #' Split all phenotype columns

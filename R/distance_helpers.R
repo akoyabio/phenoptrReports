@@ -134,7 +134,9 @@ nearest_neighbor_summary_single_impl = function(csd, phenotypes,
                     tidyselect::any_of(extra_cols),
                     dplyr::starts_with(c('Phenotype', '#')),
                     # This preserves order of Distance and Cell ID columns
-                    dplyr::matches('Distance to |Cell ID '))
+                    dplyr::matches('Distance to |Cell ID '),
+                    # Include any TMA columns
+                    dplyr::starts_with('TMA '))
     readr::write_tsv(distances_subset, details_path, na='#N/A')
   }
 
@@ -331,7 +333,8 @@ count_within_summary_impl = function(csd, phenotypes, radii,
                     dplyr::contains('Tissue Category'),
                     tidyselect::any_of(extra_cols),
                     dplyr::starts_with(c('Phenotype', '#')),
-                    dplyr::contains('within'))
+                    dplyr::contains('within'),
+                    dplyr::starts_with('TMA '))
     readr::write_tsv(counts_subset, category_path, na='#N/A')
   }
 

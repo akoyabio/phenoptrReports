@@ -18,9 +18,6 @@ shinyServer(function(input, output, server) {
   # whole_slide - Compute spatial metrics on whole slide data?
   the_data = reactiveValues()
 
-  # Cell seg data
-  csd = reactiveVal()
-
   # File selection
   # file_data may contain input_path, summary_path, score_path, output_dir
   # It is an ordinary list of reactive objects
@@ -36,15 +33,10 @@ shinyServer(function(input, output, server) {
     ad
   })
 
-  # Handle changes in file_data$input_path by initializing the Analysis tab
-  shiny::observe({
-    # Remove any existing output panels
-    wells = c('#well1', '#well2', '#well3')
-    wells %>% purrr::walk(~purrr::safely(shiny::removeUI)(.x))
-
+  #### Read the primary cell seg data file ####
+  csd = reactive({
     shiny::req(file_data$input_path())
 
-    #### Read the data file and get some info about it ####
     shiny::showModal(
       shiny::modalDialog(
         shiny::p('Reading input data...'), title='Please wait', footer=NULL))
@@ -52,7 +44,19 @@ shinyServer(function(input, output, server) {
     # We don't need all columns here, we are looking for
     # unique tissue categories, expression columns, phenotypes and samples
     d = phenoptr::read_cell_seg_data(file_data$input_path(),
-          col_select='phenoptrReports')
+                                     col_select='phenoptrReports')
+
+    shiny::removeModal()
+    d
+  })
+
+  ##### Initialize the Analysis tab ####
+  shiny::observe({
+    # Remove any existing output panels
+    wells = c('#well1', '#well2', '#well3')
+    wells %>% purrr::walk(~purrr::safely(shiny::removeUI)(.x))
+
+    d = csd()
     tissue_categories = unique(d$`Tissue Category`)
     the_data$expression_columns = stringr::str_subset(names(d), 'Mean$')
     the_data$field_col = phenoptr::field_column(d)
@@ -75,9 +79,6 @@ shinyServer(function(input, output, server) {
     }
 
     the_data$by = by_choices[1] # Default
-    csd(d)
-
-    shiny::removeModal()
 
     #### Create the initial GUI with tissue and phenotype selectors ####
     new_ui = shiny::tagList(
