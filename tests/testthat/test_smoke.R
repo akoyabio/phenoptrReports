@@ -122,6 +122,7 @@ normalize_dir = function(rel_path) {
   if (!dir.exists(rel_path)) dir.create(rel_path)
   normalizePath(rel_path, winslash='/', mustWork=FALSE)
 }
+
 test_that("file generation works", {
   output_dir = normalize_dir(test_path('results'))
 

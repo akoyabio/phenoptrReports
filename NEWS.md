@@ -4,6 +4,7 @@ Consolidate and summarize addin:
 - Add support for reading (and saving) only fields needed in phenoptrReports.
 
 Analysis addin:
+- Preserve (or recreate) TMA information in the analysis output files.
 - Only read cell seg fields needed for the analysis.
 - Fix network file paths in `Script.R`.
 

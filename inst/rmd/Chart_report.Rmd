@@ -112,6 +112,7 @@ order_tissue_categories = function(cats) {
 if ('Cell Counts' %in% sheet_names) {
   counts = read_xlsx(workbook_path, 'Cell Counts', skip=1)
   tall = counts %>%
+    select(-starts_with('TMA ')) %>% 
     gather('Phenotype', 'Cell Count', -(!!.by), -`Tissue Category`) %>%
     filter(!Phenotype %in% c('Other')) %>% 
     mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`))
@@ -158,8 +159,9 @@ if ('Cell Densities' %in% sheet_names) {
   density = read_xlsx(workbook_path, 'Cell Densities', skip=1)
   
   # Reshape for plotting
-  tall = density %>% gather('Phenotype', 'Density',
-                                    -(!!.by), -`Tissue Category`) %>%
+  tall = density %>% 
+    select(-starts_with('TMA ')) %>% 
+    gather('Phenotype', 'Density', -(!!.by), -`Tissue Category`) %>%
     filter(!Phenotype %in% c('Tissue Area (mm2)', 'Other')) %>% 
     mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`)) 
   
@@ -205,8 +207,9 @@ if ('Mean Expression' %in% sheet_names) {
   expression = read_xlsx(workbook_path, 'Mean Expression', skip=1)
   
   # Reshape for plotting
-  tall = expression %>% gather('Measure', 'Mean',
-                                    -(!!.by), -`Tissue Category`) %>%
+  tall = expression %>% 
+    select(-starts_with('TMA ')) %>% 
+    gather('Measure', 'Mean', -(!!.by), -`Tissue Category`) %>%
     mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`)) %>%
     extract(Measure, into=c('Phenotype', 'Measure'), 
             regex='(Total Cells|All Cells|[^ ]+) (.*)') %>% 
@@ -256,6 +259,9 @@ for (sheet_name in h_score_names) {
   }
   
   # Select needed columns and order tissue category
+  # `dplyr::select` requires unique names, use base subsetting
+  tma_cols = startsWith(names(h_score), 'TMA ')
+  h_score = h_score[, !tma_cols]
   h_score = h_score[, c(1:2, 7:11)] %>% 
     mutate(`Tissue Category` = order_tissue_categories(`Tissue Category`))
   
@@ -315,10 +321,12 @@ heatmap_labeller = function(d) {
 if ('Nearest Neighbors' %in% sheet_names) {
   # Make heat maps of the median distance between phenotypes,
   # one heat map per slide and tissue category.
-  neighbors = read_xlsx(workbook_path, 'Nearest Neighbors', skip=1)
+  neighbors = read_xlsx(workbook_path, 'Nearest Neighbors', skip=1) %>% 
+    select(-starts_with('TMA '))
   
   # Filter out Total Cells, they are not interesting and add clutter
-  neighbors = neighbors %>% filter(From != 'Total Cells', To != 'Total Cells')
+  neighbors = neighbors %>% 
+    filter(From != 'Total Cells', To != 'Total Cells')
   
   # Find overall max so we can use the same fill scale on every plot
   max_median = max(neighbors$Median, na.rm=TRUE)
@@ -363,7 +371,8 @@ if ('Nearest Neighbors' %in% sheet_names) {
 if ('Count Within' %in% sheet_names) {
   # Make heat maps of the "From with" count for every combination of
   # slide, radius and tissue category.
-  counts = read_xlsx(workbook_path, 'Count Within', skip=1)
+  counts = read_xlsx(workbook_path, 'Count Within', skip=1) %>% 
+    select(-starts_with('TMA '))
   
   # Filter out Total Cells, they are not interesting and add clutter,
   # and From == To rows, they can have much higher counts that other
