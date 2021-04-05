@@ -13,6 +13,8 @@ Component levels report:
 - Omit pairs plots with more than 10 components.
 - Add correlation heatmaps for each file
 
+- Update to work with multi-schema phenotypes
+
 # phenoptrReports 0.2.10
 **2020-11-11**
 

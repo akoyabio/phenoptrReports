@@ -112,7 +112,7 @@ if ('Phenotype' %in% names(csd)) {
     rename(Count='n') %>% 
     filter(Phenotype != '')
 } else {
-  # Phenotype per marker
+  # Phenotype per marker or multi-schema
   counts = csd %>% select(starts_with('Phenotype')) %>% 
     gather() %>% 
     filter(!str_detect(value, '-$')) %>% 
