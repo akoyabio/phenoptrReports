@@ -122,18 +122,23 @@ merge_and_split_phenotypes <- function(csd_files, output_dir,
 
   # Read subsequent files, report, split phenotypes, join with the first file.
   purrr::walk2(names[-1], csd_files[-1], function(name, path) {
-    # We only need the phenotype columns and join columns from the previous file
-    # Drop everything else to free memory
-    csd = csd %>%
-      dplyr::select(!!rlang::sym(field_col), `Cell ID`,
-                    dplyr::starts_with('Phenotype '))
+    # We only need the phenotype columns and join columns from subsequent files
+    # Drop everything else for speed and less memory use
+    col_select= rlang::quo(list(
+      !!rlang::sym(field_col),
+      `Cell ID`,
+      # These two are required columns, they are added by `process_one_file`
+      # if not already present
+      dplyr::any_of(c('Tissue Category', 'Slide ID')),
+      dplyr::starts_with('Phenotype')))
 
     csd2 = process_one_file(name, path)
 
     if (nrow(csd2) != start_row_count)
       stop('Number of rows in data frames do not match.\n',
            nrow(csd2), ' != ', start_row_count, ' Failed at\n', path)
-    csd <<- dplyr::inner_join(csd, csd2, by=c(field_col, 'Cell ID'))
+    csd <<- dplyr::inner_join(csd, csd2,
+              by=c(field_col, 'Slide ID', 'Tissue Category', 'Cell ID'))
 
     if (nrow(csd) != start_row_count)
       stop(field_col, 's or Cell IDs do not match (rows dropped in join).\n',
