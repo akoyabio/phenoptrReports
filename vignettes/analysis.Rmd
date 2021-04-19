@@ -172,7 +172,7 @@ count of cells within the specified radii.
   - These files may be useful
 for more detailed statistical analysis of spatial relationships.
 
-- **Process spatial metrics in parallel** If this is selected, the `futures`
+- **Process spatial metrics in parallel** If this is selected, the `future`
 package will be used to compute spatial metrics in parallel using multiple
 processing cores. This is most helpful when the data contains many fields.
 
