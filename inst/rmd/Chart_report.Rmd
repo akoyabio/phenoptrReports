@@ -42,6 +42,11 @@ library(tidyr)
 knitr::opts_chunk$set(echo=FALSE,fig.width=10, fig.height=5.5, 
                       comment=NA, warning=FALSE, message=FALSE)
 
+# The default plot hook for vignettes creates a markdown image 'tag'
+# which breaks in pandoc if there are any spaces in the image path.
+# The standard HTML plot hook inserts an <img> tag which renders correctly.
+knitr::knit_hooks$set(plot = knitr:::hook_plot_html)
+
 workbook_path = params$workbook_path
 max_slides_per_plot = params$max_slides_per_plot
 max_heatmaps_per_plot = params$max_heatmaps_per_plot
