@@ -17,6 +17,11 @@ params:
 knitr::opts_chunk$set(echo=FALSE,fig.width=9, fig.height=6, 
                       comment=NA, warning=FALSE, message=FALSE)
 
+# The default plot hook for vignettes creates a markdown image 'tag'
+# which breaks in pandoc if there are any spaces in the image path.
+# The standard HTML plot hook inserts an <img> tag which renders correctly.
+knitr::knit_hooks$set(plot = knitr:::hook_plot_html)
+
 suppressPackageStartupMessages(library(tidyverse))
 library(phenoptr)
 ```
