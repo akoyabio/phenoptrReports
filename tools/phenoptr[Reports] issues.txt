@@ -1,18 +1,17 @@
 phenoptr[Reports] issues
 
 - {tiff}
-  - The dev version of s-u/tiff now includes support for the functionality required in phenoptr. 
+  - The CRAN version of {tiff} now includes support for the functionality required in phenoptr.
     The API for reading directory info is different from the one I implemented in akoyabio/tiff.
-    The dev versions of phenoptr have a readTIFFDirectory shim that allows it to work with either version of {tiff}
-    When s-u/tiff goes to CRAN, update phenoptr to require that version and akoyabio/tiff can go EOL
+    The phenoptr has a readTIFFDirectory shim that allows it to work with either version of {tiff}
 
 - {rtree}
   - rtree is a wrapper around the Boost library implementation, accessed via {BH}.
     Version 1.75.0-0 of BH upgraded to Boost 1.75.0 which requires C++ 14
-    C++ 14 is supported in R 4.0.0. It is not fully supported in R 3.6 
+    C++ 14 is supported in R 4.0.0. It is not fully supported in R 3.6
     - some discussion here: https://github.com/eddelbuettel/bh/issues/77
-    For now my solution is to specifically require BH 1.72.0-3
     Long-term I think the best fix is to stop supporting R 3.6 which is now over a year old and will soon (when 4.1 comes out) be two minor revs behind.
+  - Update: rtree now requires BH 1.75.0 and R 4.0.0
 
 - {vroom}
   - Version 1.4 of vroom, released on Feb 3, contains a bug that breaks phenoptr
@@ -23,3 +22,5 @@ phenoptr[Reports] issues
   - The markdown format for including an image breaks in pandoc if there are spaces in the image path. This is an issue with reports using the html_vignette vignette format. A fix is to set
     knitr::knit_hooks$set(plot = knitr:::hook_plot_html)
   which uses an <img> tag directly and works fine in pandoc.
+  - In general, path characters that are special to HTML cause trouble in pandoc, e.g. # and %. I haven't found a workaround for this.
+  - How to communicate with users? How to identify & deprecate unused functions?

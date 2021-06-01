@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.11</span>
       </span>
     </div>
 
@@ -39,7 +39,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -71,14 +71,14 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="../news/index.html">
-    <span class="fa fa-newspaper-o"></span>
+    <span class="fas fa-newspaper-o"></span>
      
     news
   </a>
 </li>
 <li>
   <a href="https://github.com/akoyabio/phenoptrReports">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fas fa-github fa-lg"></span>
      
     github
   </a>
@@ -93,13 +93,13 @@
 
       
 
-      </header><script src="consolidation_files/header-attrs-2.3/header-attrs.js"></script><script src="consolidation_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="consolidation_files/header-attrs-2.8/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Consolidating inForm data</h1>
                         <h4 class="author">Kent Johnson</h4>
             
-            <h4 class="date">2020-11-11</h4>
+            <h4 class="date">2021-06-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/akoyabio/phenoptrReports/blob/master/vignettes/consolidation.Rmd"><code>vignettes/consolidation.Rmd</code></a></small>
       <div class="hidden name"><code>consolidation.Rmd</code></div>
@@ -149,11 +149,12 @@
 <p>Thus will open the consolidation app.</p>
 <p><img src="figures/Consolidate_addin.png"></p>
 </div>
-<div id="select-input-files" class="section level4">
+<div id="select-source-files" class="section level4">
 <h4 class="hasAnchor">
-<a href="#select-input-files" class="anchor"></a>Select input files</h4>
-<p>Click the “Browse Input” button in the “Select merge data files” section of the GUI. Use the file selection dialog to select your inForm merge data files. If the files are in multiple directories, click the Browse button multiple times to select them.</p>
+<a href="#select-source-files" class="anchor"></a>Select source files</h4>
+<p>Click the “Browse Input” button in the “Select source data files” section of the GUI. Use the file selection dialog to select your inForm merge data files. If the files are in multiple directories, click the Browse button multiple times to select them.</p>
 <p><img src="figures/Select_merge_files.png"></p>
+<p>Select “Keep only phenoptrReports fields” to reduce the size of the consolidated data file by omitting rarely used fields such as Min and Max expression and cell Compactness.</p>
 </div>
 <div id="select-output-directory" class="section level4">
 <h4 class="hasAnchor">
