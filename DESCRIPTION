@@ -44,7 +44,7 @@ Imports:
     tidyr (>= 1.0.0),
     tidyselect,
     tidyverse,
-    tiff,
+    tiff (>= 0.1.8),
     UpSetR (>= 1.4.0),
     utils,
     vroom,
