@@ -76,7 +76,7 @@ into a single file with separate columns for each phenotype." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.11</span>
       </span>
     </div>
 
@@ -84,7 +84,7 @@ into a single file with separate columns for each phenotype." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -116,14 +116,14 @@ into a single file with separate columns for each phenotype." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="../news/index.html">
-    <span class="fa fa-newspaper-o"></span>
+    <span class="fas fa-newspaper-o"></span>
      
     news
   </a>
 </li>
 <li>
   <a href="https://github.com/akoyabio/phenoptrReports">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fas fa-github fa-lg"></span>
      
     github
   </a>
@@ -153,11 +153,12 @@ each with its own <code>Phenotype</code> column,
 into a single file with separate columns for each phenotype.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>consolidate_and_summarize_cell_seg_data</span>(
-  <span class='kw'>csd_files</span>,
-  <span class='kw'>output_dir</span>,
-  update_progress = <span class='kw'>NULL</span>
-)</pre>
+    <pre class="usage"><span class='fu'>consolidate_and_summarize_cell_seg_data</span><span class='op'>(</span>
+  <span class='va'>csd_files</span>,
+  <span class='va'>output_dir</span>,
+  update_progress <span class='op'>=</span> <span class='cn'>NULL</span>,
+  col_select <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -173,6 +174,10 @@ into a single file with separate columns for each phenotype.</p>
     <tr>
       <th>update_progress</th>
       <td><p>Callback function which is called with progress.</p></td>
+    </tr>
+    <tr>
+      <th>col_select</th>
+      <td><p>Column selection for <code><a href='http://akoyabio.github.io/phenoptr/reference/read_cell_seg_data.html'>phenoptr::read_cell_seg_data()</a></code></p></td>
     </tr>
     </table>
 

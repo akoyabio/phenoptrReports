@@ -80,7 +80,7 @@ Page breaks as needed
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.11</span>
       </span>
     </div>
 
@@ -88,7 +88,7 @@ Page breaks as needed
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -120,14 +120,14 @@ Page breaks as needed
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="../news/index.html">
-    <span class="fa fa-newspaper-o"></span>
+    <span class="fas fa-newspaper-o"></span>
      
     news
   </a>
 </li>
 <li>
   <a href="https://github.com/akoyabio/phenoptrReports">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fas fa-github fa-lg"></span>
      
     github
   </a>
@@ -162,15 +162,15 @@ Page breaks as needed
 
     </div>
 
-    <pre class="usage"><span class='fu'>write_sheet</span>(
-  <span class='kw'>wb</span>,
-  <span class='kw'>d</span>,
-  <span class='kw'>sheet_name</span>,
-  <span class='kw'>sheet_title</span>,
-  <span class='kw'>header_col</span>,
-  keepNA = <span class='fl'>TRUE</span>,
-  addGrid = <span class='fl'>TRUE</span>
-)</pre>
+    <pre class="usage"><span class='fu'>write_sheet</span><span class='op'>(</span>
+  <span class='va'>wb</span>,
+  <span class='va'>d</span>,
+  <span class='va'>sheet_name</span>,
+  <span class='va'>sheet_title</span>,
+  <span class='va'>header_col</span>,
+  keepNA <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  addGrid <span class='op'>=</span> <span class='cn'>TRUE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -207,6 +207,13 @@ and page breaks are added where needed.</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>Invisibly, the number of columns added with TMA info (0, 3, or 4)</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>If the provided data has TMA core information embedded in a
+<code>Sample Name</code> column, add columns with the TMA info.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

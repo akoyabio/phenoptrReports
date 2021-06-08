@@ -7,6 +7,7 @@ Autofluorescence
 BiocInstaller
 Biosciences
 caleydo
+CMD
 counterstain
 crosstalk
 csv
@@ -35,6 +36,7 @@ positivity
 quartile
 readxl
 RStudio
+rtree
 seg
 selectable
 singleplex
@@ -42,6 +44,7 @@ Singleplex
 sn
 tidyr
 tif
+TMA
 TSV
 unmixing
 Unmixing

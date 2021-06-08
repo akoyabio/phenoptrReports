@@ -1,4 +1,5 @@
-# phenoptrReports 0.2.10.9000
+# phenoptrReports 0.2.11
+**2021-06-01**
 
 Consolidate and summarize addin:
 - Add support for reading (and saving) only fields needed in phenoptrReports.
@@ -28,6 +29,7 @@ Component levels report:
 Misc:
 - Update to work with multi-schema phenotypes
 - Fix report generation to work when paths contain spaces
+- Require R 4.0.0 or higher for compatibility with latest rtree
 
 # phenoptrReports 0.2.10
 **2020-11-11**

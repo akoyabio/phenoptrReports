@@ -1,7 +1,7 @@
 Package: phenoptrReports
 Title: Create reports using Phenoptics data
-Version: 0.2.10.9000
-Date: 2020-11-11
+Version: 0.2.11.9000
+Date: 2021-06-01
 Authors@R: c(
     person("Kent S", "Johnson", role = c("aut", "cre"),
            email = "kjohnson@akoyabio.com"),
@@ -10,7 +10,7 @@ Authors@R: c(
 Copyright: Akoya Biosciences
 Description: Creates diagnostic and summary reports from inForm data.
 Language: en-US
-Depends: R (>= 3.6.0)
+Depends: R (>= 4.0.0)
 License: Zlib | file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -45,7 +45,7 @@ Imports:
     tidyr (>= 1.0.0),
     tidyselect,
     tidyverse,
-    tiff,
+    tiff (>= 0.1.8),
     UpSetR (>= 1.4.0),
     utils,
     vroom,
@@ -53,7 +53,6 @@ Imports:
 Remotes:
     akoyabio/phenoptr,
     akoyabio/rtree,
-    akoyabio/tiff,
     hms-dbmi/UpSetR
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1

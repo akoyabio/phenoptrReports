@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.11</span>
       </span>
     </div>
 
@@ -79,7 +79,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -111,14 +111,14 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="../news/index.html">
-    <span class="fa fa-newspaper-o"></span>
+    <span class="fas fa-newspaper-o"></span>
      
     news
   </a>
 </li>
 <li>
   <a href="https://github.com/akoyabio/phenoptrReports">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fas fa-github fa-lg"></span>
      
     github
   </a>
@@ -140,6 +140,33 @@
       <small>Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="phenoptrreports-0211" class="section level1">
+<h1 class="page-header" data-toc-text="0.2.11">
+<a href="#phenoptrreports-0211" class="anchor"></a>phenoptrReports 0.2.11</h1>
+<p><strong>2021-06-01</strong></p>
+<p>Consolidate and summarize addin:</p>
+<ul>
+<li>Add support for reading (and saving) only fields needed in phenoptrReports.</li>
+</ul>
+<p>Analysis addin:</p>
+<ul>
+<li>Preserve (or recreate) TMA information in the analysis output files.</li>
+<li>Only read cell seg fields needed for the analysis.</li>
+<li>Fix network file paths in <code>Script.R</code>.</li>
+</ul>
+<p>Component levels report:</p>
+<ul>
+<li>Fix histograms to work with more than 11 components.</li>
+<li>Omit pairs plots with more than 10 components.</li>
+<li>Add correlation heatmaps for each file</li>
+</ul>
+<p>Misc:</p>
+<ul>
+<li>Update to work with multi-schema phenotypes</li>
+<li>Fix report generation to work when paths contain spaces</li>
+<li>Require R 4.0.0 or higher for compatibility with latest rtree</li>
+</ul>
+</div>
     <div id="phenoptrreports-0210" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.10">
 <a href="#phenoptrreports-0210" class="anchor"></a>phenoptrReports 0.2.10</h1>

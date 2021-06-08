@@ -94,6 +94,7 @@ reference:
     contents:
       - choose_directory
       - choose_files
+      - discrete_colors
       - nearest_neighbor_map
       - order_by_slide_and_tissue_category
       - spatial_map_viewer
