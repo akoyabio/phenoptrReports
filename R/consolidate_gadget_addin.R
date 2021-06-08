@@ -187,12 +187,12 @@ addin_20_consolidate = function() {
 
         # Log the command to the console for convenient audit and debugging
         # NB: `deparse` can return multiple strings!
-        cmd = stringr::str_glue(
+        cmd = glue::glue(.transformer=quote_or_null_transformer,
           'phenoptrReports::consolidate_and_summarize_cell_seg_data(\n',
           '  csd_files={rlang::expr_text(file_list())},\n',
-          '  output_dir="{output_dir()}",\n',
-          '  study_dir ="{study_dir()}",\n',
-          '  export_dir = "{export_dir()}",\n',
+          '  output_dir={output_dir()*},\n',
+          '  study_dir ={study_dir()*},\n',
+          '  export_dir = {export_dir()*},\n',
           '  require_include = {input$require_include},\n',
           '  col_select = {deparse(col_select)})\n')
         message('Running command\n', cmd)

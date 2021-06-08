@@ -229,3 +229,22 @@ discrete_colors = function(n) {
   if (n <= 36) return (unname(pals::polychrome(n)))
   return (scales::hue_pal()(n))
 }
+
+# glue::glue() and stringr::str_glue() return an empty string (character(0))
+# if any of the values in {brackets} are NULL.
+# This is intended behavior, see https://github.com/tidyverse/glue/issues/100
+# This behavior is not helpful for showing commands that may take NULL
+# arguments. This transformer returns its value either enclosed in quotes or as
+# the string "NULL" (without quotes)
+# To use, append a * to the text in {brackets*}
+quote_or_null_transformer <- function(text, envir) {
+  check_null_and_quote = grepl('[*]$', text)
+  if (check_null_and_quote)
+    text = sub('[*]$', "", text)
+  out <- glue::identity_transformer(text, envir)
+  if (check_null_and_quote) {
+    if (is.null(out)) out = "NULL" else out = paste0('"', out, '"')
+  }
+
+  out
+}
