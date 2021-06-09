@@ -1,3 +1,8 @@
+# phenoptrReports 0.2.11.9000
+
+Consolidate and summarize addin:
+- Add support for export files in subdirectories of the export path.
+
 # phenoptrReports 0.2.11
 **2021-06-01**
 

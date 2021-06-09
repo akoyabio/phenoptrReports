@@ -321,7 +321,8 @@ find_bounding_box = function(annotations, export_dir) {
 #' @keywords internal
 update_summary_data = function(export_dir, output_dir, areas) {
   candidates =
-    list.files(export_dir, '_cell_seg_data_summary.txt$', full.names=TRUE)
+    list.files(export_dir, '_cell_seg_data_summary.txt$',
+               recursive=TRUE, full.names=TRUE)
 
   # We don't know what name was used for the merge (it doesn't have to be
   # 'Merge') so weed out obvious non-merge files and use what is left.
