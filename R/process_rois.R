@@ -334,6 +334,9 @@ update_summary_data = function(export_dir, output_dir, areas) {
     purrr::discard(~stringr::str_detect(.x, 'reject')) %>%
     purrr::discard(~stringr::str_detect(.x, '\\[\\d+,\\d+\\]'))
 
+  if (length(candidates) == 0)
+    warning('No Merge_cell_seg_data_summary.txt to update in ', export_dir)
+
   # Process a single candidate
   process_one = function(candidate) {
     df = phenoptr::read_cell_seg_data(candidate)
