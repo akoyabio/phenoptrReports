@@ -129,7 +129,11 @@ process_rois_single = function(
     sample_name, data, annotation_paths, require_include, output_dir) {
   # Find the annotation file
   sample = stringr::str_remove(sample_name, '\\.qptiff$')
-  annotation_file = stringr::str_subset(annotation_paths, sample)
+  sample_regex = paste0('\\Q', sample, '\\E')
+  annotation_file = stringr::str_subset(annotation_paths, sample_regex)
+
+  if (length(annotation_file) == 0)
+    stop('No annotation file found for ', sample)
   if (length(annotation_file) > 1)
     stop('Multiple annotation files found for ', sample)
 
