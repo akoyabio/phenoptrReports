@@ -124,7 +124,7 @@ merge_and_split_phenotypes <- function(csd_files, output_dir,
   purrr::walk2(names[-1], csd_files[-1], function(name, path) {
     # We only need the phenotype columns and join columns from subsequent files
     # Drop everything else for speed and less memory use
-    col_select= rlang::quo(list(
+    col_select <<- rlang::quo(list(
       !!rlang::sym(field_col),
       `Cell ID`,
       # These two are required columns, they are added by `process_one_file`

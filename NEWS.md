@@ -1,3 +1,8 @@
+# phenoptrReports 0.2.12
+**2021-06-10**
+
+- Fix a critical bug in the consolidate and summarize addin
+
 # phenoptrReports 0.2.11
 **2021-06-01**
 
