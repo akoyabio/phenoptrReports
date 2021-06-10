@@ -155,6 +155,35 @@ test_that("Chart segmentation works", {
 # Some really basic smoke tests - just make sure the reports run
 # These work on dev machine only for now :-/
 
+test_that("Consolidation works with multiple merge files", {
+  base_path = "C:/Research/phenoptrTestData/210610_merge cell seg data"
+  csd_files=c(
+    file.path(base_path, "CD3/Merge_cell_seg_data.txt"),
+    file.path(base_path, "FoxP3/Merge_cell_seg_data.txt"),
+    file.path(base_path, "Ki67/Merge_cell_seg_data.txt")
+  )
+  skip_if_not(all(file.exists(csd_files)))
+
+  temp_dir = file.path(base_path, "temp")
+  create_empty_dir(temp_dir)
+
+  consolidate_and_summarize_cell_seg_data(csd_files, temp_dir)
+  expected_files = c("CD3_Merge_cell_seg_data.html",
+                     "FoxP3_Merge_cell_seg_data.html",
+                     "Ki67_Merge_cell_seg_data.html",
+                     "Consolidated_data.html",
+                     "Consolidated_data.txt",
+                     "temp")
+  expect_setequal(list.files(temp_dir), expected_files)
+
+  # Check the contents
+  actual =
+    phenoptr::read_cell_seg_data(file.path(temp_dir, "Consolidated_data.txt"))
+  expected =
+    phenoptr::read_cell_seg_data(file.path(base_path, "Expected/Consolidated_data.txt"))
+  expect_equal(actual, expected, ignore_attr=TRUE)
+})
+
 test_that("Unmixing quality report runs", {
   export_path = 'C:/Research/phenoptrTestData/unmixing_quality_report_test'
   skip_if_not(dir.exists(export_path))

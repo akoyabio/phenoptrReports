@@ -165,6 +165,14 @@ temp_dir_by = function(output_path) {
   file.path(dirname(output_path), 'temp')
 }
 
+create_empty_dir = function(path) {
+  if (dir.exists(path))
+    list.files(path, full.names=TRUE) %>% purrr::walk(file.remove)
+  else
+    dir.create(path, recursive=TRUE)
+}
+
+
 # A pleasing palette with lots of entries
 phenoptr_colors = c(
   "#26A2ED", "#41C572", "#F05050", "#F4D646", "#B2A1E2", "#F99B15", "#98C7DC",
