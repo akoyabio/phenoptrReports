@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Split a phenotype column — split_phenotypes • phenoptrReports</title>
+<title>Split all phenotype columns — split_phenotypes • phenoptrReports</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Split a phenotype column — split_phenotypes" />
-<meta property="og:description" content="A column containing multiple phenotypes is split
+<meta property="og:title" content="Split all phenotype columns — split_phenotypes" />
+<meta property="og:description" content="All columns containing multiple phenotypes are split
 into multiple columns, one for each single phenotype." />
 
 
@@ -73,7 +73,7 @@ into multiple columns, one for each single phenotype." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.12</span>
       </span>
     </div>
 
@@ -138,13 +138,13 @@ into multiple columns, one for each single phenotype." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Split a phenotype column</h1>
+    <h1>Split all phenotype columns</h1>
     <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/split_phenotypes.R'><code>R/split_phenotypes.R</code></a></small>
     <div class="hidden name"><code>split_phenotypes.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>A column containing multiple phenotypes is split
+    <p>All columns containing multiple phenotypes are split
 into multiple columns, one for each single phenotype.</p>
     </div>
 
@@ -161,8 +161,9 @@ into multiple columns, one for each single phenotype.</p>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A new data frame with the <code>Phenotype</code> column replaced with
-individual columns per phenotype and the <code>Confidence</code> column removed.</p>
+    <p>A new data frame with <code>Phenotype</code> and <code>Phenotype-&lt;scheme&gt;</code> columns
+replaced with
+individual columns per phenotype and the <code>Confidence</code> column(s) removed.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Multiple phenotypes in the original column must be separated with "/".
