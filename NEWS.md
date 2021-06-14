@@ -3,6 +3,8 @@
 Consolidate and summarize addin:
 - Add support for export files in subdirectories of the export path.
 - Output a trimmed cells check plot colored by tissue category
+- Allow the export directory to be omitted, which skips the tissue category
+  trimming step.
 
 # phenoptrReports 0.2.13
 **2021-06-14**

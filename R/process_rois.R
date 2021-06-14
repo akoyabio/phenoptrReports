@@ -14,7 +14,7 @@ utils::globalVariables(c(
 #' @param csd Consolidated cell seg table
 #' @param study_dir Directory containing annotation files for the source
 #' images in `csd`
-#' @param export_dir A directory containing `binary_seg_maps` files and
+#' @param export_dir Optional directory containing `binary_seg_maps` files and
 #' merged cell seg data summary files for processing.
 #' @param output_dir Directory where new files will be written.
 #' @param require_include Should the result
@@ -31,9 +31,6 @@ process_rois = function(csd, study_dir, export_dir, output_dir,
   # Parameter checks
   if (is.null(study_dir) || !dir.exists(study_dir))
     stop('Missing or invalid study directory: ', study_dir)
-
-  if (is.null(export_dir) || !dir.exists(export_dir))
-    stop('Missing or invalid export directory: ', export_dir)
 
   if (is.null(output_dir) || !dir.exists(output_dir))
     stop('Missing or invalid output directory: ', output_dir)
@@ -80,20 +77,25 @@ process_rois = function(csd, study_dir, export_dir, output_dir,
 
     # Process tissue category data and update areas
     # Note we only have to process annotations that are still in the data
-    # Skip this if we are missing a required #Include ROI
-    if (!require_include || !is.null(sample_results$include_roi)) {
-      annotations = unique(sample_results$csd$`Annotation ID`)
-      areas <<- dplyr::bind_rows(areas,
-                  process_tissue_categories_single(
-                    `Sample Name`, annotations,
-                    sample_results$include_roi, sample_results$exclude_roi,
-                    export_dir, output_dir))
-  }
+    # Only if the export directory was provided
+    if (!is.null(export_dir)) {
+      # Only if we have any required #Include ROI
+      if (!require_include || !is.null(sample_results$include_roi)) {
+        annotations = unique(sample_results$csd$`Annotation ID`)
+        areas <<- dplyr::bind_rows(areas,
+                    process_tissue_categories_single(
+                      `Sample Name`, annotations,
+                      sample_results$include_roi, sample_results$exclude_roi,
+                      export_dir, output_dir))
+      }
+    }
+
     sample_results$csd
   })
 
   # Now create new summary data files with the corrected tissue area
-  update_summary_data(export_dir, output_dir, areas)
+  if (!is.null(export_dir))
+    update_summary_data(export_dir, output_dir, areas)
 
   # Finish up
   removed = tibble::add_column(removed, `Sample Name`=csd_nested$`Sample Name`,
@@ -285,6 +287,9 @@ process_rois_single = function(
 #' @keywords internal
 process_tissue_categories_single = function(
   sample_name, annotations, include_roi, exclude_roi, export_dir, output_dir) {
+  if (is.null(export_dir))
+    stop('Export directory required in process_tissue_categories_single.')
+
   # Consolidate the ROIs to a single trim_roi
   if (is.null(include_roi))
     trim_roi = find_bounding_box(annotations, export_dir)

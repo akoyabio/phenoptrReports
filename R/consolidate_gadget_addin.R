@@ -65,9 +65,11 @@ addin_20_consolidate = function() {
         shiny::h3('Select study and export directory'),
         '(Optional) Click the "Browse Study" button to select a directory',
         'containing annotation files for the images in this analysis.',
+        'Annotations will be used to include and exclude cells from the result.',
         shiny::br(),
         'Click the "Browse export" button to select a related',
-        'inForm export directory.',
+        'inForm export directory. This will be used to compute corrected',
+        'tissue category areas.',
         shiny::br(), shiny::br(),
 
         shiny::fillRow(
@@ -225,8 +227,8 @@ addin_20_consolidate = function() {
         'Please select files to process.'
       } else if (is.null(output_dir())) {
         'Please select an output directory.'
-      } else if (!is.null(study_dir()) && is.null(export_dir())) {
-        'Please select an export directory.'
+      } else if (is.null(study_dir()) && !is.null(export_dir())) {
+        'Please select a study directory.'
       } else
         ''
     }
