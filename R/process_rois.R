@@ -42,7 +42,8 @@ process_rois = function(csd, study_dir, export_dir, output_dir,
       !all(endsWith(csd$`Sample Name`, '.qptiff')))
     stop('process_rois is only valid for analyses with QPTIFF images.')
 
-  samples = unique(csd$`Sample Name`) %>%
+  samples = dplyr::distinct(csd, `Sample Name`) %>%
+    dplyr::pull() %>%
     stringr::str_remove('\\.qptiff$')
   annotation_paths = list.files(study_dir, pattern='_annotations.xml$',
                                 full.names=TRUE, recursive=TRUE)
@@ -216,7 +217,7 @@ process_rois_single = function(
   # Remove the geometry from data
   data = sf::st_drop_geometry(data)
 
-  # Save a check plot
+  # Save a check plot colored by phenotype
   cell_plot_path = file.path(output_dir,
                              paste0(sample, '_trimmed_cells.png'))
   cat('Saving cell check plot to ', cell_plot_path, '\n')
@@ -245,6 +246,28 @@ process_rois_single = function(
   print(p)
   grDevices::dev.off()
 
+  # Another check plot colored by tissue category
+  if ('Tissue Category' %in% names(data)) {
+    cell_plot_path = file.path(output_dir,
+                               paste0(sample, '_trimmed_cells_by_tissue.png'))
+    cat('Saving cell by tissue check plot to ', cell_plot_path, '\n')
+
+    grDevices::png(cell_plot_path, type='cairo', antialias='gray',
+                   width=980, height=980)
+    p = data %>%
+      ggplot2::ggplot(ggplot2::aes(`Cell X Position`, `Cell Y Position`,
+                                   color=`Tissue Category`)) +
+      ggplot2::geom_point(shape='.', alpha=0.8) +
+      ggplot2::coord_equal() +
+      ggplot2::scale_y_reverse() +
+      ggplot2::guides(color = ggplot2::guide_legend(
+        override.aes=list(shape=19, size=3, alpha=1), ncol=1)) +
+      ggplot2::labs(title=paste(sample, 'trimmed cells by tissue category')) +
+      ggplot2::theme_minimal()
+
+    print(p)
+    grDevices::dev.off()
+  }
 
   return(list(csd=data, removed=removed, stats=stats,
               include_roi=include_roi, exclude_roi=exclude_roi))
