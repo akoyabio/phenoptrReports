@@ -36,9 +36,8 @@ write_summary_report = function(csd_path=NULL, csd=NULL,
 
 #' Create summary charts from the results of an analysis
 #'
-#' Creates a Microsoft Word file or HTML report containing summary charts
-#' derived from an analysis. The file type is determined by the file extension
-#' of `output_path`, which must be either `.docx` or `.html`.
+#' Creates a Microsoft Word document containing summary charts
+#' derived from an analysis.
 #' @param workbook_path Path to an Excel file containing sheets written
 #'   by [write_counts_sheet], etc.
 #' @param output_path Path to write the resulting file.
@@ -57,19 +56,11 @@ write_summary_charts = function(workbook_path, output_path,
   if (is.null(output_path))
     stop('You must provide an output path.')
 
-  output_format = switch(tools::file_ext(output_path),
-                   docx='word_document',
-                   html='html_vignette')
-
-  if (is.null(output_format))
-    stop('Unsupported output format')
-
   rmd_path = system.file("rmd", "Chart_report.Rmd",
                          package="phenoptrReports")
 
   rmarkdown::render(rmd_path, output_file=output_path, quiet=TRUE,
                     intermediates_dir=temp_dir_by(output_path),
-                    output_format=output_format,
                     params=list(workbook_path=workbook_path,
                                 .by=.by,
                                 max_slides_per_plot=max_slides_per_plot,
