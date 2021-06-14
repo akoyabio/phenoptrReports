@@ -1,8 +1,13 @@
+# phenoptrReports 0.2.13
+**2021-06-14**
+
+Analysis addin:
+- Fix problems with chart generation #46
+
 # phenoptrReports 0.2.12
 **2021-06-10**
 
 - Fix a critical bug in the consolidate and summarize addin
-- Fix problems with chart generation in the analyze addin #46
 
 # phenoptrReports 0.2.11
 **2021-06-01**
