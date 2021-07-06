@@ -20,7 +20,7 @@ Imports:
     formattable (>= 0.2),
     forcats,
     fs,
-    ggplot2 (>= 3.2.0),
+    ggplot2 (>= 3.3.2),
     glue,
     jpeg,
     knitr,
@@ -49,7 +49,7 @@ Imports:
     tiff (>= 0.1.8),
     UpSetR (>= 1.4.0),
     utils,
-    vroom,
+    vroom (>=1.5.1),
     zip (>= 2.0.0)
 Remotes:
     akoyabio/phenoptr,
