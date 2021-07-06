@@ -49,7 +49,7 @@ Imports:
     tiff (>= 0.1.8),
     UpSetR (>= 1.4.0),
     utils,
-    vroom (>=1.5.1),
+    vroom (>= 1.5.1),
     zip (>= 2.0.0)
 Remotes:
     akoyabio/phenoptr,
@@ -64,7 +64,7 @@ Suggests:
     rtree,
     sessioninfo,
     testthat (>= 3.0.0),
-    vdiffr
+    vdiffr (>= 1.0.2)
 URL:
     https://akoyabio.github.io/phenoptrReports/,
     https://github.com/akoyabio/phenoptrReports/
