@@ -4,6 +4,9 @@ Analysis addin:
 - Fix problem computing mean expression for phenotypes with formulas 
   in their definition #47
   
+Consolidate and summarize addin:
+- Add a dummy `Phenotype` column if none is present #48
+  
 # phenoptrReports 0.2.13
 **2021-06-14**
 

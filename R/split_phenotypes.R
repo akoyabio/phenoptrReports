@@ -106,6 +106,11 @@ merge_and_split_phenotypes <- function(csd_files, output_dir,
       d['Tissue Category'] = 'All'
     }
 
+    if (!any(stringr::str_detect(names(d), 'Phenotype'))) {
+      message('Adding Phenotype column to ', basename(path))
+      d['Phenotype'] = 'Cell+'
+    }
+
     # Split before reporting to handle multi-schema phenotyping
     d = d %>% split_phenotypes()
 
