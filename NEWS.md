@@ -1,3 +1,9 @@
+# phenoptrReports 0.2.13.9000
+
+Analysis addin:
+- Fix problem computing mean expression for phenotypes with formulas 
+  in their definition #47
+  
 # phenoptrReports 0.2.13
 **2021-06-14**
 

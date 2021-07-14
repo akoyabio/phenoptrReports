@@ -166,8 +166,9 @@ format_expression = function(vals) {
                            worksheet_code('write_expression_sheet',
                                           'expression_means'))))
 
-  pairs = purrr::map_chr(phenos,
-                  ~stringr::str_glue('"{.x$phenotype}" = "{.x$expression}"'))
+  # Map phenotype names to expression
+  pairs = purrr::imap_chr(phenos,
+                  ~stringr::str_glue('"{.y}" = "{.x$expression}"'))
   phenos_string = paste(pairs, collapse=',\n  ')
   stringr::str_glue(
 '# Associate phenotype names with expression columns to measure.
