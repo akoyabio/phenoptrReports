@@ -531,5 +531,5 @@ outline_cells = function(wb, sheet_name, rows, cols) {
 
 # Remove " (xx xx) Mean" from strings
 remove_marker_mean = function(s) {
-  stringr::str_remove(s, ' \\(.*\\) Mean$')
+  stringr::str_remove_all(s, ' \\(.*?\\) Mean')
 }

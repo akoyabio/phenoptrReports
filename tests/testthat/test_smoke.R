@@ -22,11 +22,14 @@ test_file_generation_by_field = function(data_dir, output_dir, expected_path, .b
     whole_slide=FALSE,
     phenotype_values = list(
       list(phenotype = "CD8+", expression = "Membrane PDL1 (Opal 520) Mean"),
-      list(phenotype = "CD8+", expression = "Membrane PD1 (Opal 650) Mean", score=TRUE),
+      list(phenotype = "CD8+", expression = "Membrane PD1 (Opal 650) Mean",
+           score=TRUE),
       list(phenotype = "CD68+", expression = "Membrane PDL1 (Opal 520) Mean"),
       list(phenotype = "FoxP3+", expression = 'NA'),
       list(phenotype = "CK+", expression = "Membrane PDL1 (Opal 520) Mean"),
-      list(phenotype = "CK+/~`Membrane PDL1 (Opal 520) Mean`>1", expression='NA', score=TRUE),
+      list(phenotype = "CK+/~`Membrane PDL1 (Opal 520) Mean`>1",
+           expression="Membrane PDL1 (Opal 520) Mean",
+           score=TRUE),
       list(phenotype = "Total Cells", expression = 'NA')
     ))
 
