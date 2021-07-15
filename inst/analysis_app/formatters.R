@@ -216,18 +216,12 @@ h_score = compute_h_score_from_score_data(csd, score_path,
     stringr::str_replace_all('\\.+', '_') %>%
     { stringr::str_glue('h_score_{.}') }
 
-  # Names for the worksheets
-  tab_names = scoring_phenos %>%
-    { stringr::str_glue('H-Score {.}') } %>%
-    as_valid_tab_name()
-
-  purrr::pmap(list(scoring_phenos, table_names, tab_names),
-              function(pheno, table_name, tab_name) {
+  purrr::pmap(list(scoring_phenos, table_names),
+              function(pheno, table_name) {
     table_pairs <<-
       c(table_pairs,
         list(c(cleanup_code(table_name),
                stringr::str_glue("write_h_score_sheet(wb, {table_name},
-                    '{tab_name}',
                     marker='{pheno}')\n\n"))))
 
     result <<- stringr::str_glue(
@@ -366,13 +360,6 @@ paste0(start, end)
 }
 
 ## Helper functions
-# Create valid Excel worksheet tab names from the given strings
-# Tab names can't be more than 31 characters and may not include any of \/*?:[]
-as_valid_tab_name = function(strs) {
-  strs %>%
-    stringr::str_replace_all('[\\\\/*?:\\[\\]]', '_') %>%
-    substr(1, 31)
-}
 # Create a call to `cleanup` for the given table
 cleanup_code = function(table_name) {
   stringr::str_glue("{table_name} = cleanup({table_name})\n\n")
