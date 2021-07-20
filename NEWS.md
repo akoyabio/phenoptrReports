@@ -9,6 +9,9 @@ Analysis addin:
   
 Consolidate and summarize addin:
 - Add a dummy `Phenotype` column if none is present #48
+
+Merge addin:
+- Read files to merge into memory and write once, instead of appending
   
 # phenoptrReports 0.2.13
 **2021-06-14**
