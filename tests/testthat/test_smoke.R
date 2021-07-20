@@ -12,7 +12,9 @@ test_file_generation_by_field = function(data_dir, output_dir, expected_path, .b
     tissue_categories = c("Tumor", "Stroma"),
     input_path = file.path(data_dir, "Consolidated_data.txt"),
     summary_path = file.path(data_dir, "Merge_cell_seg_data_summary.txt"),
-    score_path = file.path(data_dir, "Merge_score_data.txt"),
+    score_path = c(
+      file.path(data_dir, "Merge_score_data.txt"),
+      file.path(data_dir, "Merge2_score_data.txt")),
     output_dir = output_dir,
     field_col = 'Sample Name',
     include_nearest = TRUE,

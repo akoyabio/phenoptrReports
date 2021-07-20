@@ -3,7 +3,10 @@
 Analysis addin:
 - Fix problem computing mean expression for phenotypes with formulas 
   in their definition #47
-
+- Allow selecting (and reporting on) multiple score summary files #49
+- Tabs with H-Score results include the scored marker name 
+  (in support of #49)
+  
 Consolidate and summarize addin:
 - Add a dummy `Phenotype` column if none is present #48
 - Add support for export files in subdirectories of the export path.
@@ -11,6 +14,9 @@ Consolidate and summarize addin:
 - Allow the export directory to be omitted, which skips the tissue category
   trimming step.
 
+Merge addin:
+- Read files to merge into memory and write once, instead of appending
+  
 # phenoptrReports 0.2.13
 **2021-06-14**
 

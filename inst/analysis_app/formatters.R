@@ -184,57 +184,54 @@ expression_means = csd %>%
 }
 
 # Format calculation of H-Score for all cells and optional phenotypes
-format_h_score = function(score_path, phenos) {
-  table_pairs <<- c(table_pairs,
-                    list(c(cleanup_code('h_score'),
-                           worksheet_code('write_h_score_sheet', 'h_score'))))
+format_h_score = function(score_paths, phenos) {
+  result = '# Compute H-Score\n'
+  purrr::iwalk(score_paths, function(score_path, ix) {
+    base_table_name = stringr::str_glue('h_score_{ix}')
+    table_pairs <<- c(table_pairs,
+                      list(c(cleanup_code(base_table_name),
+                             worksheet_code('write_h_score_sheet', base_table_name))))
 
-  # First the overall H-Score
-  result = stringr::str_glue(
-"# Compute H-Score
-score_path =
+    # First the overall H-Score
+    result <<- stringr::str_glue(
+"{result}score_path_{ix} =
   '{escape_path(score_path)}'
-h_score = compute_h_score_from_score_data(csd, score_path,
+h_score_{ix} = compute_h_score_from_score_data(csd, score_path_{ix},
                                           tissue_categories, .by=.by)
 \n\n")
 
   # Add in any optional scoring by appending to result and table_pairs
-  wants_scoring = purrr::map_lgl(phenos,
-                                 ~(!is.null(.x$score) && .x$score==TRUE))
+    wants_scoring = purrr::map_lgl(phenos,
+                                   ~(!is.null(.x$score) && .x$score==TRUE))
 
-  scoring_phenos = phenos[wants_scoring] %>%
-    purrr::map_chr('phenotype') %>%
-    names() %>%
-    unique()
+    scoring_phenos = phenos[wants_scoring] %>%
+      purrr::map_chr('phenotype') %>%
+      names() %>%
+      unique()
 
-  # Names for the constructed data tables
-  # We need to distinguish e.g. CD8+ and CD8- here so replace + and -
-  # with valid characters before calling make.names.
-  table_names = scoring_phenos %>%
-    stringr::str_replace_all(c('\\+'='p', '-'='m')) %>%
-    make.names() %>%
-    stringr::str_replace_all('\\.+', '_') %>%
-    { stringr::str_glue('h_score_{.}') }
+    # Names for the constructed data tables
+    # We need to distinguish e.g. CD8+ and CD8- here so replace + and -
+    # with valid characters before calling make.names.
+    table_names = scoring_phenos %>%
+      stringr::str_replace_all(c('\\+'='p', '-'='m')) %>%
+      make.names() %>%
+      stringr::str_replace_all('\\.+', '_') %>%
+      { stringr::str_glue('h_score_{ix}_{.}') }
 
-  # Names for the worksheets
-  tab_names = scoring_phenos %>%
-    { stringr::str_glue('H-Score {.}') } %>%
-    as_valid_tab_name()
+    purrr::pmap(list(scoring_phenos, table_names),
+                function(pheno, table_name) {
+      table_pairs <<-
+        c(table_pairs,
+          list(c(cleanup_code(table_name),
+                 stringr::str_glue("write_h_score_sheet(wb, {table_name},
+                      marker='{pheno}')\n\n"))))
 
-  purrr::pmap(list(scoring_phenos, table_names, tab_names),
-              function(pheno, table_name, tab_name) {
-    table_pairs <<-
-      c(table_pairs,
-        list(c(cleanup_code(table_name),
-               stringr::str_glue("write_h_score_sheet(wb, {table_name},
-                    '{tab_name}',
-                    marker='{pheno}')\n\n"))))
-
-    result <<- stringr::str_glue(
-    "{result}{table_name}=compute_h_score_from_score_data(
-       csd, score_path, tissue_categories, .by=.by,
+      result <<- stringr::str_glue(
+      "{result}{table_name}=compute_h_score_from_score_data(
+       csd, score_path_{ix}, tissue_categories, .by=.by,
        phenotypes[['{pheno}']])
 \n\n")
+    })
   })
   result
 }
@@ -373,13 +370,6 @@ paste0(start, end)
 }
 
 ## Helper functions
-# Create valid Excel worksheet tab names from the given strings
-# Tab names can't be more than 31 characters and may not include any of \/*?:[]
-as_valid_tab_name = function(strs) {
-  strs %>%
-    stringr::str_replace_all('[\\\\/*?:\\[\\]]', '_') %>%
-    substr(1, 31)
-}
 # Create a call to `cleanup` for the given table
 cleanup_code = function(table_name) {
   stringr::str_glue("{table_name} = cleanup({table_name})\n\n")

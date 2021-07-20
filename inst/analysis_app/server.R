@@ -21,6 +21,7 @@ shinyServer(function(input, output, server) {
   # File selection
   # file_data may contain input_path, summary_path, score_path, output_dir
   # It is an ordinary list of reactive objects
+  # score_path may contain multiple values
   file_data = shiny::callModule(files_module, 'files')
 
   # Consolidated data for the formatter

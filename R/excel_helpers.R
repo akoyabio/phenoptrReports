@@ -189,7 +189,7 @@ write_nearest_neighbor_summary_sheet = function(wb, stats,
 #' @family output functions
 #' @export
 write_h_score_sheet = function(wb, h_score,
-                               sheet_name='H-Score',
+                               sheet_name=NULL,
                                sheet_title=NULL,
                                marker=NULL) {
   measure = attr(h_score, 'measure') %>% remove_marker_mean
@@ -197,8 +197,14 @@ write_h_score_sheet = function(wb, h_score,
     sheet_title = ifelse(is.null(measure),
                          'H-Score', paste0('H-Score, ', measure))
     if (!is.null(marker))
-      sheet_title = paste0(sheet_title, ', ', marker)
+      sheet_title = paste0(sheet_title, ', ', remove_marker_mean(marker))
   }
+
+  # Sheet name is the sheet title without the compartment name
+  if (is.null(sheet_name))
+    sheet_name = sheet_title %>%
+      stringr::str_remove_all('(Nucleus|Cytoplasm|Membrane|Entire Cell) ')
+  sheet_name = as_valid_tab_name(sheet_name)
 
   d = h_score %>%
     dplyr::select(-Total)
@@ -532,4 +538,12 @@ outline_cells = function(wb, sheet_name, rows, cols) {
 # Remove " (xx xx) Mean" from strings
 remove_marker_mean = function(s) {
   stringr::str_remove_all(s, ' \\(.*?\\) Mean')
+}
+
+# Create valid Excel worksheet tab names from the given strings
+# Tab names can't be more than 31 characters and may not include any of \/*?:[]
+as_valid_tab_name = function(strs) {
+  strs %>%
+    stringr::str_replace_all('[\\\\/*?:\\[\\]]', '_') %>%
+    substr(1, 31)
 }
