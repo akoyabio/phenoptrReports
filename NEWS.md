@@ -3,7 +3,9 @@
 Analysis addin:
 - Fix problem computing mean expression for phenotypes with formulas 
   in their definition #47
-- Tabs with H-Score results include the scored marker name
+- Allow selecting (and reporting on) multiple score summary files #49
+- Tabs with H-Score results include the scored marker name 
+  (in support of #49)
   
 Consolidate and summarize addin:
 - Add a dummy `Phenotype` column if none is present #48

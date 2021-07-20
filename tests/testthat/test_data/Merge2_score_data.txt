@@ -1,0 +1,2 @@
+Path	Sample Name	Tissue Category	Cell Compartment	Stain Component	0	1+	2+	3+	H-score	Tissue Category Area (Percent)	Number of Cells	Threshold 0/1+	Threshold 1+/2+	Threshold 2+/3+	Lab ID	Slide ID	inForm 2.4.6663.14071
+C:\Users\cordoD01166\Box Sync\Data\Vectra3\20180529 Infinity SI PA New MSIs\(1) 20180529 Infinity 001-015 C1D1\Scan1\MSI	"(1) 20180529 Infinity 001-015 C1D1_[43268,15725].im3"	Tumor	Membrane	PD1 (Opal 650)	100.00%	0.00%	0.00%	0.00%	0	72.13%	1896	1.769	2.791	4.9035		(1) 20180529 Infinity 001-015 C1D1	

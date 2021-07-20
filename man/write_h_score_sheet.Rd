@@ -7,7 +7,7 @@
 write_h_score_sheet(
   wb,
   h_score,
-  sheet_name = "H-Score",
+  sheet_name = NULL,
   sheet_title = NULL,
   marker = NULL
 )

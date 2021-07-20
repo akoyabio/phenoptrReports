@@ -7,7 +7,7 @@ browse_file_module_ui = function(id, header, button) {
     shiny::h4(header),
     shiny::actionButton(ns('browse'), button),
     shiny::br(), shiny::br(),
-    shiny::textOutput(ns('selected_file')),
+    shiny::uiOutput(ns('selected_file')),
     shiny::h4(shiny::textOutput(ns('error')), style='color: maroon')
   )
 }
@@ -18,7 +18,7 @@ browse_file_module_ui = function(id, header, button) {
 # (possibly empty) error string.
 browse_file_module = function(input, output, session, default_dir,
                               caption='Select a file',
-                              validator=NULL) {
+                              validator=NULL, allow_multiple=FALSE) {
   the_path = shiny::reactiveVal()
 
   # Handle click on the browse button by opening a file
@@ -35,7 +35,6 @@ browse_file_module = function(input, output, session, default_dir,
 
     shiny::req(path)
     path = normalizePath(path, winslash='/', mustWork=FALSE)
-    output$selected_file = shiny::renderText(paste('Selected file:', path))
 
     # Update default path
     default_dir(dirname(path))
@@ -47,7 +46,21 @@ browse_file_module = function(input, output, session, default_dir,
     }
     output$error = shiny::renderText(error)
 
-    if (error=='') the_path(path) else the_path(NULL)
+    if (error!='') {
+      if (!allow_multiple) the_path(NULL)
+    } else if (allow_multiple) {
+      the_path(c(the_path(), path))
+    } else the_path(path)
+  })
+
+  output$selected_file = shiny::renderUI({
+    req(the_path())
+    if (allow_multiple) {
+      shiny::HTML(paste0('Selected file(s):<br>',
+                         paste(the_path(), collapse='<br>')))
+    } else {
+      paste('Selected file:', the_path())
+    }
   })
 
   the_path
@@ -83,7 +96,7 @@ files_module_ui = function(id) {
        shiny::hr(),
 
        browse_file_module_ui(ns('score_file'),
-         'Optional: Select a scoring file to compute H-Score.',
+         'Optional: Select scoring file(s) to compute H-Score.',
          'Browse...')
      ))
   )
@@ -129,12 +142,13 @@ files_module = function(input, output, session) {
 
 
   score_path = shiny::callModule(browse_file_module, 'score_file',
-    default_dir, caption='Select a score data file',
+    default_dir, caption='Select score data file(s)',
     validator = function(path) {
       if (!endsWith(path, 'score_data.txt')) {
         'Please select a score data file.'
       } else ''
-    })
+    },
+    allow_multiple=TRUE)
 
   # Handle the browse_output button by selecting a folder
   shiny::observeEvent(input$browse_output, {
@@ -173,6 +187,10 @@ files_module_test = function() {
       text = purrr::map(the_data, ~.())
       output$results = shiny::renderText(paste(text, collapse='\n'))
       print(text)})
+
+    session$onSessionEnded(function() {
+      shiny::stopApp()
+    })
   }
 
   shiny::shinyApp(ui, server)
