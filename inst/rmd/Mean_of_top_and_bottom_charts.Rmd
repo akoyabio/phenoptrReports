@@ -1,0 +1,194 @@
+---
+output:
+  word_document:
+    reference_docx: Chart_report_template.docx
+  html_vignette:
+    df_print: kable
+params:
+  data_path:
+    input: file
+    label: 'Path to Excel file:'
+    value: C:/Research/phenoptrReports/tests/testthat/test_data/Top20_Bottom10_Data.xlsx
+  .by: 'Slide ID'
+    
+---
+
+```{r setup, echo=FALSE,include=FALSE,message=FALSE}
+library(dplyr)
+library(ggplot2)
+library(purrr)
+library(readxl)
+library(tidyr)
+
+knitr::opts_chunk$set(echo=FALSE,fig.width=10, fig.height=5.5, 
+                      comment=NA, warning=FALSE, message=FALSE)
+
+data_path = params$data_path
+.by = params$.by
+.by_sym = rlang::sym(.by)
+
+# Note: Using readxl rather than openxlsx for reading because
+# the check.names parameter of openxlsx::readWorkbook is kind of broken.
+# https://github.com/awalker89/openxlsx/issues/102
+sheet_names = readxl::excel_sheets(data_path)
+
+# Boilerplate for ggplot theming
+phenoptr_colors = c(
+  "#26A2ED", "#41C572", "#F05050", "#F4D646", "#B2A1E2", "#F99B15", "#98C7DC",
+  "#84D9A3", "#72C3F3", "#F58D8D", "#F8E487", "#CDC2EC", "#FBBE67", "#BCDBE8",
+  "#1F5F37", "#124E72", "#732626", "#756722", "#554D6C", "#784A0A", "#49606A",
+  "#C6EED5", "#BEE3FA", "#FBCBCB", "#FCF3C8", "#E8E3F6", "#FDE1B9", "#E0EEF5",
+  "#319456", "#1D7AB2", "#B43C3C", "#B7A135", "#8679AA", "#BB7410", "#7295A5"
+)
+
+scale_fill_phenoptr = scale_fill_manual(values=phenoptr_colors)
+scale_x_expand = scale_x_discrete(expand=c(0, 2, 0, 2)) # expand_scale(add=2)
+base_line = geom_hline(yintercept=0, color='grey50')
+
+theme_phenoptr = theme_minimal() +
+  theme(strip.text.y=element_text(face='bold', size=12),
+        strip.text.x=element_text(face='bold', angle=90),
+        #strip.background.y=element_rect(color='grey90', fill='white', linetype=1),
+        strip.background.y=element_blank(),
+        axis.ticks=element_blank(),
+        axis.text.x=element_blank(),
+        axis.text.y=element_text(size=8),
+        axis.title=element_text(face='bold'),
+        panel.grid.major=element_blank(),
+        panel.grid.minor=element_blank(),
+        panel.spacing.x = unit(0, "null"), # Take out horizontal space 
+        legend.key.size = unit(12, 'points'),
+        legend.title=element_text(face='bold'),
+        legend.justification = "top"
+  )
+
+# Common cleanup
+clean_slide_id = function(d) {
+  d %>% mutate(!!.by_sym := stringr::str_remove(!!.by_sym, '_Scan\\d\\.qptiff'))
+}
+
+marker_as_factor = function(d) {
+  # Remove DAPI and make a factor with components in wavelength order
+  d = filter(d, Marker != 'DAPI')
+  levels = unique(d$Marker)
+  wls = levels %>% 
+    stringr::str_match('\\((\\d+)\\)') %>% `[`(, 2) %>% as.numeric()
+  levels = levels[order(wls)]
+  d %>% mutate(Marker = factor(Marker, levels=levels))
+}
+```
+
+
+
+```{r top20, results='asis'}
+if ('Top 20 data' %in% sheet_names) {
+  top20 = read_xlsx(data_path, 'Top 20 data', skip=1)
+  tall = top20 %>%
+    gather(Marker, Mean, -!!.by_sym) %>% 
+    clean_slide_id() %>% marker_as_factor()
+  
+  cat('## Mean Counts of Top 20 Cells per', .by, '\n\n')
+  
+  p = ggplot(tall, aes(Marker, Mean, fill=Marker)) +
+    base_line +
+    geom_col() +
+    facet_wrap(vars(!!.by_sym), nrow=1, strip.position='bottom') +
+    scale_fill_phenoptr + scale_x_expand +
+    labs(x='', y='Mean counts of top 20 cells') +
+    theme_phenoptr
+
+  print(p)
+  cat('\n\n')
+}
+
+```
+
+```{r bottom_10,results='asis'}
+
+if ('Bottom 10%ile data' %in% sheet_names) {
+  bottom10 = read_xlsx(data_path, 'Bottom 10%ile data', skip=1)
+  
+  tall = bottom10 %>%
+    gather(Marker, Mean, -!!.by_sym) %>% 
+    clean_slide_id() %>% marker_as_factor()
+  
+  cat('## Mean Counts of Bottom 10% Cells per', .by, '\n\n')
+  
+  p = ggplot(tall, aes(Marker, Mean, fill=Marker)) +
+    base_line +
+    geom_col() +
+    facet_wrap(vars(!!.by_sym), nrow=1, strip.position='bottom') +
+    scale_fill_phenoptr + scale_x_expand +
+    labs(x='', y='Mean counts of bottom 10% cells') +
+    theme_phenoptr
+  
+  print(p)
+  cat('\n\n')
+}
+```
+
+```{r ratio,results='asis'}
+
+if ('Ratio top to bottom' %in% sheet_names) {
+  ratio_min = 30
+  ratio = read_xlsx(data_path, 'Ratio top to bottom', skip=1)  %>% 
+    clean_slide_id()
+  col_780 = stringr::str_subset(names(ratio), '780')
+  if (length(col_780) == 1) {
+    ratio$above_min = ratio[[col_780]]>=ratio_min
+    
+    cat('## Opal 780 Ratio (Top 20 / Bottom 10%) per', .by, '\n\n')
+    
+    # Only showing Opal 780 ratios
+    
+    p = ggplot(ratio, aes(!!.by_sym, !!rlang::sym(col_780))) +
+      geom_col(aes(fill=above_min)) +
+      geom_hline(yintercept=ratio_min, 
+                 color='darkred', linetype=2, size=1) +
+      scale_fill_manual(values=c(`TRUE`=phenoptr_colors[1], `FALSE`=phenoptr_colors[3]),
+                        guide='none') +
+      labs(x='', y='Ratio of top 20 to bottom 10%') +
+      theme_phenoptr +
+      theme(axis.text.x=element_text(face='bold', angle=90))
+   
+    print(p)
+    cat('\n\n')
+  }
+}
+```
+
+```{r ratio2,results='asis'}
+
+if ('Ratio adjacent fluors' %in% sheet_names) {
+  ratio2_min = 3
+  ratio2 = read_xlsx(data_path, 'Ratio adjacent fluors', skip=1) 
+  
+  tall = ratio2 %>% gather(Ratio, Value, -!!.by_sym) %>% 
+    clean_slide_id() %>% 
+    filter(!stringr::str_detect(Ratio, 'DAPI'))
+  
+  # Order ratios by the first wavelength shown
+  ratio_levels = unique(tall$Ratio)
+  wls = ratio_levels %>% 
+    stringr::str_match('\\((\\d+)\\)') %>% `[`(, 2) %>% as.numeric()
+  ratio_levels = ratio_levels[order(wls)]
+
+  tall = tall %>% 
+    mutate(Ratio = factor(Ratio, levels=ratio_levels))
+
+  cat('## Ratio of Top 20 Cells in Adjacent Fluors\n\n')
+  
+  p = ggplot(tall, aes(Ratio, Value, fill=Ratio)) +
+    geom_hline(yintercept=c(ratio2_min, 1/ratio2_min), 
+               color='darkred', linetype=2, size=1) +
+    geom_col() +
+    facet_wrap(vars(!!.by_sym), nrow=1, strip.position='bottom') +
+    scale_fill_phenoptr + scale_x_expand +
+    scale_y_log10() +
+    labs(x='', y='Log ratio of adjacent fluors') +
+    theme_phenoptr
+
+    print(p)
+    cat('\n\n')
+}
+```
