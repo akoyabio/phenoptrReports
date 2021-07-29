@@ -37,6 +37,7 @@ articles:
     - analysis
     - spatial_map_viewer
     - unmixing_quality_report
+    - top_10_bottom_20_report
 
 reference:
   - title: RStudio Addins
@@ -49,6 +50,7 @@ reference:
       - addin_35_spatial_map_viewer
       - addin_40_unmixing_quality
       - addin_50_component_levels
+      - addin_100_mean_of_top_and_bottom_cells
   - title: Merging and Consolidation
     desc: These functions implement the merge and consolidation apps.
     contents:
@@ -69,6 +71,12 @@ reference:
       - count_phenotypes
       - count_within_summary
       - nearest_neighbor_summary
+  - title: Mean of top and bottom cells
+    desc: These functions implement the Mean of top 20 / bottom 10 cells report
+    contents:
+      - mean_of_top_and_bottom_cells_report
+      - mean_of_top_and_bottom_cells
+      - write_mean_of_top_and_bottom_charts
   - title: Data reporting - HTML
     desc: These functions write analysis results to HTML reports.
     contents:
