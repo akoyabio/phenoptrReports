@@ -4,7 +4,7 @@
 #' Generate a "Mean of top and bottom cells" report for a
 #' selected merge data file and configuration file.
 #'
-#' `addin_100_mean_of_top_and_bottom_cells` opens a GUI that allows you to select
+#' `addin_60_mean_of_top_and_bottom_cells` opens a GUI that allows you to select
 #' a merge data file containing results of a manufacturing staining run,
 #' and a configuration file defining the columns of interest.
 #' It then creates an Excel workbook and Word document reporting on the data.

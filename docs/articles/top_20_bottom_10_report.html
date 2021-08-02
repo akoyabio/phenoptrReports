@@ -204,7 +204,7 @@ Guidelines
 Top 20 data
 </td>
 <td>
-Optimal signal intensity for unmixing is between 10-30 for all fluors except Opal 780, which should be at least between 1-10.
+Optimal signal intensity for unmixing is typically between 10-30 for all fluors except Opal 780, which should be at least between 1-10. <br><br> Reliable data can still be obtained when signals are as low as a few counts or as high as 50 or more counts, but risks are higher for crosstalk issues.
 </td>
 </tr>
 <tr>
@@ -212,7 +212,7 @@ Optimal signal intensity for unmixing is between 10-30 for all fluors except Opa
 Bottom 10%ile data
 </td>
 <td>
-Optimal background for unmixing is &lt;10. Values &gt;10 are indicative of background staining. <br><br> Higher DAPI intensities are OK since all cells will be expressing DAPI, meaning this value is a measure of the lowest real signals and not truly background.
+Optimal background for unmixing is less than 10. Values greater than 10 are indicative of background staining. <br><br> Higher DAPI intensities are OK since all cells will be expressing DAPI, meaning this value is a measure of the lowest real signals and not truly background.
 </td>
 </tr>
 <tr>
@@ -220,7 +220,7 @@ Optimal background for unmixing is &lt;10. Values &gt;10 are indicative of backg
 Ratio top to bottom
 </td>
 <td>
-The signal-to-background value helps to assess background levels in relation to real, positive signal. <br><br> Optimal ratios for top to bottom are high values. “#NUM” indicates zero background. <br><br> When higher background is present, resulting in a lower signal-to-background ratio, cell scoring based on thresholding will be less reliable and will likely result in more false positives. <br><br> For the Opal 780 channel, the report will flag signal-to-background values of 30 or less as this fluor tends to have lower intensities with higher background levels. <br><br> For DAPI, low numbers can indicate that bottom expressors are high, which is OK as this is not truly a signal-to-background assessment but is a ratio of high to low expressing cells.
+The signal-to-background value helps to assess background levels in relation to real, positive signal. <br><br> Optimal ratios for top to bottom are values greater than 20. Values much greater than 20 are common. “#NUM” indicates zero background. <br><br> When higher background is present, resulting in a lower signal-to-background ratio, cell scoring based on thresholding will be less reliable and will likely result in more false positives. <br><br> For the Opal 780 channel, the report will flag signal-to-background values of 30 or less as this fluor tends to have lower intensities with higher background levels. <br><br> For DAPI, low numbers can indicate that bottom expressors are high, which is OK as this is not truly a signal-to-background assessment but is a ratio of high to low expressing cells.
 </td>
 </tr>
 <tr>

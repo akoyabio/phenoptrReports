@@ -38,5 +38,5 @@ Interactive: true
 Name: Mean of top 20 / bottom 10 cells
 Description: Create a report showing mean expression of top 20 cells and
     bottom 10% of cells.
-Binding: addin_100_mean_of_top_and_bottom_cells
+Binding: addin_60_mean_of_top_and_bottom_cells
 Interactive: true
