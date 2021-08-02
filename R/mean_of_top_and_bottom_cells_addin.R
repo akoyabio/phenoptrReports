@@ -9,7 +9,7 @@
 #' and a configuration file defining the columns of interest.
 #' It then creates an Excel workbook and Word document reporting on the data.
 #' @export
-addin_100_mean_of_top_and_bottom_cells = function() {
+addin_60_mean_of_top_and_bottom_cells = function() {
   intro <- shiny::tagList(shiny::p(
     'This app reads a merge data file containing results',
     'of a QC staining run',

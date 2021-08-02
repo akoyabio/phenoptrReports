@@ -1,0 +1,154 @@
+---
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    df_print: kable
+params:
+  csd_path:
+    label: "Input dataset:"
+    value: "C:/Research/phenoptrTestData/staining_consistency_report_test/Merge_cell_seg_data.txt"
+    input: text  
+  marker:
+    label: "Marker:"
+    value: "CD20"
+    input: text
+  compartment:
+    label: "Compartment"
+    value: "Membrane"
+    input: text
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r title, echo=FALSE}
+title = stringr::str_replace_all(params$csd_path, "\\\\", "/")
+```
+
+---
+title: "Staining consistency report for `` `r title` `` "
+---
+
+
+<style type="text/css">
+img {
+  border: none;
+}
+hr {
+  border-top-color: #eee;
+}
+table {
+  width: auto !important;
+}
+</style>
+
+```{r setup, echo=FALSE,include=FALSE,message=FALSE}
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(ggplot2))
+library(phenoptr)
+library(stringr)
+
+knitr::opts_chunk$set(echo=FALSE,fig.width=10, fig.height=7, 
+                      comment=NA, warning=FALSE, message=FALSE)
+# The default plot hook for vignettes creates a markdown image 'tag'
+# which breaks in pandoc if there are any spaces in the image path.
+# The standard HTML plot hook inserts an <img> tag which renders correctly.
+knitr::knit_hooks$set(plot = knitr:::hook_plot_html)
+
+theme_set(theme_minimal())
+```
+
+```{r data}
+csd_path = params$csd_path
+marker = params$marker
+compartment = params$compartment
+
+csd = read_cell_seg_data(csd_path)
+
+# Figure out the column names for marker and entire cell mean expression
+marker_col = str_subset(names(csd), 
+                      regex(unclass(str_glue('{compartment} \\Q{marker}\\E.*Mean')), 
+                            ignore_case=TRUE))
+if (length(marker_col) != 1) 
+  stop('Did not find ', compartment, ' expression column for "', marker, '".')
+
+entire_col = str_subset(names(csd), 
+                        regex(unclass(str_glue('Entire Cell \\Q{marker}\\E.*Mean')), 
+                              ignore_case=TRUE))
+if (length(entire_col) != 1) 
+  stop('Did not find "Entire Cell" expression column for "', marker, '".')
+
+marker_sym= rlang::sym(marker_col)
+entire_sym = rlang::sym(entire_col)
+
+means = csd %>% 
+  group_by(`Slide ID`) %>% 
+  summarize(marker_mean= mean(!!marker_sym, na.rm=TRUE),
+            entire_mean= mean(!!entire_sym, na.rm=TRUE),
+            count=n(),
+            na_count = sum(is.na(!!marker_sym)),
+            marker_median= median(!!marker_sym, na.rm=TRUE))
+
+mean_of_means = mean(means$marker_mean)
+sd_of_means = sd(means$marker_mean)
+```
+
+### Summary
+
+This report summarizes __mean `r stringr::str_to_lower(compartment)`
+`r marker` expression__ for 
+`r length(unique(csd[['Slide ID']]))` slides.  
+For each slide, it computes the mean of `` `r marker_col` ``.
+
+- __Mean of means: `r round(mean_of_means, 1)`__
+- __Standard deviation of means: `r round(sd_of_means, 2)`__
+- __CV of means: `r scales::percent(sd_of_means/mean_of_means)`__
+
+### Mean expression plots
+
+
+```{r plots}
+ggplot(means, aes(`Slide ID`, marker_mean)) + 
+  geom_ribbon(aes(ymin=mean_of_means-sd_of_means, ymax=mean_of_means+sd_of_means), 
+              group=1, fill='gray90') +
+  geom_line(group=1, size=1) +
+  theme(axis.text.x = element_text(angle = 90, vjust=0.5)) +
+  ylim(0, NA) +
+  labs(x='Slide ID', 
+       y="Mean expression",
+       title=str_glue('Mean per slide of "{marker_col}"'),
+       subtitle='Gray bar shows mean ± 1 SD',
+       caption=str_glue('Source: {csd_path}'))
+```
+
+---
+
+```{r}
+csd %>% 
+  dplyr::filter(!is.na(!!marker_sym)) %>% 
+ggplot(aes(`Slide ID`, !!marker_sym)) + 
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 90, vjust=0.5)) +
+  labs(x='Slide ID', 
+       y="Per cell expression",
+       title=str_glue('Per cell expression of "{marker_col}"'),
+       caption=str_glue('Source: {csd_path}'))
+
+```
+
+### Per-slide summary data
+
+```{r table}
+means %>% 
+  dplyr::select(`Slide ID`, 
+                `Marker mean`=marker_mean, `Marker median`=marker_median,
+                `Entire cell mean`=entire_mean,
+                `Cell count`=count, `N/A count`=na_count) %>% 
+  knitr::kable(digits=1)
+```
+
+<br><br><br>
+<p align='center'>![](Akoya.png){height=50px style='border:none;'}</p>

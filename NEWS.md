@@ -1,5 +1,9 @@
 # phenoptrReports 0.2.13.9000
 
+Staining consistency report:
+- New addin creates a report showing mean expression of a selected marker
+  across multiple samples.
+
 Mean of top 20 / bottom 10 addin:
 - New addin helps to evaluate whether the staining quality is
   likely to produce good unmixing. See 
