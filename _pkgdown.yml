@@ -37,7 +37,7 @@ articles:
     - analysis
     - spatial_map_viewer
     - unmixing_quality_report
-    - top_10_bottom_20_report
+    - top_20_bottom_10_report
 
 reference:
   - title: RStudio Addins
