@@ -21,6 +21,7 @@ Imports:
     forcats,
     fs,
     ggplot2 (>= 3.3.2),
+    glue,
     jpeg,
     knitr,
     magrittr,
