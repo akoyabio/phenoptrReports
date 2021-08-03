@@ -38,6 +38,7 @@ articles:
     - spatial_map_viewer
     - unmixing_quality_report
     - top_20_bottom_10_report
+    - staining_consistency_report
 
 reference:
   - title: RStudio Addins
@@ -51,6 +52,7 @@ reference:
       - addin_40_unmixing_quality
       - addin_50_component_levels
       - addin_60_mean_of_top_and_bottom_cells
+      - addin_70_staining_consistency_report
   - title: Merging and Consolidation
     desc: These functions implement the merge and consolidation apps.
     contents:

@@ -134,6 +134,15 @@ The **Mean of Top 20/ bottom 10** analysis helps to evaluate whether the stainin
 For detailed instructions and requirements, see the
 [Mean of top 20 / bottom 10 cells tutorial](https://akoyabio.github.io/phenoptrReports/articles/top_20_bottom_10_report.html).
 
+### Staining consistency report
+
+The **Staining consistency report** measures variation in the mean expression
+of a single marker across multiple images. It is used to assess consistency
+of staining across multiple staining runs.
+
+For detailed instructions and requirements, see the
+[Staining consistency report tutorial](https://akoyabio.github.io/phenoptrReports/articles/staining_consistency_report.html).
+
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/akoyabio/phenoptrReports/workflows/R-CMD-check/badge.svg)](https://github.com/akoyabio/phenoptrReports/actions)
 <!-- badges: end -->
