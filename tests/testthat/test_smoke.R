@@ -128,6 +128,7 @@ normalize_dir = function(rel_path) {
   normalizePath(rel_path, winslash='/', mustWork=FALSE)
 }
 
+#### test that file generation works ####
 test_that("file generation works", {
   output_dir = normalize_dir(test_path('results'))
 
@@ -143,7 +144,7 @@ test_that("file generation works", {
   test_file_generation(data_dir, output_dir, expected_path, .by='Sample Name')
 })
 
-# Test writing charts with multiple pages per chart
+#### Test writing charts with multiple pages per chart ####
 test_that("Chart segmentation works", {
   workbook_path = normalizePath(test_path('test_data/Results_by_sample.xlsx'),
                                 winslash='/', mustWork=FALSE)
@@ -160,8 +161,9 @@ test_that("Chart segmentation works", {
 # Some really basic smoke tests - just make sure the reports run
 # These work on dev machine only for now :-/
 
+#### test that Consolidation works with multiple merge files ####
 test_that("Consolidation works with multiple merge files", {
-  base_path = "C:/Research/phenoptrTestData/210610_merge cell seg data"
+    base_path = "C:/Research/phenoptrTestData/210610_merge cell seg data"
   csd_files=c(
     file.path(base_path, "CD3/Merge_cell_seg_data.txt"),
     file.path(base_path, "FoxP3/Merge_cell_seg_data.txt"),
@@ -189,6 +191,7 @@ test_that("Consolidation works with multiple merge files", {
   expect_equal(actual, expected, ignore_attr=TRUE)
 })
 
+#### test that Unmixing quality report runs ####
 test_that("Unmixing quality report runs", {
   export_path = 'C:/Research/phenoptrTestData/unmixing_quality_report_test'
   skip_if_not(dir.exists(export_path))
@@ -200,13 +203,29 @@ test_that("Unmixing quality report runs", {
   expect(file.exists(report_path), 'Failed to create unmixing quality report')
 })
 
+#### test that Component levels report runs ####
 test_that("Component levels report runs", {
   export_path = 'C:/Research/phenoptrTestData/component_levels_report_test'
   skip_if_not(dir.exists(export_path))
 
-  report_path = file.path(export_path, 'Component_levels_report.html')
-  if (file.exists(report_path)) file.remove(report_path)
+  expected_files = c("20180830 6-plex-1_Scan1_[13638,38258]_pairs_data.txt",
+                     "20180830 6-plex-1_Scan1_[16369,39468]_pairs_data.txt",
+                     "20181009-M T68148 6-plex-1_Scan1_[12170,37340]_pairs_data.txt",
+                     "20181009-M T68148 6-plex-1_Scan1_[13165,38606]_pairs_data.txt",
+                     "all_clipping.csv",
+                     "all_quants.csv",
+                     'Component_levels_report.html')
+  expected_files = file.path(export_path, expected_files)
 
-  component_levels_report(export_path)
-  expect(file.exists(report_path), 'Failed to create component levels report')
+  for (expected_file in expected_files) {
+    if (file.exists(expected_file)) file.remove(expected_file)
+  }
+
+  report_path = file.path(export_path, 'Component_levels_report.html')
+
+  component_levels_report(export_path, export_data=TRUE)
+  for (expected_file in expected_files) {
+    expect(file.exists(expected_file),
+           paste0('Missing file in component levels report: ', basename(expected_file)))
+  }
 })

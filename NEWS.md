@@ -12,6 +12,9 @@ Consolidate and summarize addin:
 
 Merge addin:
 - Read files to merge into memory and write once, instead of appending
+
+Component levels report:
+- Works correctly when "Export data from pairs plots" is checked #50
   
 # phenoptrReports 0.2.13
 **2021-06-14**

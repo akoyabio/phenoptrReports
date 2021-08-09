@@ -217,7 +217,7 @@ purrr::iwalk(all_data, function(d, name) {
   
   if (export_data) {
     # Write pairs plot data to a file
-    pairs_name = stringr::str_replace(n, 'component_data.tif', 'pairs_data.txt')
+    pairs_name = paste0(name, '_pairs_data.txt')
     pairs_path = file.path(export_path, pairs_name)
     readr::write_tsv(d, pairs_path)
   }
