@@ -18,6 +18,20 @@ available_phenotypes = phenoptr::unique_phenotypes(csd) %>%
 
 available_fields = sort(unique(csd[[phenoptr::field_column(csd)]]))
 
+# Open one composite to figure out the available views
+composite_path = list.files(.export_path, pattern='composite_image\\.',
+                            full.names=TRUE, recursive=TRUE)[1]
+if (is.na(composite_path))
+  stop('No composite images found in ', .export_path)
+
+if (endsWith(composite_path, 'jpg')) {
+  available_views=c(Standard=1)
+} else {
+  info = phenoptr::read_composite_info(composite_path)
+  available_views = seq_along(info) %>%
+    setNames(purrr::map_chr(info, 'composite_name'))
+}
+
 # Create a temp dir to save image files in
 temp_dir = file.path(tempdir(), 'image')
 dir.create(temp_dir, showWarnings=FALSE)

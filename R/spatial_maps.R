@@ -11,6 +11,7 @@ utils::globalVariables(
 #'
 #' @param csd Cell seg data with distance columns
 #' @param field_name Sample Name or Annotation ID to map
+#' @param view_number Image index within the composite data
 #' @param export_path Path to a directory containing composite and component
 #'   image files from inForm
 #' @param phenos Named list of phenotype definitions. Must have length 2.
@@ -27,7 +28,7 @@ utils::globalVariables(
 #' }
 #' @export
 nearest_neighbor_map =
-  function(csd, field_name, export_path,
+  function(csd, field_name, view_number, export_path,
            phenos, color1, color2,
            show_as=c('from_to', 'to_from', 'mutual', 'none'),
            dot_size=3, add_logo=TRUE) {
@@ -70,7 +71,7 @@ nearest_neighbor_map =
     dplyr::filter(phenoptr::select_rows(field_data, pheno2))
 
   # Start making the plot
-  background = read_background(field_name, export_path)
+  background = read_background(field_name, view_number, export_path)
 
   # Make a base plot
   xlim=c(field_info$location[1],
@@ -305,7 +306,7 @@ id_column_name = function(pheno_names) {
 }
 
 # Try to read a composite image for a field as a nativeRaster
-read_background = function(field, export_path) {
+read_background = function(field, view_number, export_path) {
   # Field can be an Annotation ID or Sample Name
   # If it is a sample name, remove the .im3 suffix
   field_base = stringr::str_remove(field, '\\.im3')
@@ -315,16 +316,24 @@ read_background = function(field, export_path) {
     '_composite_image.tif',
     '_composite_image.jpg'
   )
+  browser()
   for (ending in image_endings) {
-    background_path = file.path(export_path, paste0(field_base, ending))
-    if (file.exists(background_path)) break
+    background_path =
+      list.files(export_path, full.names=TRUE, recursive=TRUE,
+                 pattern=paste0('\\Q', field_base, ending, '\\E'))[1]
+    if (!is.na(background_path) && file.exists(background_path)) break
   }
 
   # Read the image as a nativeRaster
   if (file.exists(background_path)) {
     if (grepl('jpg$', background_path))
       background = jpeg::readJPEG(background_path, native=TRUE)
-    else background = tiff::readTIFF(background_path, native=TRUE)
+    else {
+      # Read all and subset to avoid "Warning: stack imbalance"
+      # https://github.com/s-u/tiff/issues/10
+      background =
+        tiff::readTIFF(background_path, native=TRUE, all=TRUE)[[view_number]]
+    }
   } else {
     background = NULL
   }

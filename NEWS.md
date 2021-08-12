@@ -6,6 +6,10 @@ Analysis addin:
 - Allow selecting (and reporting on) multiple score summary files #49
 - Tabs with H-Score results include the scored marker name 
   (in support of #49)
+
+Spatial map viewer:
+- Add support for selecting the desired view when the exported
+  composite files contain multiple views.
   
 Consolidate and summarize addin:
 - Add a dummy `Phenotype` column if none is present #48

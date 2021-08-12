@@ -84,9 +84,12 @@ ui <- shinydashboard::dashboardPage(
       shiny::column(2, shiny::actionButton('previous', 'Previous',
                                            class='prev-next')),
       shiny::column(5, shiny::selectInput('field', 'Field:',
+                                          width='400px',
                                            choices=available_fields)),
       shiny::column(2, shiny::actionButton('nxt', 'Next',
-                                           class='prev-next'))
+                                           class='prev-next')),
+      shiny::column(3, shiny::selectInput('view', 'View',
+                                          choices=available_views))
     ),
     shiny::conditionalPanel(condition='input.show_as !="touching"',
       shiny::plotOutput('plot', height='800px')
