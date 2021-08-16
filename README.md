@@ -127,6 +127,9 @@ The **Component levels report** addin analyzes unmixed, multiplex images to help
 evaluate staining levels for an entire experiment. This report shows
 the distribution of signal and dark pixels for all components.
 
+For more information about the component levels report, see the 
+[Component levels report tutorial](https://akoyabio.github.io/phenoptrReports/articles/component_levels_report.html).
+
 ### Mean of Top 20/ bottom 10 report
 
 The **Mean of Top 20/ bottom 10** analysis helps to evaluate whether the staining quality is likely to produce good unmixing of the markers in the image. The analysis computes the mean expression of selected markers in the 20 highest-expressing cells and the 10% lowest-expressing cells.
