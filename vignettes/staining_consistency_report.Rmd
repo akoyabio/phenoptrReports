@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 
 The staining consistency report measures variation in the mean expression
 of a single marker across multiple images. It is used to assess consistency
-of staining across multiple staining runs.
+of staining across staining runs.
 
 ## Data requirements
 
@@ -64,5 +64,21 @@ an HTML document with the results.
 
 ```{r, fig.alt = "Image showing Create Report button", out.width="50%"}
 knitr::include_graphics("figures/Staining_consistency_create_report.png")
+```
+
+## Guidance
+
+In general, a good result will have a relatively narrow range of mean values 
+and limited outliers beyond the &plusmn;1 SD range. 
+
+```{r, fig.alt = "Image showing good results", out.width="75%"}
+knitr::include_graphics("figures/Staining_consistency_good.png")
+```
+
+A wide range of mean values and outliers far outside the &plusmn;1 SD range
+indicate that the auto-stainer may need maintenance.
+
+```{r, fig.alt = "Image showing bad results", out.width="75%"}
+knitr::include_graphics("figures/Staining_consistency_bad.png")
 ```
 
