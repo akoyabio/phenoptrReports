@@ -68,18 +68,32 @@ knitr::include_graphics("figures/Staining_consistency_create_report.png")
 
 ## Guidance
 
+#### Good result
+
 In general, a good result will have a relatively narrow range of mean values, 
 limited outliers beyond the &plusmn;1 SD range, and a CV less than 15%.
+<br><br>
 
 ```{r, fig.alt = "Image showing good results", out.width="75%"}
 knitr::include_graphics("figures/Staining_consistency_good.png")
 ```
 
+#### Problem indications
+
 A wide range of mean values, outliers far outside the &plusmn;1 SD range,
 or CV greater than 15%
-indicate that the auto-stainer may need maintenance.
+may indicate one of several things:
+
+* assay performance (if previously established) is drifting or has drifted
+* a new reagent or lot # of reagent placed into service is not performing
+* the autostainer needs maintenance
+* a run or slide failure has occurred through operator error
+<br><br>
 
 ```{r, fig.alt = "Image showing bad results", out.width="75%"}
 knitr::include_graphics("figures/Staining_consistency_bad.png")
 ```
 
+
+This analysis assumes that assay performance has been monitored over 
+time under the same operating conditions, as much as is practicable.
