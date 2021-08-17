@@ -94,6 +94,8 @@ means = csd %>%
 
 mean_of_means = mean(means$marker_mean)
 sd_of_means = sd(means$marker_mean)
+cv_of_means = sd_of_means/mean_of_means
+cv_color = if_else(cv_of_means > 0.15, 'red', 'black')
 ```
 
 ### Summary
@@ -105,7 +107,7 @@ For each slide, it computes the mean of `` `r marker_col` ``.
 
 - __Mean of means: `r round(mean_of_means, 1)`__
 - __Standard deviation of means: `r round(sd_of_means, 2)`__
-- __CV of means: `r scales::percent(sd_of_means/mean_of_means)`__
+- __<span style='color:`r cv_color`'>CV of means: `r scales::percent(cv_of_means)`</span>__
 
 ### Mean expression plots
 
@@ -114,13 +116,19 @@ For each slide, it computes the mean of `` `r marker_col` ``.
 ggplot(means, aes(`Slide ID`, marker_mean)) + 
   geom_ribbon(aes(ymin=mean_of_means-sd_of_means, ymax=mean_of_means+sd_of_means), 
               group=1, fill='gray90') +
+  geom_hline(yintercept=mean_of_means, color='gray80') +
+  geom_hline(yintercept=mean_of_means+c(-2, 2)*sd_of_means, 
+             color='red', linetype=2, size=0.3) +
   geom_line(group=1, size=1) +
   theme(axis.text.x = element_text(angle = 90, vjust=0.5)) +
   ylim(0, NA) +
   labs(x='Slide ID', 
        y="Mean expression",
        title=str_glue('Mean per slide of "{marker_col}"'),
-       subtitle='Gray bar shows mean ± 1 SD',
+       subtitle=str_glue('Mean = {round(mean_of_means, 1)}; ',
+                         'SD = {round(sd_of_means, 2)}; ',
+                         'CV = {scales::percent(cv_of_means)}\n',
+                         'Gray bar shows mean ± 1 SD, dashed line is ± 2 SD'),
        caption=str_glue('Source: {csd_path}'))
 ```
 

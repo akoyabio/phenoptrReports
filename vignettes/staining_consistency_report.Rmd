@@ -68,14 +68,15 @@ knitr::include_graphics("figures/Staining_consistency_create_report.png")
 
 ## Guidance
 
-In general, a good result will have a relatively narrow range of mean values 
-and limited outliers beyond the &plusmn;1 SD range. 
+In general, a good result will have a relatively narrow range of mean values, 
+limited outliers beyond the &plusmn;1 SD range, and a CV less than 15%.
 
 ```{r, fig.alt = "Image showing good results", out.width="75%"}
 knitr::include_graphics("figures/Staining_consistency_good.png")
 ```
 
-A wide range of mean values and outliers far outside the &plusmn;1 SD range
+A wide range of mean values, outliers far outside the &plusmn;1 SD range,
+or CV greater than 15%
 indicate that the auto-stainer may need maintenance.
 
 ```{r, fig.alt = "Image showing bad results", out.width="75%"}
