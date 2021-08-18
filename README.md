@@ -25,7 +25,7 @@ including the optional installations, before installing `phenoptrReports`.
 Next, install `phenoptrReports` from GitHub. In the RStudio console, 
 copy and paste or type this command:
 ```
-devtools::install_github("akoyabio/phenoptrReports")
+remotes::install_github("akoyabio/phenoptrReports")
 ```
 
 ----
@@ -126,6 +126,25 @@ For more information about the unmixing quality report, see the
 The **Component levels report** addin analyzes unmixed, multiplex images to help
 evaluate staining levels for an entire experiment. This report shows
 the distribution of signal and dark pixels for all components.
+
+For more information about the component levels report, see the 
+[Component levels report tutorial](https://akoyabio.github.io/phenoptrReports/articles/component_levels_report.html).
+
+### Mean of Top 20/ bottom 10 report
+
+The **Mean of Top 20/ bottom 10** analysis helps to evaluate whether the staining quality is likely to produce good unmixing of the markers in the image. The analysis computes the mean expression of selected markers in the 20 highest-expressing cells and the 10% lowest-expressing cells.
+
+For detailed instructions and requirements, see the
+[Mean of top 20 / bottom 10 cells tutorial](https://akoyabio.github.io/phenoptrReports/articles/top_20_bottom_10_report.html).
+
+### Staining consistency report
+
+The **Staining consistency report** measures variation in the mean expression
+of a single marker across multiple images. It is used to assess consistency
+of staining across multiple staining runs.
+
+For detailed instructions and requirements, see the
+[Staining consistency report tutorial](https://akoyabio.github.io/phenoptrReports/articles/staining_consistency_report.html).
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/akoyabio/phenoptrReports/workflows/R-CMD-check/badge.svg)](https://github.com/akoyabio/phenoptrReports/actions)

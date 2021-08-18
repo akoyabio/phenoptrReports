@@ -44,7 +44,7 @@ It also recognizes three leading digits as the number of an Opal fluor.
 
 #### Choose "Unmixing quality report" from the RStudio Addins menu
 
-Thus will open the quality reporting app.
+This will open the quality reporting app.
 
 ![](figures/Unmixing_quality_addin.png)
 

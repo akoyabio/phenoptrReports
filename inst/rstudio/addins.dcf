@@ -34,3 +34,14 @@ Name: Component levels report
 Description: Generate a component levels report for multiplex samples.
 Binding: addin_50_component_levels
 Interactive: true
+
+Name: Mean of top 20 / bottom 10 cells
+Description: Create a report showing mean expression of top 20 cells and
+    bottom 10% of cells.
+Binding: addin_60_mean_of_top_and_bottom_cells
+Interactive: true
+
+Name: Staining consistency report
+Description: Create a report showing mean expression of a selected marker across multiple samples.
+Binding: addin_70_staining_consistency_report
+Interactive: true

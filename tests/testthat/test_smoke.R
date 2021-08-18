@@ -171,7 +171,7 @@ test_that("Consolidation works with multiple merge files", {
   )
   skip_if_not(all(file.exists(csd_files)))
 
-  temp_dir = file.path(base_path, "temp")
+  temp_dir = tempfile("temp")
   create_empty_dir(temp_dir)
 
   consolidate_and_summarize_cell_seg_data(csd_files, temp_dir)
