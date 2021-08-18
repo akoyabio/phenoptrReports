@@ -99,7 +99,7 @@
       <h1 data-toc-skip>Staining Consistency Report</h1>
                         <h4 class="author">Kent Johnson</h4>
             
-            <h4 class="date">2021-08-17</h4>
+            <h4 class="date">2021-08-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/akoyabio/phenoptrReports/blob/master/vignettes/staining_consistency_report.Rmd"><code>vignettes/staining_consistency_report.Rmd</code></a></small>
       <div class="hidden name"><code>staining_consistency_report.Rmd</code></div>
@@ -108,7 +108,9 @@
 
     
     
-<p>The staining consistency report measures variation in the mean expression of a single marker across multiple images. It is used to assess consistency of staining across staining runs.</p>
+<p>The staining consistency report measures variation in the mean expression of a single marker across multiple images. It is used to assess consistency of staining within or across staining runs.</p>
+<p>When analyzing slides from a single staining run, this report can highlight inconsistent staining and suggest that autostainer maintenance is needed.</p>
+<p>When analyzing slides from multiple runs of an assay, the report can indicate changes in assay performance over time.</p>
 <div id="data-requirements" class="section level2">
 <h2 class="hasAnchor">
 <a href="#data-requirements" class="anchor"></a>Data requirements</h2>
@@ -154,11 +156,12 @@
 <div id="problem-indications" class="section level4">
 <h4 class="hasAnchor">
 <a href="#problem-indications" class="anchor"></a>Problem indications</h4>
-<p>A wide range of mean values, outliers far outside the ±1 SD range, or CV greater than 15% may indicate one of several things:</p>
+<p>A wide range of mean values, outliers far outside the ±1 SD range, or CV greater than 15% indicates a possible problem.</p>
+<p>If the slides are from a single staining run, the autostainer may need maintenance.</p>
+<p>If the slides are from multiple runs, the variation may be due to one of these causes:</p>
 <ul>
-<li>assay performance (if previously established) is drifting or has drifted</li>
+<li>assay performance is drifting or has drifted</li>
 <li>a new reagent or lot # of reagent placed into service is not performing</li>
-<li>the autostainer needs maintenance</li>
 <li>a run or slide failure has occurred through operator error <br><br>
 </li>
 </ul>
@@ -179,7 +182,7 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Kent S Johnson.</p>
+  <p>Developed by Kent S Johnson, Akoya Biosciences.</p>
 </div>
 
 <div class="pkgdown">

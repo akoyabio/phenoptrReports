@@ -6,7 +6,7 @@ Authors@R: c(
     person("Kent S", "Johnson", role = c("aut", "cre"),
            email = "kjohnson@akoyabio.com"),
     person("Carla", "Coltharp", role="ctb"),
-    person("Akoya Biosciences", role="cph"))
+    person("Akoya Biosciences", role=c("cph", "fnd")))
 Copyright: Akoya Biosciences
 Description: Creates diagnostic and summary reports from inForm data.
 Language: en-US
