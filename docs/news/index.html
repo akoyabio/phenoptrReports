@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.13</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -79,7 +79,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <span class="fa fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -102,6 +102,12 @@
     <li>
       <a href="../articles/unmixing_quality_report.html">Unmixing quality report</a>
     </li>
+    <li>
+      <a href="../articles/top_20_bottom_10_report.html">Mean of top 20 / bottom 10 cells report</a>
+    </li>
+    <li>
+      <a href="../articles/staining_consistency_report.html">Staining consistency report</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -111,14 +117,14 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="../news/index.html">
-    <span class="fas fa-newspaper-o"></span>
+    <span class="fa fa-newspaper-o"></span>
      
     news
   </a>
 </li>
 <li>
   <a href="https://github.com/akoyabio/phenoptrReports">
-    <span class="fas fa-github fa-lg"></span>
+    <span class="fa fa-github fa-lg"></span>
      
     github
   </a>
@@ -140,6 +146,41 @@
       <small>Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="phenoptrreports-030" class="section level1">
+<h1 class="page-header" data-toc-text="0.3.0">
+<a href="#phenoptrreports-030" class="anchor"></a>phenoptrReports 0.3.0</h1>
+<p><strong>2021-08-18</strong></p>
+<p>Mean of top 20 / bottom 10 addin:</p>
+<ul>
+<li>New addin helps to evaluate whether the staining quality is likely to produce good unmixing. See <a href="https://akoyabio.github.io/phenoptrReports/articles/top_20_bottom_10_report.html" class="uri">https://akoyabio.github.io/phenoptrReports/articles/top_20_bottom_10_report.html</a> for details.</li>
+</ul>
+<p>Staining consistency report:</p>
+<ul>
+<li>New addin creates a report showing mean expression of a selected marker across multiple samples.</li>
+</ul>
+<p>Analysis addin:</p>
+<ul>
+<li>Fix problem computing mean expression for phenotypes with formulas in their definition <a href='https://github.com/akoyabio/phenoptrReports/issues/47'>#47</a></li>
+<li>Allow selecting (and reporting on) multiple score summary files <a href='https://github.com/akoyabio/phenoptrReports/issues/49'>#49</a></li>
+<li>Tabs with H-Score results include the scored marker name (in support of <a href='https://github.com/akoyabio/phenoptrReports/issues/49'>#49</a>)</li>
+</ul>
+<p>Spatial map viewer:</p>
+<ul>
+<li>Add support for selecting the desired view when the exported composite files contain multiple views.</li>
+</ul>
+<p>Consolidate and summarize addin:</p>
+<ul>
+<li>Add a dummy <code>Phenotype</code> column if none is present <a href='https://github.com/akoyabio/phenoptrReports/issues/48'>#48</a></li>
+</ul>
+<p>Merge addin:</p>
+<ul>
+<li>Read files to merge into memory and write once, instead of appending</li>
+</ul>
+<p>Component levels report:</p>
+<ul>
+<li>Works correctly when “Export data from pairs plots” is checked <a href='https://github.com/akoyabio/phenoptrReports/issues/50'>#50</a></li>
+</ul>
+</div>
     <div id="phenoptrreports-0213" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.13">
 <a href="#phenoptrreports-0213" class="anchor"></a>phenoptrReports 0.2.13</h1>
@@ -566,7 +607,7 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Kent S Johnson.</p>
+  <p>Developed by Kent S Johnson, Akoya Biosciences.</p>
 </div>
 
 <div class="pkgdown">

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Split a single phenotype column — split_phenotype_column • phenoptrReports</title>
+<title>Actually generate the staining consistency report — staining_consistency_report • phenoptrReports</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,8 @@
 
 
 
-<meta property="og:title" content="Split a single phenotype column — split_phenotype_column" />
-<meta property="og:description" content="A column containing multiple phenotypes is split
-into multiple columns, one for each single phenotype." />
+<meta property="og:title" content="Actually generate the staining consistency report — staining_consistency_report" />
+<meta property="og:description" content="Actually generate the staining consistency report" />
 
 
 
@@ -144,39 +143,42 @@ into multiple columns, one for each single phenotype." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Split a single phenotype column</h1>
-    <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/split_phenotypes.R'><code>R/split_phenotypes.R</code></a></small>
-    <div class="hidden name"><code>split_phenotype_column.Rd</code></div>
+    <h1>Actually generate the staining consistency report</h1>
+    <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/staining_consistency_report_addin.R'><code>R/staining_consistency_report_addin.R</code></a></small>
+    <div class="hidden name"><code>staining_consistency_report.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>A column containing multiple phenotypes is split
-into multiple columns, one for each single phenotype.</p>
+    <p>Actually generate the staining consistency report</p>
     </div>
 
-    <pre class="usage"><span class='fu'>split_phenotype_column</span><span class='op'>(</span><span class='va'>csd</span>, <span class='va'>column</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>staining_consistency_report</span><span class='op'>(</span><span class='va'>csd_path</span>, <span class='va'>marker</span>, <span class='va'>compartment</span>, output_dir <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>csd</th>
-      <td><p>Cell seg data to use.</p></td>
+      <th>csd_path</th>
+      <td><p>Path to a merge cell seg data file</p></td>
     </tr>
     <tr>
-      <th>column</th>
-      <td><p>The name of the column to split</p></td>
+      <th>marker</th>
+      <td><p>Name of the marker to report</p></td>
+    </tr>
+    <tr>
+      <th>compartment</th>
+      <td><p>Name of the compartment to report</p></td>
+    </tr>
+    <tr>
+      <th>output_dir</th>
+      <td><p>(Optional) Directory for the result, default
+is the directory containing <code>csd_path</code>.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A new data frame with the <code>column</code> column replaced with
-individual columns per phenotype and the <code>Confidence</code> column(s) removed.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>Multiple phenotypes in the original column must be separated with "/".
-The names of positive phenotypes must end in "+".</p>
+    <p>The path to the created file.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

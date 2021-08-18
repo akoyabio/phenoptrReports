@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Split a single phenotype column — split_phenotype_column • phenoptrReports</title>
+<title>Create reports showing mean expression of top and bottom cells — mean_of_top_and_bottom_cells_report • phenoptrReports</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,8 @@
 
 
 
-<meta property="og:title" content="Split a single phenotype column — split_phenotype_column" />
-<meta property="og:description" content="A column containing multiple phenotypes is split
-into multiple columns, one for each single phenotype." />
+<meta property="og:title" content="Create reports showing mean expression of top and bottom cells — mean_of_top_and_bottom_cells_report" />
+<meta property="og:description" content="Create reports showing mean expression of top and bottom cells" />
 
 
 
@@ -144,39 +143,52 @@ into multiple columns, one for each single phenotype." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Split a single phenotype column</h1>
-    <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/split_phenotypes.R'><code>R/split_phenotypes.R</code></a></small>
-    <div class="hidden name"><code>split_phenotype_column.Rd</code></div>
+    <h1>Create reports showing mean expression of top and bottom cells</h1>
+    <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/mean_of_top_and_bottom_cells.R'><code>R/mean_of_top_and_bottom_cells.R</code></a></small>
+    <div class="hidden name"><code>mean_of_top_and_bottom_cells_report.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>A column containing multiple phenotypes is split
-into multiple columns, one for each single phenotype.</p>
+    <p>Create reports showing mean expression of top and bottom cells</p>
     </div>
 
-    <pre class="usage"><span class='fu'>split_phenotype_column</span><span class='op'>(</span><span class='va'>csd</span>, <span class='va'>column</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>mean_of_top_and_bottom_cells_report</span><span class='op'>(</span>
+  <span class='va'>merge_file</span>,
+  <span class='va'>config_file</span>,
+  <span class='va'>by</span>,
+  <span class='va'>tissue_categories</span>,
+  <span class='va'>adjacent_max</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>csd</th>
-      <td><p>Cell seg data to use.</p></td>
+      <th>merge_file</th>
+      <td><p>Path to a merged or consolidated cell seg data file</p></td>
     </tr>
     <tr>
-      <th>column</th>
-      <td><p>The name of the column to split</p></td>
+      <th>config_file</th>
+      <td><p>Path to a configuration file containing
+column names in the merge file, one name per line.</p></td>
+    </tr>
+    <tr>
+      <th>by</th>
+      <td><p>Column to aggregate by, e.g. "Slide ID" or "Annotation ID".</p></td>
+    </tr>
+    <tr>
+      <th>tissue_categories</th>
+      <td><p>Tissue categories to report, or NULL to use all.</p></td>
+    </tr>
+    <tr>
+      <th>adjacent_max</th>
+      <td><p>The maximum ratio between expression of adjacent fluors.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A new data frame with the <code>column</code> column replaced with
-individual columns per phenotype and the <code>Confidence</code> column(s) removed.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>Multiple phenotypes in the original column must be separated with "/".
-The names of positive phenotypes must end in "+".</p>
+    <p>None</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

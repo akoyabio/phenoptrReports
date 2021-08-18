@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Split a single phenotype column — split_phenotype_column • phenoptrReports</title>
+<title>Compute mean expression levels of the top and bottom expressing cells,
+per Slide ID or field. This creates a quality report. — mean_of_top_and_bottom_cells • phenoptrReports</title>
 
 
 <!-- jquery -->
@@ -39,9 +40,10 @@
 
 
 
-<meta property="og:title" content="Split a single phenotype column — split_phenotype_column" />
-<meta property="og:description" content="A column containing multiple phenotypes is split
-into multiple columns, one for each single phenotype." />
+<meta property="og:title" content="Compute mean expression levels of the top and bottom expressing cells,
+per Slide ID or field. This creates a quality report. — mean_of_top_and_bottom_cells" />
+<meta property="og:description" content="Report the results in an Excel workbook in the same directory
+as csd_path." />
 
 
 
@@ -144,39 +146,71 @@ into multiple columns, one for each single phenotype." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Split a single phenotype column</h1>
-    <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/split_phenotypes.R'><code>R/split_phenotypes.R</code></a></small>
-    <div class="hidden name"><code>split_phenotype_column.Rd</code></div>
+    <h1>Compute mean expression levels of the top and bottom expressing cells,
+per Slide ID or field. This creates a quality report.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/mean_of_top_and_bottom_cells.R'><code>R/mean_of_top_and_bottom_cells.R</code></a></small>
+    <div class="hidden name"><code>mean_of_top_and_bottom_cells.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>A column containing multiple phenotypes is split
-into multiple columns, one for each single phenotype.</p>
+    <p>Report the results in an Excel workbook in the same directory
+as <code>csd_path</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>split_phenotype_column</span><span class='op'>(</span><span class='va'>csd</span>, <span class='va'>column</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>mean_of_top_and_bottom_cells</span><span class='op'>(</span>
+  csd_path <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>expression_cols</span>,
+  top_count <span class='op'>=</span> <span class='fl'>20</span>,
+  bottom_percentile <span class='op'>=</span> <span class='fl'>0.1</span>,
+  adjacent_max <span class='op'>=</span> <span class='fl'>3</span>,
+  tissue_categories <span class='op'>=</span> <span class='cn'>NULL</span>,
+  .by <span class='op'>=</span> <span class='st'>"Slide ID"</span>,
+  out_path <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>csd</th>
-      <td><p>Cell seg data to use.</p></td>
+      <th>csd_path</th>
+      <td><p>Path to a merged cell seg data, or NULL. If NULL, a file
+chooser is opened to allow file selection.</p></td>
     </tr>
     <tr>
-      <th>column</th>
-      <td><p>The name of the column to split</p></td>
+      <th>expression_cols</th>
+      <td><p>Vector of column names to report.</p></td>
+    </tr>
+    <tr>
+      <th>top_count</th>
+      <td><p>The number of top-expressing cells to select for
+averaging.</p></td>
+    </tr>
+    <tr>
+      <th>bottom_percentile</th>
+      <td><p>The cutoff for the bottom percentile cells.</p></td>
+    </tr>
+    <tr>
+      <th>adjacent_max</th>
+      <td><p>The maximum ratio between expression of adjacent fluors</p></td>
+    </tr>
+    <tr>
+      <th>tissue_categories</th>
+      <td><p>Tissue categories to include, or NULL for all</p></td>
+    </tr>
+    <tr>
+      <th>.by</th>
+      <td><p>The column to aggregate by</p></td>
+    </tr>
+    <tr>
+      <th>out_path</th>
+      <td><p>The path to the output file; if <code>NULL</code>, a date-stamped file
+will be written to the same directory as <code>csd_path</code>.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A new data frame with the <code>column</code> column replaced with
-individual columns per phenotype and the <code>Confidence</code> column(s) removed.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>Multiple phenotypes in the original column must be separated with "/".
-The names of positive phenotypes must end in "+".</p>
+    <p>The path to the generated file.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

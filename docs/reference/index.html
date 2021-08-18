@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.13</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -79,7 +79,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <span class="fa fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -102,6 +102,12 @@
     <li>
       <a href="../articles/unmixing_quality_report.html">Unmixing quality report</a>
     </li>
+    <li>
+      <a href="../articles/top_20_bottom_10_report.html">Mean of top 20 / bottom 10 cells report</a>
+    </li>
+    <li>
+      <a href="../articles/staining_consistency_report.html">Staining consistency report</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -111,14 +117,14 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="../news/index.html">
-    <span class="fas fa-newspaper-o"></span>
+    <span class="fa fa-newspaper-o"></span>
      
     news
   </a>
 </li>
 <li>
   <a href="https://github.com/akoyabio/phenoptrReports">
-    <span class="fas fa-github fa-lg"></span>
+    <span class="fa fa-github fa-lg"></span>
      
     github
   </a>
@@ -195,6 +201,20 @@
           <p><code><a href="addin_50_component_levels.html">addin_50_component_levels()</a></code> </p>
         </td>
         <td><p>Generate a component levels report for a selected export folder.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="addin_60_mean_of_top_and_bottom_cells.html">addin_60_mean_of_top_and_bottom_cells()</a></code> </p>
+        </td>
+        <td><p>Generate a "Mean of top and bottom cells" report for a
+selected merge data file and configuration file.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="addin_70_staining_consistency_report.html">addin_70_staining_consistency_report()</a></code> </p>
+        </td>
+        <td><p>Generate a "Staining consistency" report for a
+selected merge data file.</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -310,6 +330,38 @@ and create summary reports</p></td>
     </tbody><tbody>
       <tr>
         <th colspan="2">
+          <h2 id="section-mean-of-top-and-bottom-cells" class="hasAnchor"><a href="#section-mean-of-top-and-bottom-cells" class="anchor"></a>Mean of top and bottom cells</h2>
+          <p class="section-desc"><p>These functions implement the Mean of top 20 / bottom 10 cells report</p></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="mean_of_top_and_bottom_cells_report.html">mean_of_top_and_bottom_cells_report()</a></code> </p>
+        </td>
+        <td><p>Create reports showing mean expression of top and bottom cells</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="mean_of_top_and_bottom_cells.html">mean_of_top_and_bottom_cells()</a></code> </p>
+        </td>
+        <td><p>Compute mean expression levels of the top and bottom expressing cells,
+per Slide ID or field. This creates a quality report.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="write_mean_of_top_and_bottom_charts.html">write_mean_of_top_and_bottom_charts()</a></code> </p>
+        </td>
+        <td><p>Create summary charts from the results of <code>mean_of_top_and_bottom_cells</code></p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
           <h2 id="section-data-reporting-html" class="hasAnchor"><a href="#section-data-reporting-html" class="anchor"></a>Data reporting - HTML</h2>
           <p class="section-desc"><p>These functions write analysis results to HTML reports.</p></p>
         </th>
@@ -322,15 +374,21 @@ and create summary reports</p></td>
       <tr>
         
         <td>
-          <p><code><a href="unmixing_quality_report.html">unmixing_quality_report()</a></code> </p>
-        </td>
-        <td><p>Create an unmixing quality report for simplex samples</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="component_levels_report.html">component_levels_report()</a></code> </p>
         </td>
         <td><p>Create a component levels report for multiplex samples</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="staining_consistency_report.html">staining_consistency_report()</a></code> </p>
+        </td>
+        <td><p>Actually generate the staining consistency report</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="unmixing_quality_report.html">unmixing_quality_report()</a></code> </p>
+        </td>
+        <td><p>Create an unmixing quality report for simplex samples</p></td>
       </tr><tr>
         
         <td>
@@ -507,7 +565,7 @@ file and export directory.</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Kent S Johnson.</p>
+  <p>Developed by Kent S Johnson, Akoya Biosciences.</p>
 </div>
 
 <div class="pkgdown">

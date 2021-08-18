@@ -1,12 +1,12 @@
 ---
-title: "Staining Consistency Report"
+title: "Staining consistency report"
 author: "Kent Johnson"
 date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
     fig_caption: FALSE
 vignette: >
-  %\VignetteIndexEntry{Staining Consistency Report}
+  %\VignetteIndexEntry{Staining consistency report}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

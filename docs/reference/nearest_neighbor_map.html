@@ -73,7 +73,7 @@ shown with any available phenotype." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.13</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -81,7 +81,7 @@ shown with any available phenotype." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <span class="fa fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -104,6 +104,12 @@ shown with any available phenotype." />
     <li>
       <a href="../articles/unmixing_quality_report.html">Unmixing quality report</a>
     </li>
+    <li>
+      <a href="../articles/top_20_bottom_10_report.html">Mean of top 20 / bottom 10 cells report</a>
+    </li>
+    <li>
+      <a href="../articles/staining_consistency_report.html">Staining consistency report</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -113,14 +119,14 @@ shown with any available phenotype." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="../news/index.html">
-    <span class="fas fa-newspaper-o"></span>
+    <span class="fa fa-newspaper-o"></span>
      
     news
   </a>
 </li>
 <li>
   <a href="https://github.com/akoyabio/phenoptrReports">
-    <span class="fas fa-github fa-lg"></span>
+    <span class="fa fa-github fa-lg"></span>
      
     github
   </a>
@@ -151,6 +157,7 @@ shown with any available phenotype.</p>
     <pre class="usage"><span class='fu'>nearest_neighbor_map</span><span class='op'>(</span>
   <span class='va'>csd</span>,
   <span class='va'>field_name</span>,
+  <span class='va'>view_number</span>,
   <span class='va'>export_path</span>,
   <span class='va'>phenos</span>,
   <span class='va'>color1</span>,
@@ -170,6 +177,10 @@ shown with any available phenotype.</p>
     <tr>
       <th>field_name</th>
       <td><p>Sample Name or Annotation ID to map</p></td>
+    </tr>
+    <tr>
+      <th>view_number</th>
+      <td><p>Image index within the composite data</p></td>
     </tr>
     <tr>
       <th>export_path</th>
@@ -220,7 +231,7 @@ segments in the plot, or <code>NULL</code> if <code>show_as</code> is <code>"non
 
       <footer>
       <div class="copyright">
-  <p>Developed by Kent S Johnson.</p>
+  <p>Developed by Kent S Johnson, Akoya Biosciences.</p>
 </div>
 
 <div class="pkgdown">

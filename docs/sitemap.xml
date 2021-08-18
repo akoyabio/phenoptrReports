@@ -22,6 +22,12 @@
     <loc>http://akoyabio.github.io/phenoptrReports/reference/addin_50_component_levels.html</loc>
   </url>
   <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/addin_60_mean_of_top_and_bottom_cells.html</loc>
+  </url>
+  <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/addin_70_staining_consistency_report.html</loc>
+  </url>
+  <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/choose_directory.html</loc>
   </url>
   <url>
@@ -70,6 +76,12 @@
     <loc>http://akoyabio.github.io/phenoptrReports/reference/discrete_colors.html</loc>
   </url>
   <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/mean_of_top_and_bottom_cells.html</loc>
+  </url>
+  <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/mean_of_top_and_bottom_cells_report.html</loc>
+  </url>
+  <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/merge_cell_seg_files.html</loc>
   </url>
   <url>
@@ -91,6 +103,9 @@
     <loc>http://akoyabio.github.io/phenoptrReports/reference/split_phenotype_column.html</loc>
   </url>
   <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/staining_consistency_report.html</loc>
+  </url>
+  <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/unmixing_quality_report.html</loc>
   </url>
   <url>
@@ -110,6 +125,9 @@
   </url>
   <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/write_h_score_sheet.html</loc>
+  </url>
+  <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/reference/write_mean_of_top_and_bottom_charts.html</loc>
   </url>
   <url>
     <loc>http://akoyabio.github.io/phenoptrReports/reference/write_nearest_neighbor_summary_sheet.html</loc>
@@ -139,10 +157,19 @@
     <loc>http://akoyabio.github.io/phenoptrReports/articles/analysis.html</loc>
   </url>
   <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/articles/component_levels_report.html</loc>
+  </url>
+  <url>
     <loc>http://akoyabio.github.io/phenoptrReports/articles/consolidation.html</loc>
   </url>
   <url>
     <loc>http://akoyabio.github.io/phenoptrReports/articles/spatial_map_viewer.html</loc>
+  </url>
+  <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/articles/staining_consistency_report.html</loc>
+  </url>
+  <url>
+    <loc>http://akoyabio.github.io/phenoptrReports/articles/top_20_bottom_10_report.html</loc>
   </url>
   <url>
     <loc>http://akoyabio.github.io/phenoptrReports/articles/unmixing_quality_report.html</loc>

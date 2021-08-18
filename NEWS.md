@@ -1,14 +1,15 @@
-# phenoptrReports 0.2.13.9000
-
-Staining consistency report:
-- New addin creates a report showing mean expression of a selected marker
-  across multiple samples.
+# phenoptrReports 0.3.0
+**2021-08-18**
 
 Mean of top 20 / bottom 10 addin:
 - New addin helps to evaluate whether the staining quality is
   likely to produce good unmixing. See 
   https://akoyabio.github.io/phenoptrReports/articles/top_20_bottom_10_report.html
   for details.
+
+Staining consistency report:
+- New addin creates a report showing mean expression of a selected marker
+  across multiple samples.
 
 Analysis addin:
 - Fix problem computing mean expression for phenotypes with formulas 

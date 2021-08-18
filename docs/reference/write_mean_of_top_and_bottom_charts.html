@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Split a single phenotype column — split_phenotype_column • phenoptrReports</title>
+<title>Create summary charts from the results of mean_of_top_and_bottom_cells — write_mean_of_top_and_bottom_charts • phenoptrReports</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,12 @@
 
 
 
-<meta property="og:title" content="Split a single phenotype column — split_phenotype_column" />
-<meta property="og:description" content="A column containing multiple phenotypes is split
-into multiple columns, one for each single phenotype." />
+<meta property="og:title" content="Create summary charts from the results of mean_of_top_and_bottom_cells — write_mean_of_top_and_bottom_charts" />
+<meta property="og:description" content="Create a Microsoft Word file or HTML document containing summary charts
+derived from the output of mean_of_top_and_bottom_cells
+with default parameters.
+The file type is determined by the file extension
+of output_path, which must be either .docx or .html." />
 
 
 
@@ -144,39 +147,43 @@ into multiple columns, one for each single phenotype." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Split a single phenotype column</h1>
-    <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/split_phenotypes.R'><code>R/split_phenotypes.R</code></a></small>
-    <div class="hidden name"><code>split_phenotype_column.Rd</code></div>
+    <h1>Create summary charts from the results of <code>mean_of_top_and_bottom_cells</code></h1>
+    <small class="dont-index">Source: <a href='https://github.com/akoyabio/phenoptrReports/blob/master/R/mean_of_top_and_bottom_cells.R'><code>R/mean_of_top_and_bottom_cells.R</code></a></small>
+    <div class="hidden name"><code>write_mean_of_top_and_bottom_charts.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>A column containing multiple phenotypes is split
-into multiple columns, one for each single phenotype.</p>
+    <p>Create a Microsoft Word file or HTML document containing summary charts
+derived from the output of <a href='mean_of_top_and_bottom_cells.html'>mean_of_top_and_bottom_cells</a>
+with default parameters.
+The file type is determined by the file extension
+of <code>output_path</code>, which must be either <code>.docx</code> or <code>.html</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>split_phenotype_column</span><span class='op'>(</span><span class='va'>csd</span>, <span class='va'>column</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>write_mean_of_top_and_bottom_charts</span><span class='op'>(</span>
+  <span class='va'>worksheet_path</span>,
+  <span class='va'>output_path</span>,
+  .by <span class='op'>=</span> <span class='st'>"Slide ID"</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>csd</th>
-      <td><p>Cell seg data to use.</p></td>
+      <th>worksheet_path</th>
+      <td><p>Path to an Excel file containing sheets written
+by <a href='mean_of_top_and_bottom_cells.html'>mean_of_top_and_bottom_cells</a>.</p></td>
     </tr>
     <tr>
-      <th>column</th>
-      <td><p>The name of the column to split</p></td>
+      <th>output_path</th>
+      <td><p>Path to write the resulting file.</p></td>
+    </tr>
+    <tr>
+      <th>.by</th>
+      <td><p>The aggregation column name</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>A new data frame with the <code>column</code> column replaced with
-individual columns per phenotype and the <code>Confidence</code> column(s) removed.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>Multiple phenotypes in the original column must be separated with "/".
-The names of positive phenotypes must end in "+".</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -20,6 +20,10 @@ navbar:
           href: articles/spatial_map_viewer.html
         - text: "Unmixing quality report"
           href: articles/unmixing_quality_report.html
+        - text: "Mean of top 20 / bottom 10 cells report"
+          href: articles/top_20_bottom_10_report.html
+        - text: "Staining consistency report"
+          href: articles/staining_consistency_report.html
     - text: "Reference"
       href: reference/index.html
   right:
@@ -83,8 +87,9 @@ reference:
   - title: Data reporting - HTML
     desc: These functions write analysis results to HTML reports.
     contents:
-      - unmixing_quality_report
       - component_levels_report
+      - staining_consistency_report
+      - unmixing_quality_report
       - write_summary_report
   - title: Data reporting - Excel and Word
     desc: These functions write analysis results to Excel worksheets
