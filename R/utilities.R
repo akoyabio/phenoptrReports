@@ -236,7 +236,8 @@ discrete_colors = function(n) {
 # This behavior is not helpful for showing commands that may take NULL
 # arguments. This transformer returns its value either enclosed in quotes or as
 # the string "NULL" (without quotes)
-# To use, append a * to the text in {brackets*}
+# To use, append a * to the text in {brackets*} and pass the argument
+# `.transformer=quote_or_null_transformer` to `glue::glue()`.
 quote_or_null_transformer <- function(text, envir) {
   check_null_and_quote = grepl('[*]$', text)
   if (check_null_and_quote)

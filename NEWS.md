@@ -1,4 +1,15 @@
-# phenoptrReports 0.2.13.9000
+# phenoptrReports 0.3.0
+**2021-08-18**
+
+Mean of top 20 / bottom 10 addin:
+- New addin helps to evaluate whether the staining quality is
+  likely to produce good unmixing. See 
+  https://akoyabio.github.io/phenoptrReports/articles/top_20_bottom_10_report.html
+  for details.
+
+Staining consistency report:
+- New addin creates a report showing mean expression of a selected marker
+  across multiple samples.
 
 Analysis addin:
 - Fix problem computing mean expression for phenotypes with formulas 
@@ -6,6 +17,10 @@ Analysis addin:
 - Allow selecting (and reporting on) multiple score summary files #49
 - Tabs with H-Score results include the scored marker name 
   (in support of #49)
+
+Spatial map viewer:
+- Add support for selecting the desired view when the exported
+  composite files contain multiple views.
   
 Consolidate and summarize addin:
 - Add a dummy `Phenotype` column if none is present #48
@@ -16,6 +31,9 @@ Consolidate and summarize addin:
 
 Merge addin:
 - Read files to merge into memory and write once, instead of appending
+
+Component levels report:
+- Works correctly when "Export data from pairs plots" is checked #50
   
 # phenoptrReports 0.2.13
 **2021-06-14**

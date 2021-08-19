@@ -59,7 +59,9 @@ server = function(input, output, session) {
     shiny::isolate(update_from_to(pheno1, pheno2, input$show_as))
 
     phenos = phenoptrReports:::parse_phenotypes_with_na(pheno1, pheno2)
-    phenoptrReports::nearest_neighbor_map(csd, input$field, .export_path,
+    phenoptrReports::nearest_neighbor_map(csd, input$field,
+                                          as.numeric(input$view),
+                                          .export_path,
                                           phenos,
                                           phenotype_output()$color,
                                           phenotype2_output()$color,
@@ -283,7 +285,9 @@ server = function(input, output, session) {
                                             phenos, color1, color2,
                                             discard_dups=TRUE)
       } else {
-        phenoptrReports::nearest_neighbor_map(csd, field, .export_path,
+        phenoptrReports::nearest_neighbor_map(csd, field,
+                                              as.numeric(input$view),
+                                              .export_path,
                                               phenos, color1, color2,
                                               show_as, dot_size, add_logo)
       }

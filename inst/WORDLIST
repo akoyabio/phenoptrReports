@@ -4,6 +4,7 @@ Addins
 Akoya
 akoyabio
 Autofluorescence
+autostainer
 BiocInstaller
 Biosciences
 caleydo
@@ -21,8 +22,13 @@ fluors
 FoxP
 ggplot
 http
+IHC
+ile
+IM
 inForm
 mis
+MOTiF
+multispectral
 nnn
 NUM
 Opalnnn
@@ -32,6 +38,7 @@ phenoptr
 phenotypes
 Phenotypes
 phenoype
+Phenotyping
 positivity
 quartile
 readxl

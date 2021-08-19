@@ -1,0 +1,7 @@
+Nucleus DAPI Mean
+Membrane CD8 (Opal 480) Mean
+Membrane PDL1 (Opal 520) Mean
+Nucleus Ki67 (Opal 570) Mean
+Cytoplasm CD68 (Opal 620) Mean
+Membrane CK (Opal 690) Mean
+Membrane PD1 (Opal 780) Mean

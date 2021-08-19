@@ -1,12 +1,12 @@
 Package: phenoptrReports
 Title: Create reports using Phenoptics data
-Version: 0.2.13.9000
-Date: 2021-06-10
+Version: 0.3.0.9000
+Date: 2021-08-18
 Authors@R: c(
     person("Kent S", "Johnson", role = c("aut", "cre"),
            email = "kjohnson@akoyabio.com"),
     person("Carla", "Coltharp", role="ctb"),
-    person("Akoya Biosciences", role="cph"))
+    person("Akoya Biosciences", role=c("cph", "fnd")))
 Copyright: Akoya Biosciences
 Description: Creates diagnostic and summary reports from inForm data.
 Language: en-US

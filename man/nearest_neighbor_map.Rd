@@ -7,6 +7,7 @@
 nearest_neighbor_map(
   csd,
   field_name,
+  view_number,
   export_path,
   phenos,
   color1,
@@ -20,6 +21,8 @@ nearest_neighbor_map(
 \item{csd}{Cell seg data with distance columns}
 
 \item{field_name}{Sample Name or Annotation ID to map}
+
+\item{view_number}{Image index within the composite data}
 
 \item{export_path}{Path to a directory containing composite and component
 or segmentation map image files from inForm}
