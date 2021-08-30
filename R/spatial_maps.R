@@ -317,7 +317,7 @@ read_background = function(field, view_number, export_path) {
     '_composite_image.tif',
     '_composite_image.jpg'
   )
-  browser()
+
   for (ending in image_endings) {
     background_path =
       list.files(export_path, full.names=TRUE, recursive=TRUE,

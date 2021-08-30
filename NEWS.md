@@ -1,3 +1,9 @@
+# phenoptrReports 0.3.1
+**2021-08-24**
+
+Spatial map viewer:
+- Remove a left-over debugging command.
+
 # phenoptrReports 0.3.0
 **2021-08-18**
 
