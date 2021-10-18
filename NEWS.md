@@ -1,3 +1,7 @@
+# phenoptrReports 0.3.1.9000
+- Fix spatial map viewer to work with older composite images 
+  that are missing ImageDescription (#52)
+
 # phenoptrReports 0.3.1
 **2021-08-24**
 
