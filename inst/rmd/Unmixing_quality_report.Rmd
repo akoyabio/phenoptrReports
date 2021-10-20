@@ -50,7 +50,8 @@ knitr::opts_chunk$set(echo=FALSE,fig.width=9, fig.height=6,
 # The standard HTML plot hook inserts an <img> tag which renders correctly.
 knitr::knit_hooks$set(plot = knitr:::hook_plot_html)
 
-library(magrittr) # Need that pipe
+# Need that pipe, don't want all of magrittr
+suppressPackageStartupMessages(library(dplyr))
 library(ggplot2)
 ```
 
