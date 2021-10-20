@@ -20,7 +20,7 @@ Imports:
     formattable (>= 0.2),
     forcats,
     fs,
-    ggplot2 (>= 3.3.2),
+    ggplot2 (>= 3.3.4),
     glue,
     jpeg,
     knitr,
@@ -63,7 +63,7 @@ Suggests:
     rstudioapi,
     rtree,
     sessioninfo,
-    testthat (>= 3.0.0),
+    testthat (>= 3.1.0),
     vdiffr (>= 1.0.2)
 URL:
     https://akoyabio.github.io/phenoptrReports/,

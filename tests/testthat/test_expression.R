@@ -25,8 +25,8 @@ test_that(
                 "CD68+" = "Membrane PDL1 (Opal 520) Mean",
                 "Total Cells" = "Membrane PDL1 (Opal 520) Mean")
 
-  ex = expect_warning(
-    compute_mean_expression_many(csd, phenotypes, params, tissue_categories),
+  expect_warning(
+    ex <- compute_mean_expression_many(csd, phenotypes, params, tissue_categories),
     regexp='Removing duplicate')
 
   expect_equal(names(ex), c("Slide ID", "Tissue Category",
@@ -50,8 +50,8 @@ test_that(
                  1.70227677100494, 2.2841306156406, 2.08889275843007))
 
   # Mean expression of top 20 cells, just check that it runs
-  ex = expect_warning(
-    compute_mean_expression_many(csd, phenotypes, params, tissue_categories,
+  expect_warning(
+    ex <- compute_mean_expression_many(csd, phenotypes, params, tissue_categories,
                                     count=20),
     regexp='Removing duplicate')
 

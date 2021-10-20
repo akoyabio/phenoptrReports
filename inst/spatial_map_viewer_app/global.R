@@ -26,12 +26,15 @@ composite_path = list.files(.export_path, pattern='composite_image\\.',
 if (is.na(composite_path))
   stop('No composite images found in ', .export_path)
 
-if (endsWith(composite_path, 'jpg')) {
-  available_views=c(Standard=1)
-} else {
+available_views = c(Standard=1) # Default if no info in composite image
+
+# Look for multiple, named composites in a TIFF image
+if (endsWith(composite_path, 'tif')) {
   info = phenoptr::read_composite_info(composite_path)
-  available_views = seq_along(info) %>%
-    setNames(purrr::map_chr(info, 'composite_name'))
+
+  if (length(info) > 0 && length(info[[1]]) > 0)
+    available_views = seq_along(info) %>%
+      setNames(purrr::map_chr(info, 'composite_name'))
 }
 
 # Create a temp dir to save image files in
