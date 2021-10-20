@@ -20,7 +20,7 @@ Imports:
     formattable (>= 0.2),
     forcats,
     fs,
-    ggplot2 (>= 3.3.2),
+    ggplot2 (>= 3.3.4),
     glue,
     jpeg,
     knitr,
