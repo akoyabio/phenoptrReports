@@ -1,6 +1,6 @@
 library(testthat)
-library(dplyr)
-library(tidyr)
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(tidyr))
 library(readxl)
 
 test_file_generation = function(data_dir, output_dir, expected_path, .by) {

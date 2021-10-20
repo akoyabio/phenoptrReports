@@ -70,7 +70,7 @@ format_header = function() {
 # http://akoyabio.github.io/phenoptr
 # http://akoyabio.github.io/phenoptrReports
 
-library(tidyverse)
+suppressPackageStartupMessages(library(dplyr))
 library(phenoptr)
 library(phenoptrReports)
 library(openxlsx)
@@ -312,7 +312,7 @@ format_cleanup = function(slide_id_prefix, use_regex, has) {
 # Do this at the end or it will break merges
 cleanup = function(d) {{
   by_col = ifelse(.by %in% names(d), .by, 'Slide ID')
-  d[[by_col]] = str_remove_all(d[[by_col]], '{slide_id_prefix}')
+  d[[by_col]] = stringr::str_remove_all(d[[by_col]], '{slide_id_prefix}')
   d
 }}
 \n\n")
