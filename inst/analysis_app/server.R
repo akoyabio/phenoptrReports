@@ -228,7 +228,7 @@ shinyServer(function(input, output, server) {
   #### Update the script text in response to user selections ####
   output$the_script = renderText({
     the_data$tissue_categories = input$tissue_categories
-    format_all(all_data())
+    phenoptrReports:::format_all(all_data())
   })
 
   #### Process the result!! ####
@@ -238,7 +238,7 @@ shinyServer(function(input, output, server) {
                      closeButton=FALSE, type='message')
 
     # Create and save the script
-    script = format_all(all_data())
+    script = phenoptrReports:::format_all(all_data())
     script_path = file.path(file_data$output_dir(), 'Script.R')
     write_lines(script, script_path)
 

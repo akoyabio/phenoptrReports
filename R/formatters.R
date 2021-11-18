@@ -6,10 +6,9 @@
 # The first string is code to "clean" the table; the second is code
 # to add the table to the final workbook.
 
-# `table_pairs` accumulates pairs of code snippets for table cleanup and
-# worksheet writing.
-# It must be at global scope to be shared between all these functions.
-table_pairs = list()
+# Environment to share among formatting functions
+# This is a bit of a hack, an R6 class or nested functions would be cleaner.
+format_env = new.env(parent = emptyenv())
 
 # Format everything.
 format_all = function(all_data) {
@@ -41,7 +40,10 @@ format_all = function(all_data) {
     has$include_count_within && all_data$include_distance_details
 
   # Re-initialize
-  table_pairs <<- list()
+  # `table_pairs` accumulates pairs of code snippets for table cleanup and
+  # worksheet writing.
+  # It must be at global scope to be shared between all these functions.
+  assign("table_pairs", list(), envir=format_env)
 
   # Code generation
   paste0(
@@ -79,10 +81,13 @@ library(openxlsx)
 
 # Format reading cell seg data and making a summary table
 format_path = function(path, field_col) {
-  table_pairs <<- c(table_pairs,
+  table_pairs = get("table_pairs", envir=format_env)
+  table_pairs = c(table_pairs,
                     list(c(cleanup_code('summary_table'),
                            worksheet_code('write_summary_sheet',
                                           'summary_table'))))
+  assign("table_pairs", table_pairs, envir=format_env)
+
   stringr::str_glue('# Read the consolidated data file
 csd_path =
   "{escape_path(path)}"
@@ -115,12 +120,14 @@ format_phenotypes = function(vals, .by) {
                                stringr::regex('Total|All', ignore_case=TRUE))))
     phenos = c(unique(phenos), 'Total Cells')
 
-  table_pairs <<- c(table_pairs, list(
+  table_pairs = get("table_pairs", envir=format_env)
+  table_pairs = c(table_pairs, list(
     c(cleanup_code('counts'),
       worksheet_code('write_counts_sheet', 'counts')),
     c(cleanup_code('percents'),
       worksheet_code('write_percents_sheet', 'percents'))
   ))
+  assign("table_pairs", table_pairs, envir=format_env)
 
   phenos_string = paste(phenos, collapse='", "')
   stringr::str_glue('# Define phenotypes
@@ -137,9 +144,11 @@ percents = counts_to_percents(counts)
 
 # Format density calculation
 format_density = function(summary_path) {
-  table_pairs <<- c(table_pairs,
+  table_pairs = get("table_pairs", envir=format_env)
+  table_pairs = c(table_pairs,
                     list(c(cleanup_code('densities'),
                            worksheet_code('write_density_sheet', 'densities'))))
+  assign("table_pairs", table_pairs, envir=format_env)
 
   stringr::str_glue(
 '# Path to a cell seg summary file, used for the tissue category area
@@ -161,10 +170,12 @@ format_expression = function(vals) {
   if (length(phenos) == 0)
     return('expression_params = NULL\n\n')
 
-  table_pairs <<- c(table_pairs,
+  table_pairs = get("table_pairs", envir=format_env)
+  table_pairs = c(table_pairs,
                     list(c(cleanup_code('expression_means'),
                            worksheet_code('write_expression_sheet',
                                           'expression_means'))))
+  assign("table_pairs", table_pairs, envir=format_env)
 
   # Map phenotype names to expression
   pairs = purrr::imap_chr(phenos,
@@ -186,6 +197,8 @@ expression_means = csd %>%
 # Format calculation of H-Score for all cells and optional phenotypes
 format_h_score = function(score_paths, phenos) {
   result = '# Compute H-Score\n'
+  table_pairs = get("table_pairs", envir=format_env)
+
   purrr::iwalk(score_paths, function(score_path, ix) {
     base_table_name = stringr::str_glue('h_score_{ix}')
     table_pairs <<- c(table_pairs,
@@ -233,15 +246,20 @@ h_score_{ix} = compute_h_score_from_score_data(csd, score_path_{ix},
 \n\n")
     })
   })
+
+  assign("table_pairs", table_pairs, envir=format_env)
+
   result
 }
 
 # Format calculation of nearest neighbors
 format_nearest_neighbors = function(output_dir, include_distance_details) {
-  table_pairs <<- c(table_pairs,
+  table_pairs = get("table_pairs", envir=format_env)
+  table_pairs = c(table_pairs,
                     list(c(cleanup_code('nearest_neighbors'),
                          worksheet_code('write_nearest_neighbor_summary_sheet',
                                         'nearest_neighbors'))))
+  assign("table_pairs", table_pairs, envir=format_env)
 
   if (include_distance_details)
     stringr::str_glue(
@@ -264,10 +282,13 @@ nearest_neighbors = nearest_neighbor_summary(
 # Format calculation of `count_within`
 format_count_within = function(output_dir, radii,
                                include_count_within_details) {
-  table_pairs <<- c(table_pairs,
+  table_pairs = get("table_pairs", envir=format_env)
+  table_pairs = c(table_pairs,
                     list(c(cleanup_code('count_within'),
                            worksheet_code('write_count_within_sheet',
                                           'count_within'))))
+  assign("table_pairs", table_pairs, envir=format_env)
+
   if (include_count_within_details)
     stringr::str_glue(
 '# Summary of cells within a specific distance
@@ -318,6 +339,7 @@ cleanup = function(d) {{
 \n\n")
 
   # Add a cleanup call for each table
+  table_pairs = get("table_pairs", envir=format_env)
   purrr::walk(table_pairs, ~{
     start <<- stringr::str_glue("{start}{.x[[1]]}")
   })
@@ -332,6 +354,7 @@ start =
 wb = createWorkbook()
 '
 # Add a write call for each table
+table_pairs = get("table_pairs", envir=format_env)
 purrr::walk(table_pairs, ~{
   start <<- stringr::str_glue("{start}{.x[[2]]}")
 })

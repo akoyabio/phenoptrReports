@@ -40,10 +40,7 @@ test_file_generation = function(data_dir, output_dir, expected_path, .by) {
       list(phenotype = "Total Cells", expression = 'NA')
     ))
 
-  # Get the formatter function from the app
-  source(system.file('analysis_app', 'formatters.R', package='phenoptrReports'),
-         local=TRUE)
-  script = format_all(all_data)
+  script = phenoptrReports:::format_all(all_data)
   script_path = file.path(output_dir, 'Script.R')
   readr::write_lines(script, script_path)
 
