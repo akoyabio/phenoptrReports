@@ -25,6 +25,7 @@ http
 IHC
 ile
 IM
+ImageDescription
 inForm
 mis
 MOTiF
@@ -49,6 +50,7 @@ selectable
 singleplex
 Singleplex
 sn
+testthat
 tidyr
 tif
 TMA
