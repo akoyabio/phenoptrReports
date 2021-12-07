@@ -311,11 +311,12 @@ process_tissue_categories_single = function(
 #' @param annotations A list of Annotation IDs of interest
 #' @param export_dir inForm export directory containing segmentation map
 #' files for the annotations of interest
-#' @return A rectangular polygon which encloses all the given annotations.
+#' @return A rectangular polygon, with dimensions in microns,
+#' which encloses all the given annotations.
 #' @keywords internal
 find_bounding_box = function(annotations, export_dir) {
   # Find annotations at the top, left, bottom and right of the range
-  centers = stringr::str_match(annotations, '\\[(\\d+),(\\d+)\\]')[, 2:3]
+  centers = stringr::str_match(annotations, '\\[(\\d+),(\\d+)\\]')[, 2:3, drop=FALSE]
   colnames(centers) = c('x', 'y')
   centers = centers %>%
     tibble::as_tibble(.name_repair='universal') %>%
@@ -327,18 +328,20 @@ find_bounding_box = function(annotations, export_dir) {
     phenoptr::readTIFFDirectory(map_path)
   }
 
-  # Position is in microns so directly usable
-  # Resolution is in pixels per cm so convert to pixels per micron
+  # Position is in cm, resolution is in pixels per cm
+  # First compute all in cm
   left = annotation_dims(annotations[which.min(centers$x)])$x.position
   right = annotation_dims(annotations[which.max(centers$x)])
-  right = right$x.position + right$width * 10000 / right$x.resolution
+  right = right$x.position + right$width / right$x.resolution
 
   top  = annotation_dims(annotations[which.min(centers$y)])$y.position
   bottom  = annotation_dims(annotations[which.max(centers$y)])
-  bottom = bottom$y.position + bottom$length * 10000 / bottom$y.resolution
+  bottom = bottom$y.position + bottom$length / bottom$y.resolution
 
-  sf::st_bbox(c(xmin=left, xmax=right, ymin=top, ymax=bottom)) %>%
+  mu_per_cm = 10000
+  bbox = sf::st_bbox(c(xmin=left, xmax=right, ymin=top, ymax=bottom)) %>%
     sf::st_as_sfc()
+  bbox * mu_per_cm
 }
 
 #' Find merged cell seg summary files in `export_dir`. Make corrected ones by
