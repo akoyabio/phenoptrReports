@@ -71,6 +71,11 @@ consolidate_and_summarize_cell_seg_data = function(
 
     # Write a workbook with ROI stats
     write_roi_stats(roi_results, output_dir)
+
+    # Write the summary data
+    vroom::vroom_write(roi_results$summary,
+                       file.path(output_dir, 'Consolidated_data_summary.txt'),
+                       delim='\t', na='#N/A')
   }
 
   # Write out the result

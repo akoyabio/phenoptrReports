@@ -73,8 +73,10 @@ make_nested = function(csd, tissue_categories=NULL, .by='Slide ID') {
 #   columns to summarize
 # @param tissue_categories The tissue categories of interest, ordered.
 # @param .by Column to aggregate by
+# @param total_name Name for the Total tissue category
 # @return A data frame with tissue category totals and rows in order.
-add_tissue_category_totals = function(d, tissue_categories, .by='Slide ID') {
+add_tissue_category_totals =
+    function(d, tissue_categories, .by='Slide ID', total_name='Total') {
   if (length(tissue_categories) < 2)
     return(d)
 
@@ -83,7 +85,7 @@ add_tissue_category_totals = function(d, tissue_categories, .by='Slide ID') {
     dplyr::select(-`Tissue Category`) %>%
     dplyr::group_by(!!.by) %>%
     dplyr::summarize_all(sum) %>%
-    dplyr::mutate(`Tissue Category` = 'Total')
+    dplyr::mutate(`Tissue Category` = total_name)
   result = dplyr::bind_rows(d, totals)
 
   result %>% order_by_slide_and_tissue_category(tissue_categories, .by)

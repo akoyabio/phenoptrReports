@@ -1,6 +1,6 @@
 # Suppress CMD CHECK notes for things that look like global vars
 utils::globalVariables(c(
-  "tags"
+  "tags", "Annotation ID"
 ))
 
 #' Process ROIs for the cells in csd and associated tissue category areas.
@@ -19,10 +19,12 @@ utils::globalVariables(c(
 #' @param output_dir Directory where new files will be written.
 #' @param require_include Should the result
 #' include only cells contained in ROIs tagged with `#IncludeInResults`?
-#' @return A list containing three items:
+#' @return A list containing four items:
 #' - `csd`: `csd` filtered by `#ExcludeFromResults` and (optionally)
 #'   `#IncludeInResults` ROIs, and with extra columns added to show
 #'   membership in any other tagged ROIs.
+#' - `summary`: A data frame summarizing tissue area and cell counts
+#' in the filtered data.
 #' - `removed`: A data frame with counts of cells removed.
 #' - `stats`: A data frame with counts of cells in other tags.
 #' @keywords internal
@@ -93,9 +95,17 @@ process_rois = function(csd, study_dir, export_dir, output_dir,
     sample_results$csd
   })
 
-  # Now create new summary data files with the corrected tissue area
+  # Create new summary data files with the corrected tissue area
+  # This creates the original "trimmed" cell seg summary containing just
+  # tissue areas for a single export
   if (!is.null(export_dir))
     update_summary_data(export_dir, output_dir, areas)
+
+  csd = tidyr::unnest(csd_nested, 'data') %>% dplyr::ungroup()
+
+  # This creates a more comprehensive summary which includes cell counts
+  # as well as tissue area
+  summ = summarize_cell_seg_data(csd, areas)
 
   # Finish up
   removed = tibble::add_column(removed, `Sample Name`=csd_nested$`Sample Name`,
@@ -105,9 +115,7 @@ process_rois = function(csd, study_dir, export_dir, output_dir,
                              .before=1)
   stats[is.na(stats)] = 0
 
-  csd = tidyr::unnest(csd_nested, 'data') %>% dplyr::ungroup()
-
-  return(list(csd=csd, removed=removed, stats=stats))
+  return(list(csd=csd, summary=summ, removed=removed, stats=stats))
 }
 
 #' Process ROIs for a single image, removing cells that don't meet
@@ -415,6 +423,57 @@ update_summary_data = function(export_dir, output_dir, areas) {
   }
 
   purrr::walk(candidates, process_one)
+}
+
+#' Create a summary data file from consolidated cell seg data and, optionally,
+#' tissue areas.
+#' @param csd Consolidated cell seg data to summarize
+#' @param areas Data frame of tissue area by annotation and category
+#' @return A data frame with columns for Slide ID, Annotation ID,
+#' Tissue Category, cell counts for each positive phenotype, and tissue area
+#' @keywords internal
+summarize_cell_seg_data = function(csd, areas=NULL) {
+  tissue_cats = sort(unique(csd$`Tissue Category`))
+
+  # Get phenotype columns and make fill list for `tidyr::complete`
+  pheno_cols = names(csd) %>% stringr::str_subset('^Phenotype')
+  pheno_fill = rep(0, length(pheno_cols)) %>%
+    rlang::set_names(pheno_cols) %>%
+    c(All=0) %>%
+    as.list()
+
+  summ = csd %>%
+    # Count phenotypes by Annotation ID and Tissue Category
+    dplyr::select(`Annotation ID`, `Tissue Category`, !!!pheno_cols) %>%
+    dplyr::group_by(`Annotation ID`, `Tissue Category`) %>%
+    dplyr::summarize(
+      All=dplyr::n(), # Total number of cells
+      dplyr::across(dplyr::starts_with('Phenotype'), ~sum(endsWith(.x, '+'))),
+      .groups='drop') %>%
+
+    # Fill in any missing Tissue Category
+    tidyr::complete(`Annotation ID`, `Tissue Category`, fill=pheno_fill) %>%
+
+    # Add summary row per Annotation ID
+    add_tissue_category_totals(tissue_cats, .by='Annotation ID',
+                               total_name='All')
+
+  # Merge with areas, if provided
+  if (!is.null(areas)) {
+    summ = dplyr::full_join(summ, areas) %>%
+      tidyr::replace_na(pheno_fill)
+  }
+
+  # Add back the Slide ID, if available
+  if ('Slide ID' %in% names(csd)) {
+    slides = csd %>%
+      dplyr::select(`Slide ID`, `Annotation ID`) %>%
+      dplyr::distinct()
+
+    summ = dplyr::right_join(slides, summ)
+  }
+
+  summ
 }
 
 #' Write a workbook with stats from the ROI trimming
