@@ -232,7 +232,10 @@ split_phenotype_column = function(csd, column) {
   positives = phenotypes[endsWith(phenotypes, '+')] %>% unique()
 
   if (length(positives) == 0)
-    stop('No positive phenotypes found.')
+    stop('No positive phenotypes found in column "', column, '".')
+
+  if ('+' %in% positives)
+    stop('Found a phenotype named "+". Do you have a space in a phenotype name?')
 
   # If there is no phenotype in the original, leave the new ones blank as well
   blanks = csd[[column]] == ''

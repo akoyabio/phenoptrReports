@@ -1,6 +1,6 @@
 library(testthat)
-library(dplyr)
-library(tidyr)
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(tidyr))
 library(readxl)
 
 test_file_generation_by_field = function(data_dir, output_dir, expected_path, .by) {
@@ -69,9 +69,6 @@ test_file_generation = function(all_data, output_dir, expected_path) {
   }
   dir.create(output_dir)
 
-  # Get the formatter function from the app
-  source(system.file('analysis_app', 'formatters.R', package='phenoptrReports'),
-         local=TRUE)
   script = format_all(all_data)
   script_path = file.path(output_dir, 'Script.R')
   readr::write_lines(script, script_path)

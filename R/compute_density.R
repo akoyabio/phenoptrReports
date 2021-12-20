@@ -60,13 +60,21 @@ compute_density_from_cell_summary =
 # Add Tissue Category and Tissue Category Area columns to summary
 # data from inForm projects that don't segment tissue.
 ensure_tissue_category_area = function(summary_data) {
-  if (any(startsWith(names(summary_data), 'Tissue Category Area')))
-    return (summary_data) # Nothing to do
+  # These two columns should be written together but I have seen
+  # data in the wild that has Tissue Category and not T C Area.
 
-  summary_data %>%
-    dplyr::mutate(`Tissue Category Area (square microns)` =
-              .data$`Total Cells` / .data$`Cell Density (per square mm)` * 1e6,
-              `Tissue Category`='All')
+  # Add missing Tissue Category column
+  if (!'Tissue Category' %in% names(summary_data))
+    summary_data$`Tissue Category` = 'All'
+
+  # Estimate missing area
+  if (!any(startsWith(names(summary_data), 'Tissue Category Area'))) {
+    summary_data = summary_data %>%
+      dplyr::mutate(`Tissue Category Area (square microns)` =
+                .data$`Total Cells` / .data$`Cell Density (per square mm)` * 1e6)
+  }
+
+  return (summary_data)
 }
 
 #' Compute cell densities from counts and tissue area

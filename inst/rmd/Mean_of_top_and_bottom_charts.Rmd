@@ -14,11 +14,11 @@ params:
 ---
 
 ```{r setup, echo=FALSE,include=FALSE,message=FALSE}
-library(dplyr)
+suppressPackageStartupMessages(library(dplyr))
 library(ggplot2)
-library(purrr)
+suppressPackageStartupMessages(library(purrr))
 library(readxl)
-library(tidyr)
+suppressPackageStartupMessages(library(tidyr))
 
 knitr::opts_chunk$set(echo=FALSE,fig.width=10, fig.height=5.5, 
                       comment=NA, warning=FALSE, message=FALSE)
