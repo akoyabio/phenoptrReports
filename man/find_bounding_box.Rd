@@ -13,7 +13,8 @@ find_bounding_box(annotations, export_dir)
 files for the annotations of interest}
 }
 \value{
-A rectangular polygon which encloses all the given annotations.
+A rectangular polygon, with dimensions in microns,
+which encloses all the given annotations.
 }
 \description{
 Get a bounding box for the given annotations as a polygon ROI

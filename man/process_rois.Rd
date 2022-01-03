@@ -12,7 +12,7 @@ process_rois(csd, study_dir, export_dir, output_dir, require_include)
 \item{study_dir}{Directory containing annotation files for the source
 images in \code{csd}}
 
-\item{export_dir}{A directory containing \code{binary_seg_maps} files and
+\item{export_dir}{Optional directory containing \code{binary_seg_maps} files and
 merged cell seg data summary files for processing.}
 
 \item{output_dir}{Directory where new files will be written.}
@@ -21,11 +21,13 @@ merged cell seg data summary files for processing.}
 include only cells contained in ROIs tagged with \verb{#IncludeInResults}?}
 }
 \value{
-A list containing three items:
+A list containing four items:
 \itemize{
 \item \code{csd}: \code{csd} filtered by \verb{#ExcludeFromResults} and (optionally)
 \verb{#IncludeInResults} ROIs, and with extra columns added to show
 membership in any other tagged ROIs.
+\item \code{summary}: A data frame summarizing tissue area and cell counts
+in the filtered data.
 \item \code{removed}: A data frame with counts of cells removed.
 \item \code{stats}: A data frame with counts of cells in other tags.
 }

@@ -49,7 +49,9 @@ into a single file with separate columns for each phenotype.
 Create a summary report for each source file and the consolidated data.
 
 Write the consolidated data to \code{Consolidated_data.txt} in the output
-directory.
+directory. Write a per-field summary of the consolidated data to
+\code{Consolidated_data_summary.txt} in the output directory. The summary
+file will reflect any trimming of the cells and tissue area.
 
 The
 individual files must all have exactly the same
