@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.2</span>
       </span>
     </div>
 
@@ -83,7 +85,7 @@
   </a>
 </li>
 <li>
-  <a href="https://github.com/akoyabio/phenoptrReports">
+  <a href="https://github.com/akoyabio/phenoptrReports" class="external-link">
     <span class="fa fa-github fa-lg"></span>
      
     github
@@ -99,24 +101,24 @@
 
       
 
-      </header><script src="consolidation_files/header-attrs-2.9/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Consolidating inForm data</h1>
-                        <h4 class="author">Kent Johnson</h4>
+                        <h4 data-toc-skip class="author">Kent Johnson</h4>
             
-            <h4 class="date">2021-08-18</h4>
+            <h4 data-toc-skip class="date">2022-01-03</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/akoyabio/phenoptrReports/blob/master/vignettes/consolidation.Rmd"><code>vignettes/consolidation.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/akoyabio/phenoptrReports/blob/HEAD/vignettes/consolidation.Rmd" class="external-link"><code>vignettes/consolidation.Rmd</code></a></small>
       <div class="hidden name"><code>consolidation.Rmd</code></div>
 
     </div>
 
     
     
-<div id="data-consolidation-overview" class="section level2">
-<h2 class="hasAnchor">
-<a href="#data-consolidation-overview" class="anchor"></a>Data consolidation overview</h2>
+<div class="section level2">
+<h2 id="data-consolidation-overview">Data consolidation overview<a class="anchor" aria-label="anchor" href="#data-consolidation-overview"></a>
+</h2>
 <p>The first step in a <code>phenoptrReports</code> data analysis is data consolidation.</p>
 <p>The consolidation step combines the output from multiple inForm projects into a single consolidated data file and creates columns for each individual phenotype. The inputs to this step are merged cell seg data files from multiple inForm projects. The output is a consolidated data file and a summary report for each file.</p>
 <p>NOTE: The consolidation step will fail if the Slide IDs and Cell IDs in the merge files do not exactly agree. This can happen, for example, if</p>
@@ -127,58 +129,58 @@
 </ul>
 <p>Run the consolidation step even if your data comes from a single inForm project. This creates a data file in the format that the analysis step uses.</p>
 </div>
-<div id="data-requirements" class="section level2">
-<h2 class="hasAnchor">
-<a href="#data-requirements" class="anchor"></a>Data requirements</h2>
-<div id="merged-cell-seg-data" class="section level4">
-<h4 class="hasAnchor">
-<a href="#merged-cell-seg-data" class="anchor"></a>Merged cell seg data</h4>
+<div class="section level2">
+<h2 id="data-requirements">Data requirements<a class="anchor" aria-label="anchor" href="#data-requirements"></a>
+</h2>
+<div class="section level4">
+<h4 id="merged-cell-seg-data">Merged cell seg data<a class="anchor" aria-label="anchor" href="#merged-cell-seg-data"></a>
+</h4>
 <p>The primary source data for <code>phenoptrReports</code> is one or more merged cell seg data files created in the inForm Review/Merge tab. You may use multiple merge files from multiple inForm projects with different phenotypes. The Slide ID and Cell ID fields in multiple merge files must agree exactly.</p>
 </div>
-<div id="tissue-segmentation" class="section level4">
-<h4 class="hasAnchor">
-<a href="#tissue-segmentation" class="anchor"></a>Tissue segmentation</h4>
+<div class="section level4">
+<h4 id="tissue-segmentation">Tissue segmentation<a class="anchor" aria-label="anchor" href="#tissue-segmentation"></a>
+</h4>
 <p>inForm projects used with <code>phenoptrReports</code> must include a tissue segmentation step.</p>
 </div>
-<div id="phenotypes" class="section level4">
-<h4 class="hasAnchor">
-<a href="#phenotypes" class="anchor"></a>Phenotypes</h4>
+<div class="section level4">
+<h4 id="phenotypes">Phenotypes<a class="anchor" aria-label="anchor" href="#phenotypes"></a>
+</h4>
 <p>The names of positive phenotypes used with <code>phenoptrReports</code> must end with “+”, for example “CD8+” or “FoxP3+”. Negative and “Other” phenotype names should not end in “+”.</p>
 </div>
 </div>
-<div id="detailed-steps" class="section level2">
-<h2 class="hasAnchor">
-<a href="#detailed-steps" class="anchor"></a>Detailed steps</h2>
-<div id="choose-consolidate-and-summarize-from-the-rstudio-addins-menu" class="section level4">
-<h4 class="hasAnchor">
-<a href="#choose-consolidate-and-summarize-from-the-rstudio-addins-menu" class="anchor"></a>Choose “Consolidate and summarize” from the RStudio Addins menu</h4>
+<div class="section level2">
+<h2 id="detailed-steps">Detailed steps<a class="anchor" aria-label="anchor" href="#detailed-steps"></a>
+</h2>
+<div class="section level4">
+<h4 id="choose-consolidate-and-summarize-from-the-rstudio-addins-menu">Choose “Consolidate and summarize” from the RStudio Addins menu<a class="anchor" aria-label="anchor" href="#choose-consolidate-and-summarize-from-the-rstudio-addins-menu"></a>
+</h4>
 <p>Thus will open the consolidation app.</p>
 <p><img src="figures/Consolidate_addin.png"></p>
 </div>
-<div id="select-source-files" class="section level4">
-<h4 class="hasAnchor">
-<a href="#select-source-files" class="anchor"></a>Select source files</h4>
+<div class="section level4">
+<h4 id="select-source-files">Select source files<a class="anchor" aria-label="anchor" href="#select-source-files"></a>
+</h4>
 <p>Click the “Browse Input” button in the “Select source data files” section of the GUI. Use the file selection dialog to select your inForm merge data files. If the files are in multiple directories, click the Browse button multiple times to select them.</p>
 <p><img src="figures/Select_merge_files.png"></p>
 <p>Select “Keep only phenoptrReports fields” to reduce the size of the consolidated data file by omitting rarely used fields such as Min and Max expression and cell Compactness.</p>
 </div>
-<div id="select-output-directory" class="section level4">
-<h4 class="hasAnchor">
-<a href="#select-output-directory" class="anchor"></a>Select output directory</h4>
+<div class="section level4">
+<h4 id="select-output-directory">Select output directory<a class="anchor" aria-label="anchor" href="#select-output-directory"></a>
+</h4>
 <p>Click the “Browse Output” button in the “Select output directory” section of the GUI. Use the directory selection dialog to create a new directory to contain the output files.</p>
 <p><img src="figures/Select_output_directory.png"></p>
 </div>
-<div id="process-files" class="section level4">
-<h4 class="hasAnchor">
-<a href="#process-files" class="anchor"></a>Process files</h4>
+<div class="section level4">
+<h4 id="process-files">Process files<a class="anchor" aria-label="anchor" href="#process-files"></a>
+</h4>
 <p>Click the “Process Files” button to start processing of the selected files.</p>
 <p><img src="figures/Process_files.png"></p>
 <p>A small progress meter will open to show progress. Any errors will be shown in the RStudio Console pane.</p>
 <p><img src="figures/Processing_please_wait.png"></p>
 </div>
-<div id="view-summary-reports" class="section level4">
-<h4 class="hasAnchor">
-<a href="#view-summary-reports" class="anchor"></a>View summary reports</h4>
+<div class="section level4">
+<h4 id="view-summary-reports">View summary reports<a class="anchor" aria-label="anchor" href="#view-summary-reports"></a>
+</h4>
 <p>When processing completes, the output directory will contain several files:</p>
 <ul>
 <li>
@@ -194,9 +196,9 @@
 <li>visualizations of the combination phenotypes present in the data</li>
 </ul>
 </div>
-<div id="next-analysis" class="section level4">
-<h4 class="hasAnchor">
-<a href="#next-analysis" class="anchor"></a>Next: Analysis</h4>
+<div class="section level4">
+<h4 id="next-analysis">Next: Analysis<a class="anchor" aria-label="anchor" href="#next-analysis"></a>
+</h4>
 <p>Continue to the <a href="analysis.html">next tutorial</a> to learn how to complete your analysis.</p>
 </div>
 </div>
@@ -213,11 +215,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Kent S Johnson, Akoya Biosciences.</p>
+  <p></p>
+<p>Developed by Kent S Johnson, Akoya Biosciences.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -225,6 +229,8 @@
 
   
 
+
+  
 
   </body>
 </html>

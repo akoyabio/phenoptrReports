@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.2</span>
       </span>
     </div>
 
@@ -83,7 +85,7 @@
   </a>
 </li>
 <li>
-  <a href="https://github.com/akoyabio/phenoptrReports">
+  <a href="https://github.com/akoyabio/phenoptrReports" class="external-link">
     <span class="fa fa-github fa-lg"></span>
      
     github
@@ -99,15 +101,15 @@
 
       
 
-      </header><script src="unmixing_quality_report_files/header-attrs-2.9/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Unmixing quality report</h1>
-                        <h4 class="author">Kent Johnson</h4>
+                        <h4 data-toc-skip class="author">Kent Johnson</h4>
             
-            <h4 class="date">2021-08-18</h4>
+            <h4 data-toc-skip class="date">2022-01-03</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/akoyabio/phenoptrReports/blob/master/vignettes/unmixing_quality_report.Rmd"><code>vignettes/unmixing_quality_report.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/akoyabio/phenoptrReports/blob/HEAD/vignettes/unmixing_quality_report.Rmd" class="external-link"><code>vignettes/unmixing_quality_report.Rmd</code></a></small>
       <div class="hidden name"><code>unmixing_quality_report.Rmd</code></div>
 
     </div>
@@ -115,38 +117,38 @@
     
     
 <p>The unmixing quality report analyzes unmixed, singleplex images to help evaluate staining and unmixing quality. This report shows crosstalk between components and highlights potential problem areas in assay development.</p>
-<div id="data-requirements" class="section level2">
-<h2 class="hasAnchor">
-<a href="#data-requirements" class="anchor"></a>Data requirements</h2>
+<div class="section level2">
+<h2 id="data-requirements">Data requirements<a class="anchor" aria-label="anchor" href="#data-requirements"></a>
+</h2>
 <p>The input to this report is an inForm export directory containing singleplex images which have been unmixed by inForm using a candidate spectral library.</p>
 <p>Singleplex images are taken from slides stained with a single fluorophore and no counterstain (except on the DAPI singleplex). The export directory should contain component data files from one or more images for each fluor in the experiment.</p>
 <p>The report generator must identify the Opal fluor for each source file by looking at the file name. It recognizes names containing “DAPI”, “AF”, “Opalnnn” and “Opal_nnn”. It also recognizes three leading digits as the number of an Opal fluor.</p>
 </div>
-<div id="detailed-steps" class="section level2">
-<h2 class="hasAnchor">
-<a href="#detailed-steps" class="anchor"></a>Detailed steps</h2>
-<div id="choose-unmixing-quality-report-from-the-rstudio-addins-menu" class="section level4">
-<h4 class="hasAnchor">
-<a href="#choose-unmixing-quality-report-from-the-rstudio-addins-menu" class="anchor"></a>Choose “Unmixing quality report” from the RStudio Addins menu</h4>
+<div class="section level2">
+<h2 id="detailed-steps">Detailed steps<a class="anchor" aria-label="anchor" href="#detailed-steps"></a>
+</h2>
+<div class="section level4">
+<h4 id="choose-unmixing-quality-report-from-the-rstudio-addins-menu">Choose “Unmixing quality report” from the RStudio Addins menu<a class="anchor" aria-label="anchor" href="#choose-unmixing-quality-report-from-the-rstudio-addins-menu"></a>
+</h4>
 <p>This will open the quality reporting app.</p>
 <p><img src="figures/Unmixing_quality_addin.png"></p>
 </div>
-<div id="select-input-files" class="section level4">
-<h4 class="hasAnchor">
-<a href="#select-input-files" class="anchor"></a>Select input files</h4>
+<div class="section level4">
+<h4 id="select-input-files">Select input files<a class="anchor" aria-label="anchor" href="#select-input-files"></a>
+</h4>
 <p>Click the “Browse” button in the “Select Export directory” section of the GUI. Use the directory selection dialog to select the directory containing exported component data files.</p>
 <p><img src="figures/Select_export_directory.png"></p>
 </div>
-<div id="create-report" class="section level4">
-<h4 class="hasAnchor">
-<a href="#create-report" class="anchor"></a>Create report</h4>
+<div class="section level4">
+<h4 id="create-report">Create report<a class="anchor" aria-label="anchor" href="#create-report"></a>
+</h4>
 <p>Click the “Create Report” button to start processing of the selected directory.</p>
 <p><img src="figures/Create_unmixing_quality_report.png"></p>
 <p>When the report is complete, the app window will close. Any errors will be reported in the RStudio Console pane.</p>
 </div>
-<div id="view-the-report" class="section level4">
-<h4 class="hasAnchor">
-<a href="#view-the-report" class="anchor"></a>View the report</h4>
+<div class="section level4">
+<h4 id="view-the-report">View the report<a class="anchor" aria-label="anchor" href="#view-the-report"></a>
+</h4>
 <p>When processing completes, the export directory will contain a file <code>Unmixing_quality_report.html</code> which may be viewed in any web browser.</p>
 </div>
 </div>
@@ -163,11 +165,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Kent S Johnson, Akoya Biosciences.</p>
+  <p></p>
+<p>Developed by Kent S Johnson, Akoya Biosciences.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -175,6 +179,8 @@
 
   
 
+
+  
 
   </body>
 </html>

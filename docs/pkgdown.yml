@@ -1,5 +1,5 @@
-pandoc: 2.11.4
-pkgdown: 1.6.1
+pandoc: 2.14.0.3
+pkgdown: 2.0.1
 pkgdown_sha: ~
 articles:
   analysis: analysis.html
@@ -9,7 +9,7 @@ articles:
   staining_consistency_report: staining_consistency_report.html
   top_20_bottom_10_report: top_20_bottom_10_report.html
   unmixing_quality_report: unmixing_quality_report.html
-last_built: 2021-08-18T17:39Z
+last_built: 2022-01-03T15:11Z
 urls:
   reference: http://akoyabio.github.io/phenoptrReports/reference
   article: http://akoyabio.github.io/phenoptrReports/articles

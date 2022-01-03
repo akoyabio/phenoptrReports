@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.2</span>
       </span>
     </div>
 
@@ -83,7 +85,7 @@
   </a>
 </li>
 <li>
-  <a href="https://github.com/akoyabio/phenoptrReports">
+  <a href="https://github.com/akoyabio/phenoptrReports" class="external-link">
     <span class="fa fa-github fa-lg"></span>
      
     github
@@ -99,15 +101,15 @@
 
       
 
-      </header><script src="staining_consistency_report_files/header-attrs-2.9/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Staining consistency report</h1>
-                        <h4 class="author">Kent Johnson</h4>
+                        <h4 data-toc-skip class="author">Kent Johnson</h4>
             
-            <h4 class="date">2021-08-18</h4>
+            <h4 data-toc-skip class="date">2022-01-03</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/akoyabio/phenoptrReports/blob/master/vignettes/staining_consistency_report.Rmd"><code>vignettes/staining_consistency_report.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/akoyabio/phenoptrReports/blob/HEAD/vignettes/staining_consistency_report.Rmd" class="external-link"><code>vignettes/staining_consistency_report.Rmd</code></a></small>
       <div class="hidden name"><code>staining_consistency_report.Rmd</code></div>
 
     </div>
@@ -117,51 +119,51 @@
 <p>The staining consistency report measures variation in the mean expression of a single marker across multiple images. It is used to assess consistency of staining within or across staining runs.</p>
 <p>When analyzing slides from a single staining run, this report can highlight inconsistent staining and suggest that autostainer maintenance is needed.</p>
 <p>When analyzing slides from multiple runs of an assay, the report can indicate changes in assay performance over time.</p>
-<div id="data-requirements" class="section level2">
-<h2 class="hasAnchor">
-<a href="#data-requirements" class="anchor"></a>Data requirements</h2>
+<div class="section level2">
+<h2 id="data-requirements">Data requirements<a class="anchor" aria-label="anchor" href="#data-requirements"></a>
+</h2>
 <p>The input to this report is a merged cell seg data file from inForm containing data about the samples to measure.</p>
 </div>
-<div id="detailed-steps" class="section level2">
-<h2 class="hasAnchor">
-<a href="#detailed-steps" class="anchor"></a>Detailed steps</h2>
-<div id="choose-staining-consistency-report-from-the-rstudio-addins-menu" class="section level4">
-<h4 class="hasAnchor">
-<a href="#choose-staining-consistency-report-from-the-rstudio-addins-menu" class="anchor"></a>Choose “Staining consistency report” from the RStudio Addins menu</h4>
+<div class="section level2">
+<h2 id="detailed-steps">Detailed steps<a class="anchor" aria-label="anchor" href="#detailed-steps"></a>
+</h2>
+<div class="section level4">
+<h4 id="choose-staining-consistency-report-from-the-rstudio-addins-menu">Choose “Staining consistency report” from the RStudio Addins menu<a class="anchor" aria-label="anchor" href="#choose-staining-consistency-report-from-the-rstudio-addins-menu"></a>
+</h4>
 <p>This will open the app.</p>
 <p><img src="figures/Staining_consistency_addin.png" title="Image showing RStudio Addin menu" alt="Image showing RStudio Addin menu" width="40%"></p>
 </div>
-<div id="select-merge-file" class="section level4">
-<h4 class="hasAnchor">
-<a href="#select-merge-file" class="anchor"></a>Select merge file</h4>
+<div class="section level4">
+<h4 id="select-merge-file">Select merge file<a class="anchor" aria-label="anchor" href="#select-merge-file"></a>
+</h4>
 <p>Click the “Browse” button in the “Select Merge Data” section of the GUI. Use the file selection dialog to select the file containing your merge data.</p>
 <p><img src="figures/Staining_consistency_browse.png" title="Image highlighting the Browse button" alt="Image highlighting the Browse button" width="60%"></p>
 </div>
-<div id="select-marker-and-compartment" class="section level4">
-<h4 class="hasAnchor">
-<a href="#select-marker-and-compartment" class="anchor"></a>Select marker and compartment</h4>
+<div class="section level4">
+<h4 id="select-marker-and-compartment">Select marker and compartment<a class="anchor" aria-label="anchor" href="#select-marker-and-compartment"></a>
+</h4>
 <p>Select the marker and cell compartment for the report from the drop-down menus.</p>
 <p><img src="figures/Staining_consistency_select_marker.png" title="Image showing selection of marker and compartment" alt="Image showing selection of marker and compartment" width="50%"></p>
 </div>
-<div id="create-report" class="section level4">
-<h4 class="hasAnchor">
-<a href="#create-report" class="anchor"></a>Create report</h4>
+<div class="section level4">
+<h4 id="create-report">Create report<a class="anchor" aria-label="anchor" href="#create-report"></a>
+</h4>
 <p>Click “Create Report” to begin generating the report. The app will create an HTML document with the results.</p>
 <p><img src="figures/Staining_consistency_create_report.png" title="Image showing Create Report button" alt="Image showing Create Report button" width="50%"></p>
 </div>
 </div>
-<div id="guidance" class="section level2">
-<h2 class="hasAnchor">
-<a href="#guidance" class="anchor"></a>Guidance</h2>
-<div id="good-result" class="section level4">
-<h4 class="hasAnchor">
-<a href="#good-result" class="anchor"></a>Good result</h4>
+<div class="section level2">
+<h2 id="guidance">Guidance<a class="anchor" aria-label="anchor" href="#guidance"></a>
+</h2>
+<div class="section level4">
+<h4 id="good-result">Good result<a class="anchor" aria-label="anchor" href="#good-result"></a>
+</h4>
 <p>In general, a good result will have a relatively narrow range of mean values, limited outliers beyond the ±1 SD range, and a CV less than 15%. <br><br></p>
 <p><img src="figures/Staining_consistency_good.png" title="Image showing good results" alt="Image showing good results" width="75%"></p>
 </div>
-<div id="problem-indications" class="section level4">
-<h4 class="hasAnchor">
-<a href="#problem-indications" class="anchor"></a>Problem indications</h4>
+<div class="section level4">
+<h4 id="problem-indications">Problem indications<a class="anchor" aria-label="anchor" href="#problem-indications"></a>
+</h4>
 <p>A wide range of mean values, outliers far outside the ±1 SD range, or CV greater than 15% indicates a possible problem.</p>
 <p>If the slides are from a single staining run, the autostainer may need maintenance.</p>
 <p>If the slides are from multiple runs, the variation may be due to one of these causes:</p>
@@ -188,11 +190,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Kent S Johnson, Akoya Biosciences.</p>
+  <p></p>
+<p>Developed by Kent S Johnson, Akoya Biosciences.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -200,6 +204,8 @@
 
   
 
+
+  
 
   </body>
 </html>
