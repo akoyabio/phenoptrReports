@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenoptrReports</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.2</span>
       </span>
     </div>
 
@@ -83,7 +85,7 @@
   </a>
 </li>
 <li>
-  <a href="https://github.com/akoyabio/phenoptrReports">
+  <a href="https://github.com/akoyabio/phenoptrReports" class="external-link">
     <span class="fa fa-github fa-lg"></span>
      
     github
@@ -99,24 +101,24 @@
 
       
 
-      </header><script src="analysis_files/header-attrs-2.9/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Analyzing inForm data</h1>
-                        <h4 class="author">Kent Johnson</h4>
+                        <h4 data-toc-skip class="author">Kent Johnson</h4>
             
-            <h4 class="date">2021-08-18</h4>
+            <h4 data-toc-skip class="date">2022-01-03</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/akoyabio/phenoptrReports/blob/master/vignettes/analysis.Rmd"><code>vignettes/analysis.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/akoyabio/phenoptrReports/blob/HEAD/vignettes/analysis.Rmd" class="external-link"><code>vignettes/analysis.Rmd</code></a></small>
       <div class="hidden name"><code>analysis.Rmd</code></div>
 
     </div>
 
     
     
-<div id="analysis-overview" class="section level2">
-<h2 class="hasAnchor">
-<a href="#analysis-overview" class="anchor"></a>Analysis overview</h2>
+<div class="section level2">
+<h2 id="analysis-overview">Analysis overview<a class="anchor" aria-label="anchor" href="#analysis-overview"></a>
+</h2>
 <p>A <code>phenoptrReports</code> analysis aggregates cell phenotypes and marker expression for each slide and tissue category in an experiment. An analysis can aggregate phenoype counts, density, mean expression and H-Score.</p>
 <p>There are three parts to creating an analysis:</p>
 <ul>
@@ -124,35 +126,35 @@
 <li>define the desired analysis</li>
 <li>create the final reports</li>
 </ul>
-<div id="data-requirements" class="section level3">
-<h3 class="hasAnchor">
-<a href="#data-requirements" class="anchor"></a>Data requirements</h3>
-<div id="consolidated-cell-seg-data" class="section level4">
-<h4 class="hasAnchor">
-<a href="#consolidated-cell-seg-data" class="anchor"></a>Consolidated cell seg data</h4>
+<div class="section level3">
+<h3 id="data-requirements">Data requirements<a class="anchor" aria-label="anchor" href="#data-requirements"></a>
+</h3>
+<div class="section level4">
+<h4 id="consolidated-cell-seg-data">Consolidated cell seg data<a class="anchor" aria-label="anchor" href="#consolidated-cell-seg-data"></a>
+</h4>
 <p>The primary source data for the analysis report is a consolidated data file created by the <em>Consolidate and summarize</em> app.</p>
 <p>If you have only one merge file, from a single inForm project, you should still use <em>Consolidate and summarize</em> to convert the file to the format used by the analysis report.</p>
 </div>
-<div id="other-files" class="section level4">
-<h4 class="hasAnchor">
-<a href="#other-files" class="anchor"></a>Other files</h4>
+<div class="section level4">
+<h4 id="other-files">Other files<a class="anchor" aria-label="anchor" href="#other-files"></a>
+</h4>
 <p>Two other input files are optional.</p>
 <p>If provided, <code>phenotprReports</code> will use a merged cell seg summary file to compute tissue area and cell density within tissue categories. A score data summary file is used to compute H-Score per slide and tissue category.</p>
 </div>
 </div>
 </div>
-<div id="detailed-steps" class="section level2">
-<h2 class="hasAnchor">
-<a href="#detailed-steps" class="anchor"></a>Detailed steps</h2>
-<div id="start-the-analysis-app" class="section level3">
-<h3 class="hasAnchor">
-<a href="#start-the-analysis-app" class="anchor"></a>Start the analysis app</h3>
+<div class="section level2">
+<h2 id="detailed-steps">Detailed steps<a class="anchor" aria-label="anchor" href="#detailed-steps"></a>
+</h2>
+<div class="section level3">
+<h3 id="start-the-analysis-app">Start the analysis app<a class="anchor" aria-label="anchor" href="#start-the-analysis-app"></a>
+</h3>
 <p>Choose “Analyze consolidated data” from the RStudio Addins menu to open the analysis app.</p>
 <p><img src="figures/Analyze_addin.png"></p>
 </div>
-<div id="select-input-files" class="section level3">
-<h3 class="hasAnchor">
-<a href="#select-input-files" class="anchor"></a>Select input files</h3>
+<div class="section level3">
+<h3 id="select-input-files">Select input files<a class="anchor" aria-label="anchor" href="#select-input-files"></a>
+</h3>
 <p>The first tab in the analysis app is Files. Use this tab to select the input files and output directory for your analysis.</p>
 <ol style="list-style-type: decimal">
 <li><p>First, click the first Browse… button to select the consolidated data file created in the consolidation app. This is the most important input file and the only one that is required.</p></li>
@@ -162,26 +164,26 @@
 </ol>
 <p><img src="figures/Analysis_files.png" style="height: 500px;"></p>
 </div>
-<div id="define-the-analysis" class="section level3">
-<h3 class="hasAnchor">
-<a href="#define-the-analysis" class="anchor"></a>Define the analysis</h3>
+<div class="section level3">
+<h3 id="define-the-analysis">Define the analysis<a class="anchor" aria-label="anchor" href="#define-the-analysis"></a>
+</h3>
 <p>The second tab in the analysis app is Analysis. It contains sections where you select tissue categories, phenotypes, and markers of interest.</p>
-<div id="tissue-categories" class="section level4">
-<h4 class="hasAnchor">
-<a href="#tissue-categories" class="anchor"></a>Tissue categories</h4>
+<div class="section level4">
+<h4 id="tissue-categories">Tissue categories<a class="anchor" aria-label="anchor" href="#tissue-categories"></a>
+</h4>
 <p>In this section, select the tissue categories to include in the analysis.</p>
 <p><img src="figures/Tissue_categories.png"></p>
 </div>
-<div id="slide-id-prefix" class="section level4">
-<h4 class="hasAnchor">
-<a href="#slide-id-prefix" class="anchor"></a>Slide ID prefix</h4>
-<p>The Slide IDs in your data file may contain prefix information that is not wanted in the final report. Any text you enter here will be removed from the start of the Slide IDs. The text can be either an exact match or a <a href="http://r4ds.had.co.nz/strings.html#matching-patterns-with-regular-expressions">regular expression</a>. Exact matches will match from the start of the Slide ID. Regular expressions will match anywhere in the Slide ID; to match only from the start, start the regular expression with <code><a href="https://rdrr.io/r/base/Arithmetic.html">^</a></code>.</p>
+<div class="section level4">
+<h4 id="slide-id-prefix">Slide ID prefix<a class="anchor" aria-label="anchor" href="#slide-id-prefix"></a>
+</h4>
+<p>The Slide IDs in your data file may contain prefix information that is not wanted in the final report. Any text you enter here will be removed from the start of the Slide IDs. The text can be either an exact match or a <a href="http://r4ds.had.co.nz/strings.html#matching-patterns-with-regular-expressions" class="external-link">regular expression</a>. Exact matches will match from the start of the Slide ID. Regular expressions will match anywhere in the Slide ID; to match only from the start, start the regular expression with <code>^</code>.</p>
 <p>Leave this field blank to use the existing Slide IDs unchanged.</p>
 <p><img src="figures/Slide_id_prefix.png"></p>
 </div>
-<div id="define-phenotypes-and-markers" class="section level4">
-<h4 class="hasAnchor">
-<a href="#define-phenotypes-and-markers" class="anchor"></a>Define phenotypes and markers</h4>
+<div class="section level4">
+<h4 id="define-phenotypes-and-markers">Define phenotypes and markers<a class="anchor" aria-label="anchor" href="#define-phenotypes-and-markers"></a>
+</h4>
 <p>In this section you define the phenotypes and markers of interest. Every phenotype defined in this section will be included in the Cell Counts, Cell Percents and Cell Density sections of the final report. Phenotypes for which you select an expression marker will also be included in the Mean Expression section of the report.</p>
 <p>The available phenotypes are shown at the top of the section. These are the phenotype names you can use in your phenotype definitions.</p>
 <p>In the “Phenotype” box, enter the definition of a phenotype of interest. You can enter a single or multiple phenotype.</p>
@@ -192,15 +194,15 @@
 <p><img src="figures/Phenotypes.png"></p>
 </div>
 </div>
-<div id="h-score-for-individual-phenotypes" class="section level3">
-<h3 class="hasAnchor">
-<a href="#h-score-for-individual-phenotypes" class="anchor"></a>H-Score for individual phenotypes</h3>
+<div class="section level3">
+<h3 id="h-score-for-individual-phenotypes">H-Score for individual phenotypes<a class="anchor" aria-label="anchor" href="#h-score-for-individual-phenotypes"></a>
+</h3>
 <p>If you selected a score summary file in the Files tab, the phenotype selections will include a “Score” checkbox. If this is checked, the generated report will include H-Score for the selected phenotype in addition to the H-Score for all cells.</p>
 <p><img src="figures/Phenotypes_with_score.png"></p>
 </div>
-<div id="select-options-for-spatial-analysis" class="section level3">
-<h3 class="hasAnchor">
-<a href="#select-options-for-spatial-analysis" class="anchor"></a>Select options for spatial analysis</h3>
+<div class="section level3">
+<h3 id="select-options-for-spatial-analysis">Select options for spatial analysis<a class="anchor" aria-label="anchor" href="#select-options-for-spatial-analysis"></a>
+</h3>
 <p>In this section, select the types of spatial analysis to include.</p>
 <ul>
 <li><p><strong>Include nearest neighbor summary</strong> If this is selected, the generated report will include a table summarizing nearest neighbor distances between every pair of phenotypes and heatmap visualizations of the mean distances.</p></li>
@@ -216,9 +218,9 @@
 </ul>
 <p><img src="figures/Spatial_options.png"></p>
 </div>
-<div id="create-reports" class="section level3">
-<h3 class="hasAnchor">
-<a href="#create-reports" class="anchor"></a>Create reports</h3>
+<div class="section level3">
+<h3 id="create-reports">Create reports<a class="anchor" aria-label="anchor" href="#create-reports"></a>
+</h3>
 <p>The final tab in the analysis app is the Run tab. Click “Create Report” to run the displayed R script to create the final reports. Wait for the script to run; when it is finished, the app will close.</p>
 <p>The script computes aggregated statistics, writes them to an Excel workbook, and creates visualizations of the results in a Word document. The R script is saved in the output directory and may be inspected, modified or re-run if needed.</p>
 <p><img src="figures/Create_report.png"></p>
@@ -237,11 +239,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Kent S Johnson, Akoya Biosciences.</p>
+  <p></p>
+<p>Developed by Kent S Johnson, Akoya Biosciences.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -249,6 +253,8 @@
 
   
 
+
+  
 
   </body>
 </html>

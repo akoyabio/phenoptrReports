@@ -1,8 +1,11 @@
-# phenoptrReports 0.3.1.9000
+# phenoptrReports 0.3.2.9000
 
-- Update tests to work with testthat 3.1.
+# phenoptrReports 0.3.2
+**2022-01-03**
+
 - Fix spatial map viewer to work with older composite images 
   that are missing ImageDescription (#52)
+- Update tests to work with testthat 3.1.
 
 # phenoptrReports 0.3.1
 **2021-08-24**
