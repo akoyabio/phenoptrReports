@@ -45,13 +45,18 @@ utils::globalVariables(c(
 #' include only cells contained in ROIs tagged with `#IncludeInResults`?
 #' @param update_progress Callback function which is called with progress.
 #' @param col_select Column selection for [phenoptr::read_cell_seg_data()]
+#' @param extra_include Optional vector of additional tags to treat as include
+#' tags.
+#' @param extra_exclude Option vector of additional tags to treat as
+#' exclude tags.
 #' @return A single data frame containing consolidated data and columns for each
 #'   single phenotype, invisibly.
 #' @importFrom magrittr %>%
 #' @export
 consolidate_and_summarize_cell_seg_data = function(
     csd_files, output_dir, study_dir=NULL, export_dir=NULL,
-    require_include=FALSE, update_progress=NULL, col_select=NULL) {
+    require_include=FALSE, update_progress=NULL, col_select=NULL,
+    extra_include=NULL, extra_exclude=NULL) {
   if (!dir.exists(output_dir))
     stopifnot(dir.create(output_dir, recursive=TRUE))
 
@@ -68,7 +73,8 @@ consolidate_and_summarize_cell_seg_data = function(
   if (!is.null(study_dir)) {
     update_progress(detail='Processing regions.')
     roi_results =
-      process_rois(csd, study_dir, export_dir, output_dir, require_include)
+      process_rois(csd, study_dir, export_dir, output_dir, require_include,
+                   extra_include, extra_exclude)
     csd = roi_results$csd
 
     # Write a workbook with ROI stats

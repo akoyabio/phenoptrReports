@@ -10,7 +10,9 @@ process_rois_single(
   data,
   annotation_paths,
   require_include,
-  output_dir
+  output_dir,
+  extra_include = NULL,
+  extra_exclude = NULL
 )
 }
 \arguments{
@@ -24,6 +26,12 @@ process_rois_single(
 include only cells contained in ROIs tagged with \verb{#IncludeInResults}?}
 
 \item{output_dir}{Directory to save a check plot}
+
+\item{extra_include}{Optional vector of additional tags to treat as include
+tags.}
+
+\item{extra_exclude}{Option vector of additional tags to treat as
+exclude tags.}
 }
 \value{
 A list containing these items:

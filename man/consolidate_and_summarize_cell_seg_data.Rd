@@ -12,7 +12,9 @@ consolidate_and_summarize_cell_seg_data(
   export_dir = NULL,
   require_include = FALSE,
   update_progress = NULL,
-  col_select = NULL
+  col_select = NULL,
+  extra_include = NULL,
+  extra_exclude = NULL
 )
 }
 \arguments{
@@ -35,6 +37,12 @@ include only cells contained in ROIs tagged with \verb{#IncludeInResults}?}
 \item{update_progress}{Callback function which is called with progress.}
 
 \item{col_select}{Column selection for \code{\link[phenoptr:read_cell_seg_data]{phenoptr::read_cell_seg_data()}}}
+
+\item{extra_include}{Optional vector of additional tags to treat as include
+tags.}
+
+\item{extra_exclude}{Option vector of additional tags to treat as
+exclude tags.}
 }
 \value{
 A single data frame containing consolidated data and columns for each

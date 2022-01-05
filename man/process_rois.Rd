@@ -4,7 +4,15 @@
 \alias{process_rois}
 \title{Process ROIs for the cells in csd and associated tissue category areas.}
 \usage{
-process_rois(csd, study_dir, export_dir, output_dir, require_include)
+process_rois(
+  csd,
+  study_dir,
+  export_dir,
+  output_dir,
+  require_include,
+  extra_include = NULL,
+  extra_exclude = NULL
+)
 }
 \arguments{
 \item{csd}{Consolidated cell seg table}
@@ -19,6 +27,12 @@ merged cell seg data summary files for processing.}
 
 \item{require_include}{Should the result
 include only cells contained in ROIs tagged with \verb{#IncludeInResults}?}
+
+\item{extra_include}{Optional vector of additional tags to treat as include
+tags.}
+
+\item{extra_exclude}{Option vector of additional tags to treat as
+exclude tags.}
 }
 \value{
 A list containing four items:

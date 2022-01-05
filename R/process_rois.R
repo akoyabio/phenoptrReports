@@ -19,6 +19,10 @@ utils::globalVariables(c(
 #' @param output_dir Directory where new files will be written.
 #' @param require_include Should the result
 #' include only cells contained in ROIs tagged with `#IncludeInResults`?
+#' @param extra_include Optional vector of additional tags to treat as include
+#' tags.
+#' @param extra_exclude Option vector of additional tags to treat as
+#' exclude tags.
 #' @return A list containing four items:
 #' - `csd`: `csd` filtered by `#ExcludeFromResults` and (optionally)
 #'   `#IncludeInResults` ROIs, and with extra columns added to show
@@ -29,7 +33,8 @@ utils::globalVariables(c(
 #' - `stats`: A data frame with counts of cells in other tags.
 #' @keywords internal
 process_rois = function(csd, study_dir, export_dir, output_dir,
-                        require_include) {
+                        require_include,
+                        extra_include=NULL, extra_exclude=NULL) {
   # Parameter checks
   if (is.null(study_dir) || !dir.exists(study_dir))
     stop('Missing or invalid study directory: ', study_dir)
@@ -71,7 +76,8 @@ process_rois = function(csd, study_dir, export_dir, output_dir,
     # Get ROIs and process cell data
     sample_results =
       process_rois_single(`Sample Name`, data, annotation_paths,
-                          require_include, output_dir)
+                          require_include, output_dir,
+                          extra_include, extra_exclude)
 
     # Update stats
     removed <<- dplyr::bind_rows(removed, sample_results$removed)
@@ -127,6 +133,10 @@ process_rois = function(csd, study_dir, export_dir, output_dir,
 #' @param require_include Should the result
 #' include only cells contained in ROIs tagged with `#IncludeInResults`?
 #' @param output_dir Directory to save a check plot
+#' @param extra_include Optional vector of additional tags to treat as include
+#' tags.
+#' @param extra_exclude Option vector of additional tags to treat as
+#' exclude tags.
 #' @return A list containing these items:
 #' - `csd`: `data` filtered by `#ExcludeFromResults` and (optionally)
 #'   `#IncludeInResults` ROIs, and with extra columns added to show
@@ -137,7 +147,8 @@ process_rois = function(csd, study_dir, export_dir, output_dir,
 #' - `exclude_roi`: The union of all #Exclude ROIs, or NULL if none.
 #' @keywords internal
 process_rois_single = function(
-    sample_name, data, annotation_paths, require_include, output_dir) {
+    sample_name, data, annotation_paths, require_include, output_dir,
+    extra_include=NULL, extra_exclude=NULL) {
   # Find the annotation file
   sample = stringr::str_remove(sample_name, '\\.qptiff$')
   sample_regex = paste0('\\Q', sample, '\\E')
@@ -157,9 +168,18 @@ process_rois_single = function(
   # Hard-coded tag names with special meaning
   include_name = '#IncludeInResults'
   exclude_name = '#ExcludeFromResults'
-  special_roi_names =
-    if (require_include) c(include_name, exclude_name) else exclude_name
+  include_roi_names =
+    if (require_include) c(include_name, extra_include) else extra_include
+  exclude_roi_names =
+    if (exclude_name %in% all_roi_names)
+      c(exclude_name, extra_exclude) else extra_exclude
+
+  special_roi_names = c(include_roi_names, exclude_roi_names)
   generic_roi_names = setdiff(all_roi_names, special_roi_names)
+
+  # Build single include and exclude ROIs and check for missing ones
+  include_roi = build_roi(rois, include_roi_names)
+  exclude_roi = build_roi(rois, exclude_roi_names)
 
   # Places to accumulate cell counts
   removed = rep(0, length(special_roi_names)) %>%
@@ -170,21 +190,14 @@ process_rois_single = function(
     rlang::set_names(generic_roi_names) %>%
     tibble::as_tibble_row()
 
-  if (require_include && !include_name %in% all_roi_names) {
-    # There is no include ROI, this is an error
-    # To completely exclude a sample, it should be omitted from the consolidation
-    stop('No #IncludeInResults ROI found for sample ', sample, '.\n',
-            'Either omit this sample from consolidation or add an include ROI.')
-  }
-
   # Start spatial processing by adding a geometry column
   data = phenoptr::add_geometry(data)
 
   # Process include ROIs if requested
-  if (require_include) {
+  if (!is.null(include_roi)) {
     # At this point we know we have an include ROI
-    cat('Trimming cells not in #Include ROIs\n')
-    include_roi = rois[[include_name]]
+    cat('Trimming cells not in',
+        paste(include_roi_names, collapse=', '), '\n')
     before_count = nrow(data)
     # Note: st_intersects with x=include_roi is faster than
     # st_intersection with x=data
@@ -192,14 +205,16 @@ process_rois_single = function(
       sf::st_intersects(include_roi, data, sparse=FALSE)[1, , drop=TRUE]
     data = data[intersects, ]
     removed[include_name] = before_count - nrow(data)
-  } else {
-    include_roi = NULL
+
+    # Trim the exclude region to the include region
+    if (!is.null(exclude_roi))
+      exclude_roi = sf::st_intersection(include_roi, exclude_roi)
   }
 
   # Process exclude ROIs if any
-  if (exclude_name %in% all_roi_names) {
-    cat('Trimming cells in #Exclude ROIs\n')
-    exclude_roi = rois[[exclude_name]]
+  if (!is.null(exclude_roi)) {
+    cat('Trimming cells in',
+        paste(exclude_roi_names, collapse=', '), '\n')
 
     # Filter cells
     before_count = nrow(data)
@@ -207,8 +222,6 @@ process_rois_single = function(
       sf::st_intersects(exclude_roi, data, sparse=FALSE)[1, , drop=TRUE]
     data = data[!intersects, ]
     removed[exclude_name] = before_count - nrow(data)
-  } else {
-    exclude_roi = NULL
   }
 
   # For each remaining (generic) ROI:
@@ -216,7 +229,7 @@ process_rois_single = function(
   #   reflecting membership in the tag.
   # - Add a cell count to `stats`
   for (roi_name in generic_roi_names) {
-    cat('Tagging cells in ', roi_name, '\n')
+    cat('Tagging cells in', roi_name, '\n')
     generic_roi = rois[[roi_name]]
     membership =
       sf::st_intersects(generic_roi, data, sparse=FALSE)[1, , drop=TRUE]
@@ -240,19 +253,37 @@ process_rois_single = function(
 
   grDevices::png(cell_plot_path, type='cairo', antialias='gray',
                  width=980, height=980)
+
+  # Helper to add ROIs
+  add_rois_to_plot = function(p) {
+    # suppressMessages prevents message about replacing the plot's coord
+    if (!is.null(include_roi))
+      p = suppressMessages(p + phenoptr::geom_sf_invert(data=include_roi,
+                                  inherit.aes=FALSE, fill=NA))
+    if (!is.null(exclude_roi))
+      p = suppressMessages(p + phenoptr::geom_sf_invert(data=exclude_roi,
+                                  inherit.aes=FALSE,
+                                  color='grey50', fill='#AAAAAA33'))
+    p
+  }
+
+  # Create a plot with funny coordinates so we can add the ROIs
+  # with geom_sf_invert and have it all work out
   p = data %>%
     dplyr::mutate(Phenotype=phenos) %>%
     dplyr::filter(stringr::str_detect(Phenotype, '\\+')) %>%
-    ggplot2::ggplot(ggplot2::aes(`Cell X Position`, `Cell Y Position`,
+    ggplot2::ggplot(ggplot2::aes(`Cell X Position`, -`Cell Y Position`,
                                  color=Phenotype)) +
     ggplot2::geom_point(shape='.', alpha=0.8) +
-    ggplot2::coord_equal() +
-    ggplot2::scale_y_reverse() +
+    ggplot2::coord_sf() +
+    phenoptr::scale_sf_invert() +
     ggplot2::guides(color = ggplot2::guide_legend(
       override.aes=list(shape=19, size=3, alpha=1), ncol=1)) +
-    ggplot2::labs(title=paste(sample, 'trimmed cells')) +
+    ggplot2::labs(title=paste(sample, 'trimmed cells'),
+                  y='Cell Y Position') +
     ggplot2::theme_minimal()
 
+  p = add_rois_to_plot(p)
   print(p)
   grDevices::dev.off()
 
@@ -265,22 +296,43 @@ process_rois_single = function(
     grDevices::png(cell_plot_path, type='cairo', antialias='gray',
                    width=980, height=980)
     p = data %>%
-      ggplot2::ggplot(ggplot2::aes(`Cell X Position`, `Cell Y Position`,
+      ggplot2::ggplot(ggplot2::aes(`Cell X Position`, -`Cell Y Position`,
                                    color=`Tissue Category`)) +
       ggplot2::geom_point(shape='.', alpha=0.8) +
-      ggplot2::coord_equal() +
-      ggplot2::scale_y_reverse() +
+      ggplot2::coord_sf() +
+      phenoptr::scale_sf_invert() +
       ggplot2::guides(color = ggplot2::guide_legend(
         override.aes=list(shape=19, size=3, alpha=1), ncol=1)) +
-      ggplot2::labs(title=paste(sample, 'trimmed cells by tissue category')) +
+      ggplot2::labs(title=paste(sample, 'trimmed cells by tissue category'),
+                    y='Cell Y Position') +
       ggplot2::theme_minimal()
 
+    p = add_rois_to_plot(p)
     print(p)
     grDevices::dev.off()
   }
 
   return(list(csd=data, removed=removed, stats=stats,
               include_roi=include_roi, exclude_roi=exclude_roi))
+}
+
+#' Build ROIs from multiple pieces
+#' @param rois A named list of all candidate ROI pieces
+#' @param roi_names Names of the ROIs to include in the result
+#' @return A single `sf::sfc` object containing the ROI of interest, or `NULL`
+#' if `roi_names` is `NULL`.
+#' @keywords internal
+build_roi = function(rois, roi_names) {
+  if (is.null(roi_names) || length(roi_names)==0)
+    return(NULL) # Nothing to do
+
+  # Check for missing ROIs
+  missing = setdiff(roi_names, names(rois))
+  if (length(missing) > 0)
+    stop('Missing ROI(s): ', paste(missing, collapse=', '))
+
+  rois[names(rois) %in% roi_names] %>%
+    purrr::reduce(sf::st_union)
 }
 
 #' Get corrected tissue category areas for a single image.

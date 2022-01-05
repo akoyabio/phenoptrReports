@@ -1,5 +1,10 @@
 # phenoptrReports 0.3.2.9000
 
+- Consolidation function (`consolidate_and_summarize_cell_seg_data`)
+  has optional arguments to specify addition tagged ROIs as
+  include or exclude regions
+- Consolidation check plots include ROI boundaries
+
 # phenoptrReports 0.3.2
 **2022-01-03**
 
