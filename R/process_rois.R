@@ -207,8 +207,13 @@ process_rois_single = function(
     removed[include_name] = before_count - nrow(data)
 
     # Trim the exclude region to the include region
-    if (!is.null(exclude_roi))
+    if (!is.null(exclude_roi)) {
       exclude_roi = sf::st_intersection(include_roi, exclude_roi)
+
+      # If the intersection is empty, exclude_roi becomes an empty list
+      # Change it to NULL for consistency
+      if (length(exclude_roi) == 0) exclude_roi = NULL
+    }
   }
 
   # Process exclude ROIs if any
