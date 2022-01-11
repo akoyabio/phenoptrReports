@@ -72,7 +72,8 @@ shinyServer(function(input, output, server) {
     if ('Slide ID' %in% names(d)) {
       unique_ids = unique(d$`Slide ID`)
       the_data$slide_id_prefix = slide_id_prefix =
-        ifelse(length(unique_ids) > 1, find_common_prefix(unique_ids), '')
+        ifelse(length(unique_ids) > 1,
+               phenoptrReports:::find_common_prefix(unique_ids), '')
       by_choices = c('Slide ID', phenoptr::field_column(d))
     } else {
       # No Slide ID column

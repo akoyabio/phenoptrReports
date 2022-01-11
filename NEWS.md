@@ -1,4 +1,9 @@
-# phenoptrReports 0.3.2.9000
+# phenoptrReports 0.3.3.9000
+
+# phenoptrReports 0.3.3
+**2022-01-11**
+
+- Fix access to `find_common_prefix` in analysis app (#56)
 
 - Consolidation function (`consolidate_and_summarize_cell_seg_data`)
   has optional arguments to specify addition tagged ROIs as
