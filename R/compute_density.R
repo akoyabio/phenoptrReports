@@ -13,7 +13,8 @@ utils::globalVariables(c(
 #'
 #' @param counts A data frame with columns for `.by`, `Tissue Category`,
 #'   and counts, such as the output of [count_phenotypes].
-#' @param summary_path Path(s) to cell seg data summary table(s) containing
+#' @param summary_path Path(s) to cell seg data summary
+#' or consolidated data summary table(s) containing
 #'   sample names and tissue categories matching `counts`.
 #' @param tissue_categories A character vector of tissue category names
 #'   of interest.
@@ -39,8 +40,12 @@ compute_density_from_cell_summary =
                                 phenoptr::read_cell_seg_data,
                                 pixels_per_micron=pixels_per_micron)
 
-  # Drop rows for specific phenotypes, we just want one row per field
-  if (any(startsWith(names(summary_data), 'Phenotype')))
+  # For a merge summary table, drop rows for specific phenotypes,
+  # we just want one row per field
+  # This is not needed for consolidated_data_summary files, which
+  # have "All" columns
+  if (!'All' %in% names(summary_data) &&
+      any(startsWith(names(summary_data), 'Phenotype')))
     # This selects rows with 'All' in all phenotype columns
     summary_data = summary_data %>%
       dplyr::filter(
