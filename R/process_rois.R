@@ -469,7 +469,7 @@ update_summary_data = function(export_dir, output_dir, areas) {
                     dplyr::starts_with('Phenotype')) %>%
       # This selects rows with 'All' in all phenotype columns
       dplyr::filter(
-        dplyr::across(dplyr::starts_with('Phenotype'), ~.x=='All')) %>%
+        dplyr::if_all(dplyr::starts_with('Phenotype'), ~.x=='All')) %>%
       dplyr::inner_join(areas, by=c('Annotation ID', 'Tissue Category'))
 
     # Write the updated file
