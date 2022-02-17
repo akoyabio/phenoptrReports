@@ -49,7 +49,7 @@ compute_density_from_cell_summary =
     # This selects rows with 'All' in all phenotype columns
     summary_data = summary_data %>%
       dplyr::filter(
-        dplyr::across(dplyr::starts_with('Phenotype'), ~.x=='All'))
+        dplyr::if_all(dplyr::starts_with('Phenotype'), ~.x=='All'))
 
   # Manufacture Tissue Category Area if not present
   summary_data = ensure_tissue_category_area(summary_data)
