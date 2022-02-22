@@ -27,7 +27,9 @@ ui <- fluidPage(
 
     # Show a plot of the selected annotations
     mainPanel(
-     plotOutput("annoPlot", height='600px')
+     plotOutput("annoPlot", height='600px'),
+     br(), hr(), br(),
+     tableOutput('table')
     )
   )
 )
@@ -107,6 +109,12 @@ server <- function(input, output, session) {
       scale_color_discrete(input$color_by) +
       theme_minimal()
   })
+
+  output$table <- renderTable(
+    table(filtered_data()$tags, filtered_data()$status) %>%
+      as.data.frame.matrix(),
+    rownames = TRUE
+  )
 
   # Stop the server when the user closes the app window
   session$onSessionEnded(function() {
