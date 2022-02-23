@@ -16,7 +16,8 @@ compute_density_from_cell_summary(
 \item{counts}{A data frame with columns for \code{.by}, \verb{Tissue Category},
 and counts, such as the output of \link{count_phenotypes}.}
 
-\item{summary_path}{Path(s) to cell seg data summary table(s) containing
+\item{summary_path}{Path(s) to cell seg data summary
+or consolidated data summary table(s) containing
 sample names and tissue categories matching \code{counts}.}
 
 \item{tissue_categories}{A character vector of tissue category names
