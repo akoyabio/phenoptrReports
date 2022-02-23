@@ -58,6 +58,7 @@ reference:
       - addin_50_component_levels
       - addin_60_mean_of_top_and_bottom_cells
       - addin_70_staining_consistency_report
+      - addin_80_annotation_viewer_app
   - title: Merging and Consolidation
     desc: These functions implement the merge and consolidation apps.
     contents:

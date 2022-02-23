@@ -45,3 +45,8 @@ Name: Staining consistency report
 Description: Create a report showing mean expression of a selected marker across multiple samples.
 Binding: addin_70_staining_consistency_report
 Interactive: true
+
+Name: Annotation viewer
+Description: View image annotations from a Phenochart GeoJSON file
+Binding: addin_80_annotation_viewer_app
+Interactive: true
