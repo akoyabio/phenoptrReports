@@ -18,6 +18,11 @@ ui <- fluidPage(
     sidebarPanel(
       HTML('Select a GeoJSON file containing annotations:&nbsp;&nbsp;'),
       actionButton('browse', 'Browse'),
+      br(), br(),
+
+      HTML('(Optional) Select a cell seg data file:&nbsp;&nbsp;'),
+      actionButton('browse_csd', 'Browse'),
+      br(), br(),
 
       selectInput('color_by', 'Color by',
                   choices=c('Status', 'Tags')),
@@ -39,9 +44,12 @@ server <- function(input, output, session) {
   # geometry, object_type, status and tags
   the_data = reactiveVal()
 
+  # Cell seg data
+  csd = reactiveVal()
+
   default_dir = reactiveVal('')
 
-  # Browse for a file and read it to the_data
+  # Browse for a GeoJSON file and read it to the_data
   shiny::observeEvent(input$browse, {
     shiny::req(input$browse)
 
@@ -63,6 +71,30 @@ server <- function(input, output, session) {
     # Empty tags make trouble with selectInput, replace them here with '(None)'
     df$tags[df$tags==''] = '(None)'
     the_data(df)
+
+    # Update default path
+    default_dir(dirname(path))
+  })
+
+  # Browse for a cell seg data file and read it to csd
+  shiny::observeEvent(input$browse_csd, {
+    shiny::req(input$browse_csd)
+
+    default = default_dir()
+    if (default != '') default = paste0(default, '\\*.txt')
+
+    path = phenoptrReports::choose_files(
+      default=default,
+      caption='Choose a cell seg data file',
+      filters = c("Text files (*.txt)", "*.txt"),
+      multi=FALSE)
+
+    # Read the data
+    shiny::req(path)
+    path = normalizePath(path, winslash='/', mustWork=FALSE)
+    df = read_tsv(path, na='#N/A',
+                  col_select=c('Cell X Position', 'Cell Y Position'))
+    csd(df)
 
     # Update default path
     default_dir(dirname(path))
@@ -93,22 +125,21 @@ server <- function(input, output, session) {
     filtered
   })
 
+  # Plot limits - a list containing xlim and ylim
+  limits = reactive({
+    req(the_data())
+
+    bbox = st_bbox(the_data())
+    xlim = c(bbox['xmin'], bbox['xmax'])
+    ylim = c(-bbox['ymax'], -bbox['ymin'])
+    list(xlim=xlim, ylim=ylim)
+  })
+
   # Plot output
   output$annoPlot <- renderPlot({
     req(filtered_data())
-
-    # What aesthetic do we color by?
-    aesthetic = switch(input$color_by,
-                       Status=aes(color=status),
-                       Tags=aes(color=tags))
-
-    # Make a plot
-    ggplot(filtered_data()) +
-      geom_sf(aesthetic, size=1, fill=NA, stat='sf_invert') +
-      scale_sf_invert() +
-      scale_color_discrete(input$color_by) +
-      theme_minimal()
-  })
+    make_plot(filtered_data(), input$color_by, limits(), csd())
+})
 
   output$table <- renderTable(
     table(filtered_data()$tags, filtered_data()$status) %>%
@@ -122,5 +153,31 @@ server <- function(input, output, session) {
   })
 }
 
-# Run the application
-shinyApp(ui = ui, server = server)
+# Helper to actually make the plot
+# @param anno_data Simple features data frame to draw
+# @param color_by Color by 'Status' or 'Tags'
+# @param limits List containing xlim and ylim
+# @param csd Optional cell data to draw
+# @return A ggplot object
+make_plot = function(anno_data, color_by, limits, csd=NULL) {
+  # What aesthetic do we color by?
+  aesthetic = switch(color_by,
+                     Status=aes(color=status),
+                     Tags=aes(color=tags))
+
+  # Make a plot
+  p = ggplot()
+
+  if (!is.null(csd))
+    p = p + geom_point(data=slice_sample(csd, n=10000),
+                       aes(`Cell X Position`, -`Cell Y Position`),
+                       shape='.', alpha=0.5)
+  p + geom_sf(data=anno_data, aesthetic, size=1, fill=NA, stat='sf_invert') +
+    scale_x_continuous(limits=limits$xlim) +
+    scale_sf_invert(limits=limits$ylim) +
+    scale_color_discrete(color_by) +
+    labs(x='X', y='Y') +
+    theme_minimal()
+}
+
+shinyApp(ui, server)
