@@ -162,6 +162,16 @@ process_rois_single = function(
   cat('Processing ROIs for', sample, '\n')
 
   # Get named ROIs from the annotation file
+  # If a GeoJSON file is available, prefer that
+  geojson_path = stringr::str_replace(annotation_file, '\\.xml$', '.geojson')
+  if (file.exists(geojson_path)) {
+    annotation_file = geojson_path
+    message('Reading annotations from ', annotation_file)
+  } else {
+    warning('Reading annotations from ', annotation_file,
+            '\nDeleted, tagged annotations may be included.')
+  }
+
   rois = phenoptr::read_tagged_rois(annotation_file)
   all_roi_names = names(rois)
 
