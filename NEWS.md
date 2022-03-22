@@ -1,5 +1,7 @@
 # phenoptrReports 0.3.3.9000
 
+- Update the minimum R version to 4.1.0 to match phenoptr requirement
+
 # phenoptrReports 0.3.3
 **2022-01-11**
 
