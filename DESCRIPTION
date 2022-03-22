@@ -10,7 +10,7 @@ Authors@R: c(
 Copyright: Akoya Biosciences
 Description: Creates diagnostic and summary reports from inForm data.
 Language: en-US
-Depends: R (>= 4.0.0)
+Depends: R (>= 4.1.0)
 License: Zlib | file LICENSE
 Encoding: UTF-8
 LazyData: true
