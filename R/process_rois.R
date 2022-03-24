@@ -515,7 +515,7 @@ summarize_cell_seg_data = function(csd, areas=NULL) {
     dplyr::group_by(`Annotation ID`, `Tissue Category`) %>%
     dplyr::summarize(
       All=dplyr::n(), # Total number of cells
-      dplyr::if_all(dplyr::starts_with('Phenotype'), ~sum(endsWith(.x, '+'))),
+      dplyr::across(dplyr::starts_with('Phenotype'), ~sum(endsWith(.x, '+'))),
       .groups='drop') %>%
 
     # Fill in any missing Tissue Category
