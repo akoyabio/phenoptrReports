@@ -1,3 +1,9 @@
+# phenoptrReports 0.3.3.9001
+**2022-09-06**
+
+- Prevent from trimming the trimmed files
+- Add batched merge function and update user interface
+
 # phenoptrReports 0.3.3.9000
 
 - Update the minimum R version to 4.1.0 to match phenoptr requirement
