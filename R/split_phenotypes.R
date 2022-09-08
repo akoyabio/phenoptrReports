@@ -237,47 +237,48 @@ split_phenotypes = function(csd) {
 #'   individual columns per phenotype and the `Confidence` column(s) removed.
 #' @importFrom magrittr %>%
 #' @keywords internal
-split_phenotype_column = function(csd, column) {
-  # Look for positive phenotypes
-  phenotypes = unique(csd[[column]]) %>%
-    stringr::str_split('/|(\\s+)') %>% # Split on single / or any whitespace
+split_phenotype_column<-  function (csd, column)
+{
+  phenotypes = unique(csd[[column]]) %>% stringr::str_split("/|(\\s+)") %>%
     purrr::flatten_chr()
-  positives = phenotypes[endsWith(phenotypes, '+')] %>% unique()
+  positives = phenotypes[endsWith(phenotypes, "+")] %>% unique()
+  if (length(positives) == 0) {
+    negative = paste0(stringr::str_replace(column, ".*[-'']", ""),"-")
+    negative1=stringr::str_replace(column, ".*[-'']", "")
+    warning('No positive phenotype ',negative1, ' was found, please check the data!' )
+    new_columns = purrr::map(negative, ~{
+      negative = .x
+      blanks = csd[[column]] == ""
+      result = rep(negative, nrow(csd))
+      result[blanks] = ""
+      result
+    })
+    new_names = paste("Phenotype", stringr::str_remove(negative, "\\-$"))
+  }
 
-  if (length(positives) == 0)
-    stop('No positive phenotypes found in column "', column, '".')
+  else{
+    if ("+" %in% positives)
+      stop("Found a phenotype named \"+\". Do you have a space in a phenotype name?")
+    blanks = csd[[column]] == ""
+    new_columns = purrr::map(positives, ~{
+      positive = .x
+      negative = stringr::str_replace(positive, "\\+$", "-")
+      result = rep(negative, nrow(csd))#this one
+      result[blanks] = ""
+      original_pos = stringr::str_detect(csd[[column]], stringr::fixed(positive))
+      result[original_pos] = positive
+      result
+    })
 
-  if ('+' %in% positives)
-    stop('Found a phenotype named "+". Do you have a space in a phenotype name?')
-
-  # If there is no phenotype in the original, leave the new ones blank as well
-  blanks = csd[[column]] == ''
-
-  # Make a new column for each positive phenotype
-  new_columns = purrr::map(positives, ~{
-    # Positive and negative values for the new column
-    positive = .x
-    negative = stringr::str_replace(positive, '\\+$', '-')
-
-    # Start out all negative or blank
-    result = rep(negative, nrow(csd))
-    result[blanks] = ''
-
-    # Fill in the positive value anywhere it appears in the original
-    original_pos = stringr::str_detect(csd[[column]], stringr::fixed(positive))
-    result[original_pos] = positive
-    result
-  })
-
-  # Make names for the new columns
-  new_names = paste('Phenotype', stringr::str_remove(positives, '\\+$'))
+    new_names = paste("Phenotype", stringr::str_remove(positives,
+                                                       "\\+$"))
+  }
   new_columns = new_columns %>% rlang::set_names(new_names)
-
-  # Build a new data frame
-  csd %>%
-    dplyr::select(-!!rlang::sym(column), -dplyr::contains('Confidence')) %>%
+  csd %>% dplyr::select(-!!rlang::sym(column), -dplyr::contains("Confidence")) %>%
     dplyr::bind_cols(new_columns)
+
 }
+
 
 # Make unique names from a list of paths to cell seg data files
 #
