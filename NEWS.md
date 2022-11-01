@@ -1,3 +1,8 @@
+# phenoptrReports 0.3.3.9002
+**2022-10-31**
+
+- summary of xml and geojson annotations
+
 # phenoptrReports 0.3.3.9001
 **2022-09-06**
 
