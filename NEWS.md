@@ -1,3 +1,9 @@
+# phenoptrReports 5.0.1
+**2023-01-09**
+
+-"Trimmed" is a path so we are looking for any place of the path that has "Trimmed" 
+- to prevent trimming the already trimmed files
+
 # phenoptrReports 0.3.3.9002
 **2022-10-31**
 

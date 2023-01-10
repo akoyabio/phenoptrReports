@@ -438,7 +438,7 @@ update_summary_data = function(export_dir, output_dir, areas) {
   # 'Merge') so weed out obvious non-merge files and use what is left.
   candidates = candidates %>%
     purrr::discard(~stringr::str_detect(.x, 'reject')) %>%
-    purrr::discard(~stringr::str_detect(.x, '^Trimmed')) %>%
+    purrr::discard(~stringr::str_detect(.x, 'Trimmed')) %>%
     purrr::discard(~stringr::str_detect(.x, '\\[\\d+,\\d+\\]'))
 
   if (length(candidates) == 0)
