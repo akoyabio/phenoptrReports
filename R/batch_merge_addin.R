@@ -1,12 +1,4 @@
 addin_15_batch_merge = function() {
-
-
-
-  fruits <- c("Banana", "Blueberry", "Cherry",
-              "Coconut", "Grapefruit", "Kiwi",
-              "Lemon", "Lime", "Mango", "Orange",
-              "Papaya")
-
   intro <- shiny::tagList(shiny::p(
     'Some text, ',
     'some more text, ',
@@ -16,6 +8,7 @@ addin_15_batch_merge = function() {
            'Data for each slide should be organized in subdirectories.'))
 
   ui <- miniUI::miniPage(
+    shinyjs::useShinyjs(),
     shiny::tags$head(
       shiny::tags$style(shiny::HTML("
       .well {
@@ -26,7 +19,10 @@ addin_15_batch_merge = function() {
     "))),
 
     miniUI::gadgetTitleBar("Batch Processing of Merge inForm Data Files",
-                           right=miniUI::miniTitleBarButton('done', 'Process Files', primary=TRUE)),
+                           right = shinyjs::disabled(
+                             miniUI::miniTitleBarButton('done',
+                                                        'Process Files',
+                                                        primary = TRUE))),
 
     miniUI::miniContentPanel(
       intro,
@@ -43,26 +39,7 @@ addin_15_batch_merge = function() {
         shiny::textOutput('source_dir')
       ),
 
-      shiny::wellPanel(
-        shiny::h3('Select sample(s) for processing'),
-        'Select the sample(s) to perform merging of inForm data.',
-
-        shiny::br(), shiny::br(),
-        shiny::actionButton("all", "Select All"),
-        shiny::actionButton("none", "Select None"),
-        shiny::br(), shiny::br(),
-        shinyWidgets::multiInput(
-          inputId = "id", label = NULL,
-          choices = fruits, width = "800px",
-          options = list(
-            enable_search = TRUE,
-            non_selected_header = "Available Samples:",
-            selected_header = "Samples Selected for Processing:"
-          ),
-        ),
-
-        shiny::verbatimTextOutput(outputId = "res")
-      ),
+      shiny::uiOutput("sample_selection_panel"),
 
       shiny::h4(shiny::textOutput('error'), style='color: maroon')
     )
@@ -70,9 +47,6 @@ addin_15_batch_merge = function() {
 
   server <- function(input, output, session) {
     source_dir <- shiny::reactiveVal()
-    sample_list <- shiny::reactive({
-      dir(source_dir())
-    })
 
     # Handle the browse_source button by selecting a folder
     shiny::observeEvent(input$browse_source, {
@@ -81,23 +55,40 @@ addin_15_batch_merge = function() {
         caption='Select a source folder'
       ))
 
-      sample_list(dir(source_dir()))
-
       output$source_dir = shiny::renderText(source_dir())
-      set_error_text()
-    })
 
-    # Update sample selection
-    output$res <- renderPrint({
-      input$id
+      # Make UI for sample selection
+      output$sample_selection_panel <- shiny::renderUI(
+        shiny::wellPanel(
+          shiny::h3('Select sample(s) for processing'),
+          'Select the sample(s) to perform merging of inForm data.',
+
+          shiny::br(), shiny::br(),
+          shiny::actionButton("all", "Select All"),
+          shiny::actionButton("none", "Select None"),
+          shiny::br(), shiny::br(),
+          shinyWidgets::multiInput(
+            inputId = "sample_list", label = NULL,
+            choices = list.dirs(source_dir(), full.names = FALSE, recursive = FALSE),
+            width = "800px",
+            options = list(
+              enable_search = TRUE,
+              non_selected_header = "Available Samples:",
+              selected_header = "Samples Selected for Processing:"
+              )
+            )
+        )
+      )
+
+      set_error_text()
     })
 
     # Handle select all button
     shiny::observeEvent(input$all, {
       shinyWidgets::updateMultiInput(
         session = session,
-        inputId = "id",
-        selected = fruits
+        inputId = "sample_list",
+        selected = list.dirs(source_dir(), full.names = FALSE, recursive = FALSE)
       )
     })
 
@@ -105,9 +96,18 @@ addin_15_batch_merge = function() {
     observeEvent(input$none, {
       shinyWidgets::updateMultiInput(
         session = session,
-        inputId = "id",
+        inputId = "sample_list",
         selected = character(0)
       )
+    })
+
+    # Handle the enabling of done button
+    shiny::observe({
+      if (length(input$sample_list) > 0) {
+        shinyjs::enable(id='done')
+      } else {
+        shinyjs::disable(id='done')
+      }
     })
 
     # Handle the done button by processing files or showing an error
@@ -148,15 +148,14 @@ addin_15_batch_merge = function() {
     get_error_text = function() {
       if (is.null(source_dir())) {
         'Please select a source directory to process.'
-      } else if (length(list.files(source_dir(),
-                                   pattern='Merge', ignore.case=TRUE)) > 0) {
-        'Please select a source directory which does not contain existing merge files.'
+      } else if (length(input$sample_list) == 0) {
+        'Please select one or more samples for batch processing.'
       } else
         ''
     }
 
     # Initialize
-    output$error = shiny::renderText('Please a source directory to process.')
+    output$error = shiny::renderText('Please select a source directory to process.')
   }
 
   # Run the gadget in a dialog
