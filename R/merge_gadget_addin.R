@@ -12,12 +12,12 @@
 #' @export
 addin_10_merge = function() {
   intro <- shiny::tagList(shiny::p(
-      'This app merges multiple inForm cell seg data files',
-      'into a single file. The merged file will be written',
-      'to the source directory.'
-    ),
-    shiny::p('The source directory should contain inForm data files',
-             'created from individual fields.'))
+    'This app merges multiple inForm cell seg data files',
+    'into a single file. The merged file will be written',
+    'to the source directory.'
+  ),
+  shiny::p('The source directory should contain inForm data files',
+           'created from individual fields.'))
 
   ui <- miniUI::miniPage(
     shiny::tags$head(
@@ -30,7 +30,7 @@ addin_10_merge = function() {
     "))),
 
     miniUI::gadgetTitleBar("Merge inForm data",
-      right=miniUI::miniTitleBarButton('done', 'Process Files', primary=TRUE)),
+                           right=miniUI::miniTitleBarButton('done', 'Process Files', primary=TRUE)),
 
     miniUI::miniContentPanel(
       intro,
@@ -43,8 +43,7 @@ addin_10_merge = function() {
         shiny::br(), shiny::br(),
 
         shiny::actionButton('browse_source', 'Browse Input...'),
-        shiny::checkboxInput('recursive', 'Include subdirectories and output as single file'),
-        shiny::checkboxInput('recursive_batch', 'Include subdirectories and output as multiple files'),
+        shiny::checkboxInput('recursive', 'Include subdirectories'),
         shiny::h4('Selected directory:'),
         shiny::textOutput('source_dir'),
         shiny::textOutput('file_message')
@@ -87,39 +86,18 @@ addin_10_merge = function() {
       error_text = get_error_text()
 
       if (error_text == '') {
-
-        # handle input combinations for running standard merge function
-        if (!any(input$recursive, input$recursive_batch) | input$recursive == TRUE) {
-          progress <- shiny::Progress$new(
-            max=merge_progress_count(source_dir(), input$recursive))
-          progress$set(message = 'Processing files, please wait!',
-                       value = 0)
-          update_progress <- function(detail = NULL) {
-            progress$set(value = progress$getValue()+1, detail = detail)
-          }
-
-          phenoptrReports::merge_cell_seg_files(source_dir(),
-                                                update_progress, input$recursive)
-          update_progress(detail='Done!')
-          Sys.sleep(0.5)
+        progress <- shiny::Progress$new(
+          max=merge_progress_count(source_dir(), input$recursive))
+        progress$set(message = 'Processing files, please wait!',
+                     value = 0)
+        update_progress <- function(detail = NULL) {
+          progress$set(value = progress$getValue()+1, detail = detail)
         }
 
-        # handle batched merging
-        if (input$recursive_batch == TRUE) {
-          progress <- shiny::Progress$new(
-            max=merge_progress_count(source_dir(), input$recursive_batch))
-          progress$set(message = 'Processing files, please wait!',
-                       value = 0)
-          update_progress <- function(detail = NULL) {
-            progress$set(value = progress$getValue()+1, detail = detail)
-          }
-
-          phenoptrReports::batched_merge(source_dir())
-
-          update_progress(detail='Done!')
-          Sys.sleep(0.5)
-        }
-
+        phenoptrReports::merge_cell_seg_files(source_dir(),
+                                              update_progress, input$recursive)
+        update_progress(detail='Done!')
+        Sys.sleep(0.5)
         shiny::stopApp()
       } else {
         shiny::showNotification(error_text, type='message')
@@ -141,12 +119,10 @@ addin_10_merge = function() {
     get_error_text = function() {
       if (is.null(source_dir())) {
         'Please select a source directory to process.'
-      } else if (length(list.files(source_dir(),
-                                   recursive=any(input$recursive, input$recursive_batch),
-                                   pattern='Merge_', ignore.case=TRUE)) > 0) {
+      } else if (length(list.files(source_dir(), recursive=input$recursive,
+                                   pattern='Merge', ignore.case=TRUE)) > 0) {
         'Please select a source directory which does not contain existing merge files.'
-      } else if (merge_progress_count(source_dir(),
-                                      any(input$recursive, input$recursive_batch))==0) {
+      } else if (merge_progress_count(source_dir(), input$recursive)==0) {
         'Please a source directory containing inForm output files.'
       } else
         ''

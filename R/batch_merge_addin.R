@@ -1,21 +1,25 @@
-batch_merge_addin <- function() {
-  intro <- shiny::tagList(shiny::p(
-    'This app runs a batched merging of cell segmentation data for selected ',
-    'samples in a cohort of slides',
-    'algorithm.'
-  ))
+# This is an RStudio Addin that provides a GUI frontend
+# to merge_cell_seg_data.
 
-  input_dir_intro <- shiny::tagList(
-    shiny::p("Input directory must contain:"),
-    shiny::tags$ul(
-      shiny::tags$li("inForm cell segmentation data"),
-      shiny::tags$li("inForm batch file (Batch.log)"),
-      shiny::tags$li("inForm algorithm (batch_procedure.ifp)")
-    )
-  )
+#' Merge cell seg data files
+#'
+#' `addin_10_merge` opens a GUI that allows you to select a directory containing
+#' cell seg data files from multiple, individual fields. The selected files
+#' will be merged
+#' to a single file which is saved to the source directory.
+#'  This is similar to the function of the inForm Merge tab but
+#' does not include the ability to review and reject individual fields.
+#' @export
+addin_10_merge = function() {
+  intro <- shiny::tagList(shiny::p(
+    'This app merges multiple inForm cell seg data files',
+    'into a single file. The merged file will be written',
+    'to the source directory.'
+  ),
+  shiny::p('The source directory should contain inForm data files',
+           'created from individual fields.'))
 
   ui <- miniUI::miniPage(
-    shinyjs::useShinyjs(),
     shiny::tags$head(
       shiny::tags$style(shiny::HTML("
       .well {
@@ -24,111 +28,80 @@ batch_merge_addin <- function() {
       }
       h3 { margin-top: 10px; }
     "))),
-    miniUI::gadgetTitleBar("Acr368 OncoSignature Scoring",
-                           right = shinyjs::disabled(
-                             miniUI::miniTitleBarButton('done',
-                                                        'Process Files',
-                                                        primary = TRUE))),
+
+    miniUI::gadgetTitleBar("Merge inForm data",
+                           right=miniUI::miniTitleBarButton('done', 'Process Files', primary=TRUE)),
 
     miniUI::miniContentPanel(
       intro,
 
       shiny::wellPanel(
-        shiny::h3('Select input directory'),
-        'Click the "Browse input..." button to select an input directory.',
-        shiny::br(),
-        input_dir_intro,
+        shiny::h3('Select source directory'),
+        'Click the "Browse Input" button to select a directory containing',
+        'inForm cell seg data files to merge.',
 
-        shiny::actionButton('browse_input', 'Browse input...'),
-
-        shiny::br(),
-        shiny::textOutput('input_dir'),
-
-        shiny::br(),
-        shiny::checkboxInput("unqualified_tma_present", "Batch contains one or more unqualified TMAs for processing", FALSE)
-      ),
-
-      shiny::wellPanel(
-        shiny::h3('Select output directory'),
-        'Click the "Browse output..." button to select an empty output directory.',
         shiny::br(), shiny::br(),
 
-        shiny::actionButton('browse_output', 'Browse output...'),
-        shiny::br(),
-        shiny::textOutput('output_dir')
+        shiny::actionButton('browse_source', 'Browse Input...'),
+        shiny::checkboxInput('recursive', 'Include subdirectories'),
+        shiny::h4('Selected directory:'),
+        shiny::textOutput('source_dir'),
+        shiny::textOutput('file_message')
       ),
 
-      shiny::h4(shiny::textOutput('error'), style = 'color: maroon')
+      shiny::h4(shiny::textOutput('error'), style='color: maroon')
     )
   )
 
   server <- function(input, output, session) {
-    output_dir <- shiny::reactiveVal()
-    input_dir <- shiny::reactiveVal()
-    enable_done <- shiny::reactiveValues()
-    enable_done$input_dir <- FALSE
-    enable_done$output_dir <- FALSE
+    source_dir = shiny::reactiveVal()
 
-
-    # Handle the browse_input button by selecting a folder
-    shiny::observeEvent(input$browse_input, {
-      shiny::req(input$browse_input)
-      input_dir(phenoptrReports::choose_directory(
-        caption = 'Select an input directory'
+    # Handle the browse_source button by selecting a folder
+    shiny::observeEvent(input$browse_source, {
+      shiny::req(input$browse_source)
+      source_dir(phenoptrReports::choose_directory(
+        caption='Select a source folder'
       ))
 
-      output$input_dir <- shiny::renderText(input_dir())
-
-      enable_done$input_dir <- shiny::isTruthy(input_dir())
-
-      if (enable_done$input_dir & enable_done$output_dir) {
-        shinyjs::enable(id = 'done')
-      } else {
-        shinyjs::disable(id = 'done')
-      }
-
-      error_text <- get_error_text()
+      output$source_dir = shiny::renderText(source_dir())
       set_error_text()
     })
 
-    # Handle the browse_output button by selecting a folder
-    shiny::observeEvent(input$browse_output, {
-      shiny::req(input$browse_output)
-      output_dir(phenoptrReports::choose_directory(
-        default = dirname(input_dir()),
-        caption = 'Select an output folder'
-      ))
-
-      output$output_dir <- shiny::renderText(output_dir())
-
-      enable_done$output_dir <- shiny::isTruthy(output_dir())
-
-      if (enable_done$input_dir & enable_done$output_dir) {
-        shinyjs::enable(id = 'done')
-      } else {
-        shinyjs::disable(id = 'done')
-      }
-
-      error_text <- get_error_text()
-      set_error_text()
+    # Update file_count
+    file_count = shiny::reactive({
+      shiny::req(source_dir())
+      files = list.files(source_dir(), pattern='_cell_seg_data.txt',
+                         recursive=input$recursive)
+      length(files)
     })
 
-    # Handle the process files button
+    # Update file_message
+    shiny::observe({
+      msg = paste0('Data from ', file_count(), ' field(s) will be processed.')
+      output$file_message = shiny::renderText(msg)
+    })
+
+    # Handle the done button by processing files or showing an error
     shiny::observeEvent(input$done, {
+      error_text = get_error_text()
 
-      # disable process button while running function
-      shinyjs::disable(id = 'done')
+      if (error_text == '') {
+        progress <- shiny::Progress$new(
+          max=merge_progress_count(source_dir(), input$recursive))
+        progress$set(message = 'Processing files, please wait!',
+                     value = 0)
+        update_progress <- function(detail = NULL) {
+          progress$set(value = progress$getValue()+1, detail = detail)
+        }
 
-      # use shinyjs to output status message; renderText does not work in
-      # this situation
-      shinyjs::html("error",
-                    'Processing data. Please see R console for status updates.')
-
-      return_paths <- list(base_path = input_dir(),
-                           out_path = output_dir(),
-                           unqualified_tma_present = input$unqualified_tma_present)
-
-      shiny::stopApp(return_paths)
+        phenoptrReports::merge_cell_seg_files(source_dir(),
+                                              update_progress, input$recursive)
+        update_progress(detail='Done!')
+        Sys.sleep(0.5)
+        shiny::stopApp()
+      } else {
+        shiny::showNotification(error_text, type='message')
+      }
     })
 
     # Handle the cancel button by quitting
@@ -137,27 +110,29 @@ batch_merge_addin <- function() {
     })
 
     # Set error message in response to user input
-    set_error_text <- function() {
-      output$error <- shiny::renderText(get_error_text())
+    # For some reason this doesn't work as a reactive so just make
+    # it a function and call as needed
+    set_error_text = function() {
+      output$error = shiny::renderText(get_error_text())
     }
 
-    get_error_text <- function() {
-      if (!enable_done$input_dir) {
-        'Please select an input directory.'
-      } else if (!enable_done$output_dir) {
-        'Please select an output directory.'
-      } else {
+    get_error_text = function() {
+      if (is.null(source_dir())) {
+        'Please select a source directory to process.'
+      } else if (length(list.files(source_dir(), recursive=input$recursive,
+                                   pattern='Merge', ignore.case=TRUE)) > 0) {
+        'Please select a source directory which does not contain existing merge files.'
+      } else if (merge_progress_count(source_dir(), input$recursive)==0) {
+        'Please a source directory containing inForm output files.'
+      } else
         ''
-      }
     }
 
     # Initialize
-    output$error <- shiny::renderText('Please select an input directory.')
+    output$error = shiny::renderText('Please a source directory to process.')
   }
 
-  # Run the gadget in paneViewer; running in dialogViewer causes error in script
-  shiny::runGadget(ui, server, viewer = shiny::paneViewer())
-
+  # Run the gadget in a dialog
+  viewer <- shiny::dialogViewer('Merge cell seg data files')
+  shiny::runGadget(ui, server, viewer = viewer)
 }
-
-

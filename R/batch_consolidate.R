@@ -4,10 +4,10 @@ batch_consolidate <- function(folders_to_consolidate,
                               require_include=FALSE,
                               col_select=NULL) {
   # Assumptions:
-  # 1. cohort folder contains two folders: scan_dir_name (containing qptiff files)
-  #    and inForm outputs folder
-  # 2. inForm outputs folder for each sample has a merge cell seg data
-  # 3. consolidated data doesn't already exist for the samples
+  # 1. Cohort folder contains two folders: scan_dir_name (containing qptiff files)
+  #    and inForm outputs folder.
+  # 2. InForm outputs folder for each sample has a Merge_cell_seg_data.txt.
+  # 3. Consolidated data doesn't already exist for the samples.
 
   # Check assumption 1
   # Cohort directory is two levels above the folder to consolidate
