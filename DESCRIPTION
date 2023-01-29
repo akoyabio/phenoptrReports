@@ -15,6 +15,7 @@ License: Zlib | file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:
+    cli,
     colourpicker,
     dplyr (>= 1.0.0),
     formattable (>= 0.2),

@@ -1,23 +1,19 @@
-# This is an RStudio Addin that provides a GUI frontend
-# to merge_cell_seg_data.
+addin_15_batch_merge = function() {
 
-#' Merge cell seg data files
-#'
-#' `addin_10_merge` opens a GUI that allows you to select a directory containing
-#' cell seg data files from multiple, individual fields. The selected files
-#' will be merged
-#' to a single file which is saved to the source directory.
-#'  This is similar to the function of the inForm Merge tab but
-#' does not include the ability to review and reject individual fields.
-#' @export
-addin_10_merge = function() {
+
+
+  fruits <- c("Banana", "Blueberry", "Cherry",
+              "Coconut", "Grapefruit", "Kiwi",
+              "Lemon", "Lime", "Mango", "Orange",
+              "Papaya")
+
   intro <- shiny::tagList(shiny::p(
-    'This app merges multiple inForm cell seg data files',
-    'into a single file. The merged file will be written',
-    'to the source directory.'
+    'Some text, ',
+    'some more text, ',
+    'and some final text.'
   ),
-  shiny::p('The source directory should contain inForm data files',
-           'created from individual fields.'))
+  shiny::p('The source directory should contain inForm data files. ',
+           'Data for each slide should be organized in subdirectories.'))
 
   ui <- miniUI::miniPage(
     shiny::tags$head(
@@ -29,7 +25,7 @@ addin_10_merge = function() {
       h3 { margin-top: 10px; }
     "))),
 
-    miniUI::gadgetTitleBar("Merge inForm data",
+    miniUI::gadgetTitleBar("Batch Processing of Merge inForm Data Files",
                            right=miniUI::miniTitleBarButton('done', 'Process Files', primary=TRUE)),
 
     miniUI::miniContentPanel(
@@ -43,10 +39,29 @@ addin_10_merge = function() {
         shiny::br(), shiny::br(),
 
         shiny::actionButton('browse_source', 'Browse Input...'),
-        shiny::checkboxInput('recursive', 'Include subdirectories'),
         shiny::h4('Selected directory:'),
-        shiny::textOutput('source_dir'),
-        shiny::textOutput('file_message')
+        shiny::textOutput('source_dir')
+      ),
+
+      shiny::wellPanel(
+        shiny::h3('Select sample(s) for processing'),
+        'Select the sample(s) to perform merging of inForm data.',
+
+        shiny::br(), shiny::br(),
+        shiny::actionButton("all", "Select All"),
+        shiny::actionButton("none", "Select None"),
+        shiny::br(), shiny::br(),
+        shinyWidgets::multiInput(
+          inputId = "id", label = NULL,
+          choices = fruits, width = "800px",
+          options = list(
+            enable_search = TRUE,
+            non_selected_header = "Available Samples:",
+            selected_header = "Samples Selected for Processing:"
+          ),
+        ),
+
+        shiny::verbatimTextOutput(outputId = "res")
       ),
 
       shiny::h4(shiny::textOutput('error'), style='color: maroon')
@@ -54,7 +69,10 @@ addin_10_merge = function() {
   )
 
   server <- function(input, output, session) {
-    source_dir = shiny::reactiveVal()
+    source_dir <- shiny::reactiveVal()
+    sample_list <- shiny::reactive({
+      dir(source_dir())
+    })
 
     # Handle the browse_source button by selecting a folder
     shiny::observeEvent(input$browse_source, {
@@ -63,22 +81,33 @@ addin_10_merge = function() {
         caption='Select a source folder'
       ))
 
+      sample_list(dir(source_dir()))
+
       output$source_dir = shiny::renderText(source_dir())
       set_error_text()
     })
 
-    # Update file_count
-    file_count = shiny::reactive({
-      shiny::req(source_dir())
-      files = list.files(source_dir(), pattern='_cell_seg_data.txt',
-                         recursive=input$recursive)
-      length(files)
+    # Update sample selection
+    output$res <- renderPrint({
+      input$id
     })
 
-    # Update file_message
-    shiny::observe({
-      msg = paste0('Data from ', file_count(), ' field(s) will be processed.')
-      output$file_message = shiny::renderText(msg)
+    # Handle select all button
+    shiny::observeEvent(input$all, {
+      shinyWidgets::updateMultiInput(
+        session = session,
+        inputId = "id",
+        selected = fruits
+      )
+    })
+
+    # Handle select none button
+    observeEvent(input$none, {
+      shinyWidgets::updateMultiInput(
+        session = session,
+        inputId = "id",
+        selected = character(0)
+      )
     })
 
     # Handle the done button by processing files or showing an error
@@ -87,7 +116,7 @@ addin_10_merge = function() {
 
       if (error_text == '') {
         progress <- shiny::Progress$new(
-          max=merge_progress_count(source_dir(), input$recursive))
+          max=merge_progress_count(source_dir()))
         progress$set(message = 'Processing files, please wait!',
                      value = 0)
         update_progress <- function(detail = NULL) {
@@ -95,7 +124,7 @@ addin_10_merge = function() {
         }
 
         phenoptrReports::merge_cell_seg_files(source_dir(),
-                                              update_progress, input$recursive)
+                                              update_progress)
         update_progress(detail='Done!')
         Sys.sleep(0.5)
         shiny::stopApp()
@@ -119,11 +148,9 @@ addin_10_merge = function() {
     get_error_text = function() {
       if (is.null(source_dir())) {
         'Please select a source directory to process.'
-      } else if (length(list.files(source_dir(), recursive=input$recursive,
+      } else if (length(list.files(source_dir(),
                                    pattern='Merge', ignore.case=TRUE)) > 0) {
         'Please select a source directory which does not contain existing merge files.'
-      } else if (merge_progress_count(source_dir(), input$recursive)==0) {
-        'Please a source directory containing inForm output files.'
       } else
         ''
     }
@@ -133,6 +160,6 @@ addin_10_merge = function() {
   }
 
   # Run the gadget in a dialog
-  viewer <- shiny::dialogViewer('Merge cell seg data files')
+  viewer <- shiny::dialogViewer('Batch Processing of Merge Cell Seg Data Files', width=900, height=1000)
   shiny::runGadget(ui, server, viewer = viewer)
 }
