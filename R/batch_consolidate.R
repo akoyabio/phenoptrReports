@@ -3,6 +3,15 @@ batch_consolidate <- function(folders_to_consolidate,
                               consolidated_dir_name=getOption('consolidated_dir_name'),
                               require_include=FALSE,
                               col_select=NULL) {
+
+  # Print initiation message
+  cli::cli_h1("Batch Consolidation of inForm Data ({length(folders_to_consolidate)} sample{?s})")
+  cli::cli_text("scan_dir_name='{scan_dir_name}'")
+  cli::cli_text("consolidated_dir_name='{consolidated_dir_name}'")
+  cli::cli_text("require_include={require_include}")
+  cli::cli_text("col_select='{col_select}'")
+  cli::cli_ol(folders_to_consolidate)
+
   # Assumptions:
   # 1. Cohort folder contains two folders: scan_dir_name (containing qptiff files)
   #    and inForm outputs folder.

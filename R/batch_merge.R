@@ -1,14 +1,14 @@
 batch_merge <- function(folders_to_merge) {
+  # Print initiation message
+  cli::cli_h1("Batch Merging of inForm Data ({length(folders_to_merge)} sample{?s})")
+  cli::cli_ol(folders_to_merge)
+
   # Check if merged files already exist. If so, display error.
   files_to_catch <- expand.grid(folders_to_merge, paste0('Merge', merge_suffixes)) %>%
     apply(1, paste, collapse="/") %>%
     sort()
   files_exist <- files_to_catch[file.exists(files_to_catch)]
   catch_files_exist_error(files_exist, "Merge")
-
-  # Print initiation message
-  cli::cli_h1("Batch Merging of inForm Data ({length(folders_to_merge)} sample{?s})")
-  cli::cli_ol(folders_to_merge)
 
   # Merge the samples
   folders_count <- length(folders_to_merge)

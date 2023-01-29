@@ -1,11 +1,12 @@
-addin_15_batch_merge = function() {
+addin_25_batch_consolidate = function() {
   intro <- shiny::tagList(shiny::p(
     'Some text, ',
     'some more text, ',
     'and some final text.'
   ),
   shiny::p('The source directory should contain inForm data files. ',
-           'Data for each slide should be organized in subdirectories.'))
+           'Data for each slide should be organized in subdirectories. ',
+           'Merge cell seg data files should be present in subdirectories.'))
 
   ui <- miniUI::miniPage(
     shinyjs::useShinyjs(),
@@ -19,7 +20,7 @@ addin_15_batch_merge = function() {
       h3 { margin-top: 10px; }
     "))),
 
-    miniUI::gadgetTitleBar("Batch Processing of Merge inForm Data Files",
+    miniUI::gadgetTitleBar("Batch Processing of Consolidate inForm Data Files",
                            right = shinyjs::disabled(
                              miniUI::miniTitleBarButton('done',
                                                         'Process Files',
@@ -31,7 +32,7 @@ addin_15_batch_merge = function() {
       shiny::wellPanel(
         shiny::h3('Select source directory'),
         'Click the "Browse Input" button to select a directory containing',
-        'inForm cell seg data files to merge.',
+        'inForm merge cell seg data files to consolidate.',
 
         shiny::br(), shiny::br(),
 
@@ -41,6 +42,16 @@ addin_15_batch_merge = function() {
       ),
 
       shiny::uiOutput("sample_selection_panel"),
+
+      shiny::wellPanel(
+        shiny::h3('Select options for consolidating data'),
+        'Options will be applied for batch processing.',
+
+        shiny::br(),
+        shiny::checkboxInput('phenoptr_only',
+                             'Keep only phenoptrReports fields'),
+        shiny::checkboxInput('require_include', 'Require #IncludeInResults tag'),
+      ),
 
       shiny::h4(shiny::textOutput('error'), style='color: maroon')
     )
@@ -62,7 +73,7 @@ addin_15_batch_merge = function() {
       output$sample_selection_panel <- shiny::renderUI(
         shiny::wellPanel(
           shiny::h3('Select sample(s) for processing'),
-          'Select the sample(s) to perform merging of inForm data.',
+          'Select the sample(s) to perform consolidation of inForm data.',
 
           shiny::br(), shiny::br(),
           shiny::actionButton("all", "Select All"),
@@ -124,10 +135,15 @@ addin_15_batch_merge = function() {
       )
 
       # Construct full paths of sample folders and process data
-      folders_to_merge <- expand.grid(source_dir(), input$sample_list) %>%
+      folders_to_consolidate <- expand.grid(source_dir(), input$sample_list) %>%
         apply(1, paste, collapse="/") %>%
         sort()
-      batch_merge(folders_to_merge)
+
+      col_select = if (input$phenoptr_only) 'phenoptrReports' else NULL
+
+      batch_consolidate(folders_to_consolidate,
+                        require_include=input$require_include,
+                        col_select=col_select)
 
       shiny::stopApp()
     })
@@ -158,6 +174,6 @@ addin_15_batch_merge = function() {
   }
 
   # Run the gadget in a dialog
-  viewer <- shiny::dialogViewer('Batch Processing of Merge Cell Seg Data Files', width=900, height=1000)
+  viewer <- shiny::dialogViewer('Batch Processing of Consolidation of inForm Data Files', width=900, height=1000)
   shiny::runGadget(ui, server, viewer = viewer)
 }
