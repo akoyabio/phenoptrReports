@@ -6,6 +6,10 @@ batch_merge <- function(folders_to_merge) {
   files_exist <- files_to_catch[file.exists(files_to_catch)]
   catch_files_exist_error(files_exist, "Merge")
 
+  # Print initiation message
+  cli::cli_h1("Batch Merging of inForm Data ({length(folders_to_merge)} sample{?s})")
+  cli::cli_ol(folders_to_merge)
+
   # Merge the samples
   folders_count <- length(folders_to_merge)
   folders_to_merge %>%

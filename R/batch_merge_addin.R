@@ -9,6 +9,7 @@ addin_15_batch_merge = function() {
 
   ui <- miniUI::miniPage(
     shinyjs::useShinyjs(),
+    shinyWidgets::useSweetAlert(),
     shiny::tags$head(
       shiny::tags$style(shiny::HTML("
       .well {
@@ -112,25 +113,22 @@ addin_15_batch_merge = function() {
 
     # Handle the done button by processing files or showing an error
     shiny::observeEvent(input$done, {
-      error_text = get_error_text()
+      # Prevent resubmission
+      shinyjs::disable(id='done')
 
-      if (error_text == '') {
-        progress <- shiny::Progress$new(
-          max=merge_progress_count(source_dir()))
-        progress$set(message = 'Processing files, please wait!',
-                     value = 0)
-        update_progress <- function(detail = NULL) {
-          progress$set(value = progress$getValue()+1, detail = detail)
-        }
+      shinyWidgets::sendSweetAlert(
+        session = session,
+        title = "Batch Processing in Progress",
+        text = "Please see console for status updates.",
+        type = "info"
+      )
 
-        phenoptrReports::merge_cell_seg_files(source_dir(),
-                                              update_progress)
-        update_progress(detail='Done!')
-        Sys.sleep(0.5)
-        shiny::stopApp()
-      } else {
-        shiny::showNotification(error_text, type='message')
-      }
+      # construct full paths of sample folders
+      folders_to_merge <- expand.grid(source_dir(), input$sample_list) %>%
+        apply(1, paste, collapse="/") %>%
+        sort()
+      batch_merge(folders_to_merge)
+      shiny::stopApp()
     })
 
     # Handle the cancel button by quitting
