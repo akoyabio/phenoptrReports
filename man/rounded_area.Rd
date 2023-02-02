@@ -2,7 +2,7 @@
 % Please edit documentation in R/process_annotations.R
 \name{rounded_area}
 \alias{rounded_area}
-\title{Round areas, and compute them for two annotations}
+\title{Round , and compute areas for two annotations}
 \usage{
 rounded_area(poly)
 }

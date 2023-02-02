@@ -1,15 +1,19 @@
 batch_consolidate <- function(folders_to_consolidate,
-                              scan_dir_name=getOption('scan_dir_name'),
-                              consolidated_dir_name=getOption('consolidated_dir_name'),
-                              require_include=FALSE,
-                              col_select=NULL) {
-
+                              scan_dir_name = getOption('scan_dir_name'),
+                              consolidated_dir_name = getOption('consolidated_dir_name'),
+                              require_include = FALSE,
+                              col_select = NULL) {
   # Print initiation message
+  if (is.null(col_select)) {
+    col_select_print <- "NULL"
+  } else {
+    col_select_print <- glue::glue("'{col_select}'")
+  }
   cli::cli_h1("Batch Consolidation of inForm Data ({length(folders_to_consolidate)} sample{?s})")
   cli::cli_text("scan_dir_name='{scan_dir_name}'")
   cli::cli_text("consolidated_dir_name='{consolidated_dir_name}'")
   cli::cli_text("require_include={require_include}")
-  cli::cli_text("col_select='{col_select}'")
+  cli::cli_text("col_select={col_select_print}")
   cli::cli_ol(folders_to_consolidate)
 
   # Assumptions:
@@ -31,7 +35,10 @@ batch_consolidate <- function(folders_to_consolidate,
   }
 
   # Check assumption 2
-  csd_files <- lapply(folders_to_consolidate, file.path, "Merge_cell_seg_data.txt") %>% unlist()
+  csd_files <-
+    lapply(folders_to_consolidate,
+           file.path,
+           "Merge_cell_seg_data.txt") %>% unlist()
   files_not_exist <- csd_files[!file.exists(csd_files)]
   # Generate error message if files are not found
   if (length(files_not_exist) > 0) {
@@ -42,76 +49,104 @@ batch_consolidate <- function(folders_to_consolidate,
     }
     cli::cli_h1("Expected Merge {stringr::str_to_title(units[[1]])}")
     cli::cli_ol(files_not_exist)
-    cli::cli_abort('The above {length(files_not_exist)} "Merge" {units[[1]]} {units[[3]]} expected but not found.
-               Please generate the "Merge" {units[[1]]} before batch processing.')
+    cli::cli_abort(
+      'The above {length(files_not_exist)} "Merge" {units[[1]]} {units[[3]]} expected but not found.
+               Please generate the "Merge" {units[[1]]} before batch processing.'
+    )
   }
 
   # Check assumption 3
-  files_to_catch <- expand.grid(folders_to_consolidate, paste0(consolidated_dir_name, "/", 'Consolidated_data.txt')) %>%
-    apply(1, paste, collapse="/") %>%
+  files_to_catch <-
+    expand.grid(
+      folders_to_consolidate,
+      paste0(consolidated_dir_name, "/", 'Consolidated_data.txt')
+    ) %>%
+    apply(1, paste, collapse = "/") %>%
     sort()
   files_exist <- files_to_catch[file.exists(files_to_catch)]
   catch_files_exist_error(files_exist, "Consolidate")
 
   # Get inputs for the consolidate function
-  files_to_process <- lapply(csd_files,
-                             get_consolidate_inputs,
-                             scan_dir_path=scan_dir_path,
-                             consolidated_dir_name=consolidated_dir_name)
+  files_to_process <- lapply(
+    csd_files,
+    get_consolidate_inputs,
+    scan_dir_path = scan_dir_path,
+    consolidated_dir_name = consolidated_dir_name
+  )
 
   # Run consolidate function for each csd file
   files_to_process %>%
-    purrr::iwalk(~consolidate_one_sample(files_to_process_i=.x,
-                                        idx=.y,
-                                        files_count=length(files_to_process),
-                                        require_include=require_include,
-                                        col_select=col_select))
+    purrr::iwalk(
+      ~ consolidate_one_sample(
+        files_to_process_i = .x,
+        idx = .y,
+        files_count = length(files_to_process),
+        require_include = require_include,
+        col_select = col_select
+      )
+    )
   # Write session info
-  devtools::session_info(to_file = paste0(dirname(folders_to_consolidate[[1]]), "/R_session_info_", format(Sys.time(), "%Y%m%d"), ".txt"))
+  devtools::session_info(to_file = paste0(
+    dirname(folders_to_consolidate[[1]]),
+    "/R_session_info_",
+    format(Sys.time(), "%Y%m%d"),
+    ".txt"
+  ))
 }
 
 
-consolidate_one_sample <- function(files_to_process_i, idx, files_count,
-                                   require_include=require_include,
-                                   col_select=col_select) {
-  # Create output directory if it doesn't exist
-  dir.create(files_to_process_i$output_dir, showWarnings = FALSE)
+consolidate_one_sample <-
+  function(files_to_process_i,
+           idx,
+           files_count,
+           require_include = require_include,
+           col_select = col_select) {
+    # Create output directory if it doesn't exist
+    dir.create(files_to_process_i$output_dir, showWarnings = FALSE)
 
-  # Print consolidate sample header
-  cli::cli_h1("Consolidating {basename(dirname(files_to_process_i$csd_file))} ({idx} of {files_count})")
-
-  phenoptrReports::consolidate_and_summarize_cell_seg_data(
-    csd_files=files_to_process_i$csd_file,
-    output_dir=files_to_process_i$output_dir,
-    study_dir=files_to_process_i$study_dir,
-    export_dir=files_to_process_i$export_dir,
-    require_include=require_include,
-    col_select=col_select
+    # Print consolidate sample header
+    cli::cli_h1(
+      "Consolidating {basename(dirname(files_to_process_i$csd_file))} ({idx} of {files_count})"
     )
 
-  # Print status update
-  cli::cli_alert_success("Consolidated {basename(dirname(files_to_process_i$csd_file))} ({idx} of {files_count})")
-}
+    phenoptrReports::consolidate_and_summarize_cell_seg_data(
+      csd_files = files_to_process_i$csd_file,
+      output_dir = files_to_process_i$output_dir,
+      study_dir = files_to_process_i$study_dir,
+      export_dir = files_to_process_i$export_dir,
+      require_include = require_include,
+      col_select = col_select
+    )
+
+    # Print status update
+    cli::cli_alert_success(
+      "Consolidated {basename(dirname(files_to_process_i$csd_file))} ({idx} of {files_count})"
+    )
+  }
 
 
-get_consolidate_inputs <- function(csd_file, scan_dir_path, consolidated_dir_name) {
+get_consolidate_inputs <-
+  function(csd_file,
+           scan_dir_path,
+           consolidated_dir_name) {
+    # Get sample name without scan number
+    position <-
+      gregexpr("_Scan", basename(dirname(csd_file))) %>% unlist()
+    sample_name <-
+      substr(basename(dirname(csd_file)), 1, position - 1)
 
-  # Get sample name without scan number
-  position <- gregexpr("_Scan", basename(dirname(csd_file))) %>% unlist()
-  sample_name <- substr(basename(dirname(csd_file)), 1, position-1)
+    return(
+      list(
+        csd_file = csd_file,
 
-  return(
-    list(
-      csd_file = csd_file,
+        # Write consolidate outputs to consolidated_dir_name
+        output_dir = file.path(dirname(csd_file), consolidated_dir_name),
 
-      # Write consolidate outputs to consolidated_dir_name
-      output_dir = file.path(dirname(csd_file), consolidated_dir_name),
+        # Study directory is the whole slide scans directory containing the qptiff files and annotations
+        study_dir = file.path(scan_dir_path, sample_name),
 
-      # Study directory is the whole slide scans directory containing the qptiff files and annotations
-      study_dir = file.path(scan_dir_path, sample_name),
-
-      # Export directory is the inForm outputs directory containing 'binary_seg_maps' files
-      export_dir = dirname(csd_file)
+        # Export directory is the inForm outputs directory containing 'binary_seg_maps' files
+        export_dir = dirname(csd_file)
       )
-  )
-}
+    )
+  }

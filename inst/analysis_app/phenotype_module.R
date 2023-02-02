@@ -45,7 +45,7 @@ phenotype_module = function(input, output, session, phenotypes, csd) {
   })
 
   # Show help
-  observeEvent(input$help, {
+  shiny::observeEvent(input$help, {
     shiny::req(input$help)
     shiny::showModal(
       shiny::modalDialog(

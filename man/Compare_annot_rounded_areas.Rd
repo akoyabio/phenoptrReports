@@ -2,7 +2,7 @@
 % Please edit documentation in R/process_annotations.R
 \name{Compare_annot_rounded_areas}
 \alias{Compare_annot_rounded_areas}
-\title{prepare and compare the areas of two annotations}
+\title{Prepare and compare the areas of two annotations}
 \usage{
 Compare_annot_rounded_areas(list_of_samples)
 }
@@ -13,5 +13,5 @@ Compare_annot_rounded_areas(list_of_samples)
 Difference of rounded areas of two annotations
 }
 \description{
-prepare and compare the areas of two annotations
+Prepare and compare the areas of two annotations
 }

@@ -11,7 +11,7 @@ compare_annotation(path_to_annotations_files, path_to_write, pattern = NULL)
 
 \item{path_to_write}{where to write the summary of annotations and rounded areas}
 
-\item{pattern}{which pattern your folder has,}
+\item{pattern}{which pattern your folder has, null if not anything}
 }
 \value{
 write a data frame with two sheets, summarizing information regarding annotations

@@ -240,7 +240,7 @@ server = function(input, output, session) {
   #### Handle Save All - local version ####
   # Save All code for when the client browser is on the server machine
   # We can save directly to the local file system
-    observeEvent(input$save_all_local, {
+    shiny::observeEvent(input$save_all_local, {
       # Create a directory in the user's Downloads directory
       download_base = fs::path_home('Downloads')
       output_dir = file.path(download_base, basename(.export_path))
