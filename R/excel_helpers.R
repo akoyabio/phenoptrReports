@@ -535,9 +535,9 @@ outline_cells = function(wb, sheet_name, rows, cols) {
                      stack=TRUE)
 }
 
-# Remove " (xx xx) Mean" from strings
+# Remove " (xx xx) Mean" from strings, cast symbols to strings before use
 remove_marker_mean = function(s) {
-  stringr::str_remove_all(s, ' \\(.*?\\) Mean')
+  stringr::str_remove_all(as.character(s), ' \\(.*?\\) Mean')
 }
 
 # Create valid Excel worksheet tab names from the given strings
