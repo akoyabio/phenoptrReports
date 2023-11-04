@@ -180,13 +180,16 @@ compute_h_score = function(csd, measure, tissue_categories, thresholds,
     dplyr::select(!!.by, `Tissue Category`, !!measure) %>%
     dplyr::filter(`Tissue Category` %in% tissue_categories)
 
-  # Score each cell and summarize
+  # Score each cell compartment and summarize
   d = d %>%
     dplyr::mutate(score = dplyr::case_when(
+    # score numeric values
+    !!measure >= thresholds[3] ~ 3,
+    !!measure >= thresholds[2] ~ 2,
+    !!measure >= thresholds[1] ~ 1,
     !!measure < thresholds[1] ~ 0,
-    !!measure < thresholds[2] ~ 1,
-    !!measure < thresholds[3] ~ 2,
-    TRUE ~ 3)) %>%
+    # ignore non-numeric values ("#N/A")
+    .default = NULL)) %>%
     dplyr::group_by(!!.by, `Tissue Category`) %>%
     dplyr::summarize(
       `Count of 0+` = sum(score==0),
