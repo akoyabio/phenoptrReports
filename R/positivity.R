@@ -189,13 +189,14 @@ compute_h_score = function(csd, measure, tissue_categories, thresholds,
     !!measure >= thresholds[1] ~ 1,
     !!measure < thresholds[1] ~ 0,
     # ignore non-numeric values ("#N/A")
-    .default = NULL)) %>%
+    .default = NA)) %>%
     dplyr::group_by(!!.by, `Tissue Category`) %>%
     dplyr::summarize(
-      `Count of 0+` = sum(score==0),
-      `Count of 1+` = sum(score==1),
-      `Count of 2+` = sum(score==2),
-      `Count of 3+` = sum(score==3),
+      # summarize only numeric values
+      `Count of 0+` = sum(score==0, na.rm = TRUE),
+      `Count of 1+` = sum(score==1, na.rm = TRUE),
+      `Count of 2+` = sum(score==2, na.rm = TRUE),
+      `Count of 3+` = sum(score==3, na.rm = TRUE),
       Total = dplyr::n()
     ) %>%
     dplyr::ungroup()
