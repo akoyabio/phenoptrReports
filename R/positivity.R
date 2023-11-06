@@ -189,6 +189,8 @@ compute_h_score = function(csd, measure, tissue_categories, thresholds,
     !!measure >= thresholds[1] ~ 1,
     !!measure < thresholds[1] ~ 0,
     # ignore non-numeric values ("#N/A")
+    #   inForm is scoring missing values as `0+`
+    #   phenoptrReports was scoring missing values as `3+`
     .default = NA)) %>%
     dplyr::group_by(!!.by, `Tissue Category`) %>%
     dplyr::summarize(
@@ -197,7 +199,9 @@ compute_h_score = function(csd, measure, tissue_categories, thresholds,
       `Count of 1+` = sum(score==1, na.rm = TRUE),
       `Count of 2+` = sum(score==2, na.rm = TRUE),
       `Count of 3+` = sum(score==3, na.rm = TRUE),
-      Total = dplyr::n()
+      # total percentages include numeric values only
+      #   inForm reports `Number of Cells`, not measurements, across all tissues
+      Total = `Count of 0+` + `Count of 1+` + `Count of 2+` + `Count of 3+`
     ) %>%
     dplyr::ungroup()
 
