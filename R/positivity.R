@@ -135,9 +135,11 @@ compute_h_score_from_score_data = function(csd, score_path,
 
   result = compute_h_score(csd, measure, tissue_categories, thresholds, .by)
 
+  # H-Scores for rare phenotypes missing any counts are populated from scratch,
+  # corresponding NA values are later reported as "#N/A" values in Excel
   if (nrow(result) != nrow(full_combos)) {
     # Add in missing combinations
-    fill = rep(0, 5) %>% rlang::set_names(names(result)[3:7]) %>% as.list()
+    fill = rep(NA, 5) %>% rlang::set_names(names(result)[3:7]) %>% as.list()
     result = full_combos %>%
       dplyr::left_join(result) %>%
       tidyr::replace_na(replace = fill) %>%
@@ -180,20 +182,28 @@ compute_h_score = function(csd, measure, tissue_categories, thresholds,
     dplyr::select(!!.by, `Tissue Category`, !!measure) %>%
     dplyr::filter(`Tissue Category` %in% tissue_categories)
 
-  # Score each cell and summarize
+  # Score each cell compartment and summarize
   d = d %>%
     dplyr::mutate(score = dplyr::case_when(
-    !!measure < thresholds[1] ~ 0,
-    !!measure < thresholds[2] ~ 1,
-    !!measure < thresholds[3] ~ 2,
-    TRUE ~ 3)) %>%
+    # score numeric values
+    !!measure >= thresholds[3] ~ 3,
+    !!measure >= thresholds[2] ~ 2,
+    !!measure >= thresholds[1] ~ 1,
+    !!measure < thresholds[1] ~ 0),
+    # ignore non-numeric values ("#N/A")
+    #   inForm is scoring missing values as `0+`
+    #   phenoptrReports was scoring missing values as `3+`
+    .default = NA) %>%
     dplyr::group_by(!!.by, `Tissue Category`) %>%
     dplyr::summarize(
-      `Count of 0+` = sum(score==0),
-      `Count of 1+` = sum(score==1),
-      `Count of 2+` = sum(score==2),
-      `Count of 3+` = sum(score==3),
-      Total = dplyr::n()
+      # summarize only numeric values
+      `Count of 0+` = sum(score==0, na.rm = TRUE),
+      `Count of 1+` = sum(score==1, na.rm = TRUE),
+      `Count of 2+` = sum(score==2, na.rm = TRUE),
+      `Count of 3+` = sum(score==3, na.rm = TRUE),
+      # total percentages include numeric values only
+      #   inForm reports `Number of Cells`, not measurements, across all tissues
+      Total = `Count of 0+` + `Count of 1+` + `Count of 2+` + `Count of 3+`
     ) %>%
     dplyr::ungroup()
 

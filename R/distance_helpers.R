@@ -134,7 +134,9 @@ nearest_neighbor_summary_single_impl = function(csd, phenotypes,
 
   # All pairs of phenotypes. Order matters so this will include both
   # (a, b) and (b, a).
-  pheno_pairs = purrr::cross2(names(phenotypes), names(phenotypes))
+  pheno_pairs <- tidyr::expand_grid(A = names(phenotypes), B = names(phenotypes)) %>%
+    split(seq_len(nrow(.))) %>% 
+    map(~ .x %>% as.list())
 
   # Helper functions for computing a bunch of summary stats on distances
   # Compute summary stats for a single dataset and all pheno_pairs
@@ -292,8 +294,10 @@ count_within_summary_impl = function(csd, phenotypes, radii,
 
   # All pairs of phenotypes as a list of vectors.
   # Order matters so this will include both (a, b) and (b, a).
-  pheno_pairs = purrr::cross2(names(phenotypes), names(phenotypes)) %>%
-    purrr::map(unlist)
+  pheno_pairs <- expand_grid(A = names(phenotypes), B = names(phenotypes)) %>%
+    split(seq_len(nrow(.))) %>% 
+    map(~ unlist(.x))
+
 
   # Prep data - nest csd by field and .by
   if (.by == field_col)
