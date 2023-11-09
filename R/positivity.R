@@ -135,9 +135,11 @@ compute_h_score_from_score_data = function(csd, score_path,
 
   result = compute_h_score(csd, measure, tissue_categories, thresholds, .by)
 
+  # H-Scores for rare phenotypes missing any counts are populated from scratch,
+  # corresponding NA values are later reported as "#N/A" values in Excel
   if (nrow(result) != nrow(full_combos)) {
     # Add in missing combinations
-    fill = rep(0, 5) %>% rlang::set_names(names(result)[3:7]) %>% as.list()
+    fill = rep(NA, 5) %>% rlang::set_names(names(result)[3:7]) %>% as.list()
     result = full_combos %>%
       dplyr::left_join(result) %>%
       tidyr::replace_na(replace = fill) %>%
